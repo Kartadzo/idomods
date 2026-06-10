@@ -1,0 +1,513 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2025-07-30 07:10:40",
+    "containerVersion": {
+        "path": "accounts/6071831104/containers/101930524/versions/6",
+        "accountId": "6071831104",
+        "containerId": "101930524",
+        "containerVersionId": "6",
+        "name": "MSAds - Nadpisywanie kodu śledzenia UET Tag",
+        "container": {
+            "path": "accounts/6071831104/containers/101930524",
+            "accountId": "6071831104",
+            "containerId": "101930524",
+            "name": "welsti.pl",
+            "publicId": "GTM-TWBVKQL",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1675782874507",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6071831104/containers/101930524/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-TWBVKQL"
+            ]
+        },
+        "trigger": [
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "18",
+                "name": "Event - purchase",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "purchase"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "orderdetails."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "GREATER",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.value}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.google_business_vertical}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630300",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "22",
+                "name": "Event - Search",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_item_list"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.item_list_id}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^$"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{url - text}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            },
+                            {
+                                "type": "BOOLEAN",
+                                "key": "negate",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630301",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "28",
+                "name": "Event - view_item",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_item"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "GREATER",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.item_id}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630301",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "31",
+                "name": "Event - add_to_cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "add_to_cart"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.google_business_vertical}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "GREATER",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.item_id}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630301",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "37",
+                "name": "Event - InitiateCheckout",
+                "type": "CLICK",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "https://perfumy.pl/order1.php"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630302",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "41",
+                "name": "Event - view_item_list",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_item_list"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{url - text}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630302",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "43",
+                "name": "Event - begin_checkout",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "begin_checkout"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630302",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "44",
+                "name": "Event - view_cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_cart"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630303",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "47",
+                "name": "Event - Home Page Site",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "MATCH_REGEX",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page Path}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "^\\/(\\?(.*))?$"
+                            },
+                            {
+                                "type": "BOOLEAN",
+                                "key": "ignore_case",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630303",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "48",
+                "name": "Event - add_to_wishlist",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "add_to_wishlist"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630303",
+                "parentFolderId": "17"
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "triggerId": "56",
+                "name": "Event - sign_up",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "sign_up"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{js - Page Reload}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753706630386",
+                "parentFolderId": "17"
+            }
+        ],
+        "folder": [
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "folderId": "17",
+                "name": "Events",
+                "fingerprint": "1753706630300"
+            }
+        ],
+        "fingerprint": "1753776541280",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6071831104/containers/101930524/versions/6?apiLink=version"
+    }
+}

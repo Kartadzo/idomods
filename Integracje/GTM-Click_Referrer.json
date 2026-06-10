@@ -1,0 +1,141 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2025-07-31 14:17:39",
+    "containerVersion": {
+        "path": "accounts/6005946011/containers/92328235/versions/17",
+        "accountId": "6005946011",
+        "containerId": "92328235",
+        "containerVersionId": "17",
+        "name": "gAds - form 'Darmowa Konsultacja'",
+        "container": {
+            "path": "accounts/6005946011/containers/92328235",
+            "accountId": "6005946011",
+            "containerId": "92328235",
+            "name": "IdoMods.pl",
+            "publicId": "GTM-W34PX5W",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1660908600535",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6005946011/containers/92328235/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-W34PX5W"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6005946011",
+                "containerId": "92328235",
+                "tagId": "120",
+                "name": "Cookie - Set Origin",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n(function(){\n    var cookieName = \"buttonReferrer\"; // Name of your cookie\n    var cookieValue = \"{{Click Text}}\"; // Value of your cookie\n    var expirationTime = 3600; // In seconds\n    expirationTime = expirationTime * 1000; // Converts expiration time to milliseconds\n    var date = new Date();\n    var dateTimeNow = date.getTime();\n\n    date.setTime(dateTimeNow + expirationTime); // Sets expiration time (Time now + one month)\n    var date = date.toUTCString(); // Converts milliseconds to UTC time string\n\n    // Extract base domain\n    var domainParts = location.hostname.split('.');\n    var baseDomain = domainParts.slice(-2).join('.'); // Get the last two parts of the domain\n\n    document.cookie = cookieName + \"=\" + cookieValue + \"; SameSite=None; Secure; expires=\" + date + \"; path=/; domain=\" + baseDomain; // Sets cookie for all subdomains\n})();\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753356214042",
+                "firingTriggerId": [
+                    "122"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6005946011",
+                "containerId": "92328235",
+                "triggerId": "122",
+                "name": "Click link - Button",
+                "type": "LINK_CLICK",
+                "waitForTags": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "checkValidation": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE",
+                    "value": "2000"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1753356017732"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6005946011",
+                "containerId": "92328235",
+                "variableId": "119",
+                "name": "Click Referrer",
+                "type": "k",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "decodeCookie",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "buttonReferrer"
+                    }
+                ],
+                "fingerprint": "1753356049697",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6005946011",
+                "containerId": "92328235",
+                "type": "CLICK_TEXT",
+                "name": "Click Text"
+            }
+        ],
+        "fingerprint": "1753357178916",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6005946011/containers/92328235/versions/17?apiLink=version"
+    }
+}

@@ -1,0 +1,359 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2023-07-12 07:56:58",
+    "containerVersion": {
+        "path": "accounts/6131607526/containers/133076665/versions/3",
+        "accountId": "6131607526",
+        "containerId": "133076665",
+        "containerVersionId": "3",
+        "name": "gAds 1.01",
+        "container": {
+            "path": "accounts/6131607526/containers/133076665",
+            "accountId": "6131607526",
+            "containerId": "133076665",
+            "name": "cashify.eu",
+            "publicId": "GTM-NT65BT6",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1688645181472",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6131607526/containers/133076665/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-NT65BT6"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "tagId": "4",
+                "name": "GAds - main code",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Global site tag (gtag.js) - Google Ads: 11249046870 -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=AW-11249046870\"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'AW-11249046870');\n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1688646712355",
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "tagId": "6",
+                "name": "GAds - page_view",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Event snippet for [gAds] Wyswietlenie strony conversion page --> \n<script> \n  gtag('event', 'conversion', { 'send_to': 'AW-11249046870/_DMUCOSywrcYENaq-_Mp', 'value': 1.0, 'currency': 'PLN' }); \n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1689148316682",
+                "firingTriggerId": [
+                    "5"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "tagId": "8",
+                "name": "GAds - contact",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Event snippet for [gAds] Kontakt conversion page --> \n<script> gtag('event', 'conversion', { 'send_to': 'AW-11249046870/D6fCCOeywrcYENaq-_Mp', 'value': 1.0, 'currency': 'PLN' }); </script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1689148130890",
+                "firingTriggerId": [
+                    "7"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "tagId": "9",
+                "name": "GAds - view_tips",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Event snippet for [gAds] Uzyskaj wskazowki conversion page --> \n<script> \n  gtag('event', 'conversion', { 'send_to': 'AW-11249046870/RtUxCOGywrcYENaq-_Mp', 'value': 1.0, 'currency': 'PLN' }); \n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1689148485255",
+                "firingTriggerId": [
+                    "10",
+                    "12",
+                    "13",
+                    "11",
+                    "14"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "triggerId": "5",
+                "name": "Wyświetlenie strony",
+                "type": "PAGEVIEW",
+                "fingerprint": "1688647333867"
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "triggerId": "7",
+                "name": "Page url - kontakt",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "cashify.eu/kontakt/"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1688647798640"
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "triggerId": "10",
+                "name": "pageView - information - Wymiana BLIK",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "https://cashify.eu/wymiana-blik/"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1688648974090"
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "triggerId": "11",
+                "name": "pageView - information - Tabela prowizji",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "https://cashify.eu/prowizje/"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1688648996637"
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "triggerId": "12",
+                "name": "pageView - information - Kryptomaty",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "https://kryptomatic.xyz/map/"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "checkValidation": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE",
+                    "value": "2000"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1688649288691"
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "triggerId": "13",
+                "name": "pageView - information - Stan gotówki kryptomatów",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "https://cashify.eu/kryptomaty"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1688649049608"
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "triggerId": "14",
+                "name": "pageView - information - Wymiana stacjonarna",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "https://cashify.eu/znajdz-kantor/"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1688648950577"
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6131607526",
+                "containerId": "133076665",
+                "type": "CLICK_URL",
+                "name": "Click URL"
+            }
+        ],
+        "fingerprint": "1689148532455",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6131607526/containers/133076665/versions/3?apiLink=version"
+    }
+}

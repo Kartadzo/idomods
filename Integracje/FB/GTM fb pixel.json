@@ -1,0 +1,376 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2023-09-18 11:25:00",
+    "containerVersion": {
+        "path": "accounts/6005946011/containers/58923175/versions/0",
+        "accountId": "6005946011",
+        "containerId": "58923175",
+        "containerVersionId": "0",
+        "container": {
+            "path": "accounts/6005946011/containers/58923175",
+            "accountId": "6005946011",
+            "containerId": "58923175",
+            "name": "BrandsManago.pl",
+            "publicId": "GTM-TTD5STZ",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1644677757657",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6005946011/containers/58923175/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-TTD5STZ"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "58",
+                "name": "cHTML - FB pixel - base code",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Facebook Pixel Code -->\n<script>\n  !function(f,b,e,v,n,t,s)\n  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n  n.callMethod.apply(n,arguments):n.queue.push(arguments)};\n  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';\n  n.queue=[];t=b.createElement(e);t.async=!0;\n  t.src=v;s=b.getElementsByTagName(e)[0];\n  s.parentNode.insertBefore(t,s)}(window, document,'script',\n  'https://connect.facebook.net/en_US/fbevents.js');\n  fbq('init', '{{FB - Pixel ID}}');\n  fbq('track', 'PageView');\n</script>\n<noscript>\n  <img height=\"1\" width=\"1\" style=\"display:none\" \n       src=\"https://www.facebook.com/tr?id={your-pixel-id-goes-here}&ev=PageView&noscript=1\"/>\n</noscript>\n<!-- End Facebook Pixel Code -->"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1695026486215",
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "59",
+                "name": "cHTML - FB pixel - nr. telefonu",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  fbq('track', 'Contact', {telephone: {{Click URL}}});\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1695027178364",
+                "firingTriggerId": [
+                    "48"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "60",
+                "name": "cHTML - FB pixel - mail",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  fbq('track', 'Contact', {mail: {{Click URL}}});\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1695027154465",
+                "firingTriggerId": [
+                    "46"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "61",
+                "name": "cHTML - FB pixel - pageView - kontakt",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  fbq('track', 'Contact');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1695027193921",
+                "firingTriggerId": [
+                    "42"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "62",
+                "name": "cHTML - FB pixel - sendForm",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  fbq('track', 'Contact', {form: 'formSend'});\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1695028876172",
+                "firingTriggerId": [
+                    "17"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "17",
+                "name": "cEvent - kontakt_stopka - gtm4wp.contactForm7MailSent",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "gtm4wp.contactForm7MailSent"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1662414424870"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "42",
+                "name": "Event - ads_conversion_Contact_Us_1",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "gtm.js"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "/kontakt/"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1694771391460"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "46",
+                "name": "click link - mail",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "STARTS_WITH",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "mailto:"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "checkValidation": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE",
+                    "value": "2000"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1693303261247"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "48",
+                "name": "click link - telefon",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "STARTS_WITH",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "tel:"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "checkValidation": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE",
+                    "value": "2000"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1693303492967"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "variableId": "9",
+                "name": "FB - Pixel ID",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "1147994062714225"
+                    }
+                ],
+                "fingerprint": "1657480284024",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "type": "CLICK_URL",
+                "name": "Click URL"
+            }
+        ],
+        "fingerprint": "1695036300917",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6005946011/containers/58923175/versions/0?apiLink=version"
+    }
+}
