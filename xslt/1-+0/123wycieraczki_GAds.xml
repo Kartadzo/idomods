@@ -1,0 +1,216 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
+    <xsl:variable name="upperLetters" 
+                  select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'" />
+    <xsl:variable name="lowerLetters" 
+                  select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźżäöüßáčďéěíňóřšťúůýžáäčďžéíĺľňóôŕšťúýžăâîșțабвгґдеєжзиіїйклмнопрстуфхцчшщьюя'" />
+    
+    
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>123wycieraczki.pl</title>
+                <link>https://123wycieraczki.pl/</link>
+                <description>Produkty ze sklepu https://123wycieraczki.pl/</description>
+                <xsl:for-each select="/offer/products/product[
+                                      price/@gross &gt; 0 and 
+                                  description/name/. != '']">
+                    <!-- Id towaru -->
+                    <xsl:choose>
+                        <xsl:when test="count(sizes/size) &lt; 1">
+                            <!-- <xsl:element name="item">
+                                 <xsl:element name="g:id">
+                                 <xsl:value-of select="@id"/>
+                                 </xsl:element>
+                                 <xsl:call-template name="product"/>
+                                 <xsl:call-template name="productSizeMatter"/>
+                                 </xsl:element> -->
+                         </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="sizes/size[1]">
+                                <xsl:element name="item">
+                                    <xsl:choose>
+                                        <xsl:when test = "position() = 1">
+                                            <!-- Id produktu -->
+                                            <xsl:element name="g:id">
+                                                <xsl:value-of select="../../@id"/>
+                                            </xsl:element>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product"/>
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <!-- Id rozmiaru produktu -->
+                                            <xsl:element name="g:id">
+                                                <xsl:value-of select="@code"/>
+                                            </xsl:element>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product"/>
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:element>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+    
+    <xsl:template name="product" xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <!-- Tytuł -->
+        <xsl:variable name='title_wer'>
+            <xsl:choose>
+                <xsl:when test="parameters/parameter[@id = 185]/value/@name != ''">
+                    <xsl:value-of select="parameters/parameter[@id = 185]/@id"/>
+                </xsl:when>
+                <xsl:when test="parameters/parameter[@id = 187]/value/@name != ''">
+                    <xsl:value-of select="parameters/parameter[@id = 187]/@id"/>
+                </xsl:when>
+                <xsl:when test="parameters/parameter[@id = 1375]/value/@name != ''">
+                    <xsl:value-of select="parameters/parameter[@id = 1375]/@id"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <title>
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:value-of select="description/name/."/>
+            <xsl:if test="$title_wer and $title_wer != ''">
+                <xsl:text><![CDATA[ Długość: ]]></xsl:text>
+            </xsl:if>
+            <!-- pióro kierowca -->
+            <xsl:value-of select="parameters/parameter[@name = 'Długość pióra kierowcy']/value/@name"/>
+            <!-- pióro pasażera -->
+            <xsl:if test="parameters/parameter[@name = 'Długość pióra pasażera']/value/@name != ''">
+                <xsl:if test="$title_wer != 185">
+                    <xsl:text><![CDATA[/]]></xsl:text>
+                </xsl:if>
+                <xsl:value-of select="parameters/parameter[@name = 'Długość pióra pasażera']/value/@name"/>
+            </xsl:if>
+            <!-- pióro tył -->
+            <xsl:if test="parameters/parameter[@id = 1375]/value/@name != ''">
+                <xsl:if test="$title_wer != 185">
+                    <xsl:text><![CDATA[/]]></xsl:text>
+                </xsl:if>
+                <xsl:value-of select="parameters/parameter[@id = 1375]/value/@name"/>
+            </xsl:if>
+            <xsl:if test="parameters/parameter[@name = 'Parametry (Rodzaj)']/value/@name">
+                <xsl:text><![CDATA[ Rodzaj: ]]></xsl:text>
+                <xsl:value-of select="parameters/parameter[@name = 'Parametry (Rodzaj)']/value/@name"/>
+            </xsl:if>
+            <xsl:if test="parameters/parameter[@name = 'Numer katalogowy']/value/@name">
+                <xsl:text><![CDATA[ ]]></xsl:text>
+                <xsl:value-of select="parameters/parameter[@name = 'Numer katalogowy']/value/@name"/>
+            </xsl:if>
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </title>
+        
+        <!-- jeśli na sklepie są jakieś zestawy -->
+        <xsl:element name="g:is_bundle">
+            <xsl:choose>
+                <xsl:when test="sum(bundled/product/@quantity) > 1">
+                    <xsl:text>yes</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>no</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:element>
+        <g:custom_label_1>
+            <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='newproduct' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Nowość|</xsl:text>
+            </xsl:if>
+            <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='bestseller' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Bestseller|</xsl:text>
+            </xsl:if>
+            <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='promotion' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Promocja|</xsl:text>
+            </xsl:if>
+        </g:custom_label_1>
+    </xsl:template>
+    
+    <xsl:template name="productSizeMatter"
+                  xmlns:g="http://base.google.com/ns/1.0" 
+                  version="2.0">
+        <g:link><xsl:value-of select="substring-before(../../card/@url, '.feed')"/><![CDATA[.html]]></g:link>
+        <g:mobile_link><xsl:value-of select="substring-before(../../card/@url, '.feed')"/><![CDATA[.html]]></g:mobile_link>
+        
+        <xsl:if test="@weight and @weight > 0">
+            <xsl:element name="g:shipping_weight">
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:value-of select="format-number(@weight div 1000, '#.##')" />
+                <xsl:text disable-output-escaping="yes"> kg]]&gt;</xsl:text>
+            </xsl:element>
+        </xsl:if>
+    </xsl:template>
+    
+    <!-- 26.11.2025 MD -->
+    <xsl:template name="strip-tags">
+        <xsl:param name="text" />
+        <xsl:param name="open" select="'&lt;'" />
+        <xsl:param name="close" select="'&gt;'" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $open) and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text, $open)" />
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after($text, $close)" />
+                    <xsl:with-param name="open" select="$open" />
+                    <xsl:with-param name="close" select="$close" />
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="tokenize">
+        <xsl:param name="text" />
+        <xsl:param name="delimiter" select="'.'" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter) and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text, $delimiter)" />
+                <xsl:value-of select="$delimiter" />
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)" />
+                    <xsl:with-param name="delimiter" select="$delimiter" />
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="string-replace-all">
+        <xsl:param name="text" />
+        <xsl:param name="replace" />
+        <xsl:param name="by" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $replace) and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text,$replace)" />
+                <xsl:value-of select="$by" />
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="substring-after($text,$replace)" />
+                    <xsl:with-param name="replace" select="$replace" />
+                    <xsl:with-param name="by" select="$by" />
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

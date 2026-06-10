@@ -1,0 +1,364 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+   
+   <xsl:template match="/">
+      <offer>
+         <xsl:attribute name="file_format"><xsl:text>IOF</xsl:text></xsl:attribute>
+         <xsl:attribute name="version"><xsl:text>3.0</xsl:text></xsl:attribute>
+         <xsl:attribute name="generated_by"><xsl:text>IdoSell Shop</xsl:text></xsl:attribute>
+         <xsl:attribute name="currency"><xsl:value-of select="offer/@currency"/></xsl:attribute>
+         <xsl:attribute name="generated"><xsl:value-of select="offer/@generated"/></xsl:attribute>
+         <xsl:attribute name="extensions"><xsl:value-of select="'yes'"/></xsl:attribute>
+         <!-- ******************** Zmienne ******************** -->
+         <xsl:variable name="client_lang" select="offer/products/@language"/>
+         <!-- ******************** Strefa produktow ******************** -->
+         <products>
+            <xsl:attribute name="language"><xsl:value-of select="$client_lang"/></xsl:attribute>
+            <xsl:for-each select="/offer/products/product">
+               <product id="{@id}" currency="{@currency}" producer_code_standard="{@producer_code_standard}" type="{@type}" vat="{@vat}" iaiext:product_free="{@iaiext:product_free}" iaiext:save_serial_numbers="{@iaiext:save_serial_numbers}" iaiext:available="{@iaiext:available}" site="{@site}">
+                  <xsl:choose>
+                     <xsl:when test = "@id = 15595">
+                        <xsl:copy-of select="*[not(self::description)]" />
+                        <description>
+                           <xsl:copy-of select="description/name" />
+                           <xsl:copy-of select="description/short_desc" />
+                           <xsl:copy-of select="description/translations" />
+                           <long_desc>
+                              <xsl:variable name="przygotowanie_opisu">
+                                 <xsl:call-template name="string-replace-all">
+                                    <xsl:with-param name="text" select="iaiext:auction_descriptions/iaiext:auction_description[@service_id=1]" tunnel="yes" />
+                                    <xsl:with-param name="replace" select="'[iai:product_id]'" tunnel="yes" />
+                                    <xsl:with-param name="by" select="@id" tunnel="yes" />
+                                 </xsl:call-template>
+                                 <!-- <xsl:choose>
+                                      <xsl:when test="contains(description/long_desc, '[iai:product_id]')">
+                                      <xsl:value-of select="substring-before(description/long_desc, '[iai:product_id]')" />
+                                      <xsl:value-of select="@id" />
+                                      <xsl:value-of select="substring-after(description/long_desc, '[iai:product_id]')" />
+                                      </xsl:when>
+                                      <xsl:otherwise>
+                                      <xsl:value-of select="description/long_desc" />
+                                      </xsl:otherwise>
+                                      </xsl:choose> -->
+                                </xsl:variable>
+                              <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                              <table border="0" cellpadding="8" cellspacing="0" width="100%">
+                                 <xsl:call-template name="render-sections">
+                                    <xsl:with-param name="text" select="$przygotowanie_opisu"/>
+                                    <xsl:with-param name="imgIndex" select="1"/>
+                                 </xsl:call-template>
+                              </table>
+                              <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>                                    
+                           </long_desc>
+                        </description>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:copy-of select="*" />
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </product>
+            </xsl:for-each>
+         </products>
+      </offer>
+   </xsl:template>
+   
+   <xsl:template name="string-replace-all">
+      <xsl:param name="text" />
+      <xsl:param name="replace" />
+      <xsl:param name="by" />
+      <xsl:param name="depth" select="0" />
+      <xsl:choose>
+         <xsl:when test="contains($text, $replace) and $depth &lt; 1000">
+            <xsl:value-of select="substring-before($text,$replace)" />
+            <xsl:value-of select="$by" />
+            <xsl:call-template name="string-replace-all">
+               <xsl:with-param name="text" select="substring-after($text,$replace)" />
+               <xsl:with-param name="replace" select="$replace" />
+               <xsl:with-param name="by" select="$by" />
+               <xsl:with-param name="depth" select="$depth + 1" />
+            </xsl:call-template>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="$text" />
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+
+   <xsl:template name="render-sections">
+      <xsl:param name="text"/>
+      <xsl:param name="imgIndex" select="1"/>
+      <xsl:param name="explicitUsed" select="'no'"/>
+      
+      <xsl:if test="string-length(normalize-space($text)) &gt; 0">
+         <xsl:choose>
+            
+            <!-- Pomijanie wiodących białych znaków -->
+            <xsl:when test="starts-with($text, ' ') or starts-with($text, '&#xA;') or starts-with($text, '&#xD;')">
+               <xsl:call-template name="render-sections">
+                  <xsl:with-param name="text" select="substring($text, 2)"/>
+                  <xsl:with-param name="imgIndex" select="$imgIndex"/>
+                  <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+               </xsl:call-template>
+            </xsl:when>
+            
+            <xsl:otherwise>
+               <xsl:choose>
+                  <xsl:when test="starts-with($text, '[iai:allegro_description_section_text-begin]')">
+                     <xsl:variable name="inner"
+                                   select="substring-before(
+                                           substring-after($text, '[iai:allegro_description_section_text-begin]'),
+                                           '[iai:allegro_description_section_text-end]'
+                                           )"/>
+                     
+                     <tr>
+                        <td colspan="2">
+                           <xsl:value-of select="$inner" disable-output-escaping="yes"/>
+                        </td>
+                     </tr>
+                     
+                     <xsl:call-template name="render-sections">
+                        <xsl:with-param name="text" select="substring-after($text, '[iai:allegro_description_section_text-end]')"/>
+                        <xsl:with-param name="imgIndex" select="$imgIndex"/>
+                        <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+                     </xsl:call-template>
+                  </xsl:when>
+                  <xsl:when test="starts-with($text, '[iai:allegro_description_section_photo_and_text-begin]')">
+                     <xsl:variable name="rawInner"
+                                   select="substring-before(
+                                           substring-after($text, '[iai:allegro_description_section_photo_and_text-begin]'),
+                                           '[iai:allegro_description_section_photo_and_text-end]'
+                                           )"/>
+                     
+                     <xsl:choose>
+                        <xsl:when test="contains($rawInner, '[iai:product_photos_large_')">
+                           <xsl:variable name="photoNum"
+                                         select="substring-before(
+                                                 substring-after($rawInner, '[iai:product_photos_large_'),
+                                                 ']'
+                                                 )"/>
+                           
+                           <xsl:variable name="innerBefore"
+                                         select="substring-before($rawInner, '[iai:product_photos_large_')"/>
+                           <xsl:variable name="innerAfter"
+                                         select="substring-after($rawInner, concat('[iai:product_photos_large_', $photoNum, ']'))"/>
+                           <xsl:variable name="inner" select="concat($innerBefore, $innerAfter)"/>
+                           
+                           <tr>
+                              <td width="50%">
+                                 <xsl:variable name="src"
+                                               select="images/large/image[number($photoNum)]/@url"/>
+                                 <xsl:if test="string-length($src) &gt; 0">
+                                    <img>
+                                       <xsl:attribute name="src">
+                                          <xsl:value-of select="$src"/>
+                                       </xsl:attribute>
+                                    </img>
+                                 </xsl:if>
+                              </td>
+                              <td width="50%">
+                                 <xsl:value-of select="$inner" disable-output-escaping="yes"/>
+                              </td>
+                           </tr>
+                           
+                           <xsl:call-template name="render-sections">
+                              <xsl:with-param name="text" select="substring-after($text, '[iai:allegro_description_section_photo_and_text-end]')"/>
+                              <!-- imgIndex bez zmian flaga: użyto product_photos_large_X-->
+                              <xsl:with-param name="imgIndex" select="$imgIndex"/>
+                              <xsl:with-param name="explicitUsed" select="'yes'"/>
+                           </xsl:call-template>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <tr>
+                              <td width="50%">
+                                 <xsl:variable name="src"
+                                               select="images/large/image[$imgIndex]/@url"/>
+                                 <xsl:if test="string-length($src) &gt; 0">
+                                    <img>
+                                       <xsl:attribute name="src">
+                                          <xsl:value-of select="$src"/>
+                                       </xsl:attribute>
+                                    </img>
+                                 </xsl:if>
+                              </td>
+                              <td width="50%">
+                                 <xsl:value-of select="$rawInner" disable-output-escaping="yes"/>
+                              </td>
+                           </tr>
+                           
+                           <xsl:call-template name="render-sections">
+                              <xsl:with-param name="text" select="substring-after($text, '[iai:allegro_description_section_photo_and_text-end]')"/>
+                              <xsl:with-param name="imgIndex" select="$imgIndex + 1"/>
+                              <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+                           </xsl:call-template>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:when>
+                  <!-- TEXT + PHOTO -->
+                  <xsl:when test="starts-with($text, '[iai:allegro_description_section_text_and_photo-begin]')">
+                     <xsl:variable name="rawInner"
+                                   select="substring-before(
+                                           substring-after($text, '[iai:allegro_description_section_text_and_photo-begin]'),
+                                           '[iai:allegro_description_section_text_and_photo-end]'
+                                           )"/>
+                     
+                     <xsl:choose>
+                        <xsl:when test="contains($rawInner, '[iai:product_photos_large_')">
+                           <xsl:variable name="photoNum"
+                                         select="substring-before(
+                                                 substring-after($rawInner, '[iai:product_photos_large_'),
+                                                 ']'
+                                                 )"/>
+                           
+                           <xsl:variable name="innerBefore"
+                                         select="substring-before($rawInner, '[iai:product_photos_large_')"/>
+                           <xsl:variable name="innerAfter"
+                                         select="substring-after($rawInner, concat('[iai:product_photos_large_', $photoNum, ']'))"/>
+                           <xsl:variable name="inner" select="concat($innerBefore, $innerAfter)"/>
+                           
+                           <tr>
+                              <td width="50%">
+                                 <xsl:value-of select="$inner" disable-output-escaping="yes"/>
+                              </td>
+                              <td width="50%">
+                                 <xsl:variable name="src"
+                                               select="images/large/image[number($photoNum)]/@url"/>
+                                 <xsl:if test="string-length($src) &gt; 0">
+                                    <img>
+                                       <xsl:attribute name="src">
+                                          <xsl:value-of select="$src"/>
+                                       </xsl:attribute>
+                                    </img>
+                                 </xsl:if>
+                              </td>
+                           </tr>
+                           
+                           <xsl:call-template name="render-sections">
+                              <xsl:with-param name="text" select="substring-after($text, '[iai:allegro_description_section_text_and_photo-end]')"/>
+                              <xsl:with-param name="imgIndex" select="$imgIndex"/>
+                              <xsl:with-param name="explicitUsed" select="'yes'"/>
+                           </xsl:call-template>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <tr>
+                              <td width="50%">
+                                 <xsl:value-of select="$rawInner" disable-output-escaping="yes"/>
+                              </td>
+                              <td width="50%">
+                                 <xsl:variable name="src"
+                                               select="images/large/image[$imgIndex]/@url"/>
+                                 <xsl:if test="string-length($src) &gt; 0">
+                                    <img>
+                                       <xsl:attribute name="src">
+                                          <xsl:value-of select="$src"/>
+                                       </xsl:attribute>
+                                    </img>
+                                 </xsl:if>
+                              </td>
+                           </tr>
+                           
+                           <xsl:call-template name="render-sections">
+                              <xsl:with-param name="text" select="$rest"/>
+                              <xsl:with-param name="imgIndex" select="$imgIndex + 1"/>
+                              <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+                           </xsl:call-template>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:when>
+                  <xsl:when test="starts-with($text,'[iai:allegro_description_section_photo]')">
+                     <tr>
+                        <td colspan="2" style="text-align:center;">
+                           <img>
+                              <xsl:attribute name="src">
+                                 <xsl:value-of select="images/large/image[$imgIndex]/@url"/>
+                              </xsl:attribute>
+                           </img>
+                        </td>
+                     </tr>
+                     
+                     <xsl:call-template name="render-sections">
+                        <xsl:with-param name="text" select="substring-after($text,'[iai:allegro_description_section_photo]')"/>
+                        <xsl:with-param name="imgIndex" select="$imgIndex + 1"/>
+                        <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+                     </xsl:call-template>
+                  </xsl:when>
+                  <xsl:when test="starts-with($text,'[iai:allegro_description_section_double_photo]')">
+                     <tr>
+                        <td width="50%" style="text-align:center;">
+                           <img>
+                              <xsl:attribute name="src">
+                                 <xsl:value-of select="images/large/image[$imgIndex]/@url"/>
+                              </xsl:attribute>
+                           </img>
+                        </td>
+                        <td width="50%" style="text-align:center;">
+                           <img>
+                              <xsl:attribute name="src">
+                                 <xsl:value-of select="images/large/image[$imgIndex + 1]/@url"/>
+                              </xsl:attribute>
+                           </img>
+                        </td>
+                     </tr>
+                     
+                     <xsl:call-template name="render-sections">
+                        <xsl:with-param name="text" select="substring-after($text,'[iai:allegro_description_section_double_photo]')"/>
+                        <xsl:with-param name="imgIndex" select="$imgIndex + 2"/>
+                        <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+                     </xsl:call-template>
+                  </xsl:when>
+                  <!-- nie rozpoznano sekcji - wypluj opis domyślny a następnie zdjęcia -->
+                  <xsl:otherwise>
+                     <tr>
+                        <td colspan="2">
+                           <xsl:value-of select="description/long_desc/." disable-output-escaping="yes"/>
+                        </td>
+                     </tr>
+                     
+                     <xsl:call-template name="render-remaining-images">
+                        <xsl:with-param name="imgIndex" select="$imgIndex"/>
+                        <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+                     </xsl:call-template>
+                  </xsl:otherwise>
+                  
+               </xsl:choose>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:if>
+      
+      <!-- koniec tekstu -->
+      <xsl:if test="string-length(normalize-space($text)) = 0 
+                    and $explicitUsed = 'no'">
+         <xsl:call-template name="render-remaining-images">
+            <xsl:with-param name="imgIndex" select="$imgIndex"/>
+            <xsl:with-param name="explicitUsed" select="$explicitUsed"/>
+         </xsl:call-template>
+      </xsl:if>
+   </xsl:template>
+
+   
+   <xsl:template name="render-remaining-images">
+      <xsl:param name="imgIndex"/>
+      
+      <xsl:variable name="src"
+                    select="images/large/image[$imgIndex]/@url"/>
+      
+      <xsl:if test="string-length($src) &gt; 0">
+         <tr>
+            <td colspan="2" style="text-align:center;">
+               <img>
+                  <xsl:attribute name="src">
+                     <xsl:value-of select="$src"/>
+                  </xsl:attribute>
+               </img>
+            </td>
+         </tr>
+         
+         <xsl:call-template name="render-remaining-images">
+            <xsl:with-param name="imgIndex" select="$imgIndex + 1"/>
+         </xsl:call-template>
+      </xsl:if>
+   </xsl:template>
+</xsl:stylesheet>

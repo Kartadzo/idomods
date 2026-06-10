@@ -1,0 +1,329 @@
+<h2 style="text-align:center;">Umowa — dane</h2>
+
+<table border="1" cellpadding="4" cellspacing="0" width="100%">
+  <tbody><tr>
+    <th>Pole</th>
+    <th>Wartość</th>
+  </tr>
+
+  <tr><td>Adres</td><td>{{address}}</td></tr>
+  <tr><td>Miasto</td><td>{{addressCity}}</td></tr>
+  <tr><td>Kraj</td><td>{{addressCountry}}</td></tr>
+  <tr><td>Mapa</td><td>{{addressMap}}</td></tr>
+  <tr><td>Kod pocztowy</td><td>{{addressPostalCode}}</td></tr>
+  <tr><td>Województwo</td><td>{{addressState}}</td></tr>
+  <tr><td>Ulica</td><td>{{addressStreet}}</td></tr>
+
+  <tr><td>Przypisany użytkownik</td><td>{{#if assignedUser}}{{assignedUser.name}}{{/if}}</td></tr>
+  <tr><td>Utworzony</td><td>{{createdAt}}</td></tr>
+  <tr><td>Utworzony przez</td><td>{{#if createdBy}}{{createdBy.name}}{{/if}}</td></tr>
+
+  <tr><td>Czas płatności faktury</td><td>{{czasPlatnosci}}</td></tr>
+  <tr><td>Czas realizacji</td><td>{{czasRealizacji}}</td></tr>
+  <tr><td>Czas rozpoczęcia</td><td>{{czasRozpoczecia}}</td></tr>
+
+  <tr><td>Opis</td><td>{{{description}}}</td></tr>
+  <tr><td>Domeny (powiązane)</td>
+    <td>
+      {{#if domenyWWW}}
+        {{#each domenyWWW}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+      {{else}}-{{/if}}
+    </td>
+  </tr>
+
+  <tr><td>E-mail</td><td>{{emailAddress}}</td></tr>
+  <tr><td>Email do faktur</td><td>{{emailDoFaktur}}</td></tr>
+
+  <tr><td>Ilość RBH</td><td>{{iloscRbh}}</td></tr>
+  <tr><td>Wysokość kapitału</td><td>{{kapital}}</td></tr>
+  <tr><td>KRS</td><td>{{krs}}</td></tr>
+
+  <tr><td>Mail do osoby kontaktowej</td><td>{{mailDoOsobyKontaktowej}}</td></tr>
+  <tr><td>Mail do osoby podpisującej</td><td>{{mailDoOsobyPodpisujcej}}</td></tr>
+
+  <tr><td>Zmodyfikowany</td><td>{{modifiedAt}}</td></tr>
+  <tr><td>Zmodyfikowany przez</td><td>{{#if modifiedBy}}{{modifiedBy.name}}{{/if}}</td></tr>
+
+  <tr><td>Nazwa</td><td>{{name}}</td></tr>
+  <tr><td>Nasza firma</td><td>{{naszaFirma}}</td></tr>
+  <tr><td>Nasza Firma - Właściciel</td><td>{{naszaFirmaWlasciciel}}</td></tr>
+  <tr><td>NIP</td><td>{{nip}}</td></tr>
+
+  <tr><td>IdM Numer umowy</td><td>{{numerUmowy}}</td></tr>
+  <tr><td>IdM umowy ramowej</td><td>{{numerUmowyRamowej}}</td></tr>
+
+  <tr><td>Telefon</td><td>{{phoneNumber}}</td></tr>
+  <tr><td>Telefon do osoby kontaktowej</td><td>{{telefonDoOsobyKontaktowej}}</td></tr>
+  <tr><td>Telefon do osoby podpisującej</td><td>{{telefonDoOsobyPodpisujcej}}</td></tr>
+
+  <tr><td>Podpisana umowa (plik)</td><td>{{#if podpisanaUmowa}}{{podpisanaUmowa.name}}{{/if}}</td></tr>
+  <tr><td>Wygenerowana umowa (plik)</td><td>{{#if wygenerowanaUmowa}}{{wygenerowanaUmowa.name}}{{/if}}</td></tr>
+
+  <tr><td>Podpisujący (lista)</td>
+    <td>
+      {{#if podpisujacy}}
+        {{#each podpisujacy}}{{this.firstName}} {{this.lastName}}{{#unless @last}}, {{/unless}}{{/each}}
+      {{else}}-{{/if}}
+    </td>
+  </tr>
+
+  <tr><td>Czy podpisujący uprawniony do podpisywania umów?</td><td>{{podpisujacyUprawionyDoPodpisywaniaUmow}}</td></tr>
+
+  <tr><td>Powód błędu</td><td>{{powodBledu}}</td></tr>
+  <tr><td>Przedmiot zamówienia</td><td>{{przedmiotZamowienia}}</td></tr>
+  <tr><td>Regon</td><td>{{regon}}</td></tr>
+  <tr><td>Właściwość sądu</td><td>{{sad}}</td></tr>
+
+  <tr><td>Rodzaj umowy</td><td>{{rodzajUmowy}}</td></tr>
+  <tr><td>Status umowy</td><td>{{statusUmowy}}</td></tr>
+  <tr><td>Stawka RBH</td><td>{{stawkaRbh}}</td></tr>
+
+  <tr><td>Opis szczegółowy przedmiotu zamówienia</td><td>{{umowaDescription}}</td></tr>
+  <tr><td>Wynagrodzenie</td><td>{{wynagrodzenie}}</td></tr>
+  <tr><td>Zasady płatności</td><td>{{zasadyPlatnosci}}</td></tr>
+  <tr><td>Warunki wypowiedzenia</td><td>{{warunkiWypowiedzenia}}</td></tr>
+</tbody></table>
+
+<!-- NEWPAGE -->
+
+<h2>Dane firmy powiązanej z umową</h2>
+
+<table border="1" cellpadding="4" cellspacing="0" width="100%">
+    <tr>
+        <th>Pole</th>
+        <th>Wartość</th>
+    </tr>
+
+    <tr><td>Nazwa</td><td>{{umowy.name}}</td></tr>
+    <tr><td>NIP / VAT EU</td><td>{{umowy.cNip}}</td></tr>
+    <tr><td>REGON</td><td>{{umowy.cRegon}}</td></tr>
+    <tr><td>KRS</td><td>{{umowy.cKrs}}</td></tr>
+    <tr><td>Strona internetowa</td><td>{{umowy.website}}</td></tr>
+    <tr><td>Email</td><td>{{umowy.emailAddress}}</td></tr>
+    <tr><td>Telefon</td><td>{{umowy.phoneNumber}}</td></tr>
+
+    <tr><td>Adres – Ulica</td><td>{{umowy.billingAddressStreet}}</td></tr>
+    <tr><td>Adres – Miasto</td><td>{{umowy.billingAddressCity}}</td></tr>
+    <tr><td>Adres – Kod pocztowy</td><td>{{umowy.billingAddressPostalCode}}</td></tr>
+    <tr><td>Adres – Województwo</td><td>{{umowy.billingAddressState}}</td></tr>
+    <tr><td>Adres – Kraj</td><td>{{umowy.billingAddressCountry}}</td></tr>
+
+    <tr><td>Adres dostawy – Ulica</td><td>{{umowy.shippingAddressStreet}}</td></tr>
+    <tr><td>Adres dostawy – Miasto</td><td>{{umowy.shippingAddressCity}}</td></tr>
+    <tr><td>Adres dostawy – Kod pocztowy</td><td>{{umowy.shippingAddressPostalCode}}</td></tr>
+    <tr><td>Adres dostawy – Województwo</td><td>{{umowy.shippingAddressState}}</td></tr>
+    <tr><td>Adres dostawy – Kraj</td><td>{{umowy.shippingAddressCountry}}</td></tr>
+
+    <tr><td>Branża</td><td>{{umowy.industry}}</td></tr>
+    <tr><td>Rodzaj współpracy</td><td>{{umowy.cStatus}}</td></tr>
+    <tr><td>Status VAT</td><td>{{umowy.cStatusVat}}</td></tr>
+    <tr><td>Kapitał</td><td>{{umowy.cKapital}}</td></tr>
+    <tr><td>Wspólnicy</td><td>{{umowy.cWspolnicy}}</td></tr>
+    <tr><td>Beneficjent rzeczywisty</td><td>{{umowy.cBeneficjent}}</td></tr>
+    <tr><td>Reprezentanci</td><td>{{umowy.cReprezentanci}}</td></tr>
+    <tr><td>Reprezentant firmy</td><td>{{umowy.cReprezentantFirmy}}</td></tr>
+
+    <tr><td>Biała lista</td><td>{{umowy.cWhitelist}}</td></tr>
+    <tr><td>Podstawa wykreślenia z VAT</td><td>{{umowy.cWykreslenieZVat}}</td></tr>
+
+    <tr><td>Adres Google Drive (zewn.)</td><td>{{umowy.cDyskGoogleExt}}</td></tr>
+    <tr><td>ID Google Drive</td><td>{{umowy.cDyskGoogleExtID}}</td></tr>
+    <tr><td>Folder umów</td><td>{{umowy.cDyskGoogleUmowy}}</td></tr>
+
+    <tr><td>ClickUp</td><td>{{umowy.cClickup}}</td></tr>
+
+    <tr><td>Lista docelowa</td><td>{{umowy.targetList}}</td></tr>
+    <tr><td>Listy docelowe</td><td>{{umowy.targetLists}}</td></tr>
+
+    <tr><td>Utworzony</td><td>{{umowy.createdAt}}</td></tr>
+    <tr><td>Utworzony przez</td><td>{{umowy.createdByName}}</td></tr>
+    <tr><td>Zmodyfikowany</td><td>{{umowy.modifiedAt}}</td></tr>
+    <tr><td>Zmodyfikowany przez</td><td>{{umowy.modifiedByName}}</td></tr>
+</table>
+
+<!-- NEWPAGE -->
+
+<h2>Podpisujący</h2>
+
+<table width="100%" border="1" cellpadding="1" cellspacing="0">
+    <tr>
+        <th width="50%">Pole</th>
+        <th>Wartość</th>
+    </tr>
+
+    <tr iterate="{{podpisujacy}}">
+        <td colspan="2">
+            <table width="100%" border="1" cellpadding="1" cellspacing="0">
+
+                <tr><td width="50%">Imię</td><td>{{firstName}}</td></tr>
+                <tr><td>Nazwisko</td><td>{{lastName}}</td></tr>
+                <tr><td>Drugie imię</td><td>{{middleName}}</td></tr>
+                <tr><td>Pełna nazwa</td><td>{{name}}</td></tr>
+
+                <tr><td>Zwrot grzecznościowy</td><td>{{salutationName}}</td></tr>
+                <tr><td>Tytuł</td><td>{{title}}</td></tr>
+                <tr><td>Stanowisko</td><td>{{cStanowisko}}</td></tr>
+                <tr><td>Rola w dealu</td><td>{{opportunityRole}}</td></tr>
+
+                <tr><td>Adres – Ulica</td><td>{{addressStreet}}</td></tr>
+                <tr><td>Adres – Miasto</td><td>{{addressCity}}</td></tr>
+                <tr><td>Adres – Kod pocztowy</td><td>{{addressPostalCode}}</td></tr>
+                <tr><td>Adres – Województwo</td><td>{{addressState}}</td></tr>
+                <tr><td>Adres – Kraj</td><td>{{addressCountry}}</td></tr>
+
+                <tr><td>E-mail</td><td>{{emailAddress}}</td></tr>
+                <tr><td>E-mail niepoprawny</td><td>{{emailAddressIsInvalid}}</td></tr>
+                <tr><td>E-mail wypisany</td><td>{{emailAddressIsOptedOut}}</td></tr>
+
+                <tr><td>Telefon</td><td>{{phoneNumber}}</td></tr>
+                <tr><td>Telefon niepoprawny</td><td>{{phoneNumberIsInvalid}}</td></tr>
+                <tr><td>Telefon wypisany</td><td>{{phoneNumberIsOptedOut}}</td></tr>
+
+                <tr><td>Uprawniony do podpisu umów</td><td>{{cUprawnionyDoPodpisuUmw}}</td></tr>
+
+                <tr><td>Klient (firma)</td><td>{{accountName}}</td></tr>
+                <tr><td>Firma (powiązania)</td><td>{{accounts}}</td></tr>
+
+                <tr><td>Nie dzwoń</td><td>{{doNotCall}}</td></tr>
+
+                <tr><td>Opis</td><td>{{description}}</td></tr>
+
+                <tr><td>Utworzony</td><td>{{createdAt}}</td></tr>
+                <tr><td>Utworzony przez</td><td>{{createdByName}}</td></tr>
+                <tr><td>Zmodyfikowany</td><td>{{modifiedAt}}</td></tr>
+                <tr><td>Zmodyfikowany przez</td><td>{{modifiedByName}}</td></tr>
+
+            </table>
+        </td>
+    </tr>
+
+</table>
+
+<!-- NEWPAGE -->
+
+<h2>Domeny WWW powiązane z umową</h2>
+
+<table width="100%" border="1" cellpadding="1" cellspacing="0">
+    <tr>
+        <th width="50%">Pole</th>
+        <th>Wartość</th>
+    </tr>
+
+    <tr iterate="{{domenyWWW}}">
+        <td colspan="2">
+            <table width="100%" border="1" cellpadding="1" cellspacing="0">
+
+                <tr><td width="50%">Nazwa</td><td>{{name}}</td></tr>
+
+                <tr><td>Domena</td><td>{{domena}}</td></tr>
+                <tr><td>Adres IP</td><td>{{adresIP}}</td></tr>
+
+                <tr><td>Firma</td><td>{{firmaName}}</td></tr>
+
+                <tr><td>Silnik WWW</td><td>{{silnikWWW}}</td></tr>
+
+                <tr><td>Główna domena panelu IdoSell</td><td>{{glownaDomenaPaneluIdoSell}}</td></tr>
+                <tr><td>ID Panelu IdoSell</td><td>{{idPaneluIdoSell}}</td></tr>
+
+                <tr><td>HTTPS – final URL</td><td>{{httpsFinalUrl}}</td></tr>
+                <tr><td>HTTPS – ma przekierowanie</td><td>{{httpsHasRedirect}}</td></tr>
+                <tr><td>HTTPS – łańcuch przekierowań</td><td>{{httpsRedirectChain}}</td></tr>
+
+                <tr><td>Opis</td><td>{{description}}</td></tr>
+
+                <tr><td>Deale</td><td>{{deale}}</td></tr>
+
+                <tr><td>Zespoły</td><td>{{teams}}</td></tr>
+
+                <tr><td>Utworzony</td><td>{{createdAt}}</td></tr>
+                <tr><td>Utworzony przez</td><td>{{createdByName}}</td></tr>
+
+                <tr><td>Zmodyfikowany</td><td>{{modifiedAt}}</td></tr>
+                <tr><td>Zmodyfikowany przez</td><td>{{modifiedByName}}</td></tr>
+
+                <tr><td>Stream Updated At</td><td>{{streamUpdatedAt}}</td></tr>
+
+            </table>
+        </td>
+    </tr>
+
+</table>
+
+<!-- NEWPAGE -->
+
+<h2>Procesy e‑podpisu</h2>
+
+<table width="100%" border="1" cellpadding="1" cellspacing="0">
+    <tr>
+        <th width="50%">Pole</th>
+        <th>Wartość</th>
+    </tr>
+
+    <tr iterate="{{eSignatureProcesses}}">
+        <td colspan="2">
+            <table width="100%" border="1" cellpadding="1" cellspacing="0">
+
+                <tr><td width="50%">Nazwa</td><td>{{name}}</td></tr>
+                <tr><td>Status</td><td>{{status}}</td></tr>
+
+                <tr><td>Opis</td><td>{{description}}</td></tr>
+
+                <tr><td>Utworzony</td><td>{{createdAt}}</td></tr>
+                <tr><td>Utworzony przez</td><td>{{createdByName}}</td></tr>
+
+                <tr><td>Zmodyfikowany</td><td>{{modifiedAt}}</td></tr>
+                <tr><td>Zmodyfikowany przez</td><td>{{modifiedByName}}</td></tr>
+
+                <tr><td>Powiązana umowa</td><td>{{cumowaName}}</td></tr>
+
+                <tr><td>Załączniki</td><td>{{attachments}}</td></tr>
+
+                <tr><td>Uczestnicy procesu</td><td>{{participants}}</td></tr>
+
+                <tr><td>Data rozpoczęcia</td><td>{{startDate}}</td></tr>
+                <tr><td>Data zakończenia</td><td>{{endDate}}</td></tr>
+
+                <tr><td>Typ procesu</td><td>{{type}}</td></tr>
+
+                <tr><td>Stream Updated At</td><td>{{streamUpdatedAt}}</td></tr>
+
+            </table>
+        </td>
+    </tr>
+
+</table>
+
+<!-- NEWPAGE -->
+
+<h3>Relacje pomocnicze i powiązane rekordy</h3>
+<table border="1" cellpadding="4" cellspacing="0" width="100%">
+  <tbody><tr><th>Pole</th><th>Wartość</th></tr>
+
+  <tr><td>Przypisany użytkownik</td><td>{{#if assignedUser}}{{assignedUser.name}}{{/if}}</td></tr>
+  <tr><td>Utworzył</td><td>{{#if createdBy}}{{createdBy.name}}{{/if}}</td></tr>
+  <tr><td>Zmodyfikował</td><td>{{#if modifiedBy}}{{modifiedBy.name}}{{/if}}</td></tr>
+  <tr><td>Zespoły</td>
+    <td>
+      {{#if teams}}{{#each teams}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}-{{/if}}
+    </td>
+  </tr>
+
+  <tr><td>Podpisana umowa (plik)</td><td>{{#if podpisanaUmowa}}{{podpisanaUmowa.name}}{{/if}}</td></tr>
+  <tr><td>Wygenerowana umowa (plik)</td><td>{{#if wygenerowanaUmowa}}{{wygenerowanaUmowa.name}}{{/if}}</td></tr>
+
+  <tr><td>E-maile (children)</td>
+    <td>
+      {{#if emails}}{{#each emails}}{{this.subject}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}0{{/if}}
+    </td>
+  </tr>
+  <tr><td>Spotkania (children)</td>
+    <td>
+      {{#if meetings}}{{#each meetings}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}0{{/if}}
+    </td>
+  </tr>
+  <tr><td>Zadania (children)</td>
+    <td>
+      {{#if tasks}}{{#each tasks}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}0{{/if}}
+    </td>
+  </tr>
+</tbody></table>

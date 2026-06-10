@@ -1,0 +1,167 @@
+<h1 style="text-align: center;"><strong>Zamówienie</strong></h1>
+<p style="text-align: center;">Nr: {{numerUmowy}}</p>
+<h2 style="text-align: center;"><strong>Specyfikacja przedmiotu zamówienia</strong></h2>
+<table border="1" cellspacing="0" cellpadding="7">
+<tbody>
+<tr>
+<td style="width: 30%;">
+<p><strong>ZAMAWIAJĄCY</strong></p>
+</td>
+<td style="width: 70%;">
+<p>{{umowy.name}}, {{addressStreet}} {{addressPostalCode}} {{addressCity}} {{addressState}} {{addressCountry}} NIP:&nbsp;{{nip}}, REGON:&nbsp;{{regon}}, {{#if sad}}{{sad}}, KRS: {{krs}}, Kapitał zakładowy: {{kapital}},{{/if}} reprezentowaną przez:&nbsp;{{#each podpisujacy}}{{this.name}} {{this.cStanowisko}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>WYKONAWCA</strong></p>
+</td>
+<td>
+<p>{{naszaFirma}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>OS. KONTAKTOWE PO STRONIE ZAMAWIAJĄCEGO</strong></p>
+</td>
+<td>
+<p>{{#each umowyOsobyKontaktowe}}{{this.name}} {{this.emailAddress}} {{this.phoneNumber}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>MAIL ZAMAWIAJĄCEGO DO FAKTUR ELEKTRONICZNYCH</strong></p>
+</td>
+<td>
+<p>{{umowy.emailAddress}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>PRZEDMIOT ZAMÓWIENIA</strong></p>
+</td>
+<td>
+<p>{{rodzajUmowy}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>DATA ROZPOCZĘCIA*</strong></p>
+</td>
+<td>
+<p>{{czasRozpoczecia}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>DATA ZAKOŃCZENIA*</strong></p>
+</td>
+<td>
+<p>{{czasRealizacji}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>STAWKA RBH</strong></p>
+</td>
+<td>
+<p>{{stawkaRbh}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>ILOŚĆ RBH</strong></p>
+</td>
+<td>
+<p>{{iloscRbh}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>WYNAGRODZENIE**</strong></p>
+</td>
+<td>
+<p>{{{wynagrodzenie}}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>ZASADY PŁATNOŚCI</strong></p>
+</td>
+<td>
+<p>{{{zasadyPlatnosci}}}</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>* Powyższe terminy są terminami orientacyjnymi, bez uwzględnienia sesji poprawek i&nbsp;testów. Ponadto termin każdorazowo ulega przedłużeniu, w&nbsp;przypadku oczekiwania przez Wykonawcę na stanowisko Zamawiającego niezbędne do wykonania przedmiotu Zamówienia oraz na okres testowania dzieła przez Zamawiającego. W takim przypadku termin wykonania przedmiotu umowy ulega każdorazowo przedłużeniu o czas oczekiwania przez Wykonawcę na stanowisko Zamawiającego niezbędne do wykonania Przedmiotu Umowy oraz o&nbsp;okres testowania Oprogramowania przez Zamawiającego.</p>
+<p>** W przypadku zleceń typu Time&nbsp;&amp;&nbsp;Material ostateczna cena za zrealizowane Zamówienie jest określana dopiero po jego zakończeniu i przesłaniu raportu z przepracowanych przez Wykonawcę godzin oraz kosztu zakupu koniecznych do realizacji materiałów.</p>
+<h4><strong>Opis szczegółowy przedmiotu zamówienia/materiały od Zamawiającego</strong></h4>
+<table style="width: 100%;" border="1" cellspacing="0" cellpadding="7">
+<tbody>
+<tr>
+<td>
+<p>{{{umowaDescription}}}</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h4 style="text-align: center;"><strong>Obowiązek informacyjny - RODO</strong></h4>
+<ol>
+<li>
+<p>Zgodnie z art. 13 ust. 1 i 2 rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych i&nbsp;w&nbsp;sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE informuję, że administratorem danych osobowych w rozumieniu przepisów Rozporządzenia Parlamentu Europejskiego I Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z&nbsp;przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (dalej Rozporządzenie lub RODO) jest Brands Manago Sp. z o.o. z siedzibą w&nbsp;Dęblinie, przy ul. Żwirki i Wigury 2, 08-530 Dęblin, wpisaną do rejestru przedsiębiorców prowadzonego przez Sąd Rejonowy Lublin Wschód w Lublinie z Siedzibą w Świdniku, VI Wydział Gospodarczy Krajowego Rejestru Sądowego pod numerem KRS 0000944762, NIP: 5060122347, REGON: 520900570, mail: kontakt@brandsmanago.pl</p>
+</li>
+<li>
+<p>W przypadku, gdy do złożenia oferty lub innych podobnych kontaktów handlowych dochodzi na prośbę Zamawiającego, administrator przetwarza podane przez Zamawiającego dane osobowe w celu niezbędnym do podjęcia działań przed zawarciem umowy na żądanie osoby, której dane dotyczą.</p>
+</li>
+<li>
+<p>Podanie danych osobowych jest niezbędne do otrzymania oferty, a ich przetwarzanie odbywa się na podstawie art. 6 ust. 1 lit. b) Rozporządzenia.</p>
+</li>
+<li>
+<p>W przypadku, gdy administrator składa ofertę lub podejmuje lub utrzymuje inne podobne biznesowe kontakty z własnej inicjatywy, przetwarzanie danych osobowych Zamawiającego odbywa się na podstawie art. 6 ust. 1 lit. f) Rozporządzenia, tj. prawnie uzasadnionego interesu administratora rozumianego jako potrzeba przedstawienia oferty w ramach działalności gospodarczej lub za uprzednią zgodą Zamawiającego, na podstawie art. 6 ust. 1 lit. a) Rozporządzenia. Zamawiający może w&nbsp;dowolnym momencie wycofać zgodę w d bez wpływu na zgodność z prawem przetwarzania, którego dokonano na podstawie zgody przed jej cofnięciem, w takim sam sposób, w jaki została udzielona. W&nbsp;tym celu administrator gromadzi Państwa dane osobowe takie jak: imię, nazwisko, nazwa firmy, NIP, adres e-mail, numer telefonu oraz inne dane kontaktowe.</p>
+</li>
+<li>
+<p>Administrator może przetwarzać ponadto udostępnione przez Zamawiającego dane osób do kontaktu, tj. imię i nazwisko, firmę, numer telefonu, adres, adres e-mail, a także w przypadku osoby prawnej - dane osobowe osób upoważnionych do działania w imieniu Zamawiającego, tj. imię i nazwisko, na podstawie art. 6 ust. 1 lit. f) Rozporządzenia, tj. prawnie uzasadnionego interesu administratora rozumianego jako konieczność weryfikacji osób upoważnionych do działania w imieniu Zamawiającego oraz konieczność kontaktowania się z Zamawiającym w sprawach związanych ze złożeniem oferty. Udostępniając administratorowi te dane, Zamawiający oświadcza,, że osoby te otrzymały przedstawione przez administratora informacje.</p>
+</li>
+<li>
+<p>Administrator przechowuje dane osobowe Zamawiającego jedynie przez okres niezbędny do realizacji umowy, w tym dochodzenia roszczeń oraz zachowania zgodności z wymaganiami wynikającymi z&nbsp;obowiązujących przepisów, w tym przepisów podatkowych, o ile doszło do zawarcia umowy w&nbsp;wyniku złożonej oferty.</p>
+</li>
+<li>
+<p>W przypadku, gdy nie doszło do zawarcia umowy, administrator przechowuje dane osobowe Zamawiającego do czasu upływu terminu ważności oferty, tj. terminu związania ofertą lub przez czas niezbędny prowadzenia negocjacji i kontaktu w związku z ofertą. Po upływie tych okresów dane osobowe zostaną usunięte.</p>
+</li>
+<li>
+<p>Zamawiającemu przysługuje prawo do żądania od Administratora dostępu do przetwarzanych danych, uzyskania kopii danych, żądania sprostowania danych, gdy są nieprawidłowe lub niekompletne, a&nbsp;także w przypadkach wskazanych w Rozporządzeniu, prawo do wniesienia sprzeciwu wobec przetwarzania, żądania usunięcia danych osobowych, żądania ograniczenia przetwarzania oraz prawo do przenoszenia danych.</p>
+</li>
+<li>
+<p>Ponadto Zamawiającemu przysługuje prawo do wniesienia skargi do organu nadzorczego.</p>
+</li>
+<li>
+<p>Administrator korzysta częściowo z zewnętrznych dostawców usług, którzy w imieniu administratora przetwarzają dane osobowe, np. dostawców usług hostingu, dostawców usług poczty elektronicznej, dostawcy usług związanych utrzymanie systemów informatycznych. Podmioty te stanowią odbiorców danych osobowych. Przekazanie danych może jednak służyć wyłącznie realizacji ich usługi.</p>
+</li>
+<li>
+<p>Administrator korzysta wyłącznie z usług takich podmiotów, które zapewniają wystarczające gwarancje ochrony praw osób, których dane dotyczą. Odbiorcami danych osobowych mogą być także stosowne organy, którym przepisy prawa wymagają podania tych danych. Administrator oświadcza, iż w&nbsp;odniesieniu do danych osobowych nie podejmuje zautomatyzowanych decyzji, w tym decyzji będących wynikiem profilowania w rozumieniu Rozporządzenia.</p>
+</li>
+<li>
+<p>Administrator przetwarza dane osobowe zgodnie z powszechnie obowiązującymi przepisami prawa w zakresie danych osobowych, w szczególności zgodnie z przepisami Rozporządzenia.</p>
+</li>
+<li>
+<p>Administrator zapewnia należytą ochronę przetwarzanych danych osobowych, w tym stosuje odpowiednie środki techniczne i organizacyjne w celu zapewnienia bezpieczeństwa i odpowiedniej poufności i integralności danych osobowych, w tym ochrony przed nieuprawnionym dostępem do nich, przed niedozwolonym lub niezgodnym z prawem przetwarzaniem oraz przypadkową utratą, nieautoryzowaną zmianą, zniszczeniem lub uszkodzeniem.</p>
+</li>
+<li>
+<p>Wszelkie żądania, prośby, powiadomienia, zapytania odnoszące się do przetwarzania danych osobowych, mogą Państwo kierować mailowo na adres: kontakt@brandsmanago.pl lub pisemnie na adres: Brands Manago Sp. z o.o., ul. Żwirki i Wigury 2, 08-530 Dęblin.</p>
+</li>
+</ol>
+<h4 style="text-align: center;"><strong>Akceptacja warunków zamówienia</strong></h4>
+<table style="width: 100%;">
+<tbody>
+<tr>
+<td>
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p><strong>[Data i Podpis Licencjodawcy]</strong></p>
+</td>
+<td>
+<p style="text-align: right;">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p style="text-align: right;"><strong>[Data i Podpis Licencjobiorcy]</strong></p>
+</td>
+</tr>
+</tbody>
+</table>

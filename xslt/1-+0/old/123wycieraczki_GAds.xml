@@ -1,0 +1,73 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>123wycieraczki.pl</title>
+                <link>https://123wycieraczki.pl/</link>
+                <description>Produkty ze sklepu https://123wycieraczki.pl/</description>
+                <xsl:for-each select="/offer/products/product">
+                    <item>
+                        <!--Unikalny identyfikator produktu  -->
+                        <id>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="@id"></xsl:value-of>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </id>
+                        <!-- Tytuł -->
+                        <xsl:variable name='title_wer'>
+                            <xsl:choose>
+                                <xsl:when test="parameters/parameter[@id = 185]/value/@name != ''"/>
+                                <xsl:when test="parameters/parameter[@id = 187]/value/@name != ''">
+                                    <xsl:value-of select="parameters/parameter[@id = 187]/@id"/>
+                                </xsl:when>
+                                <xsl:when test="parameters/parameter[@id = 1375]/value/@name != ''">
+                                    <xsl:value-of select="parameters/parameter[@id = 1375]/@id"/>
+                                </xsl:when>
+                            </xsl:choose>
+                        </xsl:variable>
+                        
+                        <title>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="description/name/."/>
+                            <xsl:text><![CDATA[ Długość: ]]></xsl:text>
+                            <!-- pióro kierowca -->
+                            <xsl:value-of select="parameters/parameter[@name = 'Długość pióra kierowcy']/value/@name"/>
+                            <!-- pióro pasażera -->
+                            <xsl:if test="parameters/parameter[@name = 'Długość pióra pasażera']/value/@name != ''">
+                                <xsl:if test="$title_wer != 187">
+                                    <xsl:text><![CDATA[/]]></xsl:text>
+                                </xsl:if>
+                                <xsl:value-of select="parameters/parameter[@name = 'Długość pióra pasażera']/value/@name"/>
+                            </xsl:if>
+                            <!-- pióro tył -->
+                            <xsl:if test="parameters/parameter[@id = 1375]/value/@name != ''">
+                                <xsl:if test="$title_wer != 1375">
+                                    <xsl:text><![CDATA[/]]></xsl:text>
+                                </xsl:if>
+                                <xsl:value-of select="parameters/parameter[@id = 1375]/value/@name"/>
+                            </xsl:if>
+                            <xsl:if test="parameters/parameter[@name = 'Parametry (Rodzaj)']/value/@name">
+                                <xsl:text><![CDATA[ Rodzaj: ]]></xsl:text>
+                                <xsl:value-of select="parameters/parameter[@name = 'Parametry (Rodzaj)']/value/@name"/>
+                            </xsl:if>
+                            <xsl:if test="parameters/parameter[@name = 'Numer katalogowy']/value/@name">
+                                <xsl:text><![CDATA[ ]]></xsl:text>
+                                <xsl:value-of select="parameters/parameter[@name = 'Numer katalogowy']/value/@name"/>
+                            </xsl:if>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </title>
+                        
+                        <g:link><xsl:value-of select="substring-before(card/@url, '.feed')"/><![CDATA[.html]]></g:link>
+                        <g:mobile_link><xsl:value-of select="substring-before(card/@url, '.feed')"/><![CDATA[.html]]></g:mobile_link>
+                        
+                    </item>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

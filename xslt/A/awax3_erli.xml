@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsl:stylesheet version="1.0" 
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" 
+                xmlns:iof="http://www.iai-shop.com/developers/iof.phtml" 
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+   <xsl:output cdata-section-elements="name short_desc long_desc iaiext:meta_title iaiext:meta_description iaiext:meta_keywords iaiext:pricecomparator_name" encoding="utf-8" indent="yes" method="xml"/>
+   <xsl:strip-space elements="*"/>
+   <xsl:template match="/">
+      <xsl:element name="offer">
+         <xsl:attribute name="file_format"><xsl:text>IOF</xsl:text></xsl:attribute>
+         <xsl:attribute name="version"><xsl:text>3.0</xsl:text></xsl:attribute>
+         <xsl:attribute name="generated_by"><xsl:text>IdoSell Shop</xsl:text></xsl:attribute>
+         <xsl:attribute name="generated"><xsl:value-of select="offer/@generated"/></xsl:attribute>
+         <!-- ******************** Zmienne ******************** -->
+         <xsl:variable name="client_lang" select="offer/products/@language"/>
+         <!-- ******************** Strefa produktow ******************** -->
+         <xsl:element name="products" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml">
+            <xsl:attribute name="language"><xsl:value-of select="$client_lang"/></xsl:attribute>
+            
+            <!-- ******************** Petla produktow ******************** -->
+            <xsl:for-each select="offer/products/*">
+               <product id="{@id}" currency="{@currency}" producer_code_standard="{@producer_code_standard}" type="{@type}" vat="{@vat}" iaiext:product_free="{@iaiext:product_free}" iaiext:save_serial_numbers="{@iaiext:save_serial_numbers}" iaiext:available="{@iaiext:available}" site="{@site}">
+                  <xsl:choose>
+                     <xsl:when test = "@id = 15595">
+                        <xsl:copy-of select="*[not(self::description)]" />
+                        <description>
+                           <xsl:copy-of select="description/name" />
+                           <xsl:copy-of select="description/short_desc" />
+                           <xsl:copy-of select="description/translations" />
+                           <long_desc>
+                              <xsl:text>{"sections":[</xsl:text>
+                              <xsl:variable name="desc" select="iaiext:auction_descriptions/iaiext:auction_description[@service_group_id='2' and @service_id='1']" />
+                              <xsl:call-template name="parse-allegro-description">
+                                 <xsl:with-param name="text" select="string($desc)" />
+                              </xsl:call-template>
+                              <xsl:text>]}</xsl:text>
+                           </long_desc>
+                        </description>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:copy-of select="*" />
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </product>
+            </xsl:for-each>
+            <!-- ******************** /Petla produktow ******************** -->
+         </xsl:element>
+         <!-- ******************** /Strefa produktow ******************** -->
+      </xsl:element>
+   </xsl:template>
+    
+    <xsl:template name="parse-allegro-description">
+        <xsl:param name="text" select="." />
+        <xsl:choose>
+            <xsl:when test="contains($text, '[iai:allegro_description_section_')">
+                <xsl:variable name="after-begin" select="substring-after($text, '[iai:allegro_description_section_')" />
+                <xsl:variable name="section-type" select="substring-before($after-begin, '-begin]')" />
+                <xsl:variable name="after-tag" select="substring-after($after-begin, '-begin]')" />
+                <xsl:variable name="content" select="substring-before($after-tag, concat('[iai:allegro_description_section_', $section-type, '-end]'))" />
+                <xsl:variable name="rest" select="substring-after($after-tag, concat('[iai:allegro_description_section_', $section-type, '-end]'))" />
+                
+                <xsl:choose>
+                    <xsl:when test="$section-type = 'photo_list'">
+                        <xsl:call-template name="emit-photo-list">
+                            <xsl:with-param name="html" select="$content" />
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:when test="$section-type = 'photo'">
+                        <xsl:variable name="image-url" select="substring-before(substring-after($content, 'src=&quot;'), '&quot;')" />
+                        <xsl:text>{"items":[{"type":"IMAGE","url":"</xsl:text>
+                        <xsl:value-of select="$image-url" />
+                        <xsl:text>"}]},</xsl:text>
+                    </xsl:when>
+                    
+                    <xsl:when test="$section-type = 'double_photo'">
+                        <xsl:variable name="image-url1" select="substring-before(substring-after($content, 'src=&quot;'), '&quot;')" />
+                        <xsl:variable name="tmp" select="substring-after($content, concat($image-url1, '&quot;'))" />
+                        <xsl:variable name="image-url2" select="substring-before(substring-after($tmp, 'src=&quot;'), '&quot;')" />
+                        <xsl:text>{"items":[{"type":"IMAGE","url":"</xsl:text>
+                        <xsl:value-of select="$image-url1" />
+                        <xsl:text>"}]},</xsl:text>
+                        <xsl:text>{"items":[{"type":"IMAGE","url":"</xsl:text>
+                        <xsl:value-of select="$image-url2" />
+                        <xsl:text>"}]},</xsl:text>
+                    </xsl:when>
+                    
+                    <xsl:when test="$section-type = 'photo_and_text'">
+                        <xsl:variable name="image-url" select="substring-before(substring-after($content, 'src=&quot;'), '&quot;')" />
+                        <xsl:variable name="text-part" select="substring-before($content, '&lt;img')" />
+                        <xsl:text>{"items":[</xsl:text>
+                        <xsl:text>{"type":"IMAGE","url":"</xsl:text>
+                        <xsl:value-of select="$image-url" />
+                        <xsl:text>"},</xsl:text>
+                        <xsl:text>{"type":"TEXT","content":"</xsl:text>
+                        <xsl:value-of select="$text-part" disable-output-escaping="yes" />
+                        <xsl:text>"}]},</xsl:text>
+                    </xsl:when>
+                    
+                    <xsl:when test="$section-type = 'text_and_photo'">
+                        <xsl:variable name="image-url" select="substring-before(substring-after($content, 'src=&quot;'), '&quot;')" />
+                        <xsl:variable name="text-part" select="substring-after($content, '&lt;/img&gt;')" />
+                        <xsl:text>{"items":[</xsl:text>
+                        <xsl:text>{"type":"TEXT","content":"</xsl:text>
+                        <xsl:value-of select="$text-part" disable-output-escaping="yes" />
+                        <xsl:text>"},</xsl:text>
+                        <xsl:text>{"type":"IMAGE","url":"</xsl:text>
+                        <xsl:value-of select="$image-url" />
+                        <xsl:text>"}]},</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>{"items":[{"type":"TEXT","content":"</xsl:text>
+                        <xsl:value-of select="$content" disable-output-escaping="yes" />
+                        <xsl:text>"}]},</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:call-template name="parse-allegro-description">
+                    <xsl:with-param name="text" select="$rest" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>{"items":[{"type":"TEXT","content":"</xsl:text>
+                <xsl:value-of select="$text" disable-output-escaping="yes" />
+                <xsl:text>"}]},</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="emit-photo-list">
+        <xsl:param name="html" />
+        <xsl:variable name="image-url" select="substring-before(substring-after($html, 'src=&quot;'), '&quot;')" />
+        <xsl:if test="string-length($image-url) &gt; 0">
+            <xsl:text>{"items":[{"type":"IMAGE","url":"</xsl:text>
+            <xsl:value-of select="$image-url" />
+            <xsl:text>"}]},</xsl:text>
+            <!-- Usuń już przetworzony <img> i przetwarzaj dalej -->
+            <xsl:call-template name="emit-photo-list">
+                <xsl:with-param name="html" select="substring-after($html, concat($image-url, '&quot;'))" />
+            </xsl:call-template>
+        </xsl:if>
+    </xsl:template>
+</xsl:stylesheet>

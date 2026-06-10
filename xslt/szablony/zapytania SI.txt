@@ -1,0 +1,21 @@
+Eksport pamięci
+"""
+Wymień wszystko, co o mnie wiesz na podstawie:
+
+1) zapisanych wpisów w pamięci,
+2) informacji wywnioskowanych z pełnej historii czatów.
+
+Wygeneruj dane wyjściowe jako listę numerowaną w pojedynczym bloku kodu, używając trybu myślenia z dłuższym wynikiem.
+
+Reguły:
+– Zapisz każdy element w pierwszej osobie („Ja...”).
+– Sformatuj każdy element dokładnie jako „<No>. [zapisane/wywnioskowane](RRRR-MM-DD) Ja...”, gdzie RRRR-MM-DD to data utworzenia zapisanych wpisów w pamięci lub data konwersacji w przypadku wywnioskowanych wpisów w pamięci.
+– Najpierw wymień wszystkie [zapisane] elementy, a następnie wszystkie [wywnioskowane] elementy.
+– W ramach każdej grupy sortuj według daty rosnąco (od najwcześniejszych).
+– Bez dodatkowych komentarzy poza blokiem kodu.
+"""
+
+SEO - meta strony
+SEO - konfiguracja meta (tytuł, opis, słowa kluczowe) strony internetowej sklepu sprzedającego płyty winylowe. Uwzględnij te zmienne ale nie zmieniaj ich nazw w '[]': [iai:product_id] - Identyfikator towaru [iai:product_name] - Nazwa towaru [iai:product_version_name] - Nazwa towaru w grupie [iai:version_group_name] - Nazwa grupy towarów [iai:product_price_gross] - Cena brutto towaru [iai:product_code] - Symbol wyświetlany w karcie towaru na stronie sklepu [iai:product_producer_code] - Kod producenta [iai:product_size_code] - Kod zewnętrznego systemu [iai:product_description] - Opis krótki towaru [iai:product_menu] - Nazwa elementów menu [iai:shop_name] - Nazwa sklepu [iai:shop_url] - Adres internetowy sklepu [iai:product_category] - Nazwa kategorii towarów [iai:product_producer_name] - Nazwa producenta towaru [iai:product_series_name] - Nazwa serii, do której należy towar [iai:menu_breadcrumb] - Lokalizacja menu (breadcrumb) [iai:menu_name] - Nazwa węzła menu [iai:menu_path] - Ścieżka do węzła menu (bez ostatniego węzła) [iai:menu_breadcrumb_inverted] - Lokalizacja menu (breadcrumb) w odwróconej kolejności [iai:menu_breadcrumb_level_X] - Nazwa elementu w lokalizacji menu. Zastąp X numerem elementu, którego nazwę chcesz zwrócić. Uwzględnij następujące wartości:Domyślne meta, Strona główna, Aktualności, Blog, Kontakt, Newsletter, Wyszukiwarka zaawansowana, Lista kategorii, Lista marek, Lista opinii ze zdjęciami, Mapa strony, Parametry, Serie, Marki, Kategorie, Własne podstrony (CMS), Karta towaru, Opinie na temat produktu, Elementy menu, Lista serii - na potrzeby mapy strony, Główne drzewo nawigacji - na potrzeby mapy strony, Dodatkowe drzewo nawigacji - na potrzeby mapy strony.
+
+„Napisz polecenie, którego ktoś użyłby do wygenerowania tego typu treści.”

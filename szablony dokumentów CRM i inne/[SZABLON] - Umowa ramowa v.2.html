@@ -1,0 +1,342 @@
+<h1 style="text-align: center;"><strong>Umowa ramowa wsp&oacute;łpracy</strong></h1>
+<h2 style="text-align: center;">Nr: {{numerUmowy}}</h2>
+<p>Zawarta w Dęblinie w dniu <strong>{{createdAt}}</strong> roku pomiędzy firmą:</p>
+<p>{{umowy.name}} z siedzibą w {{addressStreet}} {{addressPostalCode}} {{addressCity}} {{addressState}} {{addressCountry}}, NIP: {{nip}}, REGON: {{regon}}, {{#if sad}}{{sad}}, KRS: {{krs}}, Kapitał zakładowy: {{kapital}}, {{/if}} </p>
+<p>reprezentowaną przez:</p>
+<p>{{#each podpisujacy}}{{this.name}} - {{this.cStanowisko}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+<p>zwanym dalej <strong>Zamawiającym</strong>, a</p>
+<p>{{{naszaFirma}}}</p>
+<p>reprezentowaną przez:</p>
+<p>{{#if naszaFirmaWlasciciel}}{{naszaFirmaWlasciciel}}{{else}}-{{/if}}</p>
+<p>zwanym dalej <strong>Wykonawcą</strong>, zwanymi w dalszej części umowy z osobna <strong>&bdquo;Stroną</strong>&rdquo; lub łącznie <strong>&bdquo;Stronami</strong>&rdquo; o następującej treści:</p>
+<p style="text-align: center;"><strong>&sect;1 Definicje</strong></p>
+<ol>
+<li>
+<p>Umowa Ramowa - niniejsza umowa określająca zasady składania i realizacji Zam&oacute;wień na rzecz Zamawiającego przez Wykonawcę, dalej zwana &ldquo;Umowa&rdquo;.</p>
+</li>
+<li>
+<p>Serwis internetowy (Serwis) - sklep internetowy uruchomiony z wykorzystaniem Usługi IdoSell, prezentujący klientom sklepu przez szablon graficzny sklepu, asortyment sklepu oraz wszelkie informacje dotyczące sprzedaży i umożliwiający dokonywanie zakup&oacute;w przez Internet.</p>
+</li>
+<li>
+<p>Zapytanie Ofertowe - zapytanie o cenę, warunki i termin realizacji usług świadczonych przez Wykonawcę</p>
+</li>
+<li>
+<p>Zam&oacute;wienie - Dokument w kt&oacute;rym Zamawiający zleca wykonanie określonych prac i zadań (&ldquo;Usługi&rdquo;) przez Wykonawcę, zawiera zakres prac, termin rozpoczęcia i zasady wynagrodzenia Wykonawcy.</p>
+</li>
+<li>
+<p>Usługi - Prace i zadania informatyczne, programistyczne, graficzne lub doradcze zlecane Wykonawcy przez Zamawiającego.</p>
+</li>
+<li>
+<p>Oferta - informacje na temat kosztu, rodzaju prac i czasu potrzebnego na realizację Zadania. Każdorazowo Wycena powinna zawierać: liczbę roboczogodzin potrzebnych do wykonania Zadania i przybliżony termin rozpoczęcia i zakończenia prac.</p>
+</li>
+<li>
+<p>Roboczogodzina (rbh) - jednostka miary pracy Specjalisty nad danym Zadaniem. Liczbę roboczogodzin ustala się przy zastosowaniu technicznego normowania pracy, tj. pomiaru czasu. Maksymalna liczba roboczogodzin pojedynczego Specjalisty przypadająca na Dzień roboczy wynosi 7 rbh.</p>
+</li>
+<li>
+<p>Dni robocze - przez "dni robocze" należy rozumieć dni od poniedziałku do piątku, z wyłączeniem świąt i dni ustawowo wolnych od pracy</p>
+</li>
+<li>
+<p>IdoSell - usługa IdoSell świadczona przez firmę IAI S.A. z siedzibą al.Piast&oacute;w 30, 71-064 Szczecin, wpisaną do rejestru przedsiębiorc&oacute;w prowadzonego przez Sąd Rejonowy Szczecin-Centrum w Szczecinie, XIII Wydział Gospodarczy KRS pod nr 0000891870, NIP: 5252767146, Regon: 381595506, w modelu SaaS (Software as a Service) pozwalająca na prowadzenie Sklep&oacute;w internetowych umożliwiających sprzedaż w Internecie.</p>
+</li>
+<li>
+<p>Panel administracyjny - narzędzie do zarządzania Usługą IdoSell i zarządzania sprzedażą dokonywaną przez sklep internetowy wymagające przedstawienia danych uwierzytelniających.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;2 Przedmiot umowy</strong></p>
+<ol>
+<li>
+<p>Strony zawierają Umowę, na podstawie kt&oacute;rej ustalają zasady składania Zam&oacute;wień i wykonywania Usług polegających w szczeg&oacute;lności na świadczeniu usług informatycznych, programistycznych i projektowania graficznego zgodnie z bieżącym zapotrzebowaniem Klienta.</p>
+</li>
+<li>
+<p>W ramach niniejszej Umowy Zamawiający będzie kierował Zapytania Ofertowe do Wykonawcy celem wyceny i przygotowania Oferty.</p>
+</li>
+<li>
+<p>Umowa Ramowa wraz z podpisanymi poszczeg&oacute;lnymi Zam&oacute;wieniami stanowi integralną całość. W przypadku jakiegokolwiek konfliktu lub niesp&oacute;jności między postanowieniami niniejszej Umowy, a jakimkolwiek Zam&oacute;wieniem, pierwszeństwo mają postanowienia zawarte w Zam&oacute;wieniu.</p>
+</li>
+<li>
+<p>W zamian za uiszczenie wynagrodzenia przez Zamawiającego określonego w danym Zam&oacute;wieniu, Wykonawca zobowiązuje się do wykonania Usług opisanych Zam&oacute;wieniu zawartym przez Strony. Wykonawca zachowuje wyłączną swobodę w wyborze personelu wykorzystywanego do wykonywania Usług i może korzystać z usług podwykonawc&oacute;w przy wykonywaniu Usług bez obowiązku uzyskania uprzedniej zgody Zamawiającego.</p>
+</li>
+<li>
+<p>W celu uniknięcia wątpliwości Wykonawca i jego personel mogą wykonywać podobne lub takie same usługi na rzecz innych podmiot&oacute;w, w tym podmiot&oacute;w z tego samego sektora co Zamawiający. Strony zgodnie potwierdzają, że żadne postanowienie niniejszej Umowy nie będzie interpretowane traktowane jako zakaz konkurencji.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;3 Zasady składania i wyceny zam&oacute;wień</strong></p>
+<ol>
+<li>
+<p>Zamawiający wyznacza zadania do wyceny poprzez przesłanie Zapytań Ofertowych za pośrednictwem poczty elektronicznej na adres email Wykonawcy. Zapytanie Ofertowe powinno zawierać możliwie jak najdokładniejszy opis zlecanego zadania, stwierdzonej awarii, błędu lub usterki, a także w razie konieczności załączniki w formie plik&oacute;w graficznych, zrzut&oacute;w ekranu, lub raport&oacute;w z narzędzi analitycznych. Wykonawca zastrzega sobie prawo do żądania dodatkowych informacji na temat opisywanego problemu, w celu wyceny zam&oacute;wienia..</p>
+</li>
+<li>
+<p>W przypadku Zapytań Ofertowych wymagających do Wyceny analizy wykonalności lub osobnego projektu, Wykonawca zobowiązuje się uprzedzić o tym fakcie Zamawiającego. Zamawiający może zam&oacute;wić taką analizę i projekt, wynikiem kt&oacute;rej jest Wycena i studium wykonalności oraz szczeg&oacute;łowy opis realizacji zadania. Analiza i projekt stanowią część realizacji zadania oraz zostaną rozliczone w taki sam spos&oacute;b, jak inne prace i wymagają podpisania oddzielnego Zam&oacute;wienia.</p>
+</li>
+<li>
+<p>Po przyjęciu Zapytania, Wykonawca dokona szczeg&oacute;łowej analizy zgłoszonych potrzeb. Na podstawie wyciągniętych wniosk&oacute;w Wykonawca przygotuje Ofertę, w kt&oacute;rej określi zadania, szacunkową ilość roboczogodzin, koszty, zakres prac potrzebnych do realizacji zgłoszonych potrzeb oraz termin realizacji.</p>
+</li>
+<li>
+<p>Ilość roboczogodzin wskazana przez Wykonawcę w Ofercie zawsze jest wartością szacunkową i nieobowiązującą. Umowna wartość i spos&oacute;b rozliczenia Zam&oacute;wienia wskazane są każdorazowo Zam&oacute;wieniu</p>
+</li>
+<li>
+<p>Najmniejszą jednostką rozliczania czasu pracy Wykonawcy dla wszystkich rodzaj&oacute;w wszystkich Zam&oacute;wień jest 15 minut. Czas pracy w szacunkach i raportach jest podawany z dokładnością 1 minuty i zaokrąglany matematycznie.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;4 Zasady realizacji zam&oacute;wień</strong></p>
+<ol>
+<li>
+<p>Podstawą do realizacji Oferty będzie podpisanie przez Zamawiającego stosownego dokumentu Zam&oacute;wienia i przesłania go Wykonawcy pocztą tradycyjną lub emailem w przypadku podpis&oacute;w elektronicznych.</p>
+</li>
+<li>
+<p>W ramach realizacji Zam&oacute;wień Wykonawca ma prawo do ingerencji w strukturę danych lub ustawienia Serwisu internetowego, jeżeli jest to konieczne do obsługi zam&oacute;wienia.</p>
+</li>
+<li>
+<p>Każdorazowo w Zam&oacute;wieniu określone będą:</p>
+<ol>
+<li>
+<p>Zakres prac</p>
+</li>
+<li>
+<p>Szacunkowa wycena zleconych zadań</p>
+</li>
+<li>
+<p>Czas rozpoczęcia prac</p>
+</li>
+<li>
+<p>Stawka za roboczogodzinę Wykonawcy lub cena usługi</p>
+</li>
+<li>
+<p>Spos&oacute;b rozliczenia*</p>
+</li>
+</ol>
+<p>* W przypadku zleceń typu Time &amp; Material ostateczna cena za zrealizowane Zam&oacute;wienie jest określana dopiero po jego zakończeniu i przesłaniu raportu z przepracowanych przez Wykonawcę godzin oraz kosztu zakupu koniecznych do realizacji materiał&oacute;w.</p>
+</li>
+<li>
+<p>Wykonawca może odm&oacute;wić rozpoczęcia realizacji zam&oacute;wienia z powodu:</p>
+<ol>
+<li>
+<p>Braku wpłaty zaliczki lub opłacenia faktury proforma - jeśli została określona w Zam&oacute;wieniu</p>
+</li>
+<li>
+<p>Braku udzielenia wymaganych danych dostępowych przez Zamawiającego</p>
+</li>
+<li>
+<p>Braku realizacji obowiązk&oacute;w Zamawiającego wskazanych w &sect;5 Obowiązki zamawiającego.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Wykonawca będzie realizował Zam&oacute;wienia w dniach od poniedziałku do piątku w godzinach 8.00-16.00 z wyłączeniem dni ustawowo wolnych od pracy.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;5 Obowiązki zamawiającego</strong></p>
+<ol>
+<li>
+<p>Zamawiający zobowiązuje się dostarczać wszelkich informacji oraz materiał&oacute;w niezbędnych do wykonania Zam&oacute;wień i Usług przez Wykonawcę, w tym niezbędne dostępy, pliki graficzne, dokumentację, teksty.</p>
+</li>
+<li>
+<p>Zamawiający zapewni Wykonawcy ścisłą i efektywną wsp&oacute;łpracę ze strony kompetentnych os&oacute;b po swojej stronie, posiadających wystarczającą wiedzę w poszczeg&oacute;lnych obszarach działalności Wykonawcy, niezbędną dla realizacji przez Wykonawcę poszczeg&oacute;lnych Zam&oacute;wień lub Usług.</p>
+</li>
+<li>
+<p>Zamawiający przyjmuje do wiadomości, że niewykonanie lub nienależyte wykonanie obowiązk&oacute;w o kt&oacute;rych mowa w ust. 1 i 2 może uniemożliwić Wykonawcy należyte wykonywanie Zam&oacute;wień i Usług, przy czym Wykonawca zachowuje w takim wypadku prawo do pełnego wynagrodzenia za wykonane i zaraportowane działania.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;6 Obowiązki wykonawcy</strong></p>
+<ol>
+<li>
+<p>Wykonawca oświadcza, że posiada niezbędne umiejętności, wiedzę, środki oraz sprzęt do wykonania prac objętych poszczeg&oacute;lnymi Zam&oacute;wieniami i zobowiązuje się wykonać każdorazowe Zam&oacute;wienie z należytą starannością oraz z aktualnym poziomem wiedzy i techniki.</p>
+</li>
+<li>
+<p>Wykonawca oświadcza, że przy wykonaniu usług stanowiących przedmiot Umowy będą brać udział osoby posiadające niezbędną wiedzę i doświadczenie;</p>
+</li>
+<li>
+<p>Wykonawca zobowiązuje się do podjęcia działań mających na celu zabezpieczenie informacji i dokument&oacute;w przekazanych przez Klienta przed nieuprawnionym dostępem os&oacute;b trzecich.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;7 Osoby kontaktowe</strong></p>
+<ol>
+<li>
+<p>Osobami upoważnionymi do wykonywania czynności związanych z realizacją niniejszej Umowy, są: <strong>{{#each umowyOsobyKontaktowe}}{{this.name}} {{this.emailAddress}} {{this.phoneNumber}}{{#unless @last}}, {{/unless}}{{/each}}</strong></p>
+</li>
+<li>
+<p>Osoby o kt&oacute;rych mowa w ust. 1 pkt a) i b) są upoważnione (każda samodzielnie), z zachowaniem innych uprawnień przewidzianych treścią Umowy, do:</p>
+</li>
+</ol>
+<ol>
+<li>
+<p>odbioru zrealizowanych Zam&oacute;wień,</p>
+</li>
+<li>
+<p>upoważniania drogą elektroniczną pracownik&oacute;w Zamawiającego do dokonywania odbior&oacute;w</p>
+</li>
+<li>
+<p>ustalania z Wykonawcą zmian w realizacji poszczeg&oacute;lnych Zam&oacute;wień</p>
+</li>
+</ol>
+<ol>
+<li>
+<p>Zmiany os&oacute;b, o kt&oacute;rych mowa w ust. 1 wymagają uprzedniego powiadomienia mailowego drugiej Strony. Zmiana w/w os&oacute;b nie stanowi zmiany Umowy.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;8 Wynagrodzenie</strong></p>
+<ol>
+<li>
+<p>W związku z realizacją Przedmiotu Umowy Zamawiający zapłaci Wykonawcy wynagrodzenie w wysokości i na zasadach wskazanych w danym Zam&oacute;wieniu. Wynagrodzenie zostanie powiększone o stosowną stawkę podatku VAT.</p>
+</li>
+<li>
+<p>Każdorazowo faktura zostanie wysłana pocztą elektroniczną na adres e-mail Zamawiającego <strong>{{umowy.emailAddress}}</strong>. Zamawiający przyjmuje do wiadomości, że wysłanie faktury na powyższy adres e-mail jest r&oacute;wnoznaczne z faktycznym otrzymaniem faktury przez Zamawiającego.</p>
+</li>
+<li>
+<p>Każda faktura płatna jest przelewem bankowym na nr konta wskazany w fakturze lub proformie, w ciągu {{czasPlatnosci}} od daty otrzymania zgodnie z warunkami określonymi w niniejszej Umowie. Za op&oacute;źnienia w płatnościach mogą zostać naliczone odsetki według najwyższej stawki dozwolonej przez prawo w momencie przeterminowania płatności.</p>
+</li>
+<li>
+<p>Zamawiający może zgłosić zastrzeżenia do faktury w terminie 7 dni od daty otrzymania faktury. Jeżeli Zamawiający nie wniesie sprzeciwu w powyższym terminie, przyjmuje się, że Zamawiający przyjął fakturę w pełnej wysokości.</p>
+</li>
+<li>
+<p>Wykonawca ma prawo zawiesić świadczenie Usług w przypadku, jakichkolwiek op&oacute;źnień w płatnościach Wynagrodzenia lub wydatk&oacute;w. Zawieszone Zam&oacute;wienie może wymagać zmiany harmonogramu, a opłaty mogą zostać odpowiednio dostosowane.</p>
+</li>
+<li>
+<p>Opr&oacute;cz uiszczenia Wynagrodzenia, Zamawiający zwr&oacute;ci Wykonawcy wszelkie uzasadnione i uzgodnione z Zamawiającym koszty, w szczeg&oacute;lności koszty materiał&oacute;w i usług, kt&oacute;re nie zostały dostarczone bezpośrednio przez Wykonawcę, poniesione przez Wykonawcę i jego personel w związku z wykonywaniem Usług przez Wykonawcę.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;9 Własność intelektualna</strong></p>
+<ol>
+<li>Wykonawca oświadcza, że tworzone przez niego oprogramowanie podlega ochronie zgodnie z przepisami ustawy z dnia 04 lutego 1994 r. o prawie autorskim i prawach pokrewnych tj. z dnia 06 czerwca 2019 r. (Dz. U. z 2019 r. poz. 1231) oraz oświadcza, że do wytworzonego w wykonaniu niniejszej umowy oprogramowania przysługiwać mu będą wszystkie autorskie prawa majątkowe.</li>
+<li>Zamawiający nabywa z chwilą przyjęcia oprogramowania i zapłaty całości wynagrodzenia na rzecz Wykonawcy majątkowe prawa autorskie do oprogramowania, obejmujące prawo do:
+<ol>
+<li>
+<p>nieograniczonego w czasie korzystania z oprogramowania, zgodnie z charakterem i przeznaczeniem oprogramowania oraz przyjętymi zwyczajami, trwałego lub czasowego zwielokrotnienia oprogramowania w całości lub w części jakimikolwiek środkami i w jakiejkolwiek formie, jeżeli jest to niezbędne do korzystania z oprogramowania zgodnie z jego przeznaczeniem, w tym do poprawiania błęd&oacute;w oprogramowania przez Zamawiającego,</p>
+</li>
+<li>
+<p>tłumaczenia, przystosowywania, zmiany układu lub jakichkolwiek innych zmian w programie komputerowym, z zachowaniem praw osoby, kt&oacute;ra tych zmian dokonała,</p>
+</li>
+</ol>
+</li>
+<li>Bez zgody Wykonawcy, wyrażonej na piśmie pod rygorem nieważności, Zamawiający nie jest uprawniony do rozpowszechniania, w tym użyczenia lub najmu oprogramowania lub jego kopii, oraz odsprzedaży czy też przekazania na podstawie jakiegokolwiek tytułu na rzecz os&oacute;b trzecich. Ograniczenie zawarte powyżej nie dotyczy jednak przypadk&oacute;w następstwa prawnego, na podstawie kt&oacute;rych prawa autorskie majątkowe do oprogramowania będącego przedmiotem Zam&oacute;wienia przejdą na inny podmiot, w szczeg&oacute;lności w następstwie sprzedaży przedsiębiorstwa Zamawiającego oraz zmian w zakresie formy organizacyjno-prawnej działalności Zamawiającego.</li>
+<li>Czynności Zamawiającego, o kt&oacute;rych mowa w art. 75 ust. 2 ustawy z dnia 04 lutego 1994 r. o prawie autorskim i prawach pokrewnych tj. z dnia 06 czerwca 2019 r. (Dz. U. z 2019 r. poz. 1231) nie wymagają zgody Wykonawcy.</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;10 Poufność</strong></p>
+<ol>
+<li>
+<p>Każda ze Stron będzie utrzymywać Informacje Poufne drugiej Strony w ścisłej tajemnicy z takim samym stopniem ostrożności, jakiego używa do ochrony własnych Informacji Poufnych.</p>
+</li>
+<li>
+<p>Zgodnie z niniejszą umową termin &bdquo;informacja poufna&rdquo; oznacza wszelkie informacje, ustne lub pisemne, w tym (między innymi) techniczne, praktyczne i technologiczne, know-how, produkty, specyfikacje, patenty, znaki towarowe i koncepcje, a także informacje o charakterze biznesowym i handlowym (dalej &bdquo;Informacje Poufne&rdquo;).</p>
+</li>
+<li>
+<p>Strony ustalają, że każda z nich może publikować informacje o nawiązanej wsp&oacute;łpracy.</p>
+</li>
+<li>
+<p>Zamawiający niniejszym wyraża zgodę na wykorzystanie przez Wykonawcę w celach reklamowych i marketingowych dotyczących działalności Wykonawcy następujących danych / informacji:</p>
+<ol>
+<li>
+<p>nazwy handlowej i oznaczeń Zamawiającego, w tym wszystkich znaki towarowych stosowanych do odr&oacute;żnienia jego przedsiębiorstwa; w tym słowne, graficzne i słowno-graficzne znaki towarowe zarejestrowane dla Zamawiającego lub identyfikujące Zamawiającego na rynku;</p>
+</li>
+<li>
+<p>podstawowe dane dotyczące zakresu usług świadczonych przez Wykonawcę na rzecz Zamawiającego (w tym studium przypadku - case study) i studium przypadku projektanta (designer case study), jeżeli taki projekt był objęty zakresem Usług;</p>
+</li>
+</ol>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;11 Okres obowiązywania i rozwiązanie</strong></p>
+<ol>
+<li>
+<p>Niniejsza Umowa jest zawarta na czas nieokreślony i obowiązuje od dnia jej zawarcia.</p>
+</li>
+<li>
+<p>Niniejsza Umowa i każdy dokument Zam&oacute;wienia mogą zostać rozwiązane przez każdą ze Stron:</p>
+<ol>
+<li>
+<p>w trybie natychmiastowym w przypadku, gdy jedna ze stron w spos&oacute;b powtarzający narusza swoje zobowiązania wynikające z niniejszej Umowy, pomimo otrzymania pisemnego wezwania wyznaczającego dodatkowy termin na zaniechanie naruszeń i usunięcie ich skutk&oacute;w, nie kr&oacute;tszy niż 7 dni roboczych.</p>
+</li>
+<li>
+<p>z zachowaniem jednomiesięcznego okresu wypowiedzenia ze skutkiem na koniec miesiąca kalendarzowego w kt&oacute;rym zostało złożone wypowiedzenie. Wypowiedzenie dokumentu Zam&oacute;wienia nie jest jednoznaczne z wypowiedzeniem Umowy Ramowej.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>W przypadku rozwiązania niniejszej Umowy:</p>
+<ol>
+<li>
+<p>Zamawiający zapłaci Wykonawcy w ciągu 7-dni wszystkie kwoty należne Wykonawcy za wykonane Usługi i wszelkie inne wydatki poniesione przed datą rozwiązania,</p>
+</li>
+<li>
+<p>każda ze stron niezwłocznie zaprzestanie korzystania i zwr&oacute;ci drugiej stronie w ciągu 10 dni roboczych wszystkie Informacje poufne drugiej Strony i materiały oraz wszystkie ich kopie, części i streszczenia, kt&oacute;re są w jej posiadaniu lub są pod jej kontrolą, inne niż materiały, za kt&oacute;re Zamawiający zapłacił lub zgadza się zapłacić,</p>
+</li>
+<li>
+<p>wszystkie opłacone prawa własności intelektualnej zostaną przeniesione na Zamawiającego i staną się jego własnością.</p>
+</li>
+</ol>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;12 Obowiązek informacyjny - RODO</strong></p>
+<ol>
+<li>
+<p>Zgodnie z art. 13 ust. 1 i 2 rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony os&oacute;b fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE informuję, że administratorem danych osobowych w rozumieniu przepis&oacute;w Rozporządzenia Parlamentu Europejskiego I Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony os&oacute;b fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (dalej Rozporządzenie lub RODO) jest Brands Manago Sp. z o.o. z siedzibą w Dęblinie, przy ul. Żwirki i Wigury 2, 08-530 Dęblin, wpisaną do rejestru przedsiębiorc&oacute;w prowadzonego przez Sąd Rejonowy Lublin Wsch&oacute;d w Lublinie z Siedzibą w Świdniku, VI Wydział Gospodarczy Krajowego Rejestru Sądowego pod numerem KRS 0000944762, NIP: 5060122347, REGON: 520900570, mail: <a href="mailto:kontakt@brandsmanago.pl"><u>kontakt@brandsmanago.pl</u></a></p>
+</li>
+<li>
+<p>W przypadku, gdy do złożenia oferty lub innych podobnych kontakt&oacute;w handlowych dochodzi na prośbę Zamawiającego, administrator przetwarza podane przez Zamawiającego dane osobowe w celu niezbędnym do podjęcia działań przed zawarciem umowy na żądanie osoby, kt&oacute;rej dane dotyczą.</p>
+</li>
+<li>
+<p>Podanie danych osobowych jest niezbędne do otrzymania oferty, a ich przetwarzanie odbywa się na podstawie art. 6 ust. 1 lit. b) Rozporządzenia.</p>
+</li>
+<li>
+<p>W przypadku, gdy administrator składa ofertę lub podejmuje lub utrzymuje inne podobne biznesowe kontakty z własnej inicjatywy, przetwarzanie danych osobowych Zamawiającego odbywa się na podstawie art. 6 ust. 1 lit. f) Rozporządzenia, tj. prawnie uzasadnionego interesu administratora rozumianego jako potrzeba przedstawienia oferty w ramach działalności gospodarczej lub za uprzednią zgodą Zamawiającego, na podstawie art. 6 ust. 1 lit. a) Rozporządzenia. Zamawiający może w dowolnym momencie wycofać zgodę w d bez wpływu na zgodność z prawem przetwarzania, kt&oacute;rego dokonano na podstawie zgody przed jej cofnięciem, w takim sam spos&oacute;b, w jaki została udzielona. W tym celu administrator gromadzi Państwa dane osobowe takie jak: imię, nazwisko, nazwa firmy, NIP, adres e-mail, numer telefonu oraz inne dane kontaktowe.</p>
+</li>
+<li>
+<p>Administrator może przetwarzać ponadto udostępnione przez Zamawiającego dane os&oacute;b do kontaktu, tj. imię i nazwisko, firmę, numer telefonu, adres, adres e-mail, a także w przypadku osoby prawnej - dane osobowe os&oacute;b upoważnionych do działania w imieniu Zamawiającego, tj. imię i nazwisko, na podstawie art. 6 ust. 1 lit. f) Rozporządzenia, tj. prawnie uzasadnionego interesu administratora rozumianego jako konieczność weryfikacji os&oacute;b upoważnionych do działania w imieniu Zamawiającego oraz konieczność kontaktowania się z Zamawiającym w sprawach związanych ze złożeniem oferty. Udostępniając administratorowi te dane, Zamawiający oświadcza,, że osoby te otrzymały przedstawione przez administratora informacje.</p>
+</li>
+<li>
+<p>Administrator przechowuje dane osobowe Zamawiającego jedynie przez okres niezbędny do realizacji umowy, w tym dochodzenia roszczeń oraz zachowania zgodności z wymaganiami wynikającymi z obowiązujących przepis&oacute;w, w tym przepis&oacute;w podatkowych, o ile doszło do zawarcia umowy w wyniku złożonej oferty.</p>
+</li>
+<li>
+<p>W przypadku, gdy nie doszło do zawarcia umowy, administrator przechowuje dane osobowe Zamawiającego do czasu upływu terminu ważności oferty, tj. terminu związania ofertą lub przez czas niezbędny prowadzenia negocjacji i kontaktu w związku z ofertą. Po upływie tych okres&oacute;w dane osobowe zostaną usunięte.</p>
+</li>
+<li>
+<p>Zamawiającemu przysługuje prawo do żądania od Administratora dostępu do przetwarzanych danych, uzyskania kopii danych, żądania sprostowania danych, gdy są nieprawidłowe lub niekompletne, a także w przypadkach wskazanych w Rozporządzeniu, prawo do wniesienia sprzeciwu wobec przetwarzania, żądania usunięcia danych osobowych, żądania ograniczenia przetwarzania oraz prawo do przenoszenia danych.</p>
+</li>
+<li>
+<p>Ponadto Zamawiającemu przysługuje prawo do wniesienia skargi do organu nadzorczego.</p>
+</li>
+<li>
+<p>Administrator korzysta częściowo z zewnętrznych dostawc&oacute;w usług, kt&oacute;rzy w imieniu administratora przetwarzają dane osobowe, np. dostawc&oacute;w usług hostingu, dostawc&oacute;w usług poczty elektronicznej, dostawcy usług związanych utrzymanie system&oacute;w informatycznych. Podmioty te stanowią odbiorc&oacute;w danych osobowych. Przekazanie danych może jednak służyć wyłącznie realizacji ich usługi.</p>
+</li>
+<li>
+<p>Administrator korzysta wyłącznie z usług takich podmiot&oacute;w, kt&oacute;re zapewniają wystarczające gwarancje ochrony praw os&oacute;b, kt&oacute;rych dane dotyczą. Odbiorcami danych osobowych mogą być także stosowne organy, kt&oacute;rym przepisy prawa wymagają podania tych danych. Administrator oświadcza, iż w odniesieniu do danych osobowych nie podejmuje zautomatyzowanych decyzji, w tym decyzji będących wynikiem profilowania w rozumieniu Rozporządzenia.</p>
+</li>
+<li>
+<p>Administrator przetwarza dane osobowe zgodnie z powszechnie obowiązującymi przepisami prawa w zakresie danych osobowych, w szczeg&oacute;lności zgodnie z przepisami Rozporządzenia.</p>
+</li>
+<li>
+<p>Administrator zapewnia należytą ochronę przetwarzanych danych osobowych, w tym stosuje odpowiednie środki techniczne i organizacyjne w celu zapewnienia bezpieczeństwa i odpowiedniej poufności i integralności danych osobowych, w tym ochrony przed nieuprawnionym dostępem do nich, przed niedozwolonym lub niezgodnym z prawem przetwarzaniem oraz przypadkową utratą, nieautoryzowaną zmianą, zniszczeniem lub uszkodzeniem.</p>
+</li>
+<li>
+<p>Wszelkie żądania, prośby, powiadomienia, zapytania odnoszące się do przetwarzania danych osobowych, mogą Państwo kierować mailowo na adres: kontakt@brandsmanago.pl lub pisemnie na adres: Brands Manago Sp. z o.o., ul. Żwirki i Wigury 2, 08-530 Dęblin.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;13 Postanowienia końcowe </strong></p>
+<ol>
+<li>
+<p>W sprawach nieuregulowanych niniejszą umową mają zastosowanie przepisy ustawy z dnia 23 kwietnia 1964 r. Kodeks cywilny (tekst jedn. Dz. U. z 2014 r., poz. 121 ze zm.) oraz ustawy z dnia 04 lutego 1994 r. o prawie autorskim i prawach pokrewnych tj. z dnia 06 czerwca 2019 r. (Dz. U. z 2019 r. poz. 1231).</p>
+</li>
+<li>
+<p>Strony zobowiązują się rozstrzygać polubownie spory powstałe między nimi w związku z wykonaniem niniejszej Umowy. W razie niemożności polubownego załatwienia sporu, sądem właściwym do rozstrzygania spor&oacute;w między Stronami w związku z realizacją niniejszej Umowy, będzie sąd właściwy dla siedziby Wykonawcy.</p>
+</li>
+<li>
+<p>Zmiany umowy wymagają formy pisemnej pod rygorem nieważności.</p>
+</li>
+<li>
+<p>Umowę sporządzono w dw&oacute;ch jednobrzmiących egzemplarzach, po jednym dla każdej ze Stron.</p>
+</li>
+</ol>
+<h4 style="text-align: center;"><strong>Akceptacja warunk&oacute;w zam&oacute;wienia</strong></h4>
+<table style="width: 100%;">
+<tbody>
+<tr>
+<td>
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p>[Data i Podpis Wykonawcy]</p>
+</td>
+<td>
+<p style="text-align: right;">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p style="text-align: right;">[Data i Podpis Zamawiającego]</p>
+</td>
+</tr>
+</tbody>
+</table>

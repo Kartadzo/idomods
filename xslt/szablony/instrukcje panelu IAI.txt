@@ -1,0 +1,141 @@
+---------------------------przypisywanie produktów do serwisu zewnęrznego---------------------------
+Nowa instrukcja:
+Z uwagi że obecne zasady udostępniania na stronie produktów do feedu to:
+TAK - udostępniaj wszystkim oraz;
+NIE - nie udostępniaj nigdzie.
+Wystarczy pamiętać by przy tworzeniu nowego produktu odpowiednio skonfigurować tę sekcję. 
+
+W przypadku zmiany tych zasad na wybrane trzeba ustalić:
+czy produkt będzie udostępniany wszędzie za wyjątkiem wskazanych feedów (przy każdym nowym feedzie będzie trzeba te produkty dodać do niego);
+czy może tylko ma być w kilku konkretnych i w przyszłości do żadnego kolejnego nie będzie dod
+
+---------------------------dostęp do nazw i opisów w feedach---------------------------
+ustawienia feedu: Ustawienia zdjęć i opisów przekazywanych w ofercie do serwisu
+Uwaga: od strony IOF zawsze otrzymujemy nazwę i opis tylko z jednego źródła. Jeśli utworzone opis i nazwę dla sklepu nie są uzupełnione, to nie zostaną one przekazane do feedu. Nawet jeśli posiadają one te pola domyślnie, system ich nie skopiuje automatycznie. 
+np.
+https://app.clickup.com/t/36829874/EX-30937?comment=90120100647343
+
+---------------------------ceny promocyjne w reklamach---------------------------
+google sam z pomocą algorytmu który stosuje, przetwarza i daje te etykiety i promocje losowo
+https://support.google.com/merchants/answer/9017019?hl=en
+
+
+---------------------------weryfikacja płatności kartowych---------------------------
+Abyśmy mogli rozpocząć weryfikację pod płatności kartowe, niezbędne jest wypełnienie przez Państwa cyklicznej ankiety KYC.
+W tym celu proszę w panelu BOK wejść w zakładkę Twoje konto->zarządzanie kontem->Dane dotyczące sprzedaży. Po uzupełnieniu wszystkich zakładek dotyczących wolumenów, proszę o przejście kolejnych kroków dotyczących reprezentacji, beneficjentów oraz dodanie skanów dokumentów tożsamości.
+
+
+---------------------------obsługa zamówień droshppingowych (idosell)---------------------------
+potrzebne będą:
+klucz dostępu (dropshippingKey/CustomerAPI);
+adres domeny technicznej;
+login i hasło konta z aktywnym CustomerAPI;
+kredyt kupiecki czy saldo klienta;
+omówienie automatyzacji obsługi zamówień dropshippingowych i konfiguracja dostawcy;
+https://www.idosell.com/pl/obsluga-dropshipping-i-cross-docking-czyli-logistyka-bez-magazynu/dropshipping-dla-hurtowni-i-sklepu-internetowego/jak-uruchomic-dropshipping-w-sklepie-internetowym/
+https://www.idosell.com/pl/obsluga-dropshipping-i-cross-docking-czyli-logistyka-bez-magazynu/dropshipping-dla-hurtowni-i-sklepu-internetowego/jak-uruchomic-dropshipping-w-hurtowni/
+https://www.idosell.com/pl/oferta-twojej-hurtowni-dostepna-dla-sklepow-internetowych-idosell/udostepnianie-oferty-do-integracji-faq/
+
+
+
+
+
+-----------------------obsługa GPSR (idosell - producent/osoba odpowiedzialna)---------------------------
+Sytuacja wygląda tak:
+Mogą ręcznie aktualizować listę producentów i podmiotów odpowiedzialnych po stronie ceneo, tak jak już wrzuciłem dwa przykłady, i feed, już w aktualnym stanie skonfigurowany, będzie dopasowywał podane id podmiotu/producenta na produkcie do tej listy z panelu;
+Można listę po stronie sterownika xslt do feedu przekazywać poprzez wprowadzenie danych na sztywno (będzie to wymagało przy każdej aktualizacji listy aktualizować dane w sterowniku);
+
+*Jest gotowy skrypt generujący listę*
+
+
+------------------Consent generator------------------------
+https://www.termsfeed.com/
+https://www.cookieconsent.com/
+
+https://silktide.com/consent-manager/install/
+------------------------wordpress---------------------
+GTM Kit
+-----------------------consent mode wordpress-----------------------
+
+
+Pressidium Cookie Consent
+https://cyberfolks.pl/generator-polityki-prywatnosci/
+
+
+---------------------Polityka w zakresie zgody użytkownika z UE – pomoc-----------------------
+https://www.google.com/about/company/user-consent-policy-help/
+
+---------------------------Śledzenie konwersji UET---------------------------
+Wdrożenie zgody UET--------------------
+podgląd: 
+wersja - 
+https://tagmanager.google.com/#/container/accounts/20633445/containers/1108507/workspaces/1000059/tags
+wersja - 
+https://tagmanager.google.com/#/versions/accounts/6204388087/containers/170422919/versions?containerDraftId=25
+Wystarczy skopiować
+Integracja remarketingu ---------------
+https://tagmanager.google.com/#/versions/accounts/6005770508/containers/57777070/versions?containerDraftId=5
+
+
+
+----------gdzie są serwery IdoSell-----------
+https://www.beyond.pl/
+
+
+
+-----------Integracje hurtowni - pytania------------------
+Synchronizacja stanów i cen? Import produktów?
+-synchronizacja - Elementy [cena detal, cena zakupu (dla marż)?, id magazynu,stany magazynowe]
+-import - Elementy z pliku oferty, formatowanie danych, wyciąganie parametrów z opisów (jeśli jednolita struktura); 
+link do oferty;
+cena - prosto z oferty czy doliczać %. Czy dodajemy cenę domyślną dla KWST;
+Filtry synchronizowanych produktów (marka lub kod zewnętrzny);
+Harmonogram synchronizacji;
+Stan minimalny w hurtowni;
+Dopasowanie towarów - kodProducenta lub kodZewnętrzny(sugerowane - ustalić zastosowane prefiksy)
+
+
+----------konfiguracja domeny i skrzynki pocztowej-------------
+mail - ze zwrotkami, czy no-reply (Idosell radzi używać tylko do 1000 mail per ?)
+
+Poczta aftermarket na wydelegowanej domenie-------------------
+MX: mx.aftermarket.pl
+SPF: v=spf1 ip4:185.237.29.0/27 -all
+
+Poczta home na wydelegowanej domenie-------------------
+MX: 
+SPF: 
+
+ehost - niepełna delegacja
+
+
+---------------Integracje kurierów--------------------------
+Inpost----------------------
+https://www.idosell.com/pl/integracje-gotowe-do-wlaczenia-jednym-kliknieciem-/integracja-z-kurierami-w-sklepie-internetowym/integracja-z-inpost-paczkomaty-24/7-w-idosell/instrukcja-uruchomienia-i-najczesciej-zadawane-pytania-dotyczace-paczkomatow-inpost/
+Konfiguracja Paczkomatów w panelu IdoSell
+Gdy masz już Numer klienta InPost i Klucz API udaj się do menu ADMINISTRACJA / Konfiguracja kurierów. W grupie polskich usług znajdują się wszystkie integracje z usługami InPost w tym Paczkomaty. Wystarczy ustawić konfigurację zgodnie z własnymi potrzebami i podać Klucz API oraz Numer klienta InPost. Następnie kliknij w przycisk Zapisz.
+Dla pl Numer klienta InPost (Id organizacji) i Klucz API
+Potrzebujemy loginu dla konfiguracji zagranicznej.
+
+
+-----------------Szkolenie z panelu----------------------
+promocje i rabaty oraz inne-----------------
+podczas szkolenia do pokazania rabaty i oferty specjalne, 
+
+
+-----------------apka komendy cmd---------------------
+python--------------------------
+python -m PyInstaller --onefile app_xml_csv.py
+
+
+-----------------sterowniki niestandardowe--------------------
+zdjęcia--------
+abud gAds - modyfikacja kolejności zdjęć
+
+
+---------------zasady generowania cen w feedach produktowych
+Wyjaśniając zasady generowania ceny produktu:
+Jeśli jest skonfigurowana cena indywidualna dla serwisu, to ona jest podawana jako cena sprzedaży 'price' (jeśli jest niższa od ceny regularnej to staje się 'sale_price' a cena regularna 'price');
+Jeśli mamy uzupełnioną cenę przekreśloną to staje się ona 'price', a cena sprzedaży 'sale_price';
+Jeśli nie ma ani ceny serwisu, ani ceny przekeślonej to zostawiamy 'price' bez zmian;
+Jeśli mamy promocję ale nie ma ceny indywidualnej dla serwisu to dodajemy 'sale_price'.

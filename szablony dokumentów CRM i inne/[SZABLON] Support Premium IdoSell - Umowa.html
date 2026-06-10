@@ -1,0 +1,749 @@
+<h1 style="text-align: center;"><strong>Umowa ramowa - Wsparcie techniczne IdoSell</strong></h1>
+<h2 style="text-align: center;"><strong>nr: </strong><em><strong>{{numerUmowy}}</strong></em></h2>
+<p>Zawarta w Dęblinie w dniu {{createdAt}} roku pomiędzy firmą:</p>
+<p>{{umowy.name}} z siedzibą w {{addressStreet}} {{addressPostalCode}} {{addressCity}} {{addressState}} {{addressCountry}}, NIP: {{nip}}, REGON: {{regon}}, {{#if sad}}{{sad}}, KRS: {{krs}}, Kapitał zakładowy: {{kapital}},{{/if}} </p>reprezentowaną przez:</p>
+<p>{{#each podpisujacy}}{{this.name}} - {{this.cStanowisko}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+<p>Dane kontaktowe <strong>Zamawiającego </strong>do obsługi:</p>
+<p>Osoba kontaktowa: </p>
+<p>{{#each umowyOsobyKontaktowe}}{{this.name}} {{this.emailAddress}} {{this.phoneNumber}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+<p>Mail do faktur: <strong>{{umowy.emailAddress}}</strong></p>
+<p>zwanym dalej <strong>Zlecającym,</strong> a</p>
+<p>{{{naszaFirma}}}</p>reprezentowaną przez:</p>
+<p>{{#if naszaFirmaWlasciciel}}{{naszaFirmaWlasciciel}}{{else}}-{{/if}}</p>
+<p>Dane kontaktowe <strong>Usługodawcy</strong> do przyjmowania Zgłoszeń:</p>
+<p>Tel: <strong>+48 570 628 607</strong></p>
+<p>Mail: <strong>wsparcie@idomods.pl</strong>,</p>
+<p>zwanym dalej <strong>Usługodawcą</strong>, zwanymi w dalszej części umowy z osobna &bdquo;Stroną&rdquo; lub łącznie &bdquo;Stronami&rdquo; o następującej treści:</p>
+<p style="text-align: center;"><strong>&sect; 1 DEFINICJE</strong></p>
+<ol>
+<li>
+<p><strong>IdoSell - </strong>usługa IdoSell świadczona przez firmę IAI S.A. z siedzibą al.Piast&oacute;w 30, 71-064 Szczecin, wpisaną do rejestru przedsiębiorc&oacute;w prowadzonego przez Sąd Rejonowy Szczecin-Centrum w Szczecinie, XIII Wydział Gospodarczy KRS pod nr 0000891870, NIP: 5252767146, Regon: 381595506, w modelu SaaS (Software as a Service) pozwalająca na prowadzenie Sklep&oacute;w internetowych umożliwiających sprzedaż w Internecie.</p>
+</li>
+<li>
+<p><strong>Panel administracyjny </strong>- narzędzie do zarządzania Usługą IdoSell i zarządzania sprzedażą dokonywaną przez sklep internetowy wymagające przedstawienia danych uwierzytelniających.</p>
+</li>
+<li>
+<p><strong>Serwis internetowy (Serwis) </strong>- sklep internetowy uruchomiony z wykorzystaniem Usługi IdoSell, prezentujący klientom sklepu przez szablon graficzny sklepu, asortyment sklepu oraz wszelkie informacje dotyczące sprzedaży i umożliwiający dokonywanie zakup&oacute;w przez Internet.</p>
+</li>
+<li>
+<p><strong>Zgłoszenie </strong>- informacja na temat potrzeb rozwojowych, problemu, awarii, czy nieprawidłowości dotyczących Serwisu internetowego Zlecającego, może zawierać zlecenie wykonania konkretnych Zadań przez Usługodawcę.</p>
+</li>
+<li>
+<p><strong>Zadanie -</strong> prace zlecone Usługodawcy przez Zlecającego na podstawie Zgłoszenia. Każdorazowo Zadanie może być zdefiniowane przez Zlecającego w Zgłoszeniu lub przez Usługodawcę w procesie analizy problem&oacute;w zawartych w Zgłoszeniu i podane do wiadomości Zlecającego w Wycenie.</p>
+</li>
+<li>
+<p><strong>Zadanie standardowe </strong>- wszelkie prace zlecone Usługodawcy przez Zlecającego na podstawie Zgłoszenia, kt&oacute;rych celem jest rozbudowa Serwisu, usunięcie awarii i błęd&oacute;w, kt&oacute;re nie uniemożliwiają prawidłowego korzystanie z Serwisu Internetowego Zlecającego,</p>
+</li>
+<li>
+<p><strong>Zadanie krytyczne </strong>- wszelkie prace zlecone Usługodawcy przez Zlecającego na podstawie Zgłoszenia, kt&oacute;rych celem jest usunięcie awarii i błęd&oacute;w, kt&oacute;re uniemożliwiają prawidłowe korzystanie z Serwisu Internetowego Zlecającego, np: całkowite wstrzymanie działania Serwisu internetowego, zawieszanie się Serwisu internetowego, brak możliwości płatności lub dodania produkt&oacute;w do koszyka, itp.</p>
+</li>
+<li>
+<p><strong>Wycena</strong> - informacje na temat kosztu, rodzaju prac i czasu potrzebnego na realizację Zadania. Każdorazowo Wycena powinna zawierać liczbę roboczogodzin potrzebnych do wykonania Zadania z podziałem na rodzaj specjalist&oacute;w i przybliżony termin rozpoczęcia i zakończenia prac.</p>
+</li>
+<li>
+<p><strong>Pakiet usługowy </strong>- Pakiet zawierający szczeg&oacute;łowy zakres obowiązk&oacute;w Usługodawcy w ramach przedmiotu umowy, czas i termin przyjmowania Zgłoszeń, ilość roboczogodzin kontraktowych cennik roboczogodzin dodatkowych.</p>
+</li>
+<li>
+<p><strong>Roboczogodzina (RBH)</strong> - jednostka miary pracy Specjalisty nad danym Zadaniem. Liczbę roboczogodzin ustala się przy zastosowaniu technicznego normowania pracy, tj. pomiaru czasu. Maksymalna liczba roboczogodzin pojedynczego Specjalisty przypadająca na Dzień roboczy wynosi 8 rbh.</p>
+</li>
+<li>
+<p><strong>Dni robocze</strong> - przez "dni robocze" należy rozumieć dni od poniedziałku do piątku, z wyłączeniem świąt i dni ustawowo wolnych od pracy</p>
+</li>
+<li>
+<p><strong>Czas pracy wsparcia </strong>- Przedział godzin w systemie 24-godzinnym, w kt&oacute;rym Zlecający może przesyłać Zgłoszenia Usługodawcy, a Usługodawca zobowiązany jest je przyjmować. Czas pracy wsparcia r&oacute;żni się w zależności od Pakietu usługowego i jest podany w Załączniku nr 1 do niniejszej Umowy.</p>
+</li>
+<li>
+<p><strong>Godziny kontraktowe</strong> - Liczba dostępnych miesięcznie roboczogodzin konkretnego rodzaju Specjalisty. Liczba godzin kontraktowych dla danego Pakietu Usługowego podana jest w Załączniku nr 1.</p>
+</li>
+<li>
+<p><strong>Godziny dodatkowe</strong> - roboczogodziny pracy specjalist&oacute;w Usługodawcy, możliwe do dokupienia w ramach przedmiotu umowy przez Zlecającego.</p>
+</li>
+<li>
+<p><strong>Okres rozliczeniowy </strong>- przez "Okres rozliczeniowy" należy rozumieć jeden miesiąc pokrywający się z miesiącem kalendarzowym</p>
+</li>
+<li>
+<p><strong>Wynagrodzenie abonamentowe</strong> - Opłata abonamentowa miesięczna w ramach, kt&oacute;rej Usługodawca realizuje wybrany Pakiet usługowy.</p>
+</li>
+<li>
+<p><strong>Wynagrodzenie dodatkowe -</strong> Wynagrodzenie Usługodawcy za pracę wykraczające poza zakres wybranego Pakietu usługowego wynikające z przepracowanych roboczogodzin i cennika</p>
+</li>
+<li>
+<p><strong>Specjalista</strong> - Wykwalifikowany pracownik Usługodawcy lub osoba lub firma z kt&oacute;rą Usługodawca ściśle wsp&oacute;łpracuje, dedykowany/a do konkretnego rodzaju zadań w Serwisie Zlecającego.</p>
+</li>
+<li>
+<p><strong>Opiekun klienta -</strong> Pracownik Usługodawcy odpowiedzialny za przyjmowanie Zgłoszeń i przekazywanie ich wewnętrznie w organizacji Usługodawcy.</p>
+</li>
+<li>
+<p><strong>Drobne prace obsługowe -</strong>proste prace obsługowe w panelu administracyjnym niewymagające wykwalifikowanego technika lub programisty. Przykładowo: dodanie produkt&oacute;w, edycja treści, wprowadzanie danych.</p>
+</li>
+<li>
+<p><strong>Wsparcie techniczne </strong>- usługa polegająca na wsparciu technicznym, projektowym i doradczym oprogramowania i usługi IdoSell. W ramach wsparcia technicznego Usługodawca gwarantuje dostępność wykwalifikowanej kadry i deklaruje dostępność i pomoc w rozwiązywaniu problem&oacute;w z ww. oprogramowaniem.</p>
+</li>
+<li>
+<p><strong>Prace programistyczne </strong>- rodzaj usług informatycznych wykonywanych przez programistę, kt&oacute;re obejmują proces tworzenia, testowania, utrzymania i poprawiania oprogramowania. Wykorzystują one skomplikowane języki programowania i r&oacute;żne metodyki rozwoju, aby stworzyć oprogramowanie, kt&oacute;re spełnia określone wymagania i służy do rozwiązywania konkretnych problem&oacute;w.</p>
+</li>
+<li>
+<p><strong>Click Up</strong> - system CRM, z kt&oacute;rego korzysta Usługodawca w celu mierzenia faktycznego czasu pracy Specjalist&oacute;w.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect; 1. PRZEDMIOT UMOWY</strong></p>
+<ol>
+<li>
+<p>Strony zawierają Umowę regularnej dostępności wsparcia technicznego, na podstawie kt&oacute;rej ustalają zasady przyjmowania i obsługi Zgłoszeń dotyczących oprogramowania e-commerce IdoSell i zakres wykonywania, przez Usługodawcę na rzecz Zlecającego, zadań polegających w szczeg&oacute;lności na świadczeniu usług informatycznych, projektowania webowego i graficznego, analityki internetowej oraz doradztwa e-commerce zgodnie z bieżącym zapotrzebowaniem Zlecającego zwaną w dalszej części umowy <strong>&rdquo;Usługą&rdquo;</strong></p>
+</li>
+<li>
+<p>Usługodawca realizuje zadania w ramach środowiska IdoSell lub kompatybilnego z IdoSell, na kt&oacute;re może składać się jeden lub wiele Serwis&oacute;w internetowych, do kt&oacute;rego Zlecający posiada prawa na podstawie ważnej i wiążącej umowy z operatorem IdoSell.<br /><br /> Link do panelu administracyjnego IdoSell Zlecającego:</p>
+<p><strong>{{#if domenyWWW}}{{#each domenyWWW}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}-{{/if}}</strong></p>
+</li>
+<li>
+<p>Umowa opiera się o wybrany przez Zlecającego Pakiet usługowy, na kt&oacute;ry składają się określone godziny przyjmowania zgłoszeń, deklarowany czas reakcji Usługodawcy na zgłoszenia, liczba godzin kontraktowych oraz indywidualny cennik roboczogodzin specjalist&oacute;w, dla roboczogodzin wykraczających poza zadeklarowaną ilość w wybranym pakiecie. <br /><strong>Pakiety usługowe</strong> opisane są w Załączniku nr 1 do niniejszej Umowy.</p>
+</li>
+<li>
+<p>Niewykorzystane w danym okresie rozliczeniowym Godziny kontraktowe nie przechodzą na następny okres&oacute;w rozliczeniowy.</p>
+</li>
+<li>
+<p>Wybrany Pakiet usługowy: <strong>{{rodzajUmowy}} </strong>- szczeg&oacute;łowo opisany w Załączniku nr 1.</p>
+</li>
+<li>
+<p>W ramach realizacji zgłoszeń Zlecający może korzystać ze Specjalist&oacute;w w zakresie:</p>
+<ol>
+<li>
+<p>Opiekun (Customer Success Manager) - Przyjmowanie zgłoszeń telefonicznie, mailowo, smsowo lub inną dostępną formą kontaktu, Przekazywanie informacji od Zlecającego do dalszej obsługi, Organizacja wycen, Definiowanie priorytetu zgłoszeń.</p>
+</li>
+<li>
+<p>Specjalista wsparcia technicznego (E-commerce manager) - Prace konfiguracyjne w panelu IdoSell, Analiza problem&oacute;w funkcjonowania platformy IdoSell, Przygotowanie materiał&oacute;w do wycen prac programistycznych, Koordynacja projekt&oacute;w.</p>
+</li>
+<li>
+<p>Junior e-commerce specialist - Proste powtarzalne prace wymagające dużej ilości czasu pracy i niskiego wyspecjalizowania w znajomości platformy IdoSell (np: dodawanie produkt&oacute;w, przeklejanie opis&oacute;w, itp)</p>
+</li>
+<li>
+<p>Programista (front-end lub back-end Developer) - Prace programistyczne.</p>
+</li>
+<li>
+<p>Specjalista UX/UI - Audyty i projektowanie UX/UI szablon&oacute;w, maski Serwisu, widok&oacute;w Serwisu.</p>
+</li>
+<li>
+<p>Grafik - Prace graficzne z wyłączeniem grafik 3d.</p>
+</li>
+<li>
+<p>Analityk - Podpinanie i konfiguracja narzędzi analitycznych, weryfikacja poprawności zbieranych danych, przygotowywanie wniosk&oacute;w na podstawie danych analitycznych.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>W ramach realizacji zgłoszeń Zlecający może zgłaszać zapotrzebowanie na usługi z rodzaju:</p>
+<ol>
+<li>
+<p>Naprawy błęd&oacute;w, usterek i awarii w oprogramowaniu IdoSell.</p>
+</li>
+<li>
+<p>Tworzenia nowych oraz modyfikację istniejących funkcji.</p>
+</li>
+<li>
+<p>Integracji z zewnętrznymi systemami informatycznymi.</p>
+</li>
+<li>
+<p>Instalacji, modyfikacji i konfiguracji zakupionych moduł&oacute;w</p>
+</li>
+<li>
+<p>Modyfikacji graficznych oraz ich implementacji w Serwisie</p>
+</li>
+<li>
+<p>Szkoleń w zakresie obsługi systemu IdoSell i dedykowanych rozwiązań programistycznych.</p>
+</li>
+<li>
+<p>Prac analitycznych obejmujących wykonalność funkcji, wydajność systemu oraz możliwości optymalizacji Serwisu.</p>
+</li>
+<li>
+<p>Zarządzania zawartością informacyjną Serwisu.</p>
+</li>
+<li>
+<p>Importu i eksportu danych.</p>
+</li>
+<li>
+<p>Konsultacji w zakresie możliwości technicznych systemu, UX/UI (doświadczeń użytkownika Serwisu i interfejsu użytkownika) oraz rozwiązań sprzedaży internetowej.</p>
+</li>
+</ol>
+</li>
+</ol>
+<p>Każdorazowe zgłoszenie podlega wycenie w rbh określonych specjalist&oacute;w potrzebnych do realizacji wskazanego przez Zlecającego zadania.</p>
+<p style="text-align: center;"><strong>&sect;2 ZASADY PRZYJMOWANIA ZGŁOSZEŃ</strong></p>
+<ol>
+<li>
+<p>Zlecający wyznacza zadania do wykonania poprzez przesłanie zgłoszenia za pośrednictwem poczty elektronicznej na adres: <strong>wsparcie@idomods.pl</strong>, zgłoszenia telefonicznego na numer<strong> +48 </strong><strong>570-628-607</strong>Wszelkie ustalenia dotyczące zakresu prac, zgłoszenia uwag i usterek odbywają się w ramach jednego zgłoszenia.</p>
+</li>
+<li>
+<p>Usługodawca zobowiązuje się przyjmować zgłoszenia przesłane zgodnie z zasadami opisanymi w ust. 1 niniejszego Paragrafu. zgłoszenia przyjmowane są w godzinach wskazanych w wierszu &ldquo;Czas pracy wsparcia&rdquo; w Załączniku nr 1.</p>
+</li>
+<li>
+<p>Zgłoszenia przekazane poza Czasem pracy wsparcia przyjmowane będą w następnym dniu roboczym w kolejności otrzymania ich przez Usługodawcę.</p>
+</li>
+<li>
+<p>Zgłoszenie powinno zawierać możliwie jak najdokładniejszy opis zlecanego zadania, stwierdzonej awarii, błędu lub usterki, a także w razie konieczności załączniki w formie plik&oacute;w graficznych, zrzut&oacute;w ekranu, lub raport&oacute;w z narzędzi analitycznych. Usługodawca zastrzega sobie prawo do żądania dodatkowych informacji na temat opisywanego problemu, w celu rozpoczęcia realizacji zgłoszenia.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;3 ZASADY WYCENY I REALIZACJI ZADAŃ<br /></strong></p>
+<ol>
+<li>
+<p>Po przyjęciu zgłoszenia, Usługodawca dokona szczeg&oacute;łowej analizy zgłoszonych potrzeb w najkr&oacute;tszym możliwym terminie przewidzianym w wybranym Pakiecie usługowym. Na podstawie wyciągniętych wniosk&oacute;w Usługodawca przygotuje Wycenę, w kt&oacute;rej określi zadania, ilość roboczogodzin, rodzaj specjalist&oacute;w i zakres prac potrzebnych do realizacji zgłoszonych potrzeb. Wycena zostanie przekazana do Zlecającego niezwłocznie po jej przygotowaniu.</p>
+</li>
+<li>
+<p>W przypadku złożonych zgłoszeń, kt&oacute;rych wycena wymaga udziału specjalisty Wsparcia technicznego lub Programisty Usługodawca może skorzystać z godzin kontraktowych bez pozwolenia Zlecającego.</p>
+</li>
+<li>
+<p>W przypadku zgłoszeń awarii krytycznych Usługodawca zobowiązuje się do natychmiastowego podjęcia prac mających na celu jak najszybsze przywr&oacute;cenie funkcji serwisu. W tym celu może wykorzystać bez uprzedniego pozwolenia Zlecającego godziny kontraktowe odpowiednich specjalist&oacute;w.</p>
+</li>
+<li>
+<p>Usługodawca będzie realizował zgłoszenia napraw zadań krytycznych w dniach od poniedziałku do piątku w godzinach 8.00-16.00 z wyłączeniem dni ustawowo wolnych od pracy.</p>
+</li>
+<li>
+<p>W przypadku zgłoszeń wymagających analizy wykonalności lub osobnego projektu, Usługodawca zobowiązuje się uprzedzić o tym fakcie Zlecającego. Zlecający może zam&oacute;wić taką analizę i projekt, wynikiem kt&oacute;rej jest wycena i studium wykonalności oraz szczeg&oacute;łowy opis realizacji zadania. Analiza i projekt stanowią część realizacji zadania oraz zostaną rozliczone w taki sam spos&oacute;b, jak inne prace.</p>
+</li>
+<li>
+<p>Jeśli czas potrzebny na obsługę zgłoszenia wykracza poza pulę godzin kontraktowych Zlecający ma możliwość dokupienia roboczogodzin dodatkowych w zgodnie z cennikiem zawartym w Załączniku nr 1.</p>
+</li>
+<li>
+<p>Termin realizacji zadań jest definiowany osobno dla każdego zgłoszenia i jest zależny od czasochłonności zadania oraz bieżącego obciążenia zespołu Usługodawcy. Czas realizacji jest podawany w momencie rozpoczęcia prac. W przypadku stwierdzenia, że zadanie zajmie więcej czasu niż początkowo przewidywano, Usługodawca niezwłocznie poinformuje o tym Zlecającego.</p>
+</li>
+<li>
+<p>W przypadku zgłoszeń zadań krytycznych Usługodawca zobowiązuje się do natychmiastowego podjęcia prac mających na celu przywr&oacute;cenie funkcji serwisu. Usługodawca będzie realizował zgłoszenia napraw zadań krytycznych w dniach od poniedziałku do piątku w godzinach 8.00-16.00 z wyłączeniem dni ustawowo wolnych od pracy.</p>
+</li>
+<li>
+<p>Najmniejszą jednostką czasu w przypadku wyceny wszystkich zadań jest 15 minut. Czas pracy w szacunkach i raportach jest podawany z dokładnością do 15 minut, zaokrąglany w g&oacute;rę.</p>
+</li>
+<li>
+<p>Usługodawca ma prawo do ingerencji w strukturę danych, ustawienia Serwisu internetowego oraz panelu platformy IdoSell, jeżeli jest to konieczne do obsługi zgłoszenia.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;4 OBOWIĄZKI ZLECAJĄCEGO</strong></p>
+<ol>
+<li>
+<p>Zlecający zobowiązuje się dostarczać wszelkich informacji oraz materiał&oacute;w, niezbędnych do wykonania przez Usługodawcę zleconych zadań, w tym niezbędne dostępy, pliki graficzne, dokumentację, czy treści.<br /> Zlecający zapewni Usługodawcy ścisłą i efektywną wsp&oacute;łpracę ze strony kompetentnych os&oacute;b po swojej stronie, posiadających wystarczającą wiedzę w poszczeg&oacute;lnych obszarach działalności Usługodawcy, niezbędną dla realizacji przez Usługodawcę przedmiotu umowy.</p>
+</li>
+<li>
+<p>Zlecający przyjmuje do wiadomości, że niewykonanie lub nienależyte wykonanie obowiązk&oacute;w, o kt&oacute;rych mowa w ust. 1 i 2 niniejszego paragrafu, może uniemożliwić lub utrudnić Usługodawcy należyte wykonywanie Usług, przy czym Usługodawca zachowuje w takim wypadku prawo do pełnego Wynagrodzenia.</p>
+</li>
+<li>
+<p>Zlecający bierze pełną odpowiedzialność za dostarczone przez siebie materiały, zdjęcia i treści.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;5 OBOWIĄZKI USŁUGODAWCY</strong></p>
+<ol>
+<li>
+<p>Usługodawca oświadcza, że posiada niezbędne umiejętności, wiedzę, środki oraz sprzęt do wykonania Usługi objętej przedmiotem Umowy i zobowiązuje się wykonać Usługę z należytą starannością oraz z aktualnym poziomem wiedzy i technologii.</p>
+</li>
+<li>
+<p>Usługodawca oświadcza, że przy wykonaniu zadań stanowiących przedmiot Umowy będą brać udział osoby posiadające niezbędną wiedzę i doświadczenie;</p>
+</li>
+<li>
+<p>Usługodawca zobowiązuje się do podjęcia działań mających na celu zabezpieczenie informacji i dokument&oacute;w przekazanych przez Zlecającego przed nieuprawnionym dostępem os&oacute;b trzecich.</p>
+</li>
+<li>
+<p>Usługodawca, na pisemne żądanie Zlecającego, jest zobowiązany do udzielania Zlecającemu wszelkich wiadomości o przebiegu zleconych zadań i umożliwienia kontroli prawidłowości prac w spos&oacute;b nieutrudniający realizacji zadań.</p>
+</li>
+<li>
+<p>Usługodawca dołoży wszelkich starań, by wykonywane przez niego zadania nie wpłynęły w żaden negatywny spos&oacute;b na Serwis Zlecającego. Usługodawca nie odpowiada jednak za jakiekolwiek celowe lub nieświadome działania os&oacute;b trzecich, a w szczeg&oacute;lności za zmiany w platformie IdoSell oraz błędy programist&oacute;w IdoSell i okoliczności noszące znamiona siły wyższej.</p>
+</li>
+<li>
+<p>Usługodawca nie ponosi odpowiedzialności za niepoprawne użytkowanie system&oacute;w informatycznych przez Zlecającego, brak dostępności serwisu wywołany działaniem podmiot&oacute;w trzecich lub operatora IdoSell.</p>
+</li>
+</ol>
+<ol>
+<li>
+<p>Usługodawca może powierzyć wykonanie świadczeń z Umowy osobom trzecim posiadającym odpowiednią wiedzę i doświadczenie. Usługodawca odpowiada za te osoby tak samo, jak za swoich pracownik&oacute;w.</p>
+</li>
+<li>
+<p>Usługodawca podejmie działania konieczne do utrzymania stałego składu personelu świadczącego usługę, w szczeg&oacute;lności w zakresie os&oacute;b kierujących wykonaniem zadań lub zapewni bezproblemową zmianę składu personelu w spos&oacute;b gwarantujący brak utrudnień w realizacji Usługi.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;6 WYNAGRODZENIE I ROZLICZENIA DODATKOWYCH ROBOCZOGODZIN<br /></strong></p>
+<ol>
+<li>
+<p>W związku realizacją przedmiotu umowy, Zlecający zapłaci Usługodawcy wynagrodzenie abonamentowe miesięczne, z g&oacute;ry, w wysokości <strong>{{{wynagrodzenie}}}</strong><strong> netto</strong>. Wynagrodzenie zostanie powiększone o aktualną stawkę podatku VAT.</p>
+</li>
+<li>
+<p>Każdorazowo faktura zostanie wysłana pocztą elektroniczną na adres e-mail Zlecającego zawarty w komparycji umowy. Zlecający przyjmuje do wiadomości, że wysłanie faktury na ten adres e-mail jest r&oacute;wnoznaczne z faktycznym otrzymaniem faktury przez Zlecającego.</p>
+</li>
+<li>
+<p>Każda faktura płatna jest przelewem bankowym na rachunek bankowy Usługodawcy<br /> nr <strong>46 1240 6292 1111 0011 1156 1862</strong> w ciągu 7 dni od daty otrzymania zgodnie z warunkami określonymi w niniejszej Umowie. Za op&oacute;źnienia w płatnościach mogą zostać naliczone odsetki według najwyższej stawki dozwolonej przez prawo. Zlecający może zgłosić zastrzeżenia do faktury w terminie 7 dni od daty otrzymania faktury. Jeżeli Zlecający nie wniesie sprzeciwu w powyższym terminie, przyjmuje się, że przyjął fakturę w pełnej wysokości.</p>
+</li>
+<li>
+<p>Opr&oacute;cz uiszczenia wynagrodzenia abonamentowego, Zlecający może dokupować roboczogodziny r&oacute;żnych specjalist&oacute;w w celu realizacji zadań wykraczających poza pulę godzin kontraktowych zgodnie z cennikiem zamieszczonym w Załączniku nr 1 do niniejszej Umowy.</p>
+</li>
+<li>
+<p>Opłaty za roboczogodziny dodatkowe zostaną określone na podstawie faktycznego czasu realizacji tych prac po ich zakończeniu oraz stawek za roboczogodzinę danych specjalist&oacute;w określonych w Załączniku nr 1 do niniejszej umowy. Wspomniane opłaty rozliczone zostaną na podstawie oddzielnej pozycji na fakturze Vat za kolejny miesiąc następujący po miesiącu, w kt&oacute;rym zostały wykorzystane.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;7 CZAS TRWANIA UMOWY<br /></strong></p>
+<ol>
+<li>
+<p>Niniejsza Umowa zostaje zawarta na czas nieokreślony i obowiązuje od dnia jej zawarcia.</p>
+</li>
+<li>
+<p>Niniejsza Umowa może zostać rozwiązana przez każdą ze Stron:</p>
+<ol>
+<li>
+<p>w trybie natychmiastowym w przypadku, gdy jedna ze Stron w spos&oacute;b powtarzający narusza swoje zobowiązania wynikające z niniejszej Umowy, jedynie po uprzednim pisemnym wezwaniu Strony naruszającej do usunięcia naruszeń w zakreślonym terminie, nie kr&oacute;tszym niż 7 dni roboczych.</p>
+</li>
+<li>
+<p>z zachowaniem jednomiesięcznego okresu wypowiedzenia ważnego na koniec miesiąca.</p>
+</li>
+</ol>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;8 PRAWA AUTORSKIE</strong></p>
+<ol>
+<li>
+<p>W przypadku gdyby w ramach realizacji przedmiotu niniejszej umowy doszło do wykonania dzieła (utworu), co do kt&oacute;rego zachodziłyby przesłanki do przeniesienia autorskich praw majątkowych, Strony zgodnie postanawiają, że w ramach ustalonego wynagrodzenia Usługodawca przenosi na Zlecającego ww. prawa do wykorzystania na wszelkich polach eksploatacji, w szczeg&oacute;lności:</p>
+<ol>
+<li>
+<p>nieograniczonego w czasie korzystania z oprogramowania, zgodnie z charakterem i przeznaczeniem oprogramowania oraz przyjętymi zwyczajami, trwałego lub czasowego zwielokrotnienia oprogramowania w całości lub w części jakimikolwiek środkami i w jakiejkolwiek formie, jeżeli jest to niezbędne do korzystania z oprogramowania zgodnie z jego przeznaczeniem, w tym do poprawiania błęd&oacute;w oprogramowania przez Zlecającego,</p>
+</li>
+<li>
+<p>tłumaczenia, przystosowywania, zmiany układu lub jakichkolwiek innych zmian w programie komputerowym, z zachowaniem praw osoby, kt&oacute;ra tych zmian dokonała,</p>
+</li>
+<li>
+<p>bez zgody Usługodawcy, wyrażonej na piśmie pod rygorem nieważności, Zlecający nie jest uprawniony do rozpowszechniania, w tym użyczenia lub najmu oprogramowania lub jego kopii, oraz odsprzedaży czy też przekazania na podstawie jakiegokolwiek tytułu na rzecz os&oacute;b trzecich. Ograniczenie zawarte powyżej nie dotyczy jednak przypadk&oacute;w następstwa prawnego, na podstawie kt&oacute;rych prawa autorskie majątkowe do oprogramowania będącego przedmiotem Umowy przejdą na inny podmiot, w szczeg&oacute;lności w następstwie sprzedaży przedsiębiorstwa Zlecającego oraz zmian w zakresie formy organizacyjno-prawnej działalności Zlecającego.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Przeniesienie praw autorskich, o kt&oacute;rych mowa w niniejszym punkcie nastąpi z chwilą zapłaty wynagrodzenia za okres, w kt&oacute;rym utw&oacute;r został przekazany Zlecającemu.</p>
+</li>
+<li>
+<p>Za chwilę zapłaty uważa się uznanie zapłaty na koncie bankowym Usługodawcy.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;9 POUFNOŚĆ<br /></strong></p>
+<ol>
+<li>
+<p>Każda ze Stron zobowiązuje się do utrzymania w ścisłej tajemnicy wszelkich informacji handlowych i innych informacji o poufnym charakterze dotyczących wykonania Umowy lub uzyskanych od siebie w związku z jej wykonywaniem i zobowiązują się do nieujawniania tych informacji bez zgody drugiej Strony.</p>
+</li>
+<li>
+<p>Obowiązek określony w ust. 1 nie dotyczy informacji powszechnie znanych oraz udostępniania informacji na żądanie sądu, prokuratury, organ&oacute;w podatkowych lub organ&oacute;w kontrolnych lub gdy obowiązek ujawnienia informacji o takim charakterze nakładają obowiązujące przepisy prawa.</p>
+</li>
+<li>
+<p>Strony uzgadniają, że za Informacje Poufne uważa się r&oacute;wnież dane osobowe przetwarzane przez Strony jako administratora danych osobowych.</p>
+</li>
+<li>
+<p>Jeżeli wsp&oacute;łpraca wymagała będzie od kt&oacute;rejkolwiek ze Stron dostępu do danych osobowych administrowanych przez drugą Stronę, Strona ta powierza Stronie przetwarzającej przetwarzanie danych osobowych w celu i w zakresie wykonania Wsp&oacute;łpracy oraz zgodnie z zawartą w tym celu umową o powierzenie przetwarzania danych osobowych.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;10 ODPOWIEDZIALNOŚĆ<br /></strong></p>
+<ol>
+<li>
+<p>Za szkody wynikające z niewykonania lub nienależytego wykonania Umowy każda ze Stron odpowiada na zasadach określonych w Kodeksie cywilnym.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;11 POSTANOWIENIA KOŃCOWE</strong></p>
+<ol>
+<li>
+<p>W sprawach nieuregulowanych niniejszą umową mają zastosowanie przepisy ustawy z dnia 23 kwietnia 1964 r. Kodeks cywilny (tekst jedn. Dz. U. z 2014 r., poz. 121 ze zm.) oraz ustawy z dnia 04 lutego 1994 r. o prawie autorskim i prawach pokrewnych tj. z dnia 06 czerwca 2019 r. (Dz. U. z 2019 r. poz. 1231).</p>
+</li>
+<li>
+<p>Strony zobowiązują się rozstrzygać polubownie spory powstałe między nimi w związku z wykonaniem niniejszej Umowy. W razie niemożności polubownego załatwienia sporu, sądem właściwym do rozstrzygania spor&oacute;w między Stronami w związku z realizacją niniejszej Umowy, będzie sąd właściwy dla siedziby Usługodawcy.</p>
+</li>
+<li>
+<p>Wszelkie zmiany umowy w tym jej wypowiedzenie wymagają formy pisemnej pod rygorem nieważności.</p>
+</li>
+<li>
+<p>Umowę sporządzono w dw&oacute;ch jednobrzmiących egzemplarzach, po jednym dla każdej ze Stron.</p>
+</li>
+<li>
+<p>Wszystkie załączniki do niniejszej umowy stanowią jej integralną część.</p>
+</li>
+<li>
+<p>Strony wsp&oacute;lnie oświadczają, że warunki niniejszej Umowy i Załącznik&oacute;w znają, rozumieją i akceptują.</p>
+</li>
+</ol>
+<table style="width: 100%;">
+<tbody>
+<tr>
+<td>
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p>[Data i Podpis Wykonawcy]</p>
+</td>
+<td>
+<p style="text-align: right;">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p style="text-align: right;">[Data i Podpis Zamawiającego]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Załącznik nr 1 - Pakiety usługowe i cennik roboczogodzin dodatkowych</strong></p>
+<table style="width: 100%; font-size: 9px;" border="1" cellspacing="0" cellpadding="2">
+<tbody>
+<tr>
+<td>
+<p><strong>Pakiet usługowy:</strong></p>
+</td>
+<td>
+<p><strong>Opis</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 1 </strong><strong>c),d)</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 2 </strong><strong>c),d)</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 3 </strong><strong>c),d)</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Podstawa za support<strong>*</strong></p>
+</td>
+<td>
+<p>podane w zł netto</p>
+</td>
+<td>
+<p><strong>500</strong></p>
+</td>
+<td>
+<p><strong>1500</strong></p>
+</td>
+<td>
+<p><strong>3000</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Cena pakietu</p>
+</td>
+<td>
+<p>podane w zł netto</p>
+</td>
+<td>
+<p><strong>2 000 - 4 200</strong></p>
+</td>
+<td>
+<p><strong>4 290 - 9 555&nbsp;</strong></p>
+</td>
+<td>
+<p><strong>9 500</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Liczba roboczogodzin specjalist&oacute;w<br />w abonamencie</p>
+</td>
+<td>
+<p>podane w RBH</p>
+</td>
+<td>
+<p><strong>od 10 do 21</strong></p>
+</td>
+<td>
+<p><strong>od 22 do 49</strong></p>
+</td>
+<td>
+<p><strong>od 50</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Łączny koszt (podstawa za support + pakiet godzin)</p>
+</td>
+<td>
+<p>podane w zł netto</p>
+</td>
+<td>
+<p><strong>2 500 - 4 700</strong></p>
+</td>
+<td>
+<p><strong>5 790 - 11 055</strong></p>
+</td>
+<td>
+<p><strong>od 12 500</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Pakiet usługowy:</strong></p>
+</td>
+<td>
+<p><strong>Opis</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 1 </strong><strong>c),d)</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 2 </strong><strong>c),d)</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 3 </strong><strong>c),d)</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Zgłoszenia standardowe <strong>a)</strong></p>
+</td>
+<td>
+<p>czas reakcji</p>
+</td>
+<td>
+<p>48 h</p>
+</td>
+<td>
+<p>24 h</p>
+</td>
+<td>
+<p>12 h</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Zgłoszenia<br />krytyczne <strong>b)</strong></p>
+</td>
+<td>
+<p>czas reakcji</p>
+</td>
+<td>
+<p>16 h / w dni robocze</p>
+</td>
+<td>
+<p>8 h / w dni robocze</p>
+</td>
+<td>
+<p>4 h / 7 dni w tygodniu</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Raportowanie</p>
+</td>
+<td>
+<p>Miesięczne raporty z<br />przeprowadzonych prac oraz napraw</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Regularne spotkania rozwojowe</p>
+</td>
+<td>
+<p>Kwartał/miesiąc</p>
+</td>
+<td>
+<p>Nie</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Godziny pracy wsparcia</p>
+</td>
+<td>
+<p></p>
+</td>
+<td>
+<p>10-15 w dni robocze</p>
+</td>
+<td>
+<p>8-16 w dni robocze</p>
+</td>
+<td>
+<p>8-16 7 dni w tygodniu</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Dedykowany opiekun</p>
+</td>
+<td>
+<p></p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Kontakt z supportem IdoSell</p>
+</td>
+<td>
+<p></p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Kontakt z podmiotami zewnętrznymi&nbsp;</p>
+</td>
+<td>
+<p>np. agencja marketingowa, freelancer, software house</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+<td>
+<p>Tak</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Formy zgłaszania zadań</p>
+</td>
+<td>
+<p></p>
+</td>
+<td>
+<p>mail, telefon, clickup</p>
+</td>
+<td>
+<p>mail, telefon, clickup</p>
+</td>
+<td>
+<p>mail, telefon, clickup</p>
+</td>
+</tr>
+<tr>
+<td colspan="5">
+<p><strong>CENNIK ROBOCZOGODZIN DODATKOWYCH (cena netto za 1 roboczogodzinę):</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Zakres wsparcia:</strong></p>
+</td>
+<td>
+<p><strong>Opis</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 1 </strong><strong>c),d)</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 2 </strong><strong>c),d)</strong></p>
+</td>
+<td>
+<p><strong>Pakiet 3 </strong><strong>c),d)</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Konfiguracja sklepu</p>
+</td>
+<td rowspan="9"><br />
+<p>ceny netto podane za 1 RBH&nbsp;</p>
+</td>
+<td rowspan="9"><br />
+<p>200 zł</p>
+</td>
+<td rowspan="9"><br />
+<p>195 zł</p>
+</td>
+<td rowspan="9"><br />
+<p>190 zł</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Grafiki, UX/UI</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Audyty i analizy&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SEO</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Copywriting</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Marketing</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Programowanie</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Analizy techniczne</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Specjalista SM</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p style="width: 100%; font-size: 9px;">Podstawa za support obejmuje gotowość do realizacji zadań wyszczeg&oacute;lnionych w załączniku oraz dostępu do specjalist&oacute;w z wysokim priorytetem realizacji</p>
+<p style="width: 100%; font-size: 9px;"><strong>Przykład</strong>: wybierając pakiet nr 2 z liczbą roboczogodzin w wymiarze 25 RBH, zapłacisz 1 500 zł podstawy za support oraz 25 * 195 = 4 875 zł za pakiet godzin w ramach supportu, co daje łączną kwotę 6 375 zł netto za usługę.</p>
+<ol type="a" style="width: 100%; font-size: 9px;">
+<li>Wszelkie prace zlecone Usługodawcy przez Zlecającego na podstawie Zgłoszenia, kt&oacute;rych celem jest rozbudowa Serwisu, usunięcie awarii i błęd&oacute;w, kt&oacute;re nie uniemożliwiają prawidłowego korzystania z Serwisu Internetowego Zlecającego.
+<p><strong>Przykłady zgłoszeń standardowych:</strong></p>
+<ol>
+<li>Zmiany w masce sklepu</li>
+<li>Analiza konkurencji</li>
+<li>Konfiguracja panelu IdoSell</li>
+<li>Audyt Panelu, SEO, Marketingowy, UX/UI</li>
+<li>Prace Graficzne, bannery, loga ikony, maski itp.</li>
+<li>Wdrażanie zewnętrznych rozwiązań, np. marketing automation</li>
+<li>Kodowanie aplikacji indywidualnych</li>
+<li>Implementacja zewnętrznych kod&oacute;w</li>
+<li>Prowadzenie komunikacji z podmiotami zewnętrznymi</li>
+</ol></li>
+<li>Wszelkie prace zlecone Usługodawcy przez Zlecającego na podstawie Zgłoszenia, kt&oacute;rych celem jest usunięcie awarii i błęd&oacute;w, kt&oacute;re uniemożliwiają prawidłowe korzystanie z Serwisu Internetowego Zlecającego, np: całkowite wstrzymanie działania Serwisu Internetowego, zawieszanie się Serwisu Internetowego, brak możliwości płatności lub dodania produkt&oacute;w do koszyka, itp.
+
+<p><strong>Przykłady zgłoszeń krytycznych:</strong><br />1) Aktualizacja IdoSell, kt&oacute;ra zakł&oacute;ciła poprawne działanie szablonu, co uniemożliwiło zakupy klient&oacute;w</p>
+<p>2) Błąd w cenach towar&oacute;w, wymagana szybka aktualizacja produkt&oacute;w, narażenie na straty<br />3) Kontrola urzędowa, szybka poprawa wytycznych podanych przez organ.<br />4) Błąd działania indywidualnej aplikacji, tworzonej przez Usługodawcę dla Zlecającego<br />5) Problemy z domeną, niepoprawne połączenie z stroną docelową<br />6) Serwer pocztowy, nieprzychodzące maile lub brak możliwości wysłania maila</p></li>
+  <li>Zadania ze zwiększonym priorytetem do maksymalnego 200% i działamy od wczoraj <br /></li><li> Prace weekendowe 200%</li>
+</ol>
+<br>
+<p>
+<table style="width: 100%;">
+<tbody>
+<tr>
+<td>
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p>[Data i Podpis Wykonawcy]</p>
+</td>
+<td>
+<p style="text-align: right;">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p style="text-align: right;">[Data i Podpis Zamawiającego]</p>
+</td>
+</tr>
+</tbody>
+</table></p>

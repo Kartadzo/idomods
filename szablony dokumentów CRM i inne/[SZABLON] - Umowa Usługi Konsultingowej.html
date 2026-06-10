@@ -1,0 +1,300 @@
+<h1 style="text-align: center;"><strong>UMOWA RAMOWA &ndash; USŁUGI KONSULTINGOWE </strong></h1>
+<h2 style="text-align: center;"><strong>Nr:</strong> {{numerUmowy}}</h2>
+<p>Zawarta w Dęblinie w dniu {{createdAt}} roku pomiędzy firmą:</p>
+<p>{{umowy.name}} z siedzibą w {{addressStreet}} {{addressPostalCode}} {{addressCity}} {{addressState}} {{addressCountry}}, NIP: {{nip}}, REGON: {{regon}}, {{#if sad}}{{sad}}, KRS: {{krs}}, Kapitał zakładowy: {{kapital}}, {{/if}} </p>
+<p>reprezentowaną przez:</p>
+<p>{{#each podpisujacy}}{{this.name}} - {{this.cStanowisko}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+<p>zwanym dalej <strong>Zlecającym</strong>, a</p>
+<p>{{{naszaFirma}}}</p>
+<p>reprezentowaną przez:</p>
+<p>{{#if naszaFirmaWlasciciel}}{{naszaFirmaWlasciciel}}{{else}}-{{/if}}</p>
+<p>zwanym dalej <strong>Usługodawcą</strong>,</p>
+<p>zwanymi w dalszej części umowy z osobna <strong>&bdquo;Stroną&rdquo;</strong> lub łącznie <strong>&bdquo;Stronami&rdquo;</strong> o następującej treści:</p>
+<p style="text-align: center;"><strong>&sect;1 Definicje</strong></p>
+<ol>
+<li>
+<p><strong>Umowa</strong> &ndash; oznacza niniejszy dokument, kt&oacute;ry określa warunki wsp&oacute;łpracy między Zlecającym a Usługodawcą.</p>
+</li>
+<li>
+<p><strong>Usługa</strong> &ndash; oznacza wszelkie działania podejmowane przez Usługodawcę na rzecz Zlecającego, w szczeg&oacute;lności w zakresie konsultacji PPC, analityki, doradztwa e-commerce oraz wsparcia technicznego.</p>
+</li>
+<li>
+<p><strong>Roboczogodzina (RBH)</strong> &ndash; jednostka miary pracy Specjalisty nad danym Zadaniem. Czas pracy jest rozliczany z dokładnością do 15 minut.</p>
+</li>
+<li>
+<p><strong>Raport prac</strong> &ndash; zestawienie zrealizowanych zadań i czasu pracy w danym Okresie rozliczeniowym.</p>
+</li>
+<li>
+<p><strong>Okres rozliczeniowy</strong> &ndash; jeden miesiąc pokrywający się z miesiącem kalendarzowym.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;2 Przedmiot umowy</strong></p>
+<ol>
+<li>
+<p>Strony zawierają Umowę o świadczenie usług konsultingowych, na podstawie kt&oacute;rej Usługodawca będzie realizował zadania na rzecz Zlecającego w modelu rozliczenia godzinowego (Time &amp; Material).</p>
+</li>
+<li>
+<p>Usługi będą świadczone dla domen internetowych lub projekt&oacute;w wskazanych przez Zlecającego:<br /><strong>{{#if domenyWWW}}{{#each domenyWWW}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}-{{/if}}</strong></p>
+</li>
+<li>
+<p>Umowa nie przewiduje minimalnej ani maksymalnej liczby godzin do wypracowania w okresie rozliczeniowym. Zlecający zleca prace zgodnie z bieżącym zapotrzebowaniem.</p>
+</li>
+<li>
+<p>Usługodawca oświadcza, że posiada niezbędne umiejętności, wiedzę, środki oraz sprzęt do wykonania Usługi i zobowiązuje się wykonać ją z należytą starannością.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;3 Zasady wsp&oacute;łpracy i raportowanie</strong></p>
+<ol>
+<li>
+<p>Zlecający wyznacza zadania do wykonania poprzez przesłanie zgłoszenia za pośrednictwem poczty elektronicznej lub dedykowanego systemu zgłoszeń.</p>
+</li>
+<li>
+<p>Osobami kontaktowymi po stronie Zlecającego są:<br /><strong>{{#each umowyOsobyKontaktowe}}{{this.name}} {{this.emailAddress}} {{this.phoneNumber}}{{#unless @last}}, {{/unless}}{{/each}}</strong></p>
+</li>
+<li>
+<p>Po zakończeniu każdego miesiąca kalendarzowego Usługodawca dostarczy Zlecającemu Raport prac zawierający liczbę przepracowanych roboczogodzin wraz z fakturą.</p>
+</li>
+<li>
+<p>Zlecający zobowiązuje się dostarczać wszelkich informacji oraz materiał&oacute;w niezbędnych do wykonania zleconych zadań (dostępy, materiały graficzne, wytyczne).</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;4 Wynagrodzenie i płatności</strong></p>
+<ol>
+<li>
+<p>Tytułem wynagrodzenia za świadczone Usługi, Zlecający zapłaci Usługodawcy wynagrodzenie obliczone jako iloczyn liczby przepracowanych roboczogodzin (RBH) oraz ustalonej stawki godzinowej.</p>
+</li>
+<li>
+<p>Stawka za 1 RBH wynosi: <strong>{{stawkaRbh}} netto.</strong></p>
+</li>
+<li>
+<p>Wynagrodzenie zostanie powiększone o aktualną stawkę podatku VAT.</p>
+</li>
+<li>
+<p>Podstawą do wystawienia faktury jest Raport prac za dany okres rozliczeniowy.</p>
+</li>
+<li>
+<p>Każdorazowo faktura zostanie wysłana pocztą elektroniczną na adres e-mail Zlecającego:<br /><strong>{{umowy.emailAddress}}</strong></p>
+</li>
+<li>
+<p>Zlecający przyjmuje do wiadomości, że wysłanie faktury na ten adres e-mail jest r&oacute;wnoznaczne z faktycznym otrzymaniem faktury przez Zlecającego.</p>
+</li>
+<li>
+<p>Faktura płatna jest przelewem bankowym na rachunek bankowy Usługodawcy nr <strong>46 1240 6292 1111 0011 1156 1862</strong> w ciągu <strong>7 dni</strong> od daty otrzymania.</p>
+</li>
+<li>
+<p>Zlecający może zgłosić zastrzeżenia do faktury lub raportu w terminie <strong>7 dni</strong> od daty otrzymania. Brak sprzeciwu oznacza akceptację rozliczenia.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;5 Czas trwania umowy</strong></p>
+<ol>
+<li>
+<p>Niniejsza Umowa zostaje zawarta <strong>na czas nieokreślony</strong> i obowiązuje od dnia jej zawarcia.</p>
+</li>
+<li>
+<p>Niniejsza Umowa może zostać rozwiązana przez każdą ze Stron z zachowaniem <strong>jednomiesięcznego okresu wypowiedzenia</strong>ze skutkiem na koniec miesiąca.</p>
+</li>
+<li>
+<p>Wypowiedzenie wymaga formy pisemnej w tym mailowej.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;6 Prawa autorskie</strong></p>
+<ol>
+<li>
+<p>W przypadku gdyby w ramach realizacji umowy doszło do wykonania utworu w rozumieniu ustawy o o prawie autorskim i prawach pokrewnych, Usługodawca przenosi na Zlecającego autorskie prawa majątkowe do utworu z chwilą zapłaty wynagrodzenia.</p>
+</li>
+<li>
+<p>Przeniesienie praw obejmuje pola eksploatacji niezbędne do korzystania z utworu w działalności gospodarczej Zlecającego.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;7 Poufność i zgody marketingowe</strong></p>
+<ol>
+<li>
+<p>Każda ze Stron zobowiązuje się do utrzymania w ścisłej tajemnicy informacji poufnych drugiej Strony.</p>
+</li>
+<li>
+<p>Zlecający niniejszym wyraża zgodę na wykorzystanie przez Wykonawcę w celach reklamowych i marketingowych (w tym w portfolio i case study) nazwy handlowej oraz logotypu Zlecajacego.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;8 RODO</strong></p>
+<ol>
+<li>
+<p>Zgodnie z art. 13 ust. 1 i 2 rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony os&oacute;b fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE informuję, że administratorem danych osobowych w rozumieniu przepis&oacute;w Rozporządzenia Parlamentu Europejskiego I Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony os&oacute;b fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (dalej Rozporządzenie lub RODO) jest Brands Manago Sp. z o.o. z siedzibą w Dęblinie, przy ul. Żwirki i Wigury 2, 08-530 Dęblin, wpisaną do rejestru przedsiębiorc&oacute;w prowadzonego przez Sąd Rejonowy Lublin Wsch&oacute;d w Lublinie z Siedzibą w Świdniku, VI Wydział Gospodarczy Krajowego Rejestru Sądowego pod numerem KRS 0000944762, NIP: 5060122347, REGON: 520900570, mail: <a href="mailto:kontakt@brandsmanago.pl"><u>kontakt@brandsmanago.pl</u></a></p>
+</li>
+<li>
+<p>W przypadku, gdy do złożenia oferty lub innych podobnych kontakt&oacute;w handlowych dochodzi na prośbę Zamawiającego, administrator przetwarza podane przez Zamawiającego dane osobowe w celu niezbędnym do podjęcia działań przed zawarciem umowy na żądanie osoby, kt&oacute;rej dane dotyczą.</p>
+</li>
+<li>
+<p>Podanie danych osobowych jest niezbędne do otrzymania oferty, a ich przetwarzanie odbywa się na podstawie art. 6 ust. 1 lit. b) Rozporządzenia.</p>
+</li>
+<li>
+<p>W przypadku, gdy administrator składa ofertę lub podejmuje lub utrzymuje inne podobne biznesowe kontakty z własnej inicjatywy, przetwarzanie danych osobowych Zamawiającego odbywa się na podstawie art. 6 ust. 1 lit. f) Rozporządzenia, tj. prawnie uzasadnionego interesu administratora rozumianego jako potrzeba przedstawienia oferty w ramach działalności gospodarczej lub za uprzednią zgodą Zamawiającego, na podstawie art. 6 ust. 1 lit. a) Rozporządzenia. Zamawiający może w dowolnym momencie wycofać zgodę bez wpływu na zgodność z prawem przetwarzania, kt&oacute;rego dokonano na podstawie zgody przed jej cofnięciem, w takim sam spos&oacute;b, w jaki została udzielona. W tym celu administrator gromadzi Państwa dane osobowe takie jak: imię, nazwisko, nazwa firmy, NIP, adres e-mail, numer telefonu oraz inne dane kontaktowe.</p>
+</li>
+<li>
+<p>Administrator może przetwarzać ponadto udostępnione przez Zamawiającego dane os&oacute;b do kontaktu, tj. imię i nazwisko, firmę, numer telefonu, adres, adres e-mail, a także w przypadku osoby prawnej - dane osobowe os&oacute;b upoważnionych do działania w imieniu Zamawiającego, tj. imię i nazwisko, na podstawie art. 6 ust. 1 lit. f) Rozporządzenia, tj. prawnie uzasadnionego interesu administratora rozumianego jako konieczność weryfikacji os&oacute;b upoważnionych do działania w imieniu Zamawiającego oraz konieczność kontaktowania się z Zamawiającym w sprawach związanych ze złożeniem oferty. Udostępniając administratorowi te dane, Zamawiający oświadcza,, że osoby te otrzymały przedstawione przez administratora informacje.</p>
+</li>
+<li>
+<p>Administrator przechowuje dane osobowe Zamawiającego jedynie przez okres niezbędny do realizacji umowy, w tym dochodzenia roszczeń oraz zachowania zgodności z wymaganiami wynikającymi z obowiązujących przepis&oacute;w, w tym przepis&oacute;w podatkowych, o ile doszło do zawarcia umowy w wyniku złożonej oferty.</p>
+</li>
+<li>
+<p>W przypadku, gdy nie doszło do zawarcia umowy, administrator przechowuje dane osobowe Zamawiającego do czasu upływu terminu ważności oferty, tj. terminu związania ofertą lub przez czas niezbędny prowadzenia negocjacji i kontaktu w związku z ofertą. Po upływie tych okres&oacute;w dane osobowe zostaną usunięte.</p>
+</li>
+<li>
+<p>Zamawiającemu przysługuje prawo do żądania od Administratora dostępu do przetwarzanych danych, uzyskania kopii danych, żądania sprostowania danych, gdy są nieprawidłowe lub niekompletne, a także w przypadkach wskazanych w Rozporządzeniu, prawo do wniesienia sprzeciwu wobec przetwarzania, żądania usunięcia danych osobowych, żądania ograniczenia przetwarzania oraz prawo do przenoszenia danych.</p>
+</li>
+<li>
+<p>Ponadto Zamawiającemu przysługuje prawo do wniesienia skargi do organu nadzorczego.</p>
+</li>
+<li>
+<p>Administrator korzysta częściowo z zewnętrznych dostawc&oacute;w usług, kt&oacute;rzy w imieniu administratora przetwarzają dane osobowe, np. dostawc&oacute;w usług hostingu, dostawc&oacute;w usług poczty elektronicznej, dostawcy usług związanych utrzymanie system&oacute;w informatycznych. Podmioty te stanowią odbiorc&oacute;w danych osobowych. Przekazanie danych może jednak służyć wyłącznie realizacji ich usługi.</p>
+</li>
+<li>
+<p>Administrator korzysta wyłącznie z usług takich podmiot&oacute;w, kt&oacute;re zapewniają wystarczające gwarancje ochrony praw os&oacute;b, kt&oacute;rych dane dotyczą. Odbiorcami danych osobowych mogą być także stosowne organy, kt&oacute;rym przepisy prawa wymagają podania tych danych. Administrator oświadcza, iż w odniesieniu do danych osobowych nie podejmuje zautomatyzowanych decyzji, w tym decyzji będących wynikiem profilowania w rozumieniu Rozporządzenia.</p>
+</li>
+<li>
+<p>Administrator przetwarza dane osobowe zgodnie z powszechnie obowiązującymi przepisami prawa w zakresie danych osobowych, w szczeg&oacute;lności zgodnie z przepisami Rozporządzenia.</p>
+</li>
+<li>
+<p>Administrator zapewnia należytą ochronę przetwarzanych danych osobowych, w tym stosuje odpowiednie środki techniczne i organizacyjne w celu zapewnienia bezpieczeństwa i odpowiedniej poufności i integralności danych osobowych, w tym ochrony przed nieuprawnionym dostępem do nich, przed niedozwolonym lub niezgodnym z prawem przetwarzaniem oraz przypadkową utratą, nieautoryzowaną zmianą, zniszczeniem lub uszkodzeniem.</p>
+</li>
+<li>
+<p>Wszelkie żądania, prośby, powiadomienia, zapytania odnoszące się do przetwarzania danych osobowych, mogą Państwo kierować mailowo na adres: kontakt@brandsmanago.pl lub pisemnie na adres: Brands Manago Sp. z o.o., ul. Żwirki i Wigury 2, 08-530 Dęblin.</p>
+</li>
+<li>
+<p>W przypadku, gdy w ramach realizacji Usługi Usługodawca uzyskuje dostęp do danych klient&oacute;w Zamawiającego w systemie IdoSell, dane te będą przetwarzane wyłącznie w celu realizacji funkcji remarketingowych w Google Ads oraz Meta Ads, zgodnie z zawartą między Stronami umową o powierzenie przetwarzania danych osobowych.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;9 Postanowienia końcowe</strong></p>
+<ol>
+<li>
+<p>W sprawach nieuregulowanych niniejszą umową mają zastosowanie przepisy ustawy z dnia 23 kwietnia 1964 r. Kodeks cywilny (tekst jedn. Dz. U. z 2014 r., poz. 121 ze zm.) oraz ustawy z dnia 04 lutego 1994 r. o prawie autorskim i prawach pokrewnych tj. z dnia 06 czerwca 2019 r. (Dz. U. z 2019 r. poz. 1231).</p>
+</li>
+<li>
+<p>Strony zobowiązują się rozstrzygać polubownie spory powstałe między nimi w związku z wykonaniem niniejszej Umowy. W razie niemożności polubownego załatwienia sporu, sądem właściwym do rozstrzygania spor&oacute;w między Stronami w związku z realizacją niniejszej Umowy, będzie sąd właściwy dla siedziby Wykonawcy.</p>
+</li>
+<li>
+<p>Zmiany umowy wymagają formy pisemnej pod rygorem nieważności.</p>
+</li>
+<li>
+<p>Umowę sporządzono w dw&oacute;ch jednobrzmiących egzemplarzach, po jednym dla każdej ze Stron.</p>
+</li>
+<li>
+<p>Wszystkie załączniki do niniejszej umowy stanowią jej integralną część.</p>
+</li>
+<li>
+<p>Niniejsza umowa może zostać rozwiązana w dowolnym momencie, zachowaniem miesięcznego okresu wypowiedzenia, na wniosek jednej ze Stron.</p>
+</li>
+</ol>
+<p style="text-align: center;"><strong>&sect;10 </strong><strong>Podsumowanie</strong></p>
+<ol>
+<li>
+<p>Oświadczam, że warunki niniejszej Umowy znam, rozumiem i akceptuję.</p>
+</li>
+</ol>
+<p>ZAŁĄCZNIKI: <br /> 1. ZAŁĄCZNIK NR 1 - SPECYFIKACJA PRZEDMIOTU ZAM&Oacute;WIENIA USŁUGI KONSULTINGOWEJ</p>
+<h4 style="text-align: center;"><strong>Akceptacja warunk&oacute;w zam&oacute;wienia</strong></h4>
+<table style="width: 100%;">
+<tbody>
+<tr>
+<td>
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p>[Data i Podpis Wykonawcy]</p>
+</td>
+<td>
+<p style="text-align: right;">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p style="text-align: right;">[Data i Podpis Zamawiającego]</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 style="text-align: center;"><strong>Specyfikacja przedmiotu zam&oacute;wienia</strong></h2>
+<table style="width: 100%;" border="1" cellspacing="0" cellpadding="7">
+<tbody>
+<tr>
+<td style="width: 30%;">
+<p><strong>ZAMAWIAJĄCY</strong></p>
+</td>
+<td style="width: 70%;">
+<p>{{umowy.name}} z siedzibą w {{addressStreet}} {{addressPostalCode}} {{addressCity}} {{addressState}} {{addressCountry}}, NIP: {{nip}}, REGON: {{regon}}, {{#if sad}}{{sad}},{{krs}},{{kapital}},{{/if}} </p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>USŁUGODAWACA</strong></p>
+</td>
+<td>
+<p>{{{naszaFirma}}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>OS. KONTAKTOWE PO STRONIE ZAMAWIAJĄCEGO</strong></p>
+</td>
+<td>
+<p>{{#each umowyOsobyKontaktowe}}{{this.name}} {{this.emailAddress}} {{this.phoneNumber}}{{#unless @last}}, {{/unless}}{{/each}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>MAIL ZAMAWIAJĄCEGO DO FAKTUR ELEKTRONICZNYCH</strong></p>
+</td>
+<td>
+<p>{{umowy.emailAddress}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>PRZEDMIOT ZAM&Oacute;WIENIA</strong></p>
+</td>
+<td>
+<p>{{rodzajUmowy}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>DATA ROZPOCZĘCIA</strong></p>
+</td>
+<td>
+<p>{{czasRozpoczecia}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>STAWKA RBH</strong></p>
+</td>
+<td>
+<p>{{stawkaRbh}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>WYNAGRODZENIE</strong></p>
+</td>
+<td>
+<p>{{{wynagrodzenie}}}</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>ZASADY PŁATNOŚCI</strong></p>
+</td>
+<td>
+<p>{{{zasadyPlatnosci}}}</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h4 style="text-align: center;"><strong>Akceptacja warunk&oacute;w zam&oacute;wienia</strong></h4>
+<table style="width: 100%;">
+<tbody>
+<tr>
+<td>
+<p>&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p>[Data i Podpis Wykonawcy]</p>
+</td>
+<td>
+<p style="text-align: right;">&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;.</p>
+<p style="text-align: right;">[Data i Podpis Zamawiającego]</p>
+</td>
+</tr>
+</tbody>
+</table>
