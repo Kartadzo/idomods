@@ -1,0 +1,171 @@
+<xsl:stylesheet
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ'"/>
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż'"/>
+    <!-- długoś opisu -->
+    <xsl:variable name='dlugosc_opisu'>1200</xsl:variable>
+    <xsl:variable name='dlugosc_opisu_z_parametrow'>1200</xsl:variable>
+    <!-- wymagany limit długości opisu po którego przekroczeniu nie zostanie dodany opis z parametrów  -->
+    <xsl:variable name='minimalna_dlugosc_opisu_dla_parametrow'>0</xsl:variable>
+
+    <xsl:template match="/">
+        <import>
+            <offers>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <offer>
+                            <!-- sku -->
+                            <xsl:variable name="panelName">
+                                <xsl:value-of select="@panel_name"/>
+                            </xsl:variable>
+
+                            <xsl:variable name="element_position">
+                                <xsl:value-of select="position()"/>
+                            </xsl:variable>
+                            <sku><xsl:value-of select="@code"/></sku>
+
+                            <!-- product id -->
+                            <!-- <xsl:choose> <xsl:when test="@iaiext:code_external">
+                            <product-id><xsl:value-of select="@iaiext:code_external"/></product-id>
+                            </xsl:when> <xsl:otherwise> <product-id> <xsl:value-of select="@code"/>
+                            </product-id> </xsl:otherwise> </xsl:choose> -->
+                            <!-- Ean -->
+
+                            <xsl:if test="@code_producer">
+                                <product-id><xsl:value-of select="@code_producer"/></product-id>
+                            </xsl:if>
+                            <product-id-type>EAN</product-id-type>
+                            <!-- cena -->
+
+                            <!-- Opis -->
+                            <!-- short descr -->
+                            <xsl:variable name="description">
+                                <xsl:value-of select="../../description/short_desc"/>
+                            </xsl:variable>
+                            <!-- Opisy -->
+                            <description>
+                                <xsl:value-of select="$description"></xsl:value-of>
+                            </description>
+                            <internal-description>
+                                <xsl:value-of select="$description"></xsl:value-of>
+                            </internal-description>
+
+                            <!-- Magazyny -->
+                            <xsl:variable name="stocks">
+                                <xsl:for-each select="stock">
+                                    <xsl:choose>
+                                        <xsl:when
+                                            test="(@id = '1' or @id = '0' or @id = '2' or @id = '3' or @id = '4' or @id = '5' or @id = '6' or @id = '7' or @id = '8' or @id = '9' or @id = '10') and @available_stock_quantity &gt; 0">
+                                            <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                                            <xsl:text>/</xsl:text>
+                                        </xsl:when>
+                                        <xsl:when
+                                            test="(@id = '1' or @id = '0' or @id = '2' or @id = '3' or @id = '4' or @id = '5' or @id = '6' or @id = '7' or @id = '8' or @id = '9' or @id = '10') and @available_stock_quantity = -1 ">
+                                            <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                                            <xsl:text>/</xsl:text>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                </xsl:for-each>
+                            </xsl:variable>
+
+                            <quantity>
+                                <xsl:choose>
+                                    <xsl:when test="contains($stocks,'-1') and string-length($stocks) &gt;0">
+                                        <xsl:text>999999</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="string-length($stocks) = 0">
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of
+                                            select="sum(stock[@id = '1' or @id = '0' or @id = '2' or @id = '3' or @id = '4' or @id = '5' or @id = '6' or @id = '7' or @id = '8' or @id = '9' or @id = '10']/@available_stock_quantity)"></xsl:value-of>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </quantity>
+
+                            <state>11</state>
+
+                            <xsl:choose>
+                                <xsl:when test="../../promotion/price/normal_retail_price/@gross">
+                                    <xsl:for-each
+                                        select="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size">
+                                        <xsl:choose>
+                                            <xsl:when test="$element_position = 1">
+                                                <xsl:if test="@id = '0'">
+                                                    <discount-price>
+                                                        <xsl:value-of select="@gross"/>
+                                                    </discount-price>
+                                                </xsl:if>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:if test="@panel_name = $panelName">
+                                                    <xsl:value-of select="@gross"/>
+                                                </xsl:if>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:for-each>
+                                    <price>
+                                        <xsl:value-of select="price/@gross"></xsl:value-of>
+                                    </price>
+                                </xsl:when>
+                                <xsl:when test="strikethrough_retail_price/@gross">
+                                    <discount-price>
+                                        <xsl:value-of select="price/@gross"></xsl:value-of>
+                                    </discount-price>
+                                    <price>
+                                        <xsl:value-of select="strikethrough_retail_price/@gross"></xsl:value-of>
+                                    </price>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <price>
+                                        <xsl:value-of select="price/@gross"></xsl:value-of>
+                                    </price>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </offer>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </offers>
+        </import>
+    </xsl:template>
+
+    <xsl:template name="strip-tags">
+        <xsl:param name="text" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, '&lt;') and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text, '&lt;')" />
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true"/>
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)" tunnel="true"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="tokenize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="'.'"/>
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:value-of select="substring-before($text, $delimiter)"/>
+                <xsl:value-of select="$delimiter"/>
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                    <xsl:with-param name="delimiter" select="$delimiter"/>
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

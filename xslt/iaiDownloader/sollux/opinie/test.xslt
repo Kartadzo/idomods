@@ -1,0 +1,55 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="iaiext:opinions/iaiext:opinion">
+                        <opinion>
+                            <xsl:element name="product_id">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="../../@id" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:element>
+                            <xsl:element name="product_name">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="translate(../../description/name/.,'.',',')" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:element>
+                            <xsl:element name="product_url">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="../../card/@url" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:element>
+                            <xsl:element name="review_autor_login">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="author_login" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:element>
+                            <xsl:element name="review_content">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="content" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:element>
+                            <xsl:element name="review_score">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="note" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:element>
+                            <xsl:element name="review_date_add">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="date_add" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:element>
+                        </opinion>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

@@ -1,0 +1,247 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2024-06-13 08:28:30",
+    "containerVersion": {
+        "path": "accounts/3736201937/containers/9546966/versions/49",
+        "accountId": "3736201937",
+        "containerId": "9546966",
+        "containerVersionId": "49",
+        "name": "PriceSpider v1.0",
+        "container": {
+            "path": "accounts/3736201937/containers/9546966",
+            "accountId": "3736201937",
+            "containerId": "9546966",
+            "name": "zooart.com.pl",
+            "publicId": "GTM-5SRZZFV",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1571523231283",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/3736201937/containers/9546966/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-5SRZZFV"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "3736201937",
+                "containerId": "9546966",
+                "tagId": "149",
+                "name": "PriceSpider - MARS - conversion",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n(function() {\nvar merchantId = 0000;\nvar cur = {{dlv - eventModel.currency}};\nvar concat = \"\";\nvar eanTmp = {{variable - kod_producenta}};\nvar pr = {{dlv - eventModel.items[]}}; for(var i=0;i<pr.length;i++) {\nconcat += \";mpn=\" + pr[i].mpn +\n\";ean=\" + eanTmp[i] +\n\";cur=\" + cur +\n\";pr=\" + pr[i].price +\n\";qty=\" + pr[i].quantity +\n\";vendor_name=\" + pr[i].item_brand +\n\";prod_name=\" + pr[i].item_name +\n\";proprietary_id=\" + pr[i].item_id;\n};\nvar src = \"direct\" + concat;\ndocument.write(\"<img src='https://gethatch.com/iceleads_rest/merch/\"+{{SpiderPrice - merchantId}} + \"/\"\n+ encodeURI(src) + \"' height='0' width='0' />\");\n})();\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1707303647472",
+                "firingTriggerId": [
+                    "89"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "3736201937",
+                "containerId": "9546966",
+                "triggerId": "89",
+                "name": "Event - purchase",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "purchase"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "GREATER",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.item_id}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1670233296530"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "3736201937",
+                "containerId": "9546966",
+                "variableId": "70",
+                "name": "dlv - eventModel.items.0.item_id",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "0"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.items.0.item_id"
+                    }
+                ],
+                "fingerprint": "1671438234220",
+                "formatValue": {}
+            },
+            {
+                "accountId": "3736201937",
+                "containerId": "9546966",
+                "variableId": "96",
+                "name": "dlv - eventModel.currency",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "PLN"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.currency"
+                    }
+                ],
+                "fingerprint": "1671438154667",
+                "formatValue": {}
+            },
+            {
+                "accountId": "3736201937",
+                "containerId": "9546966",
+                "variableId": "97",
+                "name": "dlv - eventModel.items[]",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "0"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.items"
+                    }
+                ],
+                "fingerprint": "1671438937154",
+                "formatValue": {}
+            },
+            {
+                "accountId": "3736201937",
+                "containerId": "9546966",
+                "variableId": "150",
+                "name": "variable - kod_producenta",
+                "type": "j",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "kod_producenta"
+                    }
+                ],
+                "fingerprint": "1704364483398",
+                "formatValue": {}
+            },
+            {
+                "accountId": "3736201937",
+                "containerId": "9546966",
+                "variableId": "151",
+                "name": "SpiderPrice - merchantId",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "100079"
+                    }
+                ],
+                "fingerprint": "1707303598438",
+                "formatValue": {}
+            }
+        ],
+        "fingerprint": "1707305226948",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/3736201937/containers/9546966/versions/49?apiLink=version"
+    }
+}

@@ -1,0 +1,544 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2025-10-22 14:05:44",
+    "containerVersion": {
+        "path": "accounts/4701291381/containers/11148004/versions/28",
+        "accountId": "4701291381",
+        "containerId": "11148004",
+        "containerVersionId": "28",
+        "name": "tiktok - zaawansowane dopasowanie",
+        "container": {
+            "path": "accounts/4701291381/containers/11148004",
+            "accountId": "4701291381",
+            "containerId": "11148004",
+            "name": "megadron.pl",
+            "publicId": "GTM-KTF7PZW",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1552563111951",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/4701291381/containers/11148004/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-KTF7PZW"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "159",
+                "name": "cHTML - TikTok - Add to Cart - add_to_cart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nttq.track('AddToCart', {\n  content_type: \"product\",\n  content_id: {{dlv - eventModel.items.0.item_id}},\n  content_category: \"{{dlv - eventModel.items.0.item_category}}\",\n  content_name: \"{{dlv - eventModel.items.0.item_name}}\",\n  currency: \"{{dlv - eventModel.currency}}\",\n  price: {{dlv - eventModel.items.0.price}},\n  quantity: {{dlv - eventModel.items.0.quantity}},\n  value: {{dlv - eventModel.value}}\n});\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287176041",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "160",
+                "name": "cHTML - TikTok - Place an Order - add_shipping_info & add_payment_info",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\n\nfor(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.content_type=\"product\"\n    contents_format.content_id=array_value_objects[i].item_id\n    contents_format.content_category=array_value_objects[i].item_category\n    contents_format.content_name=array_value_objects[i].item_name\n    contents_format.quantity=array_value_objects[i].quantity\n    contents_format.price=array_value_objects[i].price\n    array_ready_objects.push(contents_format)\n}\n\nttq.track('PlaceAnOrder', {\n    value: \"{{dlv - eventModel.value}}\",\n    currency: \"{{dlv - eventModel.currency}}\",\n    contents: array_ready_objects\n})\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287143243",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "162",
+                "name": "cHTML - TikTok - Add to Wishlist - add_to_wishlist",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nttq.track('AddToWishlist', {\n  content_type: \"product\",\n  content_id: {{dlv - eventModel.items.0.item_id}},\n  currency: \"{{dlv - eventModel.currency}}\",\n  value: {{dlv - eventModel.value}}\n});\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287170627",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "163",
+                "name": "cHTML - TikTok - Search - view_item_list",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nttq.track('Search', { \n    query: \"{{url - text}}\"\n})\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287137550",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "164",
+                "name": "cHTML - TikTok - InitiateCheckout - view_cart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\n\nfor(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.content_type=\"product\"\n    contents_format.content_id=array_value_objects[i].item_id\n    contents_format.content_category=array_value_objects[i].item_category\n    contents_format.content_name=array_value_objects[i].item_name\n    contents_format.quantity=array_value_objects[i].quantity\n    contents_format.price=array_value_objects[i].price\n    array_ready_objects.push(contents_format)\n}\n\nttq.track('InitiateCheckout', {\n    value: \"{{dlv - eventModel.value}}\",\n    currency: \"{{dlv - eventModel.currency}}\",\n    contents: array_ready_objects\n})\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287150055",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "165",
+                "name": "cHTML - TikTok - Add Payment Info - begin_checkout",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \n  var array_ready_objects=[];\n  var array_value_objects={{dlv - eventModel.items[]}}\n\n  for(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.content_type=\"product\"\n    contents_format.content_id=array_value_objects[i].item_id\n    contents_format.content_category=array_value_objects[i].item_category\n    contents_format.content_name=array_value_objects[i].item_name\n    contents_format.quantity=array_value_objects[i].quantity\n    contents_format.price=array_value_objects[i].price\n    array_ready_objects.push(contents_format)\n  }\n\n  ttq.track('AddPaymentInfo', {\n    value: {{dlv - eventModel.value}},\n    currency: \"{{dlv - eventModel.currency}}\",\n    contents: array_ready_objects\n  })\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287183479",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "166",
+                "name": "cHTML - TikTok - CompletePayment - purchase",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\n\nfor(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.content_type=\"product\"\n    contents_format.content_id=array_value_objects[i].item_id\n    contents_format.content_category=array_value_objects[i].item_category\n    contents_format.content_name=array_value_objects[i].item_name\n    contents_format.quantity=array_value_objects[i].quantity\n    contents_format.price=array_value_objects[i].price\n    array_ready_objects.push(contents_format)\n}\n\nttq.track('CompletePayment', {\n    value: \"{{dlv - eventModel.value}}\",\n    currency: \"{{dlv - eventModel.currency}}\",\n    contents: array_ready_objects\n})\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758035931169",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "167",
+                "name": "cHTML - TikTok - Complete Registration - sign_up",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nttq.track('CompleteRegistration')\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287162884",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "168",
+                "name": "cHTML - TikTok - Main Code",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "99999"
+                },
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- TikTok Pixel Code Start -->\n<script>\n!function (w, d, t) {\n  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=[\"page\",\"track\",\"identify\",\"instances\",\"debug\",\"on\",\"off\",\"once\",\"ready\",\"alias\",\"group\",\"enableCookie\",\"disableCookie\",\"holdConsent\",\"revokeConsent\",\"grantConsent\"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(\nvar e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r=\"https://analytics.tiktok.com/i18n/pixel/events.js\",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement(\"script\")\n;n.type=\"text/javascript\",n.async=!0,n.src=r+\"?sdkid=\"+e+\"&lib=\"+t;e=document.getElementsByTagName(\"script\")[0];e.parentNode.insertBefore(n,e)};\n\n\n  ttq.load('CLGAED3C77U0GRKV6ASG');\n  ttq.page();\n}(window, document, 'ttq');\n</script>\n<!-- TikTok Pixel Code End -->"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758183882575",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "tagId": "169",
+                "name": "cHTML - TikTok - View Content - view_item",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nttq.identify({\n    email: {{variable - user_email}},\n    phone_number: {{variable - user_phone}}\n})\n  \nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\n\nfor(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.content_type=\"product\"\n    contents_format.content_id=array_value_objects[i].item_id\n    contents_format.content_category=array_value_objects[i].item_category\n    contents_format.content_name=array_value_objects[i].item_name\n    contents_format.quantity=array_value_objects[i].quantity\n    contents_format.price=array_value_objects[i].price\n    array_ready_objects.push(contents_format)\n}\n\nttq.track('ViewContent', {\n    value: \"{{dlv - eventModel.value}}\",\n    currency: \"{{dlv - eventModel.currency}}\",\n    contents: array_ready_objects\n})\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1758287130771",
+                "parentFolderId": "158",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "personalization_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "functionality_storage"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "folder": [
+            {
+                "accountId": "4701291381",
+                "containerId": "11148004",
+                "folderId": "158",
+                "name": "TikTok",
+                "fingerprint": "1758034317710"
+            }
+        ],
+        "fingerprint": "1758287222566",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/4701291381/containers/11148004/versions/28?apiLink=version"
+    }
+}

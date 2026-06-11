@@ -1,0 +1,453 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" cdata-section-elements="title"></xsl:output>
+    <xsl:template match="/">
+        <offers version="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <xsl:for-each select="/offer/products/product">
+            
+
+                <xsl:choose>
+                    <xsl:when test="substring-before(description/name/., 'kg') != ''">
+                    <product>
+                        <xsl:attribute name="id">
+                            <xsl:text><![CDATA[99]]></xsl:text><xsl:value-of select="@id"/>
+                        </xsl:attribute>
+                        <!-- NAZWA TOWARU -->
+                        <title>
+                            <xsl:choose>
+                                <xsl:when test="description/iaiext:pricecomparator_name">
+                                    <title><xsl:value-of select="description/iaiext:pricecomparator_name/."/></title>
+                                </xsl:when>
+                                <xsl:otherwise>
+
+                                    <xsl:choose>
+                                        <xsl:when test="substring-before(description/name/., 'kg') = ''">
+                                            <xsl:value-of select="description/name/."/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="substring-before(description/name/., 'kg')"/>
+                                            <xsl:text><![CDATA[ kg]]></xsl:text>
+                                            <xsl:value-of select="substring-after(description/name/., 'kg')"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </title>
+                        <!-- KRÓTKI OPIS -->
+
+                        <xsl:for-each select="description">
+                            <description>
+                                <xsl:choose>
+                                    <xsl:when test="short_desc != ''">
+                                        <xsl:value-of select="short_desc/text()"/>
+                                    </xsl:when>
+                                    <xsl:otherwise/>
+                                </xsl:choose>
+                            </description>
+                        </xsl:for-each>
+
+                        <!-- CENA TOWARU  -->
+                        <xsl:choose>
+                            <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                        <price><xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:for-each select="iaiext:pricecomparator_price/iaiext:site[1]">
+                                            <price><xsl:value-of select="@gross"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                        </xsl:for-each>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:when test="iaiext:price/@gross">
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:price/@gross">
+                                        <price><xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="/@currency"/></price>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <price><xsl:value-of select="iaiext:price/@gross"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; /price/@gross">
+                                        <price><xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <price><xsl:value-of select="price/@gross"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                        <condition>new</condition>
+                        <stock>
+                            <xsl:choose>
+                                <xsl:when test="sizes/size[1]/stock/@available_stock_quantity &lt; 0 or not(number(sizes/size[1]/stock/@available_stock_quantity) = sizes/size[1]/stock/@available_stock_quantity)">999</xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="floor(sizes/size[1]/stock/@available_stock_quantity)"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </stock>
+                        <xsl:variable name="code_producer_variable">
+                             <xsl:value-of select="sizes/size[1]/@code_producer"/>
+                        </xsl:variable>
+                        <ean_code>
+                            <!-- <xsl:value-of select="substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1)))" /> -->
+                            
+							<!-- Gtin / MPN -->
+							<xsl:choose>
+								<!-- ISBN-10 / ISBN-13 -->
+								<xsl:when test="(@producer_code_standard = 'ISBN10' or @producer_code_standard = 'ISBN13') and (sizes/size[1]/@code_producer and not(sizes/size[1]/@code_producer=''))">
+    								<xsl:value-of select="sizes/size[1]/@code_producer"/>
+								</xsl:when>
+								<!-- EAN-8 / EAN-13 / EAN-14 -->
+								<xsl:when test="(@producer_code_standard = 'GTIN8' or @producer_code_standard = 'GTIN13' or @producer_code_standard = 'GTIN14') and (sizes/size[1]/@code_producer and not(sizes/size[1]/@code_producer=''))">
+									<xsl:value-of select="sizes/size[1]/@code_producer"/>
+								</xsl:when>
+								<!-- UPC-A / UPC-E -->
+								<xsl:when test="(@producer_code_standard = 'GTIN12' or @producer_code_standard = 'UPCE') and (sizes/size[1]/@code_producer and not(sizes/size[1]/@code_producer=''))">
+									<xsl:value-of select="sizes/size[1]/@code_producer"/>
+								</xsl:when>
+								<!-- INNY -->
+								<xsl:otherwise>
+                                       <xsl:value-of select="substring($code_producer_variable, string-length($code_producer_variable) - 12 + 1)" />
+								</xsl:otherwise>
+							</xsl:choose>
+                        </ean_code>
+
+                        <manufacturer_code>
+                            <xsl:value-of select="producer/@id"/>
+                        </manufacturer_code>
+
+                        <manufacturer>
+                            <xsl:value-of select="normalize-space(producer/@name)"/>
+                        </manufacturer>
+
+                        <model>0</model>
+
+                        <image_url>
+                            <xsl:value-of select="images/large/image[1]/@url"/>
+                        </image_url>
+
+                        <product_url>
+                            <xsl:value-of select="card/@url"/><xsl:text><![CDATA[?utm_source=kaina24&utm_medium=referral]]></xsl:text>
+                        </product_url>
+
+                        <purchase_url>
+                            <xsl:value-of select="card/@url"/><xsl:text><![CDATA[?utm_source=kaina24&utm_medium=referral]]></xsl:text>
+                        </purchase_url>
+
+                        <category_id>
+                            <xsl:value-of select="iaiext:navigation/iaiext:site/iaiext:menu[1]/iaiext:item[1]/@id"/>
+                        </category_id>
+
+                        <category_name>
+                            <xsl:value-of select="translate(iaiext:navigation/iaiext:site/iaiext:menu[1]/iaiext:item[1]/@textid, '&gt;', '\')"/>
+                        </category_name>
+
+                        <category_link>https://zookaralyste.lt/</category_link>
+
+                        <!-- KOSZTY DOSTAWY -->
+                        <xsl:choose>
+                            <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                        <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &gt; 13.99">
+                                            <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                        <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &lt; 14">
+                                            <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:for-each select="iaiext:pricecomparator_price/iaiext:site[1]">
+                                            <xsl:if test="@gross &gt; 13.99">
+                                                <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                            <xsl:if test="@gross &lt; 14">
+                                                <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                        </xsl:for-each>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:when test="iaiext:price/@gross">
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:price/@gross">
+                                        <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &gt; 13.99">
+                                            <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                        <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &lt; 14">
+                                            <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:if test="iaiext:price/@gross &gt; 13.99">
+                                            <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                        <xsl:if test="iaiext:price/@gross &lt; 14">
+                                            <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; price/@gross">
+                                        <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &gt; 13.99">
+                                            <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                        <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &lt; 14">
+                                            <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:if test="price/@gross &gt; 13.99">
+                                            <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                        <xsl:if test="price/@gross &lt; 14">
+                                            <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                        </xsl:if>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                        <!-- KONIEC: KOSZTY DOSTAWY -->
+
+                        <!-- CZAS DOSTAWYU -->
+                        <delivery_time>2</delivery_time>
+                        <!-- KONIEC: CZAS DOSTAWY -->
+                    </product>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <product>
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@id"/>
+                            </xsl:attribute>
+        
+                            <!-- NAZWA TOWARU -->
+        
+                            <xsl:choose>
+                                <xsl:when test="description/iaiext:pricecomparator_name">
+                                    <title><xsl:value-of select="description/iaiext:pricecomparator_name/."/></title>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <title>
+                                        <xsl:value-of select="description/name/."/></title>
+                                    <!--                        <xsl:choose>
+                                                                <xsl:when test="producer/@name=' Josera'">     
+                                                                    <PRODUCTNAME><xsl:value-of select="description/name/."/><![CDATA[ (Mit Rabatt-Code JOSERA-5 erhalten Sie 5% Rabatt!)]]></PRODUCTNAME>
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    <PRODUCTNAME><xsl:value-of select="description/name/."/><![CDATA[ (Rabatt für Stammkunden 3%)]]></PRODUCTNAME>
+                                                                </xsl:otherwise>
+                                                            </xsl:choose> -->
+                                </xsl:otherwise>
+                            </xsl:choose>
+        
+                            <!-- KRÓTKI OPIS -->
+        
+                            <xsl:for-each select="description">
+                                <description>
+                                    <xsl:choose>
+                                        <xsl:when test="short_desc != ''">
+                                            <xsl:value-of select="short_desc/text()"/>
+                                        </xsl:when>
+                                        <xsl:otherwise/>
+                                    </xsl:choose>
+                                </description>
+                            </xsl:for-each>
+        
+                            <!-- CENA TOWARU  -->
+                            <xsl:choose>
+                                <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                                    <xsl:choose>
+                                        <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                            <price><xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:for-each select="iaiext:pricecomparator_price/iaiext:site[1]">
+                                                <price><xsl:value-of select="@gross"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                            </xsl:for-each>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:when test="iaiext:price/@gross">
+                                    <xsl:choose>
+                                        <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:price/@gross">
+                                            <price><xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="/@currency"/></price>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <price><xsl:value-of select="iaiext:price/@gross"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:choose>
+                                        <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; /price/@gross">
+                                            <price><xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <price><xsl:value-of select="price/@gross"/><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/></price>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+        
+                                </xsl:otherwise>
+                            </xsl:choose>
+        
+                            <condition>new</condition>
+                            <stock>
+                                <xsl:choose>
+                                    <xsl:when test="sizes/size[1]/stock/@available_stock_quantity &lt; 0 or not(number(sizes/size[1]/stock/@available_stock_quantity) = sizes/size[1]/stock/@available_stock_quantity)">999</xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="floor(sizes/size[1]/stock/@available_stock_quantity)"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </stock>
+                            <xsl:variable name="code_producer_variable">
+                                <xsl:value-of select="sizes/size[1]/@code_producer"/>
+                            </xsl:variable>
+                            <ean_code>
+                                <!-- <xsl:value-of select="substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1)))" /> -->
+                                
+                                <!-- Gtin / MPN -->
+                                <xsl:choose>
+                                    <!-- ISBN-10 / ISBN-13 -->
+                                    <xsl:when test="(@producer_code_standard = 'ISBN10' or @producer_code_standard = 'ISBN13') and (sizes/size[1]/@code_producer and not(sizes/size[1]/@code_producer=''))">
+                                        <xsl:value-of select="sizes/size[1]/@code_producer"/>
+                                    </xsl:when>
+                                    <!-- EAN-8 / EAN-13 / EAN-14 -->
+                                    <xsl:when test="(@producer_code_standard = 'GTIN8' or @producer_code_standard = 'GTIN13' or @producer_code_standard = 'GTIN14') and (sizes/size[1]/@code_producer and not(sizes/size[1]/@code_producer=''))">
+                                        <xsl:value-of select="sizes/size[1]/@code_producer"/>
+                                    </xsl:when>
+                                    <!-- UPC-A / UPC-E -->
+                                    <xsl:when test="(@producer_code_standard = 'GTIN12' or @producer_code_standard = 'UPCE') and (sizes/size[1]/@code_producer and not(sizes/size[1]/@code_producer=''))">
+                                        <xsl:value-of select="sizes/size[1]/@code_producer"/>
+                                    </xsl:when>
+                                    <!-- INNY -->
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="substring($code_producer_variable, string-length($code_producer_variable) - 12 + 1)" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </ean_code>
+        
+                            <manufacturer_code>
+                                <xsl:value-of select="producer/@id"/>
+                            </manufacturer_code>
+        
+                            <manufacturer>
+                                <xsl:value-of select="producer/@name"/>
+                            </manufacturer>
+        
+                            <model>0</model>
+        
+                            <image_url>
+                                <xsl:value-of select="images/large/image[1]/@url"/>
+                            </image_url>
+        
+                            <product_url>
+                                <xsl:value-of select="substring-before(card/@url, '.feed')"/><xsl:text><![CDATA[?utm_source=kaina24&utm_medium=referral]]></xsl:text>
+                            </product_url>
+        
+                            <purchase_url>
+                                <xsl:value-of select="substring-before(card/@url, '.feed')"/><xsl:text><![CDATA[?utm_source=kaina24&utm_medium=referral]]></xsl:text>
+                            </purchase_url>
+        
+                            <category_id>
+                                <xsl:value-of select="iaiext:navigation/iaiext:site/iaiext:menu[1]/iaiext:item[1]/@id"/>
+                            </category_id>
+        
+                            <category_name>
+                                <xsl:value-of select="translate(iaiext:navigation/iaiext:site/iaiext:menu[1]/iaiext:item[1]/@textid, '&gt;', '\')"/>
+                            </category_name>
+        
+                            <category_link>https://zookaralyste.lt/</category_link>
+        
+                            <!-- KOSZTY DOSTAWY -->
+                            <xsl:choose>
+                                <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                                    <xsl:choose>
+                                        <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                            <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &gt; 13.99">
+                                                <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                            <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &lt; 14">
+                                                <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:for-each select="iaiext:pricecomparator_price/iaiext:site[1]">
+                                                <xsl:if test="@gross &gt; 13.99">
+                                                    <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                                </xsl:if>
+                                                <xsl:if test="@gross &lt; 14">
+                                                    <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                                </xsl:if>
+                                            </xsl:for-each>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:when test="iaiext:price/@gross">
+                                    <xsl:choose>
+                                        <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:price/@gross">
+                                            <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &gt; 13.99">
+                                                <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                            <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &lt; 14">
+                                                <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:if test="iaiext:price/@gross &gt; 13.99">
+                                                <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                            <xsl:if test="iaiext:price/@gross &lt; 14">
+                                                <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:choose>
+                                        <xsl:when test="iaiext:promotion/iaiext:price/@normal_price &gt; price/@gross">
+                                            <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &gt; 13.99">
+                                                <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                            <xsl:if test="iaiext:promotion/iaiext:price/@normal_price &lt; 14">
+                                                <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:if test="price/@gross &gt; 13.99">
+                                                <delivery_price><xsl:text><![CDATA[0.00]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                            <xsl:if test="price/@gross &lt; 14">
+                                                <delivery_price><xsl:text><![CDATA[2.50]]></xsl:text></delivery_price>
+                                            </xsl:if>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+        
+                                </xsl:otherwise>
+                            </xsl:choose>
+        
+                            <!-- KONIEC: KOSZTY DOSTAWY -->
+        
+                            <!-- CZAS DOSTAWYU -->
+                            <delivery_time>2</delivery_time>
+                            <!-- KONIEC: CZAS DOSTAWY -->
+        
+                        </product>
+                </xsl:otherwise>
+                </xsl:choose>
+         
+            </xsl:for-each>
+
+        </offers>
+    </xsl:template>
+</xsl:stylesheet>

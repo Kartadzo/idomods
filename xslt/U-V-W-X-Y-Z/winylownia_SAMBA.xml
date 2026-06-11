@@ -1,0 +1,369 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+    <xsl:template match="/">
+        <PRODUCTS>
+            <xsl:for-each select="/offer/products/product">
+
+                    <PRODUCT>
+                        <!-- Id produktu -->
+                        <PRODUCT_ID>
+                            <xsl:value-of select="@id"></xsl:value-of>
+                        </PRODUCT_ID><!-- Nazwa produkty -->
+                        <xsl:variable name="name">
+                            <xsl:value-of select="description/name"></xsl:value-of>
+                               <xsl:for-each select="parameters/parameter">
+                                    <xsl:if test="@iaiext:group_distinction = 'y' and @iaiext:hide ='n'">
+                                            <xsl:for-each select="value">
+                                                <xsl:text>, </xsl:text><xsl:value-of select="../@name"></xsl:value-of>: <xsl:value-of select="@name"></xsl:value-of>
+                                            </xsl:for-each>
+                                    </xsl:if>
+                               </xsl:for-each>
+                            </xsl:variable>
+                        <TITLE>
+                            <xsl:value-of select="$name"></xsl:value-of>
+                        </TITLE>
+                        <!-- price - zwykla cena det. brutto-->
+                        <PRICE>
+                            <xsl:value-of select="price/@gross"></xsl:value-of>
+                        </PRICE><!-- cena przed promocja -->
+                        <PRICE_BEFORE_DISCOUNT>
+                            <xsl:choose>
+                                <xsl:when test="iaiext:strikethrough_retail_price/@gross">
+                                    <xsl:value-of select="iaiext:strikethrough_retail_price/@gross"></xsl:value-of>
+                                </xsl:when>
+                                <xsl:when test="iaiext:promotion/iaiext:price/@normal_price">
+                                    <xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"></xsl:value-of>
+                                </xsl:when>
+                            </xsl:choose>
+              
+                        </PRICE_BEFORE_DISCOUNT><!-- Tworzenie linku do profilu -->
+                        <URL>
+                            <xsl:value-of select="substring-before(card/@url, '.feed')"/><xsl:text></xsl:text>
+                        </URL><!-- Zdjęcie -->
+                     
+                                    <IMAGE>
+                                        <xsl:value-of select="images/large/image/@url"></xsl:value-of>
+                                    </IMAGE>
+                              <!-- Krótki opis produktu -->
+                            <DESCRIPTION>
+                                <xsl:value-of select="description/short_desc"></xsl:value-of>
+                            </DESCRIPTION>
+                        <BRAND>
+                            <xsl:value-of select="producer/@name"></xsl:value-of>
+                        </BRAND>
+
+                        <!-- Magazyny -->
+                        <xsl:variable name="stocks">
+                            <xsl:for-each select="iaiext:sizes/iaiext:size/iaiext:stock">
+                            <xsl:choose>
+                                <xsl:when test="(@id = '1' or @id = '0' or @id ='2' or @id='3' or @id ='4' or @id='5' or @id='6' or @id='7' or @id='8' or @id='9') and @iaiext:available_stock_quantity &gt; 0">
+                                    <xsl:value-of select="@iaiext:available_stock_quantity"></xsl:value-of><xsl:text>/</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="(@id = '1' or @id = '0' or @id ='2' or @id='3' or @id ='4' or @id='5' or @id='6' or @id='7' or @id='8' or @id='9') and @iaiext:available_stock_quantity = -1 ">
+                                   <xsl:value-of select="@iaiext:available_stock_quantity"></xsl:value-of><xsl:text>/</xsl:text>
+                                </xsl:when>
+                            </xsl:choose>
+                           </xsl:for-each>
+                        </xsl:variable>
+                
+                        
+                        <STOCK>
+                            <xsl:choose>
+                                  
+                                <xsl:when test="contains($stocks,'-1') and string-length($stocks) &gt;0">
+                                    <xsl:text>999999</xsl:text>
+                                   </xsl:when>
+                               <xsl:when test="string-length($stocks) = 0">
+                                   <xsl:text>0</xsl:text>
+                               </xsl:when>
+                                <xsl:otherwise>
+                               
+                                       <xsl:value-of select="sum(iaiext:sizes/iaiext:size/iaiext:stock[@id = '1' or @id = '0' or @id ='2' or @id='3' or @id ='4' or @id='5' or @id='6' or @id='7' or @id='8' or @id='9']/@iaiext:available_stock_quantity)"></xsl:value-of>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                          
+                        </STOCK>
+
+                        <xsl:variable name="vHighest">
+                                  <xsl:value-of select="iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]/iaiext:item[1]/@iaiext:priority_menu"/>
+                        </xsl:variable>
+                        <PARAMETERS>
+                            <xsl:for-each select="iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]">
+                                <xsl:for-each select="iaiext:item">
+                                
+                                <xsl:choose>
+                                        <xsl:when test="position() > 1">
+                                            <xsl:call-template name="splitter">
+                                                <xsl:with-param name="remaining-string" select="@textid"/>
+                                                <xsl:with-param name="pattern" select="&apos;\&apos;"/>
+                                                <xsl:with-param name="wholestring" select="&apos;&apos;"/>
+                                            </xsl:call-template>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                 
+                                
+
+                                </xsl:for-each>
+                            </xsl:for-each><!-- Parametry -->
+
+
+                            <!-- Krótka data ważności -->
+                          
+
+
+                            <xsl:for-each select="parameters/parameter">
+                               
+                            <xsl:if test="@iaiext:hide = 'n'">
+                            <xsl:for-each select="value"><!-- Warunek dla parametrów które chcemy -->
+                                    <PARAMETER>
+                                        <NAME>
+                                            <xsl:value-of select="../@name"></xsl:value-of>
+                                        </NAME>
+                                        <VALUE>
+                                            <xsl:value-of select="@name"></xsl:value-of>
+                                        </VALUE>
+                                    </PARAMETER>
+                                </xsl:for-each>
+                        </xsl:if>
+
+                            </xsl:for-each>
+                        </PARAMETERS>
+                        <!-- <CATEGORYTEXT><xsl:value-of select="translate(iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]/iaiext:item[1]/@textid,&apos;\&apos;,&apos;|&apos;)"></xsl:value-of></CATEGORYTEXT> -->
+
+                        <xsl:variable name="category">
+                        <xsl:value-of select="translate(iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]/iaiext:item[1]/@textid,&apos;\&apos;,&apos;|&apos;)"></xsl:value-of>
+                        </xsl:variable>
+                        <CATEGORYTEXT>
+                            <xsl:value-of select="$category"></xsl:value-of>
+                        </CATEGORYTEXT>
+                        <!-- <xsl:for-each select="iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]">
+                            <xsl:for-each select="iaiext:item">
+                                <xsl:choose>
+                                    <xsl:when test="@iaiext:priority_menu = $vHighest">
+                                        <test><xsl:value-of select="$vHighest"></xsl:value-of></test>
+                                        <CATEGORYTEXT>
+                                            <xsl:value-of select="translate(@textid,&apos;\&apos;,&apos;|&apos;)"/>
+                                        </CATEGORYTEXT>
+                                    </xsl:when>
+                                    <xsl:otherwise></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </xsl:for-each> -->
+
+                        <xsl:for-each select="iaiext:sizes/iaiext:size">
+                        <xsl:choose>
+                            <xsl:when test="@id = 'uniw'"></xsl:when>
+                            <xsl:otherwise>
+                                <VARIANT>
+                                    <!-- Magazyny -->
+                                    <xsl:variable name="stocks2">
+                                        <xsl:for-each select="iaiext:stock">
+                                   
+                                        <xsl:choose>
+                                            <xsl:when test="(@id = '1' or @id = '0' or @id ='2' or @id='3' or @id ='4' or @id='5' or @id='6' or @id='7' or @id='8' or @id='9') and @iaiext:available_stock_quantity &gt; 0">
+                                                <xsl:value-of select="@iaiext:available_stock_quantity"></xsl:value-of><xsl:text>/</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(@id = '1' or @id = '0' or @id ='2' or @id='3' or @id ='4' or @id='5' or @id='6' or @id='7' or @id='8' or @id='9') and @iaiext:available_stock_quantity = -1 ">
+                                               <xsl:value-of select="@iaiext:available_stock_quantity"></xsl:value-of><xsl:text>/</xsl:text>
+                                            </xsl:when>
+                                        </xsl:choose>
+                                       </xsl:for-each>
+                                    </xsl:variable>
+                               
+                                    
+                                    <STOCK>
+                                        <xsl:choose>
+                                              
+                                            <xsl:when test="contains($stocks2,'-1') and string-length($stocks2) &gt;0">
+                                                <xsl:text>999999</xsl:text>
+                                               </xsl:when>
+                                           <xsl:when test="string-length($stocks2) = 0">
+                                               <xsl:text>0</xsl:text>
+                                           </xsl:when>
+                                            <xsl:otherwise>
+                                           
+                                                   <xsl:value-of select="sum(iaiext:stock[@id = '1' or @id = '0' or @id ='2' or @id='3' or @id ='4' or @id='5' or @id='6' or @id='7' or @id='8' or @id='9']/@iaiext:available_stock_quantity)"></xsl:value-of>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                      
+                                    </STOCK>
+
+                                    <!-- Id produktu -->
+                                    <PRODUCT_ID>
+                                        <xsl:value-of select="@code"></xsl:value-of>
+                                    </PRODUCT_ID><!-- Nazwa produkty -->
+                                    <xsl:variable name="name_variant">
+                                        <xsl:value-of select="../../description/name"></xsl:value-of>
+                                           <xsl:for-each select="../../parameters/parameter">
+                                                <xsl:if test="@iaiext:group_distinction = 'y' and @iaiext:hide ='n'">
+                                                        <xsl:for-each select="value">
+                                                            <xsl:text>, </xsl:text><xsl:value-of select="../@name"></xsl:value-of>: <xsl:value-of select="@name"></xsl:value-of>
+                                                        </xsl:for-each>
+                                                </xsl:if>
+                                           </xsl:for-each>
+                                        </xsl:variable>
+                                    <TITLE>
+                                        <xsl:value-of select="$name_variant"></xsl:value-of>
+                                    </TITLE><!-- price -->
+                                    <PRICE>
+                                        <xsl:value-of select="iaiext:price/@gross"></xsl:value-of>
+                                    </PRICE><!-- cena przed promocja -->
+                                    <PRICE_BEFORE_DISCOUNT>
+                             
+                                        <xsl:choose>
+                                            <xsl:when test="iaiext:strikethrough_retail_price/@gross">
+                                                <xsl:value-of select="iaiext:strikethrough_retail_price/@gross"></xsl:value-of>
+                                            </xsl:when>
+                                            <xsl:when test="../../iaiext:promotion/iaiext:price/@normal_price">
+                                                <xsl:value-of select="../../iaiext:promotion/iaiext:price/@normal_price"></xsl:value-of>
+                                            </xsl:when>
+                                        </xsl:choose>
+                          
+                                    </PRICE_BEFORE_DISCOUNT><!-- Tworzenie linku do profilu -->
+                                    <URL>
+                                        <xsl:value-of select="substring-before(../../card/@url, '.feed')"/><xsl:text></xsl:text><![CDATA[?selected_size=]]><xsl:value-of select="@id"></xsl:value-of>
+
+                              
+                                    </URL><!-- Zdjęcie -->
+                                 
+                                                <IMAGE>
+                                                    <xsl:value-of select="../../images/large/image/@url"></xsl:value-of>
+                                                </IMAGE>
+                                          <!-- Krótki opis produktu -->
+                                        <DESCRIPTION>
+                                            <xsl:value-of select="../../description/short_desc"></xsl:value-of>
+                                        </DESCRIPTION>
+                                    <BRAND>
+                                        <xsl:value-of select="../../producer/@name"></xsl:value-of>
+                                    </BRAND>
+                                    <xsl:variable name="vHighest2">
+                                      
+                                              <xsl:value-of select="../../iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]/iaiext:item[1]/@iaiext:priority_menu"/>
+                                       
+                                    </xsl:variable>
+                                    <PARAMETERS>
+                                        <xsl:for-each select="../../iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]">
+                                            <xsl:for-each select="iaiext:item">
+                                             
+                                                 <xsl:choose>
+                                                    <xsl:when test="position() > 1">
+                                                        <xsl:call-template name="splitter">
+                                                            <xsl:with-param name="remaining-string" select="@textid"/>
+                                                            <xsl:with-param name="pattern" select="&apos;\&apos;"/>
+                                                            <xsl:with-param name="wholestring" select="&apos;&apos;"/>
+                                                        </xsl:call-template>
+                                                    </xsl:when>
+                                                
+                                                </xsl:choose> 
+                                               
+                                            </xsl:for-each>
+                                        </xsl:for-each><!-- Parametry -->
+
+
+                                        <xsl:for-each select="../../parameters/parameter">
+                                        
+                                            <xsl:if test="@iaiext:hide = 'n'">
+                                            </xsl:if>
+                                            <xsl:for-each select="value"><!-- Warunek dla parametrów które chcemy -->
+                                                <PARAMETER>
+                                                    <NAME>
+                                                        <xsl:value-of select="../@name"></xsl:value-of>
+                                                    </NAME>
+                                                    <VALUE>
+                                                        <xsl:value-of select="@name"></xsl:value-of>
+                                                    </VALUE>
+                                                </PARAMETER>
+                                            </xsl:for-each>
+
+                                        </xsl:for-each>
+                                    </PARAMETERS>
+
+
+                                    <!-- <CATEGORYTEXT><xsl:value-of select="translate(../../iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]/iaiext:item[1]/@textid,&apos;\&apos;,&apos;|&apos;)"></xsl:value-of></CATEGORYTEXT> -->
+
+
+
+
+                <xsl:variable name="category2">
+                                    <xsl:value-of select="translate(../../iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]/iaiext:item[1]/@textid,&apos;\&apos;,&apos;|&apos;)"></xsl:value-of>
+                                    </xsl:variable>
+                                    <CATEGORYTEXT>
+                                        <xsl:value-of select="$category2"></xsl:value-of>
+                                    </CATEGORYTEXT>
+
+                                    <!-- <xsl:for-each select="../../iaiext:navigation/iaiext:site/iaiext:menu[@id = &apos;1&apos;]">
+                                        <xsl:for-each select="iaiext:item">
+                                            <xsl:choose>
+                                                <xsl:when test="@iaiext:priority_menu = $vHighest2">
+                                                    <CATEGORYTEXT>
+                                                        <xsl:value-of select="translate(@textid,&apos;\&apos;,&apos;|&apos;)"/>
+                                                    </CATEGORYTEXT>
+                                                </xsl:when>
+                                                <xsl:otherwise></xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:for-each>
+                                    </xsl:for-each> -->
+                                </VARIANT>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                           
+                        </xsl:for-each>
+
+
+                    </PRODUCT>
+
+            </xsl:for-each>
+        </PRODUCTS>
+    </xsl:template>
+    <xsl:template name="splitter">
+        <xsl:param name="remaining-string"/>
+        <xsl:param name="pattern"/>
+        <xsl:param name="wholestring"/>
+        <xsl:choose>
+            <xsl:when test="contains($remaining-string,$pattern)">
+                <PARAMETER>
+                    <NAME>Kategoria alternatywna</NAME>
+                    <VALUE>
+                        <xsl:choose>
+                            <xsl:when test="normalize-space($wholestring) = &apos;&apos;">
+                                <xsl:value-of select="concat(normalize-space($wholestring), normalize-space(substring-before($remaining-string,$pattern)))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="concat(normalize-space($wholestring),&apos; &gt; &apos;, normalize-space(substring-before($remaining-string,$pattern)))"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </VALUE>
+                </PARAMETER>
+                <xsl:choose>
+                    <xsl:when test="normalize-space($wholestring) = &apos;&apos;">
+                        <xsl:call-template name="splitter">
+                            <xsl:with-param name="remaining-string" select="substring-after($remaining-string,$pattern)"/>
+                            <xsl:with-param name="pattern" select="$pattern"/><!-- <xsl:with-param name="wholestring"  select="concat(normalize-space($wholestring), normalize-space(substring-before($remaining-string,$pattern)))"/> -->
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="splitter">
+                            <xsl:with-param name="remaining-string" select="substring-after($remaining-string,$pattern)"/>
+                            <xsl:with-param name="pattern" select="$pattern"/><!-- <xsl:with-param name="wholestring"  select="concat(normalize-space($wholestring),' > ', normalize-space(substring-before($remaining-string,$pattern)))"/> -->
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <PARAMETER>
+                    <NAME>Kategoria alternatywna</NAME>
+                    <VALUE>
+                        <xsl:choose>
+                            <xsl:when test="normalize-space($wholestring) = &apos;&apos;">
+                                <xsl:value-of select="concat(normalize-space($wholestring),normalize-space($remaining-string))"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="concat(normalize-space($wholestring),&apos; &gt; &apos;,normalize-space($remaining-string))"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </VALUE>
+                </PARAMETER>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

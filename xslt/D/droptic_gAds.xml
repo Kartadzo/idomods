@@ -1,0 +1,60 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>000000000</title>
+                <link>https://00000000/</link>
+                <description>Produkty ze sklepu https://00000000000/</description>
+                <xsl:for-each select="/offer/products/product[
+                price/@gross &gt; 0 and 
+                description/name/. != '']">
+                    <!-- Id towaru -->
+                    <xsl:choose>
+                        <xsl:when test="count(sizes/size) &lt; 1">
+                            <xsl:element name="item">
+                                <xsl:element name="g:id">
+                                    <xsl:value-of select="@id"/>
+                                </xsl:element>
+                                <xsl:call-template name="product"/>
+                                <xsl:call-template name="productSizeMatter"/>
+                            </xsl:element>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="sizes/size">
+                                <xsl:element name="item">
+                                    <xsl:choose>
+                                        <xsl:when test = "position() = 1">
+                                            <!-- Id produktu -->
+                                            <xsl:element name="g:id">
+                                                <xsl:value-of select="@code"/>
+                                            </xsl:element>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product"/>
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <!-- Id rozmiaru produktu -->
+                                            <xsl:element name="g:id">
+                                                <xsl:value-of select="@code"/>
+                                            </xsl:element>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product"/>
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:element>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

@@ -1,0 +1,88 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl">
+<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <xsl:template match="/">
+        <SHOP>
+            <xsl:for-each select="/offer/products/product">
+     
+                <xsl:for-each select="sizes/size">                    
+                    <SHOPITEM>
+
+                        <DELIVERY_DATE><xsl:value-of select="../../iaiext:delivery_time/@value"/></DELIVERY_DATE>
+
+                        <ITEM_ID>
+                            <xsl:value-of select="@code"/>
+                        </ITEM_ID>
+                        <PRODUCTNAME>
+                            <xsl:value-of select="../../description/name"/>
+                        </PRODUCTNAME>
+                        <DESCRIPTION>
+                            <xsl:value-of select="../../description/long_desc"/>
+                        </DESCRIPTION>
+
+                        <URL>
+                            <xsl:value-of select="../../card/@url"/>
+                        </URL>
+                        <xsl:variable name="vLowest">
+                            <xsl:for-each select="../../images/large/image/@iaiext:priority">
+                                <xsl:sort data-type="number"/>
+                                <xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
+                            </xsl:for-each>
+                        </xsl:variable>
+
+                        <xsl:for-each select="../../images/large/image">
+                            <xsl:choose>
+                                <xsl:when test="@iaiext:priority = number($vLowest)">
+                                    <IMGURL>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></IMGURL>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <IMGURL_ALTERNATIVE>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></IMGURL_ALTERNATIVE>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:for-each>
+                        <PRICE_VAT>
+                            <xsl:value-of select="price/@gross"/>
+                        </PRICE_VAT>
+
+                        <DELIVERY>
+                            <DELIVERY_ID>PPL</DELIVERY_ID>
+                            <DELIVERY_PRICE>0</DELIVERY_PRICE>
+                            <DELIVERY_PRICE_COD>100</DELIVERY_PRICE_COD>
+                        </DELIVERY>
+                        <MANUFACTURER>
+                            <xsl:value-of select="../../producer/@name"/>
+                        </MANUFACTURER>
+
+                        <!-- <CATEGORYTEXT>
+                            <xsl:value-of select="translate(../../category_idosell/@path,'>','|')"/>
+                        </CATEGORYTEXT> -->
+
+                        <CATEGORYTEXT>
+                            <xsl:value-of select="../../parameters/parameter[@id = 26]/value/@name"/>
+                        </CATEGORYTEXT>
+
+                        <EAN><xsl:value-of select="@code_producer"/></EAN>
+                        <PARAM>
+                            <PARAM_NAME>size</PARAM_NAME>
+                            <VAL><xsl:value-of select="@name"/></VAL>
+                        </PARAM>
+                        <PARAM>
+                            <PARAM_NAME>size_system</PARAM_NAME>
+                            <VAL>EU</VAL>
+                        </PARAM>
+                        <xsl:for-each select="../../parameters/parameter">
+                            <xsl:if test="@hide = 'n'">
+                                <xsl:for-each select="value">
+                                    <PARAM>
+                                        <PARAM_NAME><xsl:value-of select="../@name"></xsl:value-of> </PARAM_NAME>
+                                        <VAL><xsl:value-of select="@name"></xsl:value-of></VAL>
+                                    </PARAM>
+                                </xsl:for-each>
+                            </xsl:if> 
+                        </xsl:for-each>
+                    
+                    </SHOPITEM>
+                </xsl:for-each>
+            </xsl:for-each>
+        </SHOP>
+        </xsl:template>
+    </xsl:stylesheet>

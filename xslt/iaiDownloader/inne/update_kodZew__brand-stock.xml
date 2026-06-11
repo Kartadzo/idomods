@@ -1,0 +1,55 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    
+    <!-- długoś aktualizacji 
+    - zaczynamy od pierwszego, w razie powolnego aktualizowania produktów -> zmniejszyć -->
+    <xsl:variable name='pierwszy_produkt'>15186</xsl:variable>
+    <xsl:variable name='ostatni_produkt'>15300</xsl:variable>
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/items/item[
+                position() &gt;= $pierwszy_produkt and 
+                position() &lt;= $ostatni_produkt
+                ]">
+                    <item>
+                        <kodZewnetrzny>
+                            <xsl:text>swiatsypialni.net-</xsl:text>
+                            <xsl:value-of select="ean/."/>
+                        </kodZewnetrzny>
+                        <kodProducentaEAN>
+                            <xsl:value-of select="ean/."/>
+                        </kodProducentaEAN>
+                        <idMagazynu>0</idMagazynu>
+                        <available_quantity>
+                            <xsl:value-of select="available_quantity/."/>
+                        </available_quantity>
+                        <marka>
+                            <xsl:value-of select="parameters/param[name/. = 'Marka']/value"/>
+                        </marka>
+                        <cena_sugerowana_brutto>
+                            <xsl:value-of select="cena_sugerowana_brutto/."/>
+                        </cena_sugerowana_brutto>
+                        <zdjęcie_link_1>
+                            <xsl:value-of select="image_link_1/."/>
+                        </zdjęcie_link_1>
+                        <zdjęcie_link_2>
+                            <xsl:value-of select="image_link_2/."/>
+                        </zdjęcie_link_2>
+                        <zdjęcie_link_3>
+                            <xsl:value-of select="image_link_3/."/>
+                        </zdjęcie_link_3>
+                        <zdjęcie_link_4>
+                            <xsl:value-of select="image_link_4/."/>
+                        </zdjęcie_link_4>
+                    </item>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

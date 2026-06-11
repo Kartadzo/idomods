@@ -1,0 +1,120 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/produkty/produkt">
+                    <xsl:choose>
+                        <xsl:when test="warianty">
+                            <xsl:for-each select="warianty/wariant">
+                                <product id="{wariant_id}" kod_zewnetrzny="SC-{wariant_id}">
+                                    <kzs>
+                                        <xsl:value-of select="wariant_kzs"/>
+                                    </kzs>
+                                    <ean>
+                                        <xsl:value-of select="wariant_ean"/>
+                                    </ean>
+                                    <wariant_nazwa>
+                                        <xsl:value-of select="wariant_nazwa"/>
+                                    </wariant_nazwa>
+                                    <wariant_wartosc>
+                                        <xsl:value-of select="wariant_wartosc"/>
+                                    </wariant_wartosc>
+                                    <id_magazynu>
+                                        <xsl:text>0</xsl:text>
+                                    </id_magazynu>
+                                    <stan_magazynowy>
+                                        <xsl:value-of select="wariant_stan_magazynowy"/>
+                                    </stan_magazynowy>
+                                    <producent>
+                                        <xsl:value-of select="../../producent"/>
+                                    </producent>
+                                    <nazwa>
+                                        <xsl:value-of select="../../nazwa"/>
+                                    </nazwa>
+                                    <dlugi_opis>
+                                        <xsl:value-of select="../../dlugi_opis"/>
+                                    </dlugi_opis>
+                                    <kategoria>
+                                        <xsl:value-of select="../../kategoria"/>
+                                    </kategoria>
+                                    <waga>
+                                        <xsl:value-of select="../../waga"/>
+                                    </waga>
+                                    <cena_zewnetrzna>
+                                        <xsl:value-of select="../../cena_zewnetrzna"/>
+                                    </cena_zewnetrzna>
+                                    <cena_zewnetrzna_hurt>
+                                        <xsl:value-of select="../../cena_zewnetrzna_hurt"/>
+                                    </cena_zewnetrzna_hurt>
+                                    <vat>
+                                        <xsl:value-of select="../../vat"/>
+                                    </vat>
+                                    <zdjecia>
+                                        <xsl:for-each select="../../zdjecia/zdjecie">
+                                            <zdjecie pozycja="{@pozycja}">
+                                                <xsl:value-of select="."/>
+                                            </zdjecie>
+                                        </xsl:for-each>
+                                    </zdjecia>
+                                </product>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <product id="{id}" kod_zewnetrzny="SC-{id}">
+                                <kzs>
+                                    <xsl:value-of select="kzs"/>
+                                </kzs>
+                                <ean>
+                                    <xsl:value-of select="ean"/>
+                                </ean>
+                                <nazwa>
+                                    <xsl:value-of select="nazwa"/>
+                                </nazwa>
+                                <id_magazynu>
+                                    <xsl:text>0</xsl:text>
+                                </id_magazynu>
+                                <stan_magazynowy>
+                                    <xsl:value-of select="stan_magazynowy"/>
+                                </stan_magazynowy>
+                                <producent>
+                                    <xsl:value-of select="producent"/>
+                                </producent>
+                                <dlugi_opis>
+                                    <xsl:value-of select="dlugi_opis"/>
+                                </dlugi_opis>
+                                <kategoria>
+                                    <xsl:value-of select="kategoria"/>
+                                </kategoria>
+                                <waga>
+                                    <xsl:value-of select="waga"/>
+                                </waga>
+                                <cena_zewnetrzna>
+                                    <xsl:value-of select="cena_zewnetrzna"/>
+                                </cena_zewnetrzna>
+                                <cena_zewnetrzna_hurt>
+                                    <xsl:value-of select="cena_zewnetrzna_hurt"/>
+                                </cena_zewnetrzna_hurt>
+                                <vat>
+                                    <xsl:value-of select="vat"/>
+                                </vat>
+                                <zdjecia>
+                                    <xsl:for-each select="zdjecia/zdjecie">
+                                        <zdjecie pozycja="{@pozycja}">
+                                            <xsl:value-of select="."/>
+                                        </zdjecie>
+                                    </xsl:for-each>
+                                </zdjecia>
+                            </product>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

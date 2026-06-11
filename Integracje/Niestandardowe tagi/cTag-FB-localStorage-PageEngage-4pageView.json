@@ -1,0 +1,255 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2025-08-25 07:43:50",
+    "containerVersion": {
+        "path": "accounts/6309058601/containers/227781701/versions/0",
+        "accountId": "6309058601",
+        "containerId": "227781701",
+        "containerVersionId": "0",
+        "container": {
+            "path": "accounts/6309058601/containers/227781701",
+            "accountId": "6309058601",
+            "containerId": "227781701",
+            "name": "Feraverti.com",
+            "publicId": "GTM-K9BLLX8Q",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1755679198348",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6309058601/containers/227781701/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-K9BLLX8Q"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "tagId": "5",
+                "name": "cHTML - Licznik Page View",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "100"
+                },
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n(function() {\n  var key = \"counterPageView\";\n  var ttlMinutes = 360;\n  var expiry = Date.now() + ttlMinutes * 60 * 1000;\n  var raw = localStorage.getItem(key);\n  \n  if (!raw) {\n    // Pierwsze uruchomienie\n    var data = { value: 1, expiry: expiry };\n    localStorage.setItem(key, JSON.stringify(data));\n  } else {\n    try {\n      var data = JSON.parse(raw);\n      data.value = parseInt(data.value, 10) + 1;\n      data.expiry = expiry; // odśwież TTL\n      localStorage.setItem(key, JSON.stringify(data));\n    } catch(e) {\n      var data = { value: 1, expiry: expiry };\n      localStorage.setItem(key, JSON.stringify(data));\n    }\n  }\n})();\n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1756107715677",
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "parentFolderId": "14",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "tagId": "9",
+                "name": "cHTML - FB - clients engage",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "fbq('trackCustom', 'PageViewClientsEngage');"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1756107648668",
+                "firingTriggerId": [
+                    "10"
+                ],
+                "parentFolderId": "13",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "tagId": "11",
+                "name": "cHTML - Licznik Page View – check_expiry",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "1000"
+                },
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n(function() {\n  var key = \"counterPageView\";\n  var raw = localStorage.getItem(key);\n\n  if (raw) {\n    try {\n      var data = JSON.parse(raw);\n      if (Date.now() > data.expiry) {\n        localStorage.removeItem(key);\n      }\n    } catch(e) {\n      localStorage.removeItem(key);\n    }\n  }\n})();\n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1756107715650",
+                "firingTriggerId": [
+                    "12"
+                ],
+                "parentFolderId": "14",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "triggerId": "10",
+                "name": "PV - counterPageView - count=4",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{cjs - Licznik Page View}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "4"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1756107767353",
+                "parentFolderId": "15"
+            },
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "triggerId": "12",
+                "name": "Page View - check domain",
+                "type": "INIT",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Referrer}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "feraverti.com"
+                            },
+                            {
+                                "type": "BOOLEAN",
+                                "key": "negate",
+                                "value": "true"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1756107715677",
+                "parentFolderId": "14"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "variableId": "4",
+                "name": "cjs - Licznik Page View",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n  try {\n    var raw = localStorage.getItem('counterPageView');\n    if (!raw) return undefined;\n    var data = JSON.parse(raw);\n    return data.value; \n  } catch(e) {\n    return undefined;\n  }\n}\n"
+                    }
+                ],
+                "fingerprint": "1756107715678",
+                "parentFolderId": "14",
+                "formatValue": {}
+            }
+        ],
+        "folder": [
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "folderId": "13",
+                "name": "FB",
+                "fingerprint": "1756107640139"
+            },
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "folderId": "14",
+                "name": "Session Storage",
+                "fingerprint": "1756107688739"
+            },
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "folderId": "15",
+                "name": "cEvents",
+                "fingerprint": "1756107764475"
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6309058601",
+                "containerId": "227781701",
+                "type": "REFERRER",
+                "name": "Referrer"
+            }
+        ],
+        "fingerprint": "1756107830616",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6309058601/containers/227781701/versions/0?apiLink=version"
+    }
+}

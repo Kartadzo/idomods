@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl" version="1.0">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0"><!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>gearpro.pl</title>
+                <link>https://gearpro.pl/</link>
+                <description>Produkty ze sklepu https://gearpro.pl/</description>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <xsl:variable name="Kwota_wysylki">6.99</xsl:variable>
+                        <xsl:variable name="Darmowa_wysyłka_od">50.0</xsl:variable>
+                        <item>
+                            <g:id>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="@code"/>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:id>
+                            <xsl:choose>
+                                <xsl:when test="price/@gross &lt; $Darmowa_wysyłka_od">
+                                    <g:shipping>
+                                        <g:price>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="$Kwota_wysylki"></xsl:value-of>
+                                            <xsl:value-of select="../../@currency"/>
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:price>
+                                        <g:country>PL</g:country>
+                                    </g:shipping>
+                                </xsl:when>
+                                <xsl:when test="price/@gross = $Darmowa_wysyłka_od">
+                                    <g:shipping>
+                                        <g:price>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[0 </xsl:text>
+                                            <xsl:value-of select="../../@currency"/>
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:price>
+                                        <g:country>PL</g:country>
+                                    </g:shipping>
+                                </xsl:when>
+                                <xsl:when test="price/@gross &gt; $Darmowa_wysyłka_od">
+                                    <g:shipping>
+                                        <g:price>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[0</xsl:text>
+                                            <xsl:value-of select="../../@currency"/>
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:price>
+                                        <g:country>PL</g:country>
+                                    </g:shipping>
+                                </xsl:when>
+                            </xsl:choose>
+                            <xsl:for-each select="../../parameters/parameter">
+                                <xsl:if test="@name = &apos;Google Ads&apos;">
+                                    <xsl:for-each select="value">
+                                        <xsl:choose>
+                                            <xsl:when test="@name = 0">
+                                                <g:custom_label_0>0</g:custom_label_0>
+                                            </xsl:when>
+                                            <xsl:when test="@name = 1">
+                                                <g:custom_label_0>1</g:custom_label_0>
+                                            </xsl:when>
+                                            <xsl:when test="@name = 2">
+                                                <g:custom_label_0>2</g:custom_label_0>
+                                            </xsl:when>
+                                            <xsl:when test="@name = 3">
+                                                <g:custom_label_0>3</g:custom_label_0>
+                                            </xsl:when>
+                                            <xsl:when test="@name = 4">
+                                                <g:custom_label_0>4</g:custom_label_0>
+                                            </xsl:when>
+                                            <xsl:when test="@name = 5">
+                                                <g:custom_label_0>5</g:custom_label_0>
+                                            </xsl:when>
+                                        </xsl:choose>
+                                    </xsl:for-each>
+                                </xsl:if>
+                            </xsl:for-each><!-- description -->
+                           
+
+                            <!-- opis -->
+                            <xsl:variable name="returned_value_without_html">
+                                <xsl:call-template name="strip-tags">
+                                    <xsl:with-param name="text" select="../../description/long_desc" tunnel="yes"/>
+                                </xsl:call-template>
+                            </xsl:variable>
+                            <xsl:variable name="returned_value_300_char" select="substring(normalize-space($returned_value_without_html),1,300)"></xsl:variable>
+                            <xsl:variable name="value_cut">
+                                <xsl:call-template name="tokenize">
+                                    <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,300)"/>
+                                </xsl:call-template>
+                            </xsl:variable>
+                            <xsl:variable name="last_char" select="substring($returned_value_300_char, string-length($returned_value_300_char), 1)"></xsl:variable>
+                            <g:description>
+                  
+                            <xsl:choose>
+                                <xsl:when test="../../description/short_desc =''">
+
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="../../description/short_desc"></xsl:value-of>
+                                    <xsl:text> </xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                                <xsl:value-of select="$returned_value_300_char"></xsl:value-of>
+                            
+                            </g:description>
+
+
+                        </item><!--Custom labels  -->
+                    </xsl:for-each>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+    <xsl:template name="strip-tags">
+        <xsl:param name="text"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, &apos;&lt;&apos;)">
+                <xsl:value-of select="substring-before($text, &apos;&lt;&apos;)"/>
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), &apos;&gt;&apos;)"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="tokenize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="&apos;.&apos;"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

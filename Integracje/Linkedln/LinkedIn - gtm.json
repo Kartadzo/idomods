@@ -1,0 +1,406 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2023-09-15 09:56:16",
+    "containerVersion": {
+        "path": "accounts/6005946011/containers/58923175/versions/18",
+        "accountId": "6005946011",
+        "containerId": "58923175",
+        "containerVersionId": "18",
+        "name": "LinkedIn + GA4",
+        "description": "zaktualizowano dodatkowo wyzwalacz dla strony kontaktowej.",
+        "container": {
+            "path": "accounts/6005946011/containers/58923175",
+            "accountId": "6005946011",
+            "containerId": "58923175",
+            "name": "BrandsManago.pl",
+            "publicId": "GTM-TTD5STZ",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1644677757657",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6005946011/containers/58923175/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-TTD5STZ"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "52",
+                "name": "Linkedin Insight - konfiguracja",
+                "type": "bzi",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "id",
+                        "value": "{{linkedin - Insight Tag}}"
+                    }
+                ],
+                "fingerprint": "1694766615356",
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "53",
+                "name": "linkedin - klik - mail",
+                "type": "cvt_58923175_11",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customUrl"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "partnerId",
+                        "value": "{{linkedin - Insight Tag}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "conversionId",
+                        "value": "14130858"
+                    }
+                ],
+                "fingerprint": "1694769575225",
+                "firingTriggerId": [
+                    "46"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "54",
+                "name": "linkedin - klik - nr. telefonu",
+                "type": "cvt_58923175_11",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customUrl"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "partnerId",
+                        "value": "{{linkedin - Insight Tag}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "conversionId",
+                        "value": "14130866"
+                    }
+                ],
+                "fingerprint": "1694769566617",
+                "firingTriggerId": [
+                    "48"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "55",
+                "name": "linkedin - klik - formularz kontaktowy",
+                "type": "cvt_58923175_11",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customUrl"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "partnerId",
+                        "value": "{{linkedin - Insight Tag}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "conversionId",
+                        "value": "14130874"
+                    }
+                ],
+                "fingerprint": "1694769966698",
+                "firingTriggerId": [
+                    "17"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "tagId": "56",
+                "name": "linkedin - pageView - kontakt",
+                "type": "cvt_58923175_11",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "customUrl"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "partnerId",
+                        "value": "{{linkedin - Insight Tag}}"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "conversionId",
+                        "value": "14130882"
+                    }
+                ],
+                "fingerprint": "1694770013966",
+                "firingTriggerId": [
+                    "42"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "17",
+                "name": "cEvent - kontakt_stopka - gtm4wp.contactForm7MailSent",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "gtm4wp.contactForm7MailSent"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1662414424870"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "42",
+                "name": "Event - ads_conversion_Contact_Us_1",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "gtm.js"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "/kontakt/"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1694771391460"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "46",
+                "name": "click link - mail",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "STARTS_WITH",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "mailto:"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "checkValidation": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE",
+                    "value": "2000"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1693303261247"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "triggerId": "48",
+                "name": "click link - telefon",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "STARTS_WITH",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "tel:"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "checkValidation": {
+                    "type": "BOOLEAN",
+                    "value": "false"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE",
+                    "value": "2000"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1693303492967"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "variableId": "51",
+                "name": "linkedin - Insight Tag",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "5303634"
+                    }
+                ],
+                "fingerprint": "1694681423911",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "type": "CLICK_URL",
+                "name": "Click URL"
+            }
+        ],
+        "fingerprint": "1694771662598",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6005946011/containers/58923175/versions/18?apiLink=version",
+        "customTemplate": [
+            {
+                "accountId": "6005946011",
+                "containerId": "58923175",
+                "templateId": "11",
+                "name": "LinkedIn InsightTag 2.0",
+                "fingerprint": "1657480831949",
+                "templateData": "___TERMS_OF_SERVICE___\n\nBy creating or modifying this file you agree to Google Tag Manager's Community\nTemplate Gallery Developer Terms of Service available at\nhttps://developers.google.com/tag-manager/gallery-tos (or such other URL as\nGoogle may provide), as modified from time to time.\n\n\n___INFO___\n\n{\n  \"type\": \"TAG\",\n  \"id\": \"cvt_temp_public_id\",\n  \"version\": 1,\n  \"securityGroups\": [],\n  \"displayName\": \"LinkedIn InsightTag 2.0\",\n  \"brand\": {\n    \"id\": \"github.com_linkedin\",\n    \"displayName\": \"linkedin\",\n    \"thumbnail\": \"data:image/png;base64,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\\u003d\\u003d\"\n  },\n  \"description\": \"LinkedIn’s official updated tag template allows for both page-level and event-level tracking via easily configurable options.\",\n  \"containerContexts\": [\n    \"WEB\"\n  ]\n}\n\n\n___TEMPLATE_PARAMETERS___\n\n[\n  {\n    \"type\": \"TEXT\",\n    \"name\": \"partnerId\",\n    \"displayName\": \"Partner ID / Insight Tag ID\",\n    \"simpleValueType\": true,\n    \"notSetText\": \"Enter one or more Partner IDs separated by comma\",\n    \"valueValidators\": [\n      {\n        \"type\": \"REGEX\",\n        \"args\": [\n          \"^\\\\d+(,\\\\s?\\\\d+)*$\"\n        ]\n      }\n    ]\n  },\n  {\n    \"type\": \"TEXT\",\n    \"name\": \"conversionId\",\n    \"displayName\": \"Conversion IDs (max. 3)\",\n    \"simpleValueType\": true,\n    \"help\": \"Enter 1-3 conversion ids separated by comma. Only first 3 conversion ids will be sent. This field is optional\",\n    \"canBeEmptyString\": true,\n    \"valueValidators\": [\n      {\n        \"type\": \"REGEX\",\n        \"args\": [\n          \"^\\\\s*|\\\\d+(,\\\\s?\\\\d+)*$\"\n        ]\n      }\n    ]\n  },\n  {\n    \"type\": \"TEXT\",\n    \"name\": \"customUrl\",\n    \"displayName\": \"Custom URL override\",\n    \"simpleValueType\": true,\n    \"help\": \"(Override) This is different than Match rules. Enter a URL only if you were specifically provided one by LinkedIn team to override.\",\n    \"canBeEmptyString\": true\n  }\n]\n\n\n___SANDBOXED_JS_FOR_WEB_TEMPLATE___\n\nconst getUrl = require('getUrl');\nconst log = require('logToConsole');\nconst sendPixel = require('sendPixel');\nconst assertThat = require('assertThat');\nconst setInWindow = require('setInWindow');\nconst getTimestamp = require('getTimestamp');\nconst injectScript = require('injectScript');\nconst copyFromWindow = require('copyFromWindow');\nconst encodeUriComponent = require('encodeUriComponent');\n\n/**\n * Globals\n */\nconst conversionIds = data.conversionId ?\n      data.conversionId.split(',').slice(0,3).map(id => id.trim())\n      : '';\nconst allPids = [];\nconst pageUrl = data.customUrl ? data.customUrl : getUrl();\n\n/**\n * Checks presence of LinkedIn Insight tag code.\n */\nconst isInsightTagAPIAvailable = () => typeof copyFromWindow('lintrk') === 'function';\n\n/**\n * Reads and Sets in global namespace all applicable PIDs on the page\n */\nconst setAllPids = (function() {\n  const partnerIds = {};\n  const bizoId = copyFromWindow('_bizo_data_partner_id');\n  const bizoIds = copyFromWindow('_bizo_data_partner_ids') || [];\n  const linkedInPartnerId = copyFromWindow('_linkedin_data_partner_id');\n  const linkedInPartnerIds = copyFromWindow('_linkedin_data_partner_ids') || [];\n\n  const addPid = pid => {\n    if (pid && !partnerIds[pid]) {\n      partnerIds[pid] = true;\n      allPids.push(pid);\n    }\n  };\n\n  // add the partner ids set via this GTM installation\n  const inputPids = data.partnerId.split(',');\n  inputPids.forEach(id => addPid(id.trim()));\n\n  // Add all PIDs that may have updated the global, helps skipping following adds.\n  addPid(linkedInPartnerId);\n  linkedInPartnerIds.forEach(id => addPid(id));\n\n  // add other PIDs from page\n  addPid(bizoId);\n  bizoIds.forEach(id => addPid(id));\n\n  // Update the main namespace for future tracking by InsightTag to include the partner IDs\n  setInWindow('_linkedin_data_partner_ids', allPids, true);\n}());\n\n/**\n * Generate query params only for GTM based tracking\n */\nfunction generateQueryParamsForGTM(cid) {\n  const encodedPIDs = encodeUriComponent(allPids.join(','));\n\n  let result = 'pid=' + encodedPIDs;\n  result += '&tm=gtmv2';\n  result += cid ? '&conversionId=' + encodeUriComponent(cid) : '';\n  result += '&url=' + encodeUriComponent(pageUrl);\n  result += '&v=2&fmt=js&time=' + getTimestamp();\n  return result;\n}\n\n// Success call back to InsightTag injection\nfunction didInjectInsightTag() {\n  trackByInsightTag();\n  data.gtmOnSuccess();\n}\n\n// Callback to plain GTM when InsightTag code failed to inject\nfunction didFailInsightTag() {\n  trackByPlainGTM();\n  data.gtmOnFailure();\n}\n\nfunction trackByPlainGTM() {\n  if (conversionIds.length && conversionIds.length <= 3) {\n    conversionIds.forEach(id => {\n      const trackingUrl = 'https://px.ads.linkedin.com/collect?' + generateQueryParamsForGTM(id);\n      sendPixel(trackingUrl, data.gtmOnSuccess, data.gtmOnFailure);\n    });\n  } else {\n    sendPixel('https://px.ads.linkedin.com/collect?' + generateQueryParamsForGTM(), data.gtmOnSuccess, data.gtmOnFailure);\n  }\n}\n\n/**\n * Download LinkedIn Insight tag core code if `window.lintrk` is not available\n * Also ensure it doesn’t default fire.\n */\nfunction trackByInsightTag() {\n  if (isInsightTagAPIAvailable()) {\n    const lintrk = copyFromWindow('lintrk');\n    const options = { tmsource: 'gtmv2' };\n    options.conversion_url = pageUrl;\n\n    if (conversionIds.length && conversionIds.length <= 3) {\n      conversionIds.forEach(id => {\n        options.conversion_id = id;\n        lintrk('track', options);\n      });\n    } else {\n      lintrk('track', options);\n    }\n  } else {\n    setInWindow('_already_called_lintrk', true, true);\n    injectScript('https://snap.licdn.com/li.lms-analytics/insight.min.js', didInjectInsightTag, didFailInsightTag);\n  }\n}\n\n/**\n * Enable `trackByPlainGTM` for test purposes, and disable `trackByInsightTag`.\n * trackByPlainGTM();\n */\ntrackByInsightTag();\n\n\n___WEB_PERMISSIONS___\n\n[\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"logging\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"environments\",\n          \"value\": {\n            \"type\": 1,\n            \"string\": \"debug\"\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"send_pixel\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"allowedUrls\",\n          \"value\": {\n            \"type\": 1,\n            \"string\": \"specific\"\n          }\n        },\n        {\n          \"key\": \"urls\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 1,\n                \"string\": \"https://*.linkedin.com/*\"\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"access_globals\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"keys\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"_bizo_data_partner_id\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"_bizo_data_partner_ids\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"_linkedin_data_partner_id\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"_linkedin_data_partner_ids\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"lintrk\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  }\n                ]\n              },\n              {\n                \"type\": 3,\n                \"mapKey\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"key\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"read\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"write\"\n                  },\n                  {\n                    \"type\": 1,\n                    \"string\": \"execute\"\n                  }\n                ],\n                \"mapValue\": [\n                  {\n                    \"type\": 1,\n                    \"string\": \"_already_called_lintrk\"\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": true\n                  },\n                  {\n                    \"type\": 8,\n                    \"boolean\": false\n                  }\n                ]\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"get_url\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"urlParts\",\n          \"value\": {\n            \"type\": 1,\n            \"string\": \"any\"\n          }\n        },\n        {\n          \"key\": \"queriesAllowed\",\n          \"value\": {\n            \"type\": 1,\n            \"string\": \"any\"\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  },\n  {\n    \"instance\": {\n      \"key\": {\n        \"publicId\": \"inject_script\",\n        \"versionId\": \"1\"\n      },\n      \"param\": [\n        {\n          \"key\": \"urls\",\n          \"value\": {\n            \"type\": 2,\n            \"listItem\": [\n              {\n                \"type\": 1,\n                \"string\": \"https://snap.licdn.com/*\"\n              }\n            ]\n          }\n        }\n      ]\n    },\n    \"clientAnnotations\": {\n      \"isEditedByUser\": true\n    },\n    \"isRequired\": true\n  }\n]\n\n\n___TESTS___\n\nscenarios:\n- name: No API - Test sendPixel with custom URL and single conversionId\n  code: |-\n    const mockData = {\n      partnerId: '123',\n      customUrl: 'google.com',\n      conversionId: '12576358'\n    };\n\n    mock('sendPixel', (url, onSuccess, onFailure) => {\n      assertThat(url).contains('https://px.ads.linkedin.com/collect?pid=123&tm=gtmv2&conversionId=12576358&url=google.com&v=2&fmt=js&time=');\n      onSuccess();\n    });\n\n    runCode(mockData);\n    assertApi('gtmOnSuccess').wasCalled();\n- name: No API - Test sendPixel with page URL and no conversionId\n  code: |-\n    const encodeUriComponent = require('encodeUriComponent');\n    const getUrl = require('getUrl');\n    const mockData = { partnerId: '123' };\n\n    mock('sendPixel', (url, onSuccess, onFailure) => {\n      assertThat(url).contains('https://px.ads.linkedin.com/collect?pid=123&tm=gtmv2&url=' + encodeUriComponent(getUrl()) + '&v=2&fmt=js&time=');\n      onSuccess();\n    });\n\n    runCode(mockData);\n    assertApi('gtmOnSuccess').wasCalled();\n- name: With API - test script injection\n  code: |-\n    const getUrl = require('getUrl');\n    const mockData = { partnerId: '123' };\n    const copyFromWindow = require('copyFromWindow');\n\n    mock('injectScript', (url) => {\n      assertThat(url, 'correct script download URL is called').isEqualTo('https://snap.licdn.com/li.lms-analytics/insight.min.js');\n    });\n\n    runCode(mockData);\n- name: No API - Multiple partnerIds and conversion ids\n  code: \"const mockData = {\\n  partnerId: '123,456, 789, 299',\\n  customUrl: 'google.com',\\n\\\n    \\  conversionId: '1, 2, 3, 4, 5'\\n};\\nconst callStack = [];\\nmock('sendPixel',\\\n    \\ (url, onSuccess, onFailure) => {\\n  callStack.push(url);\\n  \\n  // Call success\\\n    \\ only once when stack is full\\n  if (callStack.length === 3) {\\n    onSuccess();\\n\\\n    \\  }\\n});\\n\\nrunCode(mockData);\\n\\nassertThat(callStack.length).isEqualTo(3);\\n\\\n    \\nassertThat(callStack[0]).contains('https://px.ads.linkedin.com/collect?pid=123%2C456%2C789%2C299&tm=gtmv2&conversionId=1&url=google.com&v=2&fmt=js&time=');\\n\\\n    \\nassertThat(callStack[1]).contains('https://px.ads.linkedin.com/collect?pid=123%2C456%2C789%2C299&tm=gtmv2&conversionId=2&url=google.com&v=2&fmt=js&time=');\\n\\\n    \\nassertThat(callStack[2]).contains('https://px.ads.linkedin.com/collect?pid=123%2C456%2C789%2C299&tm=gtmv2&conversionId=3&url=google.com&v=2&fmt=js&time=');\\n\\\n    \\nassertApi('gtmOnSuccess').wasCalled();\"\n\n\n___NOTES___\n\nCreated on 11/17/2021, 11:34:21 AM\n\n\n",
+                "galleryReference": {
+                    "host": "github.com",
+                    "owner": "linkedin",
+                    "repository": "linkedin-gtm-community-template",
+                    "version": "61d7d7cf207c62b05d8e3595288c4bccf8517dab",
+                    "signature": "0fe43a81ecc2a69b3b57dbf1a2315c8422d366aa083164628b26e3680ae7ccb1"
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,73 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl">
+<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+<xsl:template match="/">
+<rss xmlns:g="http://base.google.com/ns/1.0"  version="2.0">
+    <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+    <channel>
+        <title>estetic-home.pl</title>
+        <link>https://estetic-home.pl/</link>
+	    <description>Produkty ze sklepu https://estetic-home.pl/</description>
+        <xsl:for-each select="/offer/products/product">
+            <xsl:for-each select="sizes/size">
+                <item>  
+                    <!--Unikalny identyfikator produktu  -->
+                    <g:id> 
+                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>    
+                        <xsl:value-of select="@code"></xsl:value-of>   
+                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                    </g:id> 
+                    <g:custom_label_0>
+                        <xsl:choose>
+                            <xsl:when test="../../price/@gross &lt;= 5">
+                                <xsl:text disable-output-escaping="yes">0-5 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 5 and ../../price/@gross &lt;= 10">
+                                <xsl:text disable-output-escaping="yes">5-10 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 10 and ../../price/@gross &lt;= 20">
+                                <xsl:text disable-output-escaping="yes">10-20 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 20 and ../../price/@gross &lt;= 30">
+                                <xsl:text disable-output-escaping="yes">20-30 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 30 and ../../price/@gross &lt;= 40">
+                                <xsl:text disable-output-escaping="yes">30-40 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 40 and ../../price/@gross &lt;= 50">
+                                <xsl:text disable-output-escaping="yes">40-50 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 50 and ../../price/@gross &lt;= 60">
+                                <xsl:text disable-output-escaping="yes">50-60 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 60 and ../../price/@gross &lt;= 70">
+                                <xsl:text disable-output-escaping="yes">60-70 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 70 and ../../price/@gross &lt;= 80">
+                                <xsl:text disable-output-escaping="yes">70-80 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 90 and ../../price/@gross &lt;= 100">
+                                <xsl:text disable-output-escaping="yes">90-100 </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                            <xsl:when test="../../price/@gross &gt; 100">
+                                <xsl:text disable-output-escaping="yes">100- </xsl:text>
+                                <xsl:value-of select="../../@currency"></xsl:value-of>
+                            </xsl:when>
+                        </xsl:choose>
+                    </g:custom_label_0>
+                </item>
+            </xsl:for-each>
+        </xsl:for-each>
+    </channel>
+</rss>
+</xsl:template>
+</xsl:stylesheet>

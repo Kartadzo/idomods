@@ -1,0 +1,55 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:template match="/">
+    <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <channel>
+            <xsl:for-each select="/products/product">
+                <product addedDate="{@addedDate}" lastUpdate="{@lastUpdate}">
+                    <ean><xsl:value-of select="ean"/></ean>
+                    <kod_zewnetrzny_dostawcy><xsl:text>PS-</xsl:text><xsl:value-of select="id"/><xsl:text>-0</xsl:text></kod_zewnetrzny_dostawcy>
+                    <sku><xsl:value-of select="sku"/></sku>
+                    <name><xsl:value-of select="name"/></name>
+                    <desc><xsl:value-of select="desc"/></desc>
+                    <url><xsl:value-of select="url"/></url>
+                    <categories>
+                        <xsl:for-each select="categories/category">
+                            <category id="{@id}" main="{@main}"><xsl:value-of select="."/></category>
+                        </xsl:for-each>
+                    </categories>
+                    <attributes>
+                        <xsl:for-each select="attributes/attribute">
+                            <attribute id="{@id}" attributeId="{@attributeId}">
+                                <name><xsl:value-of select="name"/></name>
+                                <label><xsl:value-of select="label"/></label>
+                            </attribute>
+                        </xsl:for-each>
+                    </attributes>
+                    <producent><xsl:value-of select="producent"/></producent>
+                    <unit><xsl:value-of select="unit"/></unit>
+                    <weight><xsl:value-of select="weight"/></weight>
+                    <PKWiU><xsl:value-of select="PKWiU"/></PKWiU>
+                    <inStock><xsl:value-of select="inStock"/></inStock>
+                    <stockId><xsl:text>0</xsl:text></stockId>
+                    <qty><xsl:value-of select="qty"/></qty>
+                    <availability><xsl:value-of select="availability"/></availability>
+                    <requiredBox><xsl:value-of select="requiredBox"/></requiredBox>
+                    <quantityPerBox><xsl:value-of select="quantityPerBox"/></quantityPerBox>
+                    <priceAfterDiscountNet><xsl:value-of select="priceAfterDiscountNet"/></priceAfterDiscountNet>
+                    <vat><xsl:value-of select="vat"/></vat>
+                    <retailPriceGross><xsl:value-of select="retailPriceGross"/></retailPriceGross>
+                    <photos>
+                        <xsl:for-each select="photos/photo">
+                            <photo id="{@id}" main="{@main}"><xsl:value-of select="."/></photo>
+                        </xsl:for-each>
+                    </photos>
+                </product>
+            </xsl:for-each>
+        </channel>
+    </rss>
+    </xsl:template>
+</xsl:stylesheet>

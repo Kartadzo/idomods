@@ -1,0 +1,333 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2025-07-30 07:08:50",
+    "containerVersion": {
+        "path": "accounts/6071831104/containers/101930524/versions/6",
+        "accountId": "6071831104",
+        "containerId": "101930524",
+        "containerVersionId": "6",
+        "name": "MSAds - Nadpisywanie kodu śledzenia UET Tag",
+        "container": {
+            "path": "accounts/6071831104/containers/101930524",
+            "accountId": "6071831104",
+            "containerId": "101930524",
+            "name": "welsti.pl",
+            "publicId": "GTM-TWBVKQL",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1675782874507",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6071831104/containers/101930524/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-TWBVKQL"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "19",
+                "name": "cHTML - UETQ - Event - Purchase",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n    var array_ready_objects = [];\n    var array_value_objects = {{dlv - eventModel.items[]}}\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        contents_format.item_id = array_value_objects[i].item_id              //id\n        contents_format.item_quantity = array_value_objects[i].quantity  //quantity\n        contents_format.price = array_value_objects[i].price        //price\n        array_ready_objects.push(contents_format)\n    }\n  \n        var productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n</script>\n<script>\t\n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push('event', 'purchase', {\n        'transaction_id': {{dlv - eventModel.transaction_id}},\n\t\t'ecomm_prodid': productIds, \n\t\t'ecomm_pagetype': 'purchase',\n\t\t'ecomm_totalvalue': {{dlv - eventModel.value}},\n        'revenue_value': {{dlv - eventModel.value}},\n\t\t'currency': '{{dlv - eventModel.currency}}',\n\t\t'items': array_ready_objects\n\t});\n</script>\n<script> \n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push ('event', '', {\n     'ecomm_prodid': productIds, \n     'ecomm_pagetype': {{cjs - product_type}}\n   });   \n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776410618",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "23",
+                "name": "cHTML - UETQ - Event - Search Page",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nvar array_value_objects = {{dlv - eventModel.items[]}};\nvar productIds = array_value_objects.map(function(item) {\n  return item.item_id;\n});\n</script>\n<script>\t\n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push('event', 'view_search_results', {\n\t\t'ecomm_query': {{url - text}},\n        'ecomm_prodid': productIds,\n\t\t'ecomm_pagetype': 'searchresults'\n\t\t}\n\t);\n</script>\n<script> \n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push ('event', '', {\n     'ecomm_prodid': productIds, \n     'ecomm_pagetype': 'searchresults'\n   });   \n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776359592",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "39",
+                "name": "cHTML - UETQ - Event - Remarketing",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "100"
+                },
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n   // Add this script right after your base UET tag code\n   window.uetq_idomods = window.uetq_idomods || [];\n   window.uetq_idomods.push('set', { 'pid': { \n      'em': {{user_data.sha256_email_address}},\n      'ph': {{user_data.sha256_phone_number}},\n   } });\n</script>\n\n<script>\n  // cHTML - UETQ - Event - Consent Update\nwindow.uetq_idomods = window.uetq_idomods || [];\nwindow.uetq_idomods.push('consent', 'update', {\n    'ad_storage': 'granted'\n    });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776035716",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "42",
+                "name": "cHTML - UETQ - Event - Category",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nvar array_value_objects = {{dlv - eventModel.items[]}};\nvar productIds = array_value_objects.map(function(item) {\n    return item.item_id;\n});\n</script>\n\n<script>\t\n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push('event', 'category_browse_page', {\n\t\t'ecomm_category': {{dlv - eventModel.item_list_name}},\n        'ecomm_prodid': productIds,\n\t\t'ecomm_pagetype': 'category'\n\t\t}\n\t);\n</script>\n<script> \n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push ('event', '', {\n     'ecomm_prodid': productIds, \n     'ecomm_pagetype': 'category'\n   });   \n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776424985",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "45",
+                "name": "cHTML - UETQ - Event - View Cart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n    var array_ready_objects = [];\n    var array_value_objects = {{dlv - eventModel.items[]}}\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        contents_format.item_id = array_value_objects[i].item_id              //id\n        contents_format.item_quantity = array_value_objects[i].quantity  //quantity\n        contents_format.price = array_value_objects[i].price        //price\n        array_ready_objects.push(contents_format)\n    }\n  \n        var productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n</script>\n<script>\n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push('event', 'view_cart', {\n\t\t'ecomm_totalvalue': {{dlv - eventModel.value}},\n        'revenue_value': {{dlv - eventModel.value}},\n\t\t'currency': {{dlv - eventModel.currency}},\n        'ecomm_prodid': productIds,\n        'ecomm_pagetype': {{cjs - product_type}},\n\t\t'items': array_ready_objects\n      }\n    );\n</script>\n<script> \n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push ('event', '', {\n     'ecomm_prodid': productIds, \n     'ecomm_pagetype': {{cjs - product_type}}\n   });   \n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776346716",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "46",
+                "name": "cHTML - UETQ - Event - Main Code",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "1000"
+                },
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push('config', 'tcf', { 'enabled' : true });\n</script>\n<script>\n    (function(w,d,t,r,u)\n    {\n        var f,n,i;\n        w[u]=w[u]||[],f=function()\n        {\n            var o={ti:\"{{UET Tag}}\", enableAutoSpaTracking: true};\n            o.q=w[u],w[u]=new UET(o),w[u].push(\"pageLoad\")\n        },\n        n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function()\n        {\n            var s=this.readyState;\n            s&&s!==\"loaded\"&&s!==\"complete\"||(f(),n.onload=n.onreadystatechange=null)\n        },\n        i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)\n    })\n    (window,document,\"script\",\"//bat.bing.com/bat.js\",\"uetq_idomods\");\n</script>\n<script>\n// You can set default consent mode right after the UET tag \nwindow.uetq_idomods = window.uetq_idomods || [];\nwindow.uetq_idomods.push('consent', 'default', {\n    'ad_storage': 'denied'\n    });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776311251",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "teardownTag": [
+                    {
+                        "tagName": "cHTML - UETQ - Event - Remarketing",
+                        "stopTeardownOnFailure": true
+                    }
+                ],
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "49",
+                "name": "cHTML - UETQ - Event - View Item",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\t\n\twindow.uetq_idomods = window.uetq_idomods || [];\n\twindow.uetq_idomods.push('event', 'view_item', {\n\t\t'ecomm_prodid': {{dlv - eventModel.items.0.item_id}}, \n\t\t'ecomm_pagetype': 'product'\n\t\t}\n\t);\n</script>\n<script> \n   window.uetq_idomods = window.uetq_idomods || []; \n\n   window.uetq_idomods.push ('event', '', {\n     'ecomm_prodid': {{dlv - eventModel.items.0.item_id}}, \n     'ecomm_pagetype': 'product'\n   });   \n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776011393",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "50",
+                "name": "cHTML - UETQ - Event - Add To Cart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n    var array_ready_objects = [];\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    \n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        contents_format.item_id = array_value_objects[i].item_id              //id\n        contents_format.item_quantity = array_value_objects[i].quantity  //quantity\n        contents_format.price = array_value_objects[i].price        //price\n        array_ready_objects.push(contents_format)\n    }\n        var productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n</script>\n<script>\n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push('event', 'add_to_cart', {\n        'ecomm_prodid': {{dlv - eventModel.items.0.item_id}},\n\t\t'ecomm_pagetype': {{cjs - product_type}}, // warunek w regule add_to_cart\n        'ecomm_totalvalue': {{dlv - eventModel.value}},\n        'revenue_value': {{dlv - eventModel.value}},\n        'currency': '{{dlv - eventModel.currency}}',\n        'items': array_ready_objects\n  });\n</script>\n<script> \n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push ('event', '', {\n     'ecomm_prodid': {{dlv - eventModel.items.0.item_id}}, \n     'ecomm_pagetype': {{cjs - product_type}}\n   });   \n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776435868",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "tagId": "52",
+                "name": "cHTML - UETQ - Event - Home Page",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n\twindow.uetq_idomods = window.uetq_idomods || [];\n\twindow.uetq_idomods.push('event', 'homepage', {\n\t\t'ecomm_pagetype': 'home'\n\t\t}\n\t);\n</script>\n<script> \n   window.uetq_idomods = window.uetq_idomods || []; \n   window.uetq_idomods.push ('event', '', {\n     'ecomm_prodid': {{dlv - eventModel.items.0.item_id}}, \n     'ecomm_pagetype': 'home'\n   });   \n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753776272336",
+                "parentFolderId": "10",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "folder": [
+            {
+                "accountId": "6071831104",
+                "containerId": "101930524",
+                "folderId": "10",
+                "name": "MC Ads",
+                "fingerprint": "1753706630300"
+            }
+        ],
+        "fingerprint": "1753776541280",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6071831104/containers/101930524/versions/6?apiLink=version"
+    }
+}

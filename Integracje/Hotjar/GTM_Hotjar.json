@@ -1,0 +1,461 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2025-07-30 13:36:53",
+    "containerVersion": {
+        "path": "accounts/6102205328/containers/117901141/versions/0",
+        "accountId": "6102205328",
+        "containerId": "117901141",
+        "containerVersionId": "0",
+        "container": {
+            "path": "accounts/6102205328/containers/117901141",
+            "accountId": "6102205328",
+            "containerId": "117901141",
+            "name": "www.verostilo.com",
+            "publicId": "GTM-NRHX3RM",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1684229688558",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6102205328/containers/117901141/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-NRHX3RM"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "tagId": "47",
+                "name": "Hotjar - main code",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "99999"
+                },
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Hotjar Tracking Code for https://www.verostilo.com -->\n<script>\n    (function(h,o,t,j,a,r){\n        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};\n        h._hjSettings={hjid:3246682,hjsv:6};\n        a=o.getElementsByTagName('head')[0];\n        r=o.createElement('script');r.async=1;\n        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;\n        a.appendChild(r);\n    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753882527871",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "parentFolderId": "56",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "tagId": "49",
+                "name": "Hotjar - purchase",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  window.hj=window.hj||function(){(hj.q=hj.q||[]).push(arguments);};\n  hj('event', 'purchase');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753882527872",
+                "firingTriggerId": [
+                    "16"
+                ],
+                "parentFolderId": "56",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "tagId": "53",
+                "name": "Hotjar - logged_in",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  window.hj=window.hj||function(){(hj.q=hj.q||[]).push(arguments);};\n  hj('event', 'logged_in');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753882527872",
+                "firingTriggerId": [
+                    "50"
+                ],
+                "parentFolderId": "56",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "tagId": "54",
+                "name": "Hotjar - saved_to_wishlist",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  window.hj=window.hj||function(){(hj.q=hj.q||[]).push(arguments);};\n  hj('event', 'saved_to_wishlist');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753882527872",
+                "firingTriggerId": [
+                    "52"
+                ],
+                "parentFolderId": "56",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "tagId": "55",
+                "name": "Hotjar - scrolled_to_end",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  window.hj=window.hj||function(){(hj.q=hj.q||[]).push(arguments);};\n  hj('event', 'scrolled_to_end');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1753882527872",
+                "firingTriggerId": [
+                    "51"
+                ],
+                "parentFolderId": "56",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "value": "analytics_storage"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "triggerId": "16",
+                "name": "Event - purchase > 0",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "purchase"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "GREATER",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.value}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "orderdetails.php"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1697805633794"
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "triggerId": "50",
+                "name": "Event - login",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "login"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753183860241"
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "triggerId": "51",
+                "name": "Event - scroll",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "scroll"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753184025262"
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "triggerId": "52",
+                "name": "Event - add_to_wishlist",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "add_to_wishlist"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1753184078504"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "variableId": "15",
+                "name": "dlv - eventModel.value",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "0"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.value"
+                    }
+                ],
+                "fingerprint": "1753882545100",
+                "parentFolderId": "57",
+                "formatValue": {}
+            }
+        ],
+        "folder": [
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "folderId": "56",
+                "name": "Hotjar",
+                "fingerprint": "1753882518224"
+            },
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "folderId": "57",
+                "name": "DLV",
+                "fingerprint": "1753882534765"
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6102205328",
+                "containerId": "117901141",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            }
+        ],
+        "fingerprint": "1753882613305",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6102205328/containers/117901141/versions/0?apiLink=version"
+    }
+}

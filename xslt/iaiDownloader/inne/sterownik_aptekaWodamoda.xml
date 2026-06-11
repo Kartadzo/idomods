@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+xmlns:php="http://php.net/xsl">
+
+<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+<!-- zmienne przekazujace mnoznik dla ceny koncowej --> 
+    <xsl:variable name="mnoznik-vat" select="1.0" />
+	<xsl:variable name="mnoznik-detal" select="1.0" />
+	<xsl:variable name="mnoznik-hurt" select="1.0" />
+	<xsl:variable name="mnoznik-minimal" select="1.0" />
+	
+	
+	<xsl:template match="/">
+	<xsl:element name="offers">
+		<xsl:for-each select="/feed/entry">
+			<xsl:element name="product">						
+				<xsl:element name="ID"><xsl:value-of select="g_id"/></xsl:element>
+				<xsl:element name="price"><xsl:value-of select="substring-before(g_price, ' PLN')"/></xsl:element>
+				<xsl:element name="currency"><xsl:text>PLN</xsl:text></xsl:element>
+				
+				
+				<xsl:element name="cena-detal1">
+					<xsl:value-of select="format-number(substring-before(g_price, ' PLN')*$mnoznik-vat*$mnoznik-detal,'#.##')"/>
+				</xsl:element>
+				<xsl:element name="cena-hurt1">
+					<xsl:value-of select="format-number(substring-before(g_price, ' PLN')*$mnoznik-vat*$mnoznik-hurt,'#.##')"/>
+				</xsl:element>
+				<xsl:element name="cena-minimal1">
+					<xsl:value-of select="format-number(substring-before(g_price, ' PLN')*$mnoznik-vat*$mnoznik-minimal,'#.##')"/>
+				</xsl:element>
+				
+				<xsl:element name="avail"><xsl:value-of select="g_availability"/></xsl:element>
+				<xsl:element name="stan-mag">
+					<xsl:choose>
+						<xsl:when test="g_availability = 'in stock'">							
+							<xsl:text>-1</xsl:text>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>0</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:element>
+
+
+				<xsl:element name="weight">
+					<xsl:choose>
+						<xsl:when test="contains(g_shipping_weight, '.')">
+							<xsl:value-of select="translate(substring-before(g_shipping_weight,' kg'),'.','')"/><xsl:text>00</xsl:text>
+					    </xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="substring-before(g_shipping_weight,' kg')"/>
+							<xsl:text>000</xsl:text>
+					    </xsl:otherwise>
+					</xsl:choose>
+				</xsl:element>
+				<xsl:element name="cat"><xsl:value-of select="g_google_product_category"/></xsl:element>
+				<xsl:element name="name"><xsl:value-of select="title"/></xsl:element>
+				<xsl:element name="desc"><xsl:value-of select="description"/></xsl:element>
+				
+				<xsl:element name="imgs">
+					<xsl:for-each select="g_image_link">
+						<xsl:element name="img">
+							<xsl:value-of select="." />
+						</xsl:element>
+					</xsl:for-each>
+				</xsl:element>
+				
+				<xsl:element name="Kod_producenta"><xsl:value-of select="g_id"/></xsl:element>
+				<xsl:element name="Producent"><xsl:value-of select="g_brand"/></xsl:element>
+				<xsl:element name="EAN"><xsl:value-of select="g_gtin"/></xsl:element>
+			</xsl:element>
+		</xsl:for-each>
+	</xsl:element>
+</xsl:template>
+</xsl:stylesheet>

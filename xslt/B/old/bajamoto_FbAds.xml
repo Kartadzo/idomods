@@ -1,0 +1,41 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <item>
+                        <!-- Id towaru -->
+                        <g:id>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="@id"/>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:id>
+                        <xsl:if test="promotion/price/normal_retail_price or strikethrough_retail_price">
+                            <xsl:choose>
+                                <xsl:when test = "
+                                      (strikethrough_retail_price and strikethrough_retail_price/@gross > sizes/size/price/@gross) or
+                                      (promotion/price/normal_retail_price and promotion/price/normal_retail_price/@gross > sizes/size/price/@gross) or
+                                      (promotion/price/normal_retail_price and price/@gross != sizes/size/price/@gross and 
+                                      promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross > sizes/size/price/@gross)">
+                                      <xsl:choose>
+                                          <xsl:when test = "iaiext:hotspots/iaiext:site/flag[@type = 'distinguished']/@visible = 'yes'">
+                                              <g:custom_label_1>
+                                                  <xsl:text disable-output-escaping="yes">&lt;![CDATA[Mega Deal]]&gt;</xsl:text>
+                                              </g:custom_label_1>
+                                          </xsl:when>
+                                      </xsl:choose>
+                                </xsl:when>
+                            </xsl:choose>
+                        </xsl:if>
+                    </item>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

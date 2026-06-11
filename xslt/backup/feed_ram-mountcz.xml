@@ -1,0 +1,63 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl">
+    <xsl:output cdata-section-elements="Opis" method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:template match="/">
+        <Offer>
+            <xsl:for-each select="/offer/products/product">
+                <Product>
+                    <!-- kod zew. systemu -->
+                    <Code><xsl:value-of select="sizes/size/@iaiext:code_external"/></Code>
+                    <!-- EAN -->
+                    <Ean><xsl:value-of select="sizes/size/@code_producer"/></Ean>
+                    <!-- Nazwa produktu -->
+                    <Name><xsl:value-of select="description/name"/></Name>
+                 <stock_qty>
+                            <xsl:choose>
+                                <xsl:when test="string(number(stock[@id = '1']/@available_stock_quantity)) != 'NaN' 
+                                and string(number(stock[@id = '3']/@available_stock_quantity)) != 'NaN'">
+                                    <xsl:value-of select="stock[@id = '1']/@available_stock_quantity + stock[@id = '3']/@available_stock_quantity"/>
+                                </xsl:when>
+                                <xsl:when test="string(number(stock[@id = '1']/@available_stock_quantity)) != 'NaN' 
+                                and string(number(stock[@id = '3']/@available_stock_quantity)) = 'NaN'">
+                                    <xsl:value-of select="stock[@id = '1']/@available_stock_quantity"/>
+                                </xsl:when>
+                                <xsl:when test="string(number(stock[@id = '1']/@available_stock_quantity)) = 'NaN' 
+                                and string(number(stock[@id = '3']/@available_stock_quantity)) != 'NaN'">
+                                    <xsl:value-of select="stock[@id = '3']/@available_stock_quantity"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </stock_qty>
+                            <!-- Cena zakupu netto -->
+                            <xsl:for-each select="./iaiext:pricecomparator_price/iaiext:site">
+                            <xsl:choose>
+                                <xsl:when test="@service_id=10012"> 
+                                    <Cena_zakupu_netto>
+                                        <xsl:value-of select="@iaiext:net_from_panel"/>
+                                    </Cena_zakupu_netto>
+                                </xsl:when>  
+                            </xsl:choose>
+                            </xsl:for-each>  
+                    <VAT>
+                        <xsl:text>21</xsl:text>
+                    </VAT>
+                    
+                    <!-- Linki do zdjec -->
+                    <photos>
+                        <xsl:variable name="photoCount" select="count(images/large/image)"/>
+                        <xsl:for-each select="./images/large/image">
+                            <xsl:variable name="currentPhotoIndex" select="position()"/>
+                            <xsl:element name="photo{$currentPhotoIndex}">
+                                <xsl:value-of select="./@url"/>
+                            </xsl:element>
+                        </xsl:for-each>
+                    </photos>
+                    <!-- Opis produktu -->
+                    <description_long><xsl:value-of select="description/long_desc"/></description_long>
+                </Product>
+            </xsl:for-each>
+        </Offer>
+    </xsl:template>
+</xsl:stylesheet>

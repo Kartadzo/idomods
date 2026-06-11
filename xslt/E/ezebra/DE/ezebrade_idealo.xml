@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XSLT Idealo ver. 1.0 final (01.06.2016) -->
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml">
+	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" cdata-section-elements="id name price url"/>
+	<xsl:template match="/">
+		<xsl:element name="LIST">
+			<xsl:for-each select="offer/products/*">
+				<xsl:for-each select="iaiext:sizes/iaiext:size">
+					<xsl:if test="(../../description/name and ../../description/name != '') and ((../../price/@gross &gt; 0) or (../../iaiext:pricecomparator_price/iaiext:site/@gross &gt; 0) or (iaiext:price/@gross &gt; 0))">
+						<xsl:element name="ARTICLE">
+							<!-- Numer artykułu (zalecane) -->
+							<xsl:element name="ARTICLENUMBER">
+								<xsl:value-of select="@code"/>
+							</xsl:element>
+							<!-- EAN (wymagane) -->
+							<xsl:element name="EAN">
+								<xsl:choose>
+									<xsl:when test="contains(@code_producer,'de') or contains(@code_external,'de')">
+										<xsl:choose>
+											<!-- ISBN-10 / ISBN-13 -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'ISBN10' or ../../@iaiext:producer_code_standard = 'ISBN13') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="substring-after(@code_producer,'de')"/>  
+											</xsl:when>	
+											<!-- EAN-8 / EAN-13 / EAN-14 -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'GTIN8' or ../../@iaiext:producer_code_standard = 'GTIN13' or ../../@iaiext:producer_code_standard = 'GTIN14') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="substring-after(@code_producer,'de')"/>  
+											</xsl:when>	
+											<!-- UPC-A / UPC-E -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'GTIN12' or ../../@iaiext:producer_code_standard = 'UPCE') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="substring-after(@code_producer,'de')"/>  
+											</xsl:when>							
+											<xsl:otherwise>
+												<xsl:variable name="code_on_card" select="../../@code_producer"/>
+												<xsl:choose>
+													<xsl:when test="@code_producer and not(@code_producer='')">
+														<xsl:value-of select="substring-after(@code_producer,'de')"/>
+													</xsl:when>
+													<xsl:when test="@code_external and not(@code_external='')">
+														<xsl:value-of select="substring-after(@code_external,'de')"/>
+													</xsl:when>
+													<xsl:when test="$code_on_card and not($code_on_card='')">
+														<xsl:value-of select="$code_on_card"/>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="@code"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:choose>
+											<!-- ISBN-10 / ISBN-13 -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'ISBN10' or ../../@iaiext:producer_code_standard = 'ISBN13') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="@code_producer"/>  
+											</xsl:when>	
+											<!-- EAN-8 / EAN-13 / EAN-14 -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'GTIN8' or ../../@iaiext:producer_code_standard = 'GTIN13' or ../../@iaiext:producer_code_standard = 'GTIN14') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="@code_producer"/>  
+											</xsl:when>	
+											<!-- UPC-A / UPC-E -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'GTIN12' or ../../@iaiext:producer_code_standard = 'UPCE') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="@code_producer"/>  
+											</xsl:when>							
+											<xsl:otherwise>
+												<xsl:variable name="code_on_card" select="../../@code_producer"/>
+												<xsl:choose>
+													<xsl:when test="@code_producer and not(@code_producer='')">
+														<xsl:value-of select="@code_producer"/>
+													</xsl:when>
+													<xsl:when test="@code_external and not(@code_external='')">
+														<xsl:value-of select="@code_external"/>
+													</xsl:when>
+													<xsl:when test="$code_on_card and not($code_on_card='')">
+														<xsl:value-of select="$code_on_card"/>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="@code"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:element>
+							<!-- Oryginalny kod producenta (wymagane) -->
+							<xsl:element name="MANUFACTURERPARTNUMBE">
+								<xsl:choose>
+									<xsl:when test="contains(@code_producer,'de') or contains(@code_external,'de')">
+										<xsl:choose>
+											<!-- MPN -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'MPN') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="substring-after(@code_producer,'de')"/>  
+											</xsl:when>
+											<!-- INNY -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'OTHER') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="substring-after(@code_producer,'de')"/>  
+											</xsl:when>								
+											<xsl:otherwise>
+												<xsl:variable name="code_on_card" select="../../@code_producer"/>
+												<xsl:choose>
+													<xsl:when test="@code_producer and not(@code_producer='')">
+														<xsl:value-of select="substring-after(@code_producer,'de')"/>
+													</xsl:when>
+													<xsl:when test="@code_external and not(@code_external='')">
+														<xsl:value-of select="substring-after(@code_external,'de')"/>
+													</xsl:when>
+													<xsl:when test="$code_on_card and not($code_on_card='')">
+														<xsl:value-of select="$code_on_card"/>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="@code"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:choose>
+											<!-- MPN -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'MPN') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="@code_producer"/>  
+											</xsl:when>
+											<!-- INNY -->
+											<xsl:when test="(../../@iaiext:producer_code_standard = 'OTHER') and (@code_producer and not(@code_producer=''))">										
+												<xsl:value-of select="@code_producer"/>  
+											</xsl:when>								
+											<xsl:otherwise>
+												<xsl:variable name="code_on_card" select="../../@code_producer"/>
+												<xsl:choose>
+													<xsl:when test="@code_producer and not(@code_producer='')">
+														<xsl:value-of select="@code_producer"/>
+													</xsl:when>
+													<xsl:when test="@code_external and not(@code_external='')">
+														<xsl:value-of select="@code_external"/>
+													</xsl:when>
+													<xsl:when test="$code_on_card and not($code_on_card='')">
+														<xsl:value-of select="$code_on_card"/>
+													</xsl:when>
+													<xsl:otherwise>
+														<xsl:value-of select="@code"/>
+													</xsl:otherwise>
+												</xsl:choose>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:element>
+							<!-- Nazwa producenta (wymagane) -->
+							<xsl:element name="MANUFACTURERNAME">
+								<xsl:choose>
+									<xsl:when test="../../producer/@name = 'producent niezdefiniowany'"/>	
+									<xsl:otherwise>
+										<xsl:value-of select="../../producer/@name"/>						
+									</xsl:otherwise>
+								</xsl:choose>						
+							</xsl:element>
+							<!-- Nazwa produktu (wymagane) -->
+							<xsl:element name="PRODUCTNAME">
+								<xsl:choose>
+									<xsl:when test="../../description/name/@type = 'marketplace_site_name'">	
+										<xsl:value-of select="normalize-space(../../description/name/.)"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="normalize-space(../../description/name/.)"/><!--<xsl:if test="../../description/version"><xsl:if test="../../description/name[not(.='')]"><xsl:if test="../../description/version[not(/@name='')]"><![CDATA[ - ]]></xsl:if></xsl:if><xsl:value-of select="normalize-space(../../description/version/@name)"/></xsl:if>-->	
+									</xsl:otherwise>
+								</xsl:choose>														
+							</xsl:element>
+							<!-- Kategoria produktu (zalecane) -->
+							<xsl:element name="PRODUCTCATEGORY">
+								<xsl:choose>
+									<xsl:when test="contains(../../category/@name, '*')">	
+										<xsl:value-of select="substring-after(../../category/@name, '*')"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="../../category/@name"/>
+									</xsl:otherwise>
+								</xsl:choose>						
+							</xsl:element>
+							<!-- Opis produktu (zalecane) -->
+							<xsl:for-each select="../../description">
+								<xsl:choose>
+									<xsl:when test="short_desc != ''">
+										<xsl:element name="DESCRIPTION"><xsl:value-of select="short_desc/."/></xsl:element>
+									</xsl:when>
+									<xsl:when test="long_desc != ''">
+										<xsl:element name="DESCRIPTION"><xsl:value-of select="long_desc/."/></xsl:element>
+									</xsl:when>								
+									<xsl:otherwise />
+								</xsl:choose>
+							</xsl:for-each>
+							<!-- Cena brutto (wymagane) -->
+							<xsl:element name="PRICE">
+								<xsl:variable name="cenaP" select="../../iaiext:pricecomparator_price/iaiext:site/@gross"/>
+								<xsl:variable name="cenaS" select="iaiext:price/@gross"/>
+								<xsl:variable name="cenaB" select="../../price/@gross"/>
+								<xsl:choose>
+									<xsl:when test="($cenaP != $cenaB) and $cenaP !='' and $cenaP &gt; 0">
+										<xsl:value-of select="$cenaP"/>
+									</xsl:when>
+									<xsl:when test="not($cenaS) or $cenaS = '0'">
+										<xsl:value-of select="$cenaB"/>
+									</xsl:when>									
+									<xsl:otherwise>
+										<xsl:value-of select="$cenaS"/>
+									</xsl:otherwise>
+								</xsl:choose>							
+							</xsl:element>						
+							<!-- Czas dostawy (zalecane) -->
+							<xsl:element name="DELIVERYTIME">
+								<xsl:variable name="unit" select="../../iaiext:delivery_time/@unit"/>
+								<xsl:variable name="days" select="../../iaiext:delivery_time/@value"/>
+								<xsl:variable name="ddays"><![CDATA[ days]]></xsl:variable>
+								<xsl:variable name="dday"><![CDATA[ day]]></xsl:variable>							
+								<xsl:variable name="brak"><![CDATA[]]></xsl:variable>
+								<xsl:variable name="av1"><![CDATA[1]]></xsl:variable>							
+								<!--<xsl:choose>
+									<xsl:when test="iaiext:stock or @availability = 'in_stock' or @availability = 'on_order'">
+										<xsl:choose>
+											<xsl:when test="($unit = 'day' and $days = 0) or ($unit = 'day' and $days = 1) or ($unit = 'hour' and $days &lt;= 24) or ($unit = 'minute' and $days &lt;= 1440)">
+												<xsl:value-of select="$av1"/><xsl:value-of select="$dday"/>
+											</xsl:when>
+											<xsl:when test="$unit = 'hour' and $days &gt; 24">
+												<xsl:variable name="hdays" select="$days div 24"/>
+												<xsl:value-of select="ceiling($hdays)"/><xsl:value-of select="$ddays"/>
+											</xsl:when>
+											<xsl:when test="$unit = 'day' and $days &gt; 1">
+												<xsl:value-of select="$days"/><xsl:value-of select="$ddays"/>
+											</xsl:when>												
+											<xsl:otherwise />
+										</xsl:choose>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="$brak"/>
+									</xsl:otherwise>
+								</xsl:choose>-->
+								<![CDATA[2-3 Tage]]>
+							</xsl:element>
+							<!-- Koszty dostawy -->
+							<xsl:element name="SHIPPINGCOSTS">
+								<xsl:element name="PREPAYMENT"><xsl:value-of select="iaiext:price/iaiext:price_marketplace_site/iaiext:delivery_cost/iaiext:prepayment/@gross"/></xsl:element>
+								<xsl:element name="CASH_ON_DELIVERY"><xsl:value-of select="iaiext:price/iaiext:price_marketplace_site/iaiext:delivery_cost/iaiext:cash_on_delivery/@gross"/></xsl:element>							
+							</xsl:element>
+							<!-- URL produktu (wymagane) -->
+							<xsl:element name="PRODUCTURL">
+								<xsl:variable name="sizeID" select="@id"/>
+								<xsl:variable name="urlProduct" select="../../card/@url"/>
+								<xsl:variable name="link" select="substring-before($urlProduct,'.html')"/>
+								<xsl:variable name="link0001" select="substring-before($link,'/product-')"/> <!-- http://sklep.pl -->
+								<xsl:variable name="link0002" select="substring-after($urlProduct,'/product')"/> <!-- -pol-2163-Sportowe-meskie-trampki-F6-1-N33-tx211-Navy.ceneo.html -->
+								<xsl:variable name="link0003" select="substring-before($link0002,'.')"/> <!-- -pol-2163-Sportowe-meskie-trampki-F6-1-N33-tx211-Navy -->
+								<xsl:variable name="link0004" select="substring-after($link0002,'.')"/>
+								<xsl:variable name="sep"><![CDATA[-]]></xsl:variable>
+								<!--<xsl:value-of select="$link0001"/><xsl:text>/product</xsl:text><xsl:value-of select="$link0003"/><xsl:value-of select="$sep"/><xsl:value-of select="$sizeID"/><xsl:text>.</xsl:text><xsl:value-of select="$link0004"/>-->
+								<xsl:value-of select="concat(substring-before(../../card/@url, '.feed'),'.html')"/>											
+							</xsl:element>
+							<!-- URL obrazka (wymagane) -->
+							<xsl:element name="IMAGES">
+								<xsl:choose>
+									<xsl:when test="../../images/large">
+										<xsl:for-each select="../../images/large/image">
+											<xsl:element name="IMAGEURL{position()}">
+												<xsl:value-of select="@url"/>
+											</xsl:element>
+										</xsl:for-each>
+									</xsl:when>
+									<xsl:when test="../../images/large">
+										<xsl:for-each select="../../images/icons/icon">
+											<xsl:element name="IMAGEURL{position()}">
+												<xsl:value-of select="@url"/>
+											</xsl:element>
+										</xsl:for-each>
+									</xsl:when>								
+									<xsl:otherwise>
+										<xsl:element name="IMAGEURL{position()}">
+											<xsl:variable name="link_product_card" select="../../card/@url"/>
+											<xsl:variable name="no_image"><![CDATA[/eng_il-default-1.png]]></xsl:variable>
+											<xsl:value-of select="substring-before($link_product_card,'/product-')"/><xsl:value-of select="$no_image"/>										
+										</xsl:element>						
+									</xsl:otherwise>
+								</xsl:choose>						
+							</xsl:element>
+							<!-- Cena poddstawowa (wymagane) -->
+							<xsl:element name="BASEPRICE">
+								<!--<xsl:value-of select="../../iaiext:pricecomparator_price/iaiext:site/@unit_price"/>-->
+								<xsl:variable name="cenaBasePrice" select="iaiext:price/@gross"/>
+								<!--<xsl:variable name="pojemnoscBasePrice" select="format-number(number(substring-before(../../parameters/parameter[@id=3778]/value/@name, 'ml')), '###.##')"/>-->
+								<xsl:variable name="pojemnoscBasePrice2" select="translate(substring-before(../../parameters/parameter[@id=3778]/value/@name, 'ml'),',','.')"/>
+								<!--<xsl:variable name="wagaBasePrice" select="../../parameters/parameter[@id=14074]/value/@name"/>-->
+								<xsl:variable name="wagaBasePrice2" select="translate(substring-before(../../parameters/parameter[@id=14074]/value/@name, 'g'),',','.')"/>
+
+								<xsl:choose>
+									<xsl:when test="$pojemnoscBasePrice2">
+										<!--<xsl:value-of select="((100 * number($cenaBasePrice)) / number($pojemnoscBasePrice2))"/>-->
+										<xsl:value-of select="format-number(((100 * number($cenaBasePrice)) div number($pojemnoscBasePrice2)),'###.##')"/>
+										<![CDATA[ EUR / 100 ml]]> 
+										<!--<xsl:value-of select="$cenaBasePrice"/>
+										<![CDATA[ / ]]> 
+										<xsl:value-of select="$pojemnoscBasePrice2"/>-->
+									</xsl:when>
+									<xsl:when test="$wagaBasePrice2">
+										<!--<xsl:value-of select="((100 * number($cenaBasePrice)) / number($wagaBasePrice2))"/>-->
+										<xsl:value-of select="format-number(((100 * number($cenaBasePrice)) div number($wagaBasePrice2)),'###.##')"/>
+										<![CDATA[ EUR / 100 g]]> 
+										<!--<xsl:value-of select="$cenaBasePrice"/>
+										<![CDATA[ / ]]> 
+										<xsl:value-of select="$wagaBasePrice2"/>-->
+									</xsl:when>									
+									<xsl:otherwise>
+										<!--<xsl:value-of select=""/>-->
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:element>
+							<!-- Metody platnosci (zalecane) -->
+                            <xsl:element name="ZAHLARTEN">
+                                <xsl:element name="VORKASSE">
+                                    0.00
+                                </xsl:element>
+                                <!--<xsl:element name="NACHNAHME">
+                                    0.00
+                                </xsl:element>-->
+                                <xsl:element name="KREDITKARTE">
+                                    0.00
+                                </xsl:element>
+                                <xsl:element name="PAYPAL">
+                                    0.00
+                                </xsl:element>
+                                <!--<xsl:element name="RECHNUNG">
+                                    0.00
+                                </xsl:element>
+                                <xsl:element name="SOFORTUBERWEISUNG">
+                                    0.00
+                                </xsl:element>
+                                <xsl:element name="AMAZONPAY">
+                                    0.00
+                                </xsl:element>
+                                <xsl:element name="GOOGLEPAYSEND">
+                                    0.00
+                                </xsl:element>
+                                <xsl:element name="SKRILL">
+                                    0.00
+                                </xsl:element>
+                                <xsl:element name="GIROPAY">
+                                    0.00
+                                </xsl:element>
+                                <xsl:element name="BANKEINZUG">
+                                    0.00
+                                </xsl:element>-->
+                            </xsl:element>									
+						</xsl:element>
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:for-each>		
+		</xsl:element>
+	</xsl:template>
+</xsl:stylesheet>

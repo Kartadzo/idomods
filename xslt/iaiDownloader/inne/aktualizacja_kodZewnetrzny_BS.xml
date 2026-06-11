@@ -1,0 +1,46 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:template match="/">
+    <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <channel>
+            <xsl:for-each select="/offer/products/product">
+                <product id="{@id}" net="{@vat}">
+                    <price gross="{price/@gross}" net="{price/@net}"/>
+                    <sizes>
+                        <size>
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@sizes/size/@id"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="name">
+                                <xsl:value-of select="sizes/size/@name"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="panel_name">
+                                <xsl:value-of select="sizes/size/@panel_name"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="code_producer">
+                                <xsl:value-of select="sizes/size/@code_producer"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="kod_zewnetrzny_dostawcy">
+                                <xsl:text>BS-</xsl:text>
+                                <xsl:value-of select="sizes/size/@code"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="code">
+                                <xsl:value-of select="sizes/size/@code"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="weight">
+                                <xsl:value-of select="sizes/size/@weight"/>
+                            </xsl:attribute>
+                            <stock id="0" quantity="{sizes/size/stock/@quantity}"/>
+                        </size>
+                    </sizes>
+                </product>
+            </xsl:for-each>
+        </channel>
+    </rss>
+    </xsl:template>
+</xsl:stylesheet>

@@ -1,0 +1,309 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>Krteckem.cz/</title>
+                <link>https://krteckem.cz/</link>
+                <description>Produkty ze sklepu https://krteckem.cz/</description>
+                <xsl:for-each select="/offer/products/product">
+                    <item>
+
+                        <xsl:variable name="Kwota_za_darmo_wysylka">679.00</xsl:variable>
+                        <xsl:variable name="Kwota_wysylki">61.00</xsl:variable>
+
+                        <!--Unikalny identyfikator produktu  -->
+                        <g:id>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="sizes/size/@code"></xsl:value-of>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:id>
+
+                        <!-- tytuł -->
+                        <xsl:variable name="nazwaTowaru">
+                            <xsl:choose>
+                                <xsl:when test="iaiext:pricecomparator_name and iaiext:pricecomparator_name != ''">
+                                    <xsl:value-of select="iaiext:pricecomparator_name/."/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="description/name/."/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:variable>
+                        
+                        <xsl:variable name="upperCaseCount">
+                            <xsl:call-template name="count-uppercase">
+                                <xsl:with-param name="text" select="$nazwaTowaru"/>
+                            </xsl:call-template>
+                        </xsl:variable>
+
+                        <xsl:variable name="lowerCaseCount">
+                            <xsl:call-template name="count-lowercase">
+                                <xsl:with-param name="text" select="$nazwaTowaru"/>
+                            </xsl:call-template>
+                        </xsl:variable>
+
+                        <xsl:choose>
+                            <xsl:when test="$upperCaseCount &gt; $lowerCaseCount and ($lowerCaseCount div $upperCaseCount) &lt; 0.3">
+                                <title>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                    <xsl:call-template name="capitalize">
+                                        <xsl:with-param name="text" select="$nazwaTowaru"/>
+                                    </xsl:call-template>
+                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </title>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <title>
+                                    <xsl:value-of select="$nazwaTowaru"/>
+                                </title>
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                        <!-- waga sizes/size/@weight-->
+
+                        <xsl:variable name="value_of_weight" select="sizes/size/@weight"></xsl:variable>
+
+                        <xsl:variable name="value_of_weight_to_kg" select="$value_of_weight div 1000"></xsl:variable>
+
+
+                        <xsl:variable name="to_3_point_after_decimal" select="format-number($value_of_weight_to_kg , '#.00000')"></xsl:variable>
+                        <xsl:variable name="after_dots" select="substring-after($to_3_point_after_decimal,'.')"></xsl:variable>
+                        <!-- ruszyc przecinek do lewej dwa razy bo aby dwa miejsca bedziemy zostawiac -->
+                        <xsl:variable name="move_decimal_to_left_2_point" select="$after_dots div 1000"></xsl:variable>
+                        <!-- tutaj pobieram wartosc 3 miejsca po przecinku i sprawdzam czy trzeba zaokraglic druga liczbe czy nie -->
+                        <xsl:variable name="value_if_round" select="substring-after($move_decimal_to_left_2_point,'.')"></xsl:variable>
+                        <!-- wartosci po pierwszej cyfrze after decimal -->
+                        <xsl:variable name="current_second_and_more_decimal_value" select="substring-after(($value_of_weight_to_kg)*10,'.')"></xsl:variable>
+
+                        <xsl:choose>
+                            <xsl:when test="$current_second_and_more_decimal_value != '' and $value_if_round != ''">
+                                <xsl:variable name="real_second_number_after_decimal" select="substring-before(($current_second_and_more_decimal_value)div10,'.')"></xsl:variable>
+                                <xsl:variable name="real_first_number_after_decimal" select="substring-after(substring-before($value_of_weight_to_kg *10,'.')div 10,'.')"></xsl:variable>
+
+                                <xsl:choose>
+                                    <xsl:when test="$real_second_number_after_decimal = '0' and $real_first_number_after_decimal = ''">
+                                        <g:shipping_weight>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="substring-before($value_of_weight_to_kg,'.')"></xsl:value-of>.01 kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:shipping_weight>
+                                    </xsl:when>
+                                    <xsl:when test="$real_second_number_after_decimal = '9' and $real_first_number_after_decimal != '9' and $real_first_number_after_decimal=''">
+                                        <g:shipping_weight>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="substring-before($value_of_weight_to_kg,'.')"></xsl:value-of>.1 kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:shipping_weight>
+                                    </xsl:when>
+                                    <xsl:when test="$real_second_number_after_decimal = '9' and $real_first_number_after_decimal != '9' and $real_first_number_after_decimal!=''">
+                                        <g:shipping_weight>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="substring-before($value_of_weight_to_kg,'.')"></xsl:value-of>.<xsl:value-of select="$real_first_number_after_decimal +1"></xsl:value-of> kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:shipping_weight>
+                                    </xsl:when>
+                                    <xsl:when test="$real_second_number_after_decimal = '9' and $real_first_number_after_decimal = '9'">
+                                        <g:shipping_weight>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="ceiling($value_of_weight_to_kg)"></xsl:value-of> kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:shipping_weight>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:choose>
+                                            <xsl:when test="$real_first_number_after_decimal = ''">
+                                                <xsl:if test="parameters/parameter[@name='Hmotnost']/value/@name or parameters/parameter[@name='Hmotnost:']/value/@name or parameters/parameter[@name='Závaží']/value/@name">
+                                                    <g:unit_pricing_measure>
+                                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                        <xsl:value-of select="substring-before($value_of_weight_to_kg,'.')"></xsl:value-of>.0<xsl:value-of select="$real_second_number_after_decimal +1"></xsl:value-of> kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                    </g:unit_pricing_measure>
+                                                    <g:unit_pricing_base_measure>
+                                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>1 kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                    </g:unit_pricing_base_measure>
+                                                </xsl:if>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:if test="parameters/parameter[@name='Hmotnost']/value/@name or parameters/parameter[@name='Hmotnost:']/value/@name or parameters/parameter[@name='Závaží']/value/@name">
+                                                    <g:unit_pricing_measure>
+                                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                        <xsl:value-of select="substring-before($value_of_weight_to_kg,'.')"></xsl:value-of>.<xsl:value-of select="$real_first_number_after_decimal"></xsl:value-of>
+                                                        <xsl:value-of select="$real_second_number_after_decimal +1"></xsl:value-of> kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                    </g:unit_pricing_measure>
+                                                    <g:unit_pricing_base_measure>
+                                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>1 kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                    </g:unit_pricing_base_measure>
+                                                </xsl:if>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:when test="parameters/parameter[@name='Kapacita']/value/@name &gt;= 100">
+                                <xsl:variable name="value_of_capacity" select="parameters/parameter[@name='Kapacita']/value/@name div 1000"></xsl:variable>
+                                <g:unit_pricing_measure>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                    <xsl:value-of select="format-number($value_of_capacity, '#.##')"></xsl:value-of> l<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </g:unit_pricing_measure>
+                                <g:unit_pricing_base_measure>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>1 l<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </g:unit_pricing_base_measure>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:variable name="read_value_to_two_decimal_point" select="format-number($value_of_weight_to_kg , '#.00')"></xsl:variable>
+                                <xsl:choose>
+                                    <xsl:when test="substring-before($read_value_to_two_decimal_point, '.') = ''">
+                                        <xsl:if test="parameters/parameter[@name='Hmotnost']/value/@name or parameters/parameter[@name='Hmotnost:']/value/@name or parameters/parameter[@name='Závaží']/value/@name">
+                                            <g:unit_pricing_measure>
+                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>0<xsl:value-of select="$read_value_to_two_decimal_point"></xsl:value-of> kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                            </g:unit_pricing_measure>
+                                            <g:unit_pricing_base_measure>
+                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>1 kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                            </g:unit_pricing_base_measure>
+                                        </xsl:if>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:if test="parameters/parameter[@name='Hmotnost']/value/@name or parameters/parameter[@name='Hmotnost:']/value/@name or parameters/parameter[@name='Závaží']/value/@name">
+                                            <g:unit_pricing_measure>
+                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                <xsl:value-of select="$read_value_to_two_decimal_point"></xsl:value-of> kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                            </g:unit_pricing_measure>
+                                            <g:unit_pricing_base_measure>
+                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>1 kg<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                            </g:unit_pricing_base_measure>
+                                        </xsl:if>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                    </item>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+
+    <xsl:template name="strip-tags">
+        <xsl:param name="text"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, '&lt;')">
+                <xsl:value-of select="substring-before($text, '&lt;')"/>
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+
+    <xsl:template name="tokenize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="'.'"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="count-lowercase">
+        <xsl:param name="text"/>
+        <xsl:param name="index" select="1"/>
+        <xsl:param name="count" select="0"/>
+        <xsl:variable name="lowercase" select="'aábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž'"/>
+        <xsl:variable name="length" select="string-length($text)"/>
+        <xsl:choose>
+            <xsl:when test="$index &lt;= $length">
+                <xsl:variable name="char" select="substring($text,$index,1)"/>
+                <xsl:if test="contains($lowercase,$char)">
+                    <xsl:variable name="newcount" select="$count + 1"/>
+                    <xsl:call-template name="count-lowercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$newcount"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="not(contains($lowercase,$char))">
+                    <xsl:call-template name="count-lowercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$count"/>
+                    </xsl:call-template>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$count"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="count-uppercase">
+        <xsl:param name="text"/>
+        <xsl:param name="index" select="1"/>
+        <xsl:param name="count" select="0"/>
+        <xsl:variable name="uppercase" select="'AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽ'"/>
+        <xsl:variable name="length" select="string-length($text)"/>
+        <xsl:choose>
+            <xsl:when test="$index &lt;= $length">
+                <xsl:variable name="char" select="substring($text,$index,1)"/>
+                <xsl:if test="contains($uppercase,$char)">
+                    <xsl:variable name="newcount" select="$count + 1"/>
+                    <xsl:call-template name="count-uppercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$newcount"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="not(contains($uppercase,$char))">
+                    <xsl:call-template name="count-uppercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$count"/>
+                    </xsl:call-template>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$count"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- TEN SKRYPT NA PRZEKSZTAŁCANIE WYRAZÓW 1 LIERA WIELKA RESZTA MAŁA / trzeba dopracować po nawiasie jest dalej z małej litery ! -->
+    <xsl:template name="capitalize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="' '"/>
+
+        <xsl:variable name="upper-case" select="'AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽ'"/>
+        <xsl:variable name="lower-case" select="'aábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž'"/>
+
+        <xsl:variable name="word" select="substring-before(concat($text, $delimiter), $delimiter)" />
+        <xsl:choose>
+            <xsl:when test="$delimiter=' '">
+                <!-- tokenize word by 2nd delimiter -->
+                <xsl:call-template name="capitalize">
+                    <xsl:with-param name="text" select="$word"/>
+                    <xsl:with-param name="delimiter" select="'/'"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- capitalize word -->
+                <xsl:value-of select="translate(substring($word, 1, 1), $lower-case, $upper-case)"/>
+                <xsl:value-of select="translate(substring($word, 2), $upper-case, $lower-case)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:if test="contains($text, $delimiter)">
+            <xsl:value-of select="$delimiter"/>
+            <!-- recursive call -->
+            <xsl:call-template name="capitalize">
+                <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                <xsl:with-param name="delimiter" select="$delimiter"/>
+            </xsl:call-template>
+        </xsl:if>
+    </xsl:template>
+</xsl:stylesheet>

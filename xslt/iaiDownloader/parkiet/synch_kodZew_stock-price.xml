@@ -1,0 +1,41 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <!-- długoś aktualizacji 
+    - zaczynamy od pierwszego, w razie powolnego aktualizowania produktów -> zmniejszyć -->
+    <xsl:variable name='pierwszy_produkt'>0</xsl:variable>
+    <xsl:variable name='ostatni_produkt'>126000</xsl:variable>
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each
+                    select="/products/product[
+                position() &gt;= $pierwszy_produkt and 
+                position() &lt;= $ostatni_produkt
+                ]">
+                    <item>
+                        <id>
+                            <xsl:value-of select="number(id/.)+126000" />
+                        </id>
+                        <kodZewnetrzny>
+                            <xsl:text>KA-</xsl:text>
+                            <xsl:value-of select="sku/." />
+                        </kodZewnetrzny>
+                        <retailPriceGross>
+                            <xsl:value-of select="format-number(number(translate(retailPriceGross/., ',', '.'))*number(translate(quantityPerBox/.,',','.')), '#.##')" />
+                        </retailPriceGross>
+                        <idMagazynu>0</idMagazynu>
+                        <qty>
+                            <xsl:value-of select="floor(number(translate(qty/., ',', '.')) div number(translate(quantityPerBox/.,',','.')))" />
+                        </qty>
+                    </item>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

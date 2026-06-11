@@ -1,0 +1,272 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+
+    <xsl:variable name="upperLetters" select="'AÁÄBCČDĎDZDŽEÉFGHChIÍJKLĹĽMNŇOÓÔPQRŔSŠTŤUÚVWXYÝZŽ'"/>
+    <xsl:variable name="lowerLetters" select="'aáäbcčdďdzdžeéfghchiíjklĺľmnňoóôpqrŕsštťuúvwxyýzž'"/>
+    <!-- długoś opisu -->
+    <xsl:variable name='dlugosc_opisu'>1200</xsl:variable>
+    <xsl:variable name='dlugosc_opisu_z_parametrow'>1200</xsl:variable>
+    <!-- wymagany limit długości opisu po którego przekroczeniu nie zostanie dodany opis z parametrów  -->
+    <xsl:variable name='minimalna_dlugosc_opisu_dla_parametrow'>0</xsl:variable>
+
+    <xsl:template match="/">
+        <import>
+            <products>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <product>
+                            <attribute>
+                                <code>productIdentifier</code>
+                                <value>
+                                    <xsl:value-of select="@code"></xsl:value-of>
+                                </value>
+                            </attribute>
+                            <!-- grupa towarowa -->
+                            <attribute>
+                                <code>rozmiar</code>
+                                <value>
+                                    <xsl:value-of select="@name"/>
+                                </value>
+                            </attribute>
+                            <attribute>
+                                <code>typ_rozmiaru</code>
+                                <value>
+                                    <xsl:value-of select="../../parameters/parameter[@id = '584']/value/@name"/>
+                                </value>
+                            </attribute>
+                            
+                            <!-- Model -->
+                            <attribute>
+                                <code>model</code>
+                                <value>
+                                    <xsl:value-of select="../../parameters/parameter[@id = '572']/value/@name"/>
+                                </value>
+                            </attribute>
+                            <attribute>
+                                <code>grupaProduktów</code>
+                                <value>
+                                    <xsl:value-of select="../../group/@id"></xsl:value-of>
+                                </value>
+                            </attribute>
+
+                            <attribute>
+                                <code>index</code>
+                                <value>
+                                    <xsl:value-of select="../../@id"></xsl:value-of>
+                                </value>
+                            </attribute>
+                            
+                            <attribute>
+                                <code>Krój</code>
+                                <value>
+                                    <xsl:value-of select="../../parameters/parameter[@id = '573']/value/@name"/>
+                                </value>
+                            </attribute>
+                            <attribute>
+                                <code>typ_produktu</code>
+                                <value>
+                                    <xsl:value-of select="../../category/@name"/>
+                                </value>
+                            </attribute>
+                            <attribute>
+                                <code>grupa_produktow</code>
+                                <value>
+                                    <xsl:value-of select="../../iaiext:navigation/iaiext:site/iaiext:menu[@id=1]/iaiext:item/@textid"></xsl:value-of>
+                                </value>
+                            </attribute>
+
+                            <!-- <attribute>
+                                <code>wzrostmodela</code>
+                                <value/>
+                              </attribute> -->
+                            
+                            
+                            <xsl:if test="../../parameters/parameter[@id = '33']/value/@name">
+                                <attribute>
+                                    <code>sklad_odziez</code>
+                                    <value>
+                                        <xsl:value-of select="../../parameters/parameter[@id = '33']/value/@name"/>
+                                    </value>
+                                </attribute>
+                            </xsl:if>
+                            
+                            <xsl:if test="../../parameters/parameter[@id = '510']/value/@name">
+                                <attribute>
+                                    <code>odziez_wypelnienie</code>
+                                    <value>
+                                        <xsl:choose>
+                                            <xsl:when test="../../parameters/parameter[@id = '510']/value/@name != ''">
+                                                <xsl:for-each select="value">
+                                                    <xsl:value-of select="../../parameters/parameter[@id = '510']/value/@name"/>
+                                                </xsl:for-each>
+                                            </xsl:when>
+                                            <xsl:when test="../../parameters/parameter[@id = '643']/value/@name != ''">
+                                                <xsl:value-of select="../../parameters/parameter[@id = '643']/value/@name"/>
+                                            </xsl:when>
+                                        </xsl:choose>
+                                    </value>
+                                </attribute>
+                            </xsl:if>
+
+                            <attribute>
+                                <code>Seria produktów</code>
+                                <value>
+                                    <xsl:value-of select="../../parameters/parameter[@name = 'Sezóna']/value/@name"></xsl:value-of>
+                                </value>
+                            </attribute>
+
+                            <!-- Opis -->
+                            <!-- short descr -->
+                            <xsl:variable name="description">
+                                <xsl:value-of select="../../description/short_desc"/>
+                            </xsl:variable>
+                            <!-- Opisy -->
+                            <attribute>
+                                <code>description</code>
+                                <value>
+                                    <xsl:value-of select="$description"></xsl:value-of>
+                                </value>
+                            </attribute>
+
+                            <attribute>
+                                <code>ProductCategory</code>
+                                <value>
+                                    <xsl:choose>
+                                        <xsl:when test="../../category/@id = '1214553888' or 
+                                        ../../category/@id = '1214553886' or 
+                                        ../../category/@id = '1214553887' or 
+                                        ../../category/@id = '1214553885' or 
+                                        ../../category/@id = '1214553891' or 
+                                        ../../category/@id = '1214553892'">
+                                        <xsl:text>Kurtki</xsl:text>
+                                        </xsl:when>
+                                        <xsl:when test="../../category/@id = '1214553895' or 
+                                        ../../category/@id = '1214553894'">
+                                        <xsl:text>Płaszcze</xsl:text>
+                                        </xsl:when>
+                                        <xsl:when test="../../category_idosell/@path = ''">
+                                            <xsl:value-of select="../../category/@name"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="../../category_idosell/@path"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </value>
+                            </attribute>
+
+                            <attribute>
+                                <code>producent</code>
+                                <value>
+                                    <xsl:value-of select="../../producer/@name"></xsl:value-of>
+                                </value>
+                            </attribute>
+
+                            <attribute>
+                                <code>ean</code>
+                                <value>
+                                    <xsl:value-of select="@code_producer"/>
+                                </value>
+                            </attribute>
+
+                            <attribute>
+                                <code>productTitle</code>
+                                <value>
+                                    <xsl:value-of select="../../description/name"/>
+                                </value>
+                            </attribute>
+
+                            <!-- color -->
+                            <xsl:if test="../../parameters/parameter[@context_id = 'CONTEXT_COLOR']/value/@name">
+                                <attribute>
+                                    <code>kolor</code>
+                                    <value>
+                                        <xsl:value-of select="../../parameters/parameter[@context_id = 'CONTEXT_COLOR']/value/@name"/>
+                                    </value>
+                                </attribute>
+                            </xsl:if>
+
+                            <!-- gender -->
+                            <xsl:if test="../../parameters/parameter[@context_id = 'CONTEXT_SEX']/value/@name">
+                                <attribute>
+                                    <code>gender</code>
+                                    <value>
+                                        <xsl:value-of select="../../parameters/parameter[@context_id = 'CONTEXT_SEX']/value/@name"/>
+                                    </value>
+                                </attribute>
+                            </xsl:if>
+
+                            <xsl:variable name="vLowest">
+                                <xsl:for-each select="../../images/large/image/@iaiext:priority">
+                                    <xsl:sort data-type="number"/>
+                                    <xsl:if test="position()=1">
+                                        <xsl:value-of select="."/>
+                                    </xsl:if>
+                                </xsl:for-each>
+                            </xsl:variable>
+
+                            <xsl:for-each select="../../images/large/image">
+                                <xsl:choose>
+                                    <xsl:when test="@iaiext:priority = number($vLowest)">
+                                        <attribute>
+                                            <code>main_image</code>
+                                            <value>
+                                                <xsl:value-of select="@url"></xsl:value-of>
+                                            </value>
+                                        </attribute>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <attribute>
+                                            <code>image<xsl:value-of select="@iaiext:priority"/>
+                                            </code>
+                                            <value>
+                                                <xsl:value-of select="@url"></xsl:value-of>
+                                            </value>
+                                        </attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </product>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </products>
+        </import>
+    </xsl:template>
+
+    <xsl:template name="strip-tags">
+        <xsl:param name="text" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, '&lt;') and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text, '&lt;')" />
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true"/>
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)" tunnel="true"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="tokenize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="'.'"/>
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:value-of select="substring-before($text, $delimiter)"/>
+                <xsl:value-of select="$delimiter"/>
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                    <xsl:with-param name="delimiter" select="$delimiter"/>
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

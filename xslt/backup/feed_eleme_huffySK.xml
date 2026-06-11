@@ -1,0 +1,64 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl">
+    <xsl:output cdata-section-elements="description_long" method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:template match="/">
+        <Offer>
+            <xsl:for-each select="/offer/products/product">
+                <Product>
+                    <!-- kod zew. systemu -->
+                    <Code><xsl:value-of select="sizes/size/@iaiext:code_external"/></Code>
+                    <!-- EAN -->
+                    <Ean><xsl:value-of select="sizes/size/@code_producer"/></Ean>
+                    <!-- Nazwa produktu -->
+                    <Name><xsl:value-of select="description/name"/></Name>
+                    <!-- Stan mag -->
+                    <xsl:variable name="stocks">
+                                    <xsl:for-each select="sizes/size/stock">
+                                    <xsl:choose>
+                                        <xsl:when test="(@id = '1' or @id = '0' or @id = '2' or @id = '3' or @id = '4' or @id = '5' or @id = '6' or @id = '7' or @id = '8' or @id = '9' or @id = '10' or @id = '-1' or @id = '-2' or @id = '-3') and @available_stock_quantity &gt; 0">
+                                            <xsl:value-of select="@available_stock_quantity"></xsl:value-of><xsl:text>/</xsl:text>
+                                        </xsl:when>
+                                        <xsl:when test="(@id = '0' ) and @available_stock_quantity = -1 ">
+                                            <xsl:value-of select="@available_stock_quantity"></xsl:value-of><xsl:text>/</xsl:text>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                    </xsl:for-each>
+                                </xsl:variable>
+                                <stock_qty>   <xsl:choose>
+                                    <xsl:when test="contains($stocks,'-1') and string-length($stocks) &gt;0">
+                                        <xsl:text>999999</xsl:text>
+                                    </xsl:when>
+                                <xsl:when test="string-length($stocks) = 0">
+                                    <xsl:text>0</xsl:text>
+                                </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="sum(sizes/size/stock[@id = '1' or @id = '0' or @id = '2' or @id = '3' or @id = '4' or @id = '5' or @id = '6' or @id = '7' or @id = '8' or @id = '9' or @id = '10' or @id = '-1' or @id = '-2' or @id = '-3']/@available_stock_quantity)"></xsl:value-of>
+                                    </xsl:otherwise>
+                                </xsl:choose></stock_qty>
+                   <price>
+              <xsl:for-each select="../../iaiext:pricecomparator_price/iaiext:site">
+                <xsl:choose>
+                  <xsl:when test="@service_id=10013"> 
+                    <xsl:value-of select="@iaiext:net_from_panel"/>
+                  </xsl:when>  
+                </xsl:choose>
+              </xsl:for-each>
+            </price>  
+                    <VAT>
+                        <xsl:text>20</xsl:text>
+                    </VAT>
+                    
+                 <photos>
+                                <xsl:for-each select="./images/large/image">
+                                <photo>
+                                    <xsl:value-of select="./@url"/>
+                                </photo>
+                            </xsl:for-each>
+                            </photos>
+                    <!-- Opis produktu -->
+                    <description_long><xsl:value-of select="description/long_desc"/></description_long>
+                </Product>
+            </xsl:for-each>
+        </Offer>
+    </xsl:template>
+</xsl:stylesheet>

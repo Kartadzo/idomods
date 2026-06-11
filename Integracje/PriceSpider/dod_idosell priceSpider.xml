@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository file_format="ICF" version="1.0"><element id="1718267175">
+<meta><title>MARS - PriceSpider</title><description> 2024.06.13 10:26:15</description><icon encoding="base64"></icon><language name="pol"/></meta>
+<classification><type name="snippets_campaign"/></classification>
+<settings/><contents><content type="title">MARS - PriceSpider - konwersja - zmienne do gtm</content><content type="text_main_0"><![CDATA[<script>
+var kod_producenta = []
+[iai:foreach_products_begin]
+ kod_producenta.push('[iai:product_producer_code]');
+[iai:foreach_products_end]
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">head</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">y</content><content type="site">all</content><content type="timeout">1</content><content type="display_dynamically">no</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<enclosures> </enclosures>
+</element>
+</repository>

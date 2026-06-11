@@ -1,0 +1,784 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2024-01-30 12:56:55",
+    "containerVersion": {
+        "path": "accounts/6055496868/containers/92666223/versions/22",
+        "accountId": "6055496868",
+        "containerId": "92666223",
+        "containerVersionId": "22",
+        "name": "Synerise v1.4.8",
+        "description": "opóźnienie 100ms",
+        "container": {
+            "path": "accounts/6055496868/containers/92666223",
+            "accountId": "6055496868",
+            "containerId": "92666223",
+            "name": "SklepWedkarski.pl",
+            "publicId": "GTM-W9GVPRX",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1661501085918",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6055496868/containers/92666223/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-W9GVPRX"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "87",
+                "name": "cHTML - Synerise - trackingCode",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nfunction onSyneriseLoad() {\nSR.init({\n  'trackerKey':'4353af67-689d-4430-ab45-c5d426d59df1',\n    'dataLayer':dataLayer,\n    'gaVersion': 'GA4'\n});\n}\n\n(function(s,y,n,e,r,i,se){s['SyneriseObjectNamespace']=r;s[r]=s[r]||[],\ns[r]._t=1*new Date(),s[r]._i=0,s[r]._l=i;var z=y.createElement(n),\nse=y.getElementsByTagName(n)[0];z.async=1;z.src=e;se.parentNode.insertBefore(z,se);\nz.onload=z.onreadystatechange=function(){var rdy=z.readyState;\nif(!rdy||/complete|loaded/.test(z.readyState)){s[i]();z.onload = null;\nz.onreadystatechange=null;}};})(window,document,'script',\n'//web.snrbox.com/synerise-javascript-sdk.min.js','SR', 'onSyneriseLoad');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705568869387",
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "paused": true,
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "89",
+                "name": "cHTML - Synerise - viewCart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  setTimeout(function(){\nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\nvar cart_quantity = 0;\n\nfor(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.sku=array_value_objects[i].item_id\n    contents_format.quantity=array_value_objects[i].quantity\n    cart_quantity += array_value_objects[i].quantity\n    array_ready_objects.push(contents_format)\n}\nvar productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n  \nif ( array_value_objects.length > 0){\n  SR.event.trackCustomEvent('cart.status', {\n    products: array_ready_objects,\n    totalAmount: {{dlv - eventModel.value}},\n    totalQuantity: cart_quantity,\n    itemIds: productIds\n    }, 'CartStatus');\n} else {\n  SR.event.trackCustomEvent('cart.status', {\n  products: [],\n  totalAmount: 0,\n  totalQuantity: 0\n  }, 'CartStatus');\n}\n  },100)\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705578790901",
+                "firingTriggerId": [
+                    "72",
+                    "111"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "93",
+                "name": "cHTML - Synerise - product.view",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  setTimeout(function(){\nSR.event.trackCustomEvent( \"product.view\", // event action name\n    { // additional parameters\n        \"productId\": \"{{dlv - eventModel.items.0.item_id}}\"\n    }\n)\n    },100)\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705578749431",
+                "firingTriggerId": [
+                    "57"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "paused": true,
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "95",
+                "name": "cHTML - Synerise - transaction.charge",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  setTimeout(function(){\nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\nvar cart_quantity = 0;\n\nfor(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.sku = array_value_objects[i].item_id\n    contents_format.item_name = array_value_objects[i].item_name\n    contents_format.quantity = array_value_objects[i].quantity\n    cart_quantity += array_value_objects[i].quantity\n    array_ready_objects.push(contents_format)\n  \n    dataLayer.push({\n    event: \"product_buy\",\n    eventModel: {\n      currency: {{dlv - eventModel.currency}},\n      value: array_value_objects[i].price*array_value_objects[i].quantity,\n      orderID: {{dlv - eventModel.transaction_id}},\n      items: [\n        {\n          item_id: array_value_objects[i].item_id,\n          item_name: array_value_objects[i].item_name,\n          item_category: \"product\",\n          item_brand: array_value_objects[i].item_category,\n          price: array_value_objects[i].price,\n          quantity: array_value_objects[i].quantity,\n        }\n      ]\n    },\n  })\n}\nvar productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n  \nSR.event.trackCustomEvent('transaction.charge', {\n    products: array_ready_objects,\n    totalAmount: {{dlv - eventModel.value}},\n    totalQuantity: cart_quantity,\n    orderID: {{dlv - eventModel.transaction_id}}\n    }\n);\n  },100)\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705578767577",
+                "firingTriggerId": [
+                    "62"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "97",
+                "name": "cHTML - Synerise - product.removeFromCart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  setTimeout(function(){\nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\nvar cart_quantity = 0;\n\nfor(var i=0;i<1;i++){\n    var contents_format = {}\n    contents_format.item_category=\"product\"\n    contents_format.sku=array_value_objects[0].item_id\n    contents_format.brand=array_value_objects[0].item_category\n    contents_format.quantity=array_value_objects[0].quantity\n    cart_quantity += array_value_objects[0].quantity\n    array_ready_objects.push(contents_format)\n}\nvar productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n  \ndataLayer.push({//do czyszczenia zdarzenie\n    event: \"clear.status\",\n    eventModel: {\n      items: []\n    },\n})\n  \nSR.event.trackCustomEvent('product.removeFromCart', {\n    products: array_ready_objects,\n    totalAmount: {{dlv - eventModel.value}},\n    totalQuantity: cart_quantity,\n    productId: {{dlv - eventModel.items.0.item_id}}\n    }\n);\n  },100)\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705578729496",
+                "firingTriggerId": [
+                    "92"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "98",
+                "name": "cHTML - Synerise - product.addToCart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nsetTimeout(function(){\nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\nvar cart_quantity = 0;\n\nfor(var i=0;i<1;i++){\n    var contents_format = {}\n    contents_format.item_category=\"product\"\n    contents_format.sku=array_value_objects[0].item_id\n    contents_format.brand=array_value_objects[0].item_category\n    contents_format.quantity=array_value_objects[0].quantity\n    cart_quantity += array_value_objects[0].quantity\n    array_ready_objects.push(contents_format)\n}\nvar productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n  \nSR.event.trackCustomEvent('product.addToCart', {\n    products: array_ready_objects,\n    totalAmount: {{dlv - eventModel.value}},\n    totalQuantity: cart_quantity,\n    productId: {{dlv - eventModel.items.0.item_id}}\n    }\n);\n  },100)\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705578615332",
+                "firingTriggerId": [
+                    "66"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "101",
+                "name": "cHTML - Synerise - product.buy",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  setTimeout(function(){\nvar array_value_objects={{dlv - eventModel.items[]}}\nvar cart_quantity = 0;\nfor(var i=0;i<1;i++){\n    cart_quantity += array_value_objects[0].quantity\n}\n  \nSR.event.trackCustomEvent( \"product.buy\", // event action name\n    { // additional parameters\n        productId: {{dlv - eventModel.items.0.item_id}},\n        finalUnitPrice: {{dlv - eventModel.value}},\n        quantity: cart_quantity,\n        orderID: {{dlv - eventModel.transaction_id}},\n    }\n)\n},100)\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705578717140",
+                "firingTriggerId": [
+                    "100"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "tagId": "113",
+                "name": "cHTML - Synerise - viewCart – cart.status",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nvar array_ready_objects=[];\nvar array_value_objects={{dlv - eventModel.items[]}}\nvar cart_quantity = 0;\n\nfor(var i=0;i<array_value_objects.length;i++){\n    var contents_format = {}\n    contents_format.sku=array_value_objects[i].item_id\n    contents_format.quantity=array_value_objects[i].quantity\n    cart_quantity += array_value_objects[i].quantity\n    array_ready_objects.push(contents_format)\n}\nvar productIds = array_value_objects.map(function(item) {\n        return item.item_id;\n    });\n  \nif ( array_value_objects.length > 0){\n  SR.event.trackCustomEvent('cart.status', {\n    products: array_ready_objects,\n    totalAmount: {{dlv - eventModel.value}},\n    totalQuantity: cart_quantity,\n    itemIds: productIds\n    }, 'CartStatus');\n} else {\n  SR.event.trackCustomEvent('cart.status', {\n  products: [],\n  totalAmount: 0,\n  totalQuantity: 0\n  }, 'CartStatus');\n}\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1705563602629",
+                "firingTriggerId": [
+                    "110"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "57",
+                "name": "Event - view_item & item_id > 0",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_item"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "GREATER",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.item_id}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1705394865588"
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "62",
+                "name": "Event - purchase > 0",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "purchase"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "GREATER",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.price}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "orderdetails.php"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1702641441476"
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "66",
+                "name": "Event - add_to_cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "add_to_cart"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{dlv - eventModel.items.0.google_business_vertical}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1701096696075"
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "72",
+                "name": "Event - view_cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "view_cart"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1702383153161"
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "92",
+                "name": "Event - remove_from_cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "remove_from_cart"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1702547772230"
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "100",
+                "name": "Event - product_buy",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "product_buy"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1702911745067"
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "110",
+                "name": "Event - cart.status",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "cart.status"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1705486650853"
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "triggerId": "111",
+                "name": "Event - clear.status",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "clear.status"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1705487240759"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "variableId": "55",
+                "name": "dlv - eventModel.items.0.item_id",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "0"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.items.0.item_id"
+                    }
+                ],
+                "fingerprint": "1701093480229",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "variableId": "61",
+                "name": "dlv - eventModel.value",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "0"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.value"
+                    }
+                ],
+                "fingerprint": "1701093480230",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "variableId": "65",
+                "name": "dlv - eventModel.items.0.price",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "0"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.items.0.price"
+                    }
+                ],
+                "fingerprint": "1701093480232",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "variableId": "69",
+                "name": "dlv - eventModel.items[]",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "0"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.items"
+                    }
+                ],
+                "fingerprint": "1701093480233",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "variableId": "70",
+                "name": "dlv - eventModel.currency",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "defaultValue",
+                        "value": "PLN"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.currency"
+                    }
+                ],
+                "fingerprint": "1701093480233",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "variableId": "86",
+                "name": "dlv - eventModel.items.0.google_business_vertical",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.items.0.google_business_vertical"
+                    }
+                ],
+                "fingerprint": "1701096626182",
+                "formatValue": {
+                    "convertNullToValue": {
+                        "type": "TEMPLATE",
+                        "value": "0"
+                    },
+                    "convertUndefinedToValue": {
+                        "type": "TEMPLATE",
+                        "value": "0"
+                    }
+                }
+            },
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "variableId": "96",
+                "name": "dlv - eventModel.transaction_id",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "eventModel.transaction_id"
+                    }
+                ],
+                "fingerprint": "1702562253194",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6055496868",
+                "containerId": "92666223",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            }
+        ],
+        "fingerprint": "1705579171900",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6055496868/containers/92666223/versions/22?apiLink=version"
+    }
+}

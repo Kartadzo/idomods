@@ -1,0 +1,300 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <!-- PL|DE|CZ|SK|RO|||||||||||||||||||||||||||||||| -->
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚ'"/>
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźżäöüßáčďéěíňóřšťúůýžáäčďžéíĺľňóôŕšťúýžăâîșț'"/>
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <item>
+                            <!--Unikalny identyfikator produktu  -->
+                            <g:id>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="@code"></xsl:value-of>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:id>
+                            <!-- Najpierw sprawdzić system grupowania wariantów -->
+                            <g:item_group_id>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="../../@id"/>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:item_group_id>
+                            <!-- Tytuł -->
+                            <g:title>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="../../description/name/."/>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:title>
+                            <xsl:variable name="sell_by">
+                                <xsl:choose>
+                                    <xsl:when test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail > 0">
+                                        <xsl:value-of select="../../iaiext:sell_by/iaiext:retail/@quantity"/>
+                                    </xsl:when>
+                                    <xsl:when test="iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail > 0">
+                                        <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>1</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="size_id">
+                                <xsl:choose>
+                                    <xsl:when test="@name!=''">
+                                        <xsl:value-of select="@id"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>-</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="product_currency">
+                                <xsl:choose>
+                                    <xsl:when test="../../@currency!=''">
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="@currency"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_serwis">
+                                <xsl:choose>
+                                    <xsl:when test="../../iaiext:pricecomparator_price/iaiext:site">
+                                        <xsl:value-of select="../../iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                                        <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_przekreslona">
+                                <xsl:choose>
+                                    <!-- cena przekreslona dla rozmiaru lub domyślna -->
+                                    <xsl:when test="sizes/size/strikethrough_retail_price">
+                                        <xsl:value-of select="sizes/size/strikethrough_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <xsl:when test="strikethrough_retail_price">
+                                        <xsl:value-of select="strikethrough_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_przedpromocyjna">
+                                <xsl:choose>
+                                    <!-- cena standard gdy jest cena promocyjna rozmiaru -->
+                                    <xsl:when test="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@panel_name != '' and
+                                                    ../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross > price/@gross">
+                                        <xsl:value-of select="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
+                                    </xsl:when>
+                                    <!-- cena standard gdy jest cena promocyna standardowej ceny -->
+                                    <xsl:when test="../../promotion/price/normal_retail_price and ../../promotion/price/normal_retail_price/@gross > price/@gross">
+                                        <xsl:value-of select="../../promotion/price/normal_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <!-- cena standard gdy jest cena promocyjna rozmiaru -->
+                                    <xsl:when test="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@panel_name != '' and
+                                                    promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross > price/@gross">
+                                        <xsl:value-of select="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
+                                    </xsl:when>
+                                    <!-- cena standard gdy jest cena promocyna standardowej ceny -->
+                                    <xsl:when test="promotion/price/normal_retail_price and promotion/price/normal_retail_price/@gross > price/@gross">
+                                        <xsl:value-of select="promotion/price/normal_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="mainPrice">
+                                <xsl:choose>
+                                    <xsl:when test="$cena_serwis > 0">
+                                        <xsl:choose>
+                                            <xsl:when test="$cena_przedpromocyjna > $cena_serwis or $cena_przekreslona > $cena_serwis">
+                                                <xsl:choose>
+                                                    <xsl:when test="$cena_przedpromocyjna > 0">
+                                                        <!-- <xsl:when test="$cena_przedpromocyjna > $cena_przekreslona"> priotytet cena promocji-->
+                                                        <xsl:value-of select="$cena_przedpromocyjna * $sell_by"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:value-of select="$cena_przekreslona * $sell_by"/>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="$cena_serwis * $sell_by"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:choose>
+                                            <xsl:when test="$cena_przedpromocyjna > price/@gross or $cena_przekreslona > price/@gross">
+                                                <xsl:choose>
+                                                    <xsl:when test="$cena_przedpromocyjna > 0">
+                                                        <!-- <xsl:when test="$cena_przedpromocyjna > $cena_przekreslona"> -->
+                                                        <xsl:value-of select="$cena_przedpromocyjna * $sell_by"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:value-of select="$cena_przekreslona * $sell_by"/>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="price/@gross * $sell_by"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <g:price>
+                                <xsl:value-of select="$mainPrice"/>
+                                <xsl:text><![CDATA[ ]]></xsl:text>
+                                <xsl:value-of select="$product_currency"/>
+                            </g:price>
+                            <!-- produkcja -->
+                            <!-- jesli bedzie promocja lub przekreślona cena to od razu promocyjna cene większa od normalnej-->
+                            <xsl:choose>
+                                <xsl:when test="($cena_serwis * $sell_by) > 0 and $mainPrice > ($cena_serwis * $sell_by)">
+                                    <g:sale_price>
+                                        <xsl:value-of select="$cena_serwis * $sell_by"/>
+                                        <xsl:text><![CDATA[ ]]></xsl:text>
+                                        <xsl:value-of select="$product_currency"/>
+                                    </g:sale_price>
+                                </xsl:when>
+                                <xsl:when test="$mainPrice > (price/@gross * $sell_by) and $mainPrice > ($cena_serwis * $sell_by)">
+                                    <g:sale_price>
+                                        <xsl:value-of select="price/@gross * $sell_by"/>
+                                        <xsl:text><![CDATA[ ]]></xsl:text>
+                                        <xsl:value-of select="$product_currency"/>
+                                    </g:sale_price>
+                                </xsl:when>
+                            </xsl:choose>
+                            <g:custom_label_0>
+                                <xsl:choose>
+                                    <xsl:when test="$mainPrice &lt;= 50">
+                                        <xsl:text disable-output-escaping="yes">0-50 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 50 and $mainPrice &lt;= 100">
+                                        <xsl:text disable-output-escaping="yes">50-100 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 100 and $mainPrice &lt;= 150">
+                                        <xsl:text disable-output-escaping="yes">100-150 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 150 and $mainPrice &lt;= 200">
+                                        <xsl:text disable-output-escaping="yes">150-200 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 200 and $mainPrice &lt;= 250">
+                                        <xsl:text disable-output-escaping="yes">200-250 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 250 and $mainPrice &lt;= 300">
+                                        <xsl:text disable-output-escaping="yes">250-300 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 300 and $mainPrice &lt;= 350">
+                                        <xsl:text disable-output-escaping="yes">300-350 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 350 and $mainPrice &lt;= 400">
+                                        <xsl:text disable-output-escaping="yes">350-400 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 400 and $mainPrice &lt;= 450">
+                                        <xsl:text disable-output-escaping="yes">400-450 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 450 and $mainPrice &lt;= 500">
+                                        <xsl:text disable-output-escaping="yes">450-500 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 500 and $mainPrice &lt;= 550">
+                                        <xsl:text disable-output-escaping="yes">500-550 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 550 and $mainPrice &lt;= 600">
+                                        <xsl:text disable-output-escaping="yes">550-600 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 600 and $mainPrice &lt;= 650">
+                                        <xsl:text disable-output-escaping="yes">600-650 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 650 and $mainPrice &lt;= 700">
+                                        <xsl:text disable-output-escaping="yes">650-700 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 700 and $mainPrice &lt;= 750">
+                                        <xsl:text disable-output-escaping="yes">700-750 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 750 and $mainPrice &lt;= 800">
+                                        <xsl:text disable-output-escaping="yes">750-800 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 800 and $mainPrice &lt;= 850">
+                                        <xsl:text disable-output-escaping="yes">800-850 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 850 and $mainPrice &lt;= 900">
+                                        <xsl:text disable-output-escaping="yes">850-900 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 900 and $mainPrice &lt;= 950">
+                                        <xsl:text disable-output-escaping="yes">900-950 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 950 and $mainPrice &lt;= 1000">
+                                        <xsl:text disable-output-escaping="yes">950-1000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="$mainPrice &gt; 1000">
+                                        <xsl:text disable-output-escaping="yes">1000- </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                </xsl:choose>
+                            </g:custom_label_0>
+                            <g:custom_label_1>
+                                <xsl:if test="../../iaiext:hotspots/iaiext:site/flag/@type='newproduct' and ../../iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                                    <xsl:text>|Nowość|</xsl:text>
+                                </xsl:if>
+                                <xsl:if test="../../iaiext:hotspots/iaiext:site/flag/@type='bestseller' and ../../iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                                    <xsl:text>|Bestseller|</xsl:text>
+                                </xsl:if>
+                                <xsl:if test="../../iaiext:hotspots/iaiext:site/flag/@type='promotion' and ../../iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                                    <xsl:text>|Promocja|</xsl:text>
+                                </xsl:if>
+                            </g:custom_label_1>
+                        </item>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+    <xsl:template name="string-subcategory">
+        <xsl:param name="text"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, '\')">
+                <xsl:value-of select="substring-before($text, '\')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

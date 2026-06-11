@@ -1,0 +1,329 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <xsl:template match="/">
+        <Products>
+            <xsl:for-each select="/offer/products/product">
+                <!-- Start produkt -->
+                <Product>
+                    <xsl:variable name='Kwota_za_darmo_wysylka'>177</xsl:variable>
+                    <xsl:variable name="Kwota_wysylki">9.8</xsl:variable>
+                    <xsl:variable name="Kwota_wysylki_large">14.90</xsl:variable>
+                    <xsl:variable name='Kwota_za_darmo_wysylka_large'>150</xsl:variable>
+                    <!-- Producer -->
+                    <Manufacturer>
+                        <xsl:value-of select="producer/@name"></xsl:value-of>
+                    </Manufacturer>
+                    <!-- Nazwa -->
+                    <Name>
+                        <xsl:value-of select="description/name"></xsl:value-of>
+                    </Name>
+                    <!-- kategoria -->
+                    <xsl:variable name="categoryMenu">
+                        <xsl:for-each select="iaiext:navigation/iaiext:site/iaiext:menu[1]">
+                            <xsl:for-each select="iaiext:item">
+                                <xsl:value-of select="@textid"></xsl:value-of>
+                                <xsl:text> >
+                                </xsl:text>
+                            </xsl:for-each>
+                        </xsl:for-each>
+                    </xsl:variable>
+                    <Category>
+                        <xsl:value-of select="translate($categoryMenu,'\','>')"></xsl:value-of>
+                    </Category>
+                    <!-- Link do produktu -->
+                    <ProductUrl>
+                        <xsl:value-of select="substring-before(card/@url, '.feed')"><![CDATA[.compariro.html]]></xsl:value-of>
+                    </ProductUrl>
+                    <!-- Cena -->
+                    <xsl:choose>
+                        <!-- kiedy hurtowa cena detaliczna -->
+                        <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                            <xsl:choose>
+                                <!-- kiedy cena promocyjna jest wieksza niz cena dla serwisu zewnetrznego -->
+                                <xsl:when test="promotion/price/normal_retail_price/@gross &gt; iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                    <Price>
+                                        <xsl:value-of select="promotion/price/normal_retail_price/@gross"></xsl:value-of>
+                                    </Price>
+                                    <!-- Cena dostawy -->
+
+                                    <xsl:choose>
+                                        <xsl:when test="promotion/price/normal_retail_price/@gross &gt;= $Kwota_za_darmo_wysylka">
+                                            <DeliveryCost>GRATIS</DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:when test="promotion/price/normal_retail_price/@gross &gt;= $Kwota_za_darmo_wysylka_large">
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki_large"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <!-- Koniec ceny dostawy -->
+                                </xsl:when>
+                                <!-- inaczej bierze cena dla serwisu zewnetrznego -->
+                                <xsl:otherwise>
+                                    <Price>
+                                        <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                        </xsl:value-of>
+
+                                    </Price>
+
+                                    <!-- Cena dostawy -->
+
+                                    <xsl:choose>
+                                        <xsl:when test="iaiext:pricecomparator_price/iaiext:site[1]/@gross &gt;= $Kwota_za_darmo_wysylka">
+                                            <DeliveryCost>GRATIS</DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:when test="iaiext:pricecomparator_price/iaiext:site[1]/@gross &gt;= $Kwota_za_darmo_wysylka_large">
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki_large"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <!-- Koniec ceny dostawy -->
+
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <!-- kiedy nie wystepuje hurtowa cena detaliczna -->
+                        <xsl:when test="price/@gross">
+                            <xsl:choose>
+                                <!-- kiedy promocyjna bedzie wieksza  -->
+                                <xsl:when test="promotion/price/normal_retail_price/@gross &gt; price/@gross">
+
+                                    <Price>
+                                        <xsl:value-of select="promotion/price/normal_retail_price/@gross"></xsl:value-of>
+                                    </Price>
+
+
+                                    <!-- Cena dostawy -->
+                                    <xsl:choose>
+                                        <xsl:when test="promotion/price/normal_retail_price/@gross &gt;= $Kwota_za_darmo_wysylka">
+                                            <DeliveryCost>GRATIS</DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:when test="promotion/price/normal_retail_price/@gross &gt;= $Kwota_za_darmo_wysylka_large">
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki_large"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <!-- Koniec ceny dostawy -->
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <!-- bierzemy normalna price/gorss -->
+                                    <Price>
+                                        <xsl:value-of select="price/@gross"></xsl:value-of>
+                                    </Price>
+
+                                    <!-- Cena dostawy -->
+                                    <xsl:choose>
+                                        <xsl:when test="price/@gross &gt;= $Kwota_za_darmo_wysylka">
+                                            <DeliveryCost>GRATIS</DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:when test="price/@gross &gt;= $Kwota_za_darmo_wysylka_large">
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <DeliveryCost>
+                                                <xsl:value-of select="$Kwota_wysylki_large"></xsl:value-of>
+                                                <xsl:text> </xsl:text>
+                                                <xsl:value-of select="@currency"></xsl:value-of>
+                                            </DeliveryCost>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <!-- Koniec ceny dostawy -->
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                    </xsl:choose>
+
+                    <!-- identyfikator -->
+                    <Identifier>
+                        <xsl:value-of select="@id"></xsl:value-of>
+                    </Identifier>
+                    <!-- opis -->
+                    <!-- opis -->
+                    <xsl:choose>
+                        <xsl:when test="description/short_desc = ''">
+                            <!-- desc bez html -->
+                            <xsl:variable name = "returned_value_without_html">
+                                <xsl:call-template name="strip-tags">
+                                    <xsl:with-param name="text" select="description/long_desc" tunnel="yes"/>
+                                </xsl:call-template>
+                            </xsl:variable>
+                            <!-- wartosci do 300 znakow -->
+                            <xsl:variable name="returned_value_300_char" select="substring(normalize-space($returned_value_without_html),1,200)"></xsl:variable>
+                            <!-- wycinam to po kropce ostatniej  -->
+                            <xsl:variable name="value_cut">
+                                <xsl:call-template name="tokenize">
+                                    <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,300)"/>
+                                </xsl:call-template>
+                            </xsl:variable>
+                            <xsl:variable name="last_char" select="substring($returned_value_300_char, string-length($returned_value_300_char), 1)"></xsl:variable>
+
+
+                            <xsl:choose>
+                                <xsl:when test="$last_char != '.'">
+                                    <Description>
+                                        <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))"></xsl:value-of>
+                                    </Description>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <Description>
+                                        <xsl:value-of select="$returned_value_300_char"></xsl:value-of>
+                                    </Description>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <Description>
+                                <xsl:value-of select="description/short_desc"></xsl:value-of>
+                            </Description>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <!-- Zdjęcie główne oraz zdjęcia alternatywne -->
+                    <xsl:variable name="vLowest">
+                        <xsl:for-each select="images/large/image/@iaiext:priority">
+                            <xsl:sort data-type="number"/>
+                            <xsl:if test="position()=1">
+                                <xsl:value-of select="."/>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:variable>
+
+                    <xsl:for-each select="images/large/image">
+                        <xsl:choose>
+                            <xsl:when test="@iaiext:priority = number($vLowest)">
+                                <ImageUrl>
+                                    <xsl:value-of select="@url"></xsl:value-of>
+                                </ImageUrl>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <ImageUrl2>
+                                    <xsl:value-of select="@url"></xsl:value-of>
+                                </ImageUrl2>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <!-- Kod EAN -->
+
+                    <xsl:choose>
+                        <xsl:when test="sizes/size/@code_producer">
+                            <xsl:variable name="code_producer_variable">
+                                <xsl:value-of select="sizes/size/@code_producer"></xsl:value-of>
+                            </xsl:variable>
+                            <EanCode>
+                                <xsl:value-of select="substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1)))" />
+                            </EanCode>
+                        </xsl:when>
+                        <xsl:when test="@code_on_card">
+                            <EanCode>
+                                <xsl:value-of select="@code_on_card"/>
+                            </EanCode>
+                        </xsl:when>
+                    </xsl:choose>
+                    <!-- parametry -->
+                    <Attributes>
+                        <xsl:for-each select="parameters/parameter">
+                            <xsl:for-each select="value">
+                                <!-- Warunek dla parametrów które chcemy -->
+                                <Attribute>
+                                    <Attribute_name>
+                                        <xsl:value-of select="../@name"></xsl:value-of>
+                                    </Attribute_name>
+                                    <Attribute_value>
+                                        <xsl:value-of select="@name"></xsl:value-of>
+                                    </Attribute_value>
+                                </Attribute>
+                            </xsl:for-each>
+                        </xsl:for-each>
+                    </Attributes>
+
+                    <!-- Czas dostawy -->
+                    <xsl:choose>
+                        <xsl:when test="sizes/size/stock[@id = 1]/@quantity">
+                            <DeliveryTime>0 Dni</DeliveryTime>
+                        </xsl:when>
+                        <xsl:when test="sizes/size/stock[@id = 0]/@quantity">
+                            <!-- mamy m0 -->
+                            <DeliveryTime>1 Dni</DeliveryTime>
+                        </xsl:when>
+
+                    </xsl:choose>
+
+                    <!-- Waga produktu -->
+                    <Weight>
+                        <xsl:value-of select="sizes/size/@weight"></xsl:value-of>
+                        <xsl:text> g</xsl:text>
+                    </Weight>
+
+
+                </Product>
+                <!-- end produkt -->
+            </xsl:for-each>
+
+        </Products>
+    </xsl:template>
+    <xsl:template name="strip-tags">
+        <xsl:param name="text"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, '&lt;')">
+                <xsl:value-of select="substring-before($text, '&lt;')"/>
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+
+    <xsl:template name="tokenize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="'.'"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

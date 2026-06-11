@@ -1,0 +1,74 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <product id="{@id}">
+                        <xsl:attribute name="kod_zewnetrzny_dostawcy">
+                            <xsl:text>SG-</xsl:text>
+                            <xsl:value-of select="@id"/>
+                            <xsl:text>-0</xsl:text>
+                        </xsl:attribute>
+                        <price gross="{price/@gross}" net="{price/@net}" vat="{price/@vat}"/>
+                        <srp gross="{srp/@gross}" net="{srp/@net}" vat="{srp/@vat}"/>
+                        <sizes>
+                            <size id="{sizes/size/@id}" code_producer="{sizes/size/@code_producer}" code="{sizes/size/@code}" weight="{sizes/size/@weight}">
+                                <xsl:choose>
+                                    <xsl:when test="sizes/size/stock">
+                                        <stock id="0">
+                                            <xsl:attribute name="quantity">
+                                                <!-- Ile redukujemy -->
+                                                <xsl:variable name="redukowanaKwota">
+                                                    <xsl:text>1</xsl:text>
+                                                </xsl:variable>
+                                                <xsl:choose>
+                                                    <!-- Jeśli mają być redukowane tylko stany od zera do 'redukowanaKwota' to usunąć znak '>'. -->
+                                                    <xsl:when test="sizes/size[1]/stock/@quantity >= $redukowanaKwota">
+                                                        <xsl:value-of select="sizes/size[1]/stock/@quantity - $redukowanaKwota"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="sizes/size[1]/stock/@quantity &gt; 0 and sizes/size[1]/stock/@quantity &lt; $redukowanaKwota">
+                                                        <xsl:value-of select="sizes/size[1]/stock/@quantity - sizes/size[1]/stock/@quantity"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:text>0</xsl:text>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:attribute>
+                                        </stock>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <stock id="0" quantity="0"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </size>
+                        </sizes>
+                    </product>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+    <!-- Plik full.xml
+Data wygenerowania pliku	Wygenerowano 2024-01-09 23:20:20
+Liczba eksportowanych towarów	9275
+Plik został ostatnio pobrany	Nigdy
+URL pliku eksportu
+[kopiuj]	https://hurt.sharg.pl/edi/export-offer.php?client=sklep@militarialodz.pl&language=pol&token=d5d8c5233b5b1e38017a255&shop=3&type=full&format=xml&iof_2_5
+Plik light.xml
+Data wygenerowania pliku	Nie wygenerowano
+Liczba eksportowanych towarów	4978
+Plik został ostatnio pobrany	Nigdy
+URL pliku eksportu
+[kopiuj]	https://hurt.sharg.pl/edi/export-offer.php?client=sklep@militarialodz.pl&language=pol&token=acb7a156e2a81a0f2562e67&shop=3&type=light&format=xml&iof_2_5
+Plik gateway.xml
+Data wygenerowania pliku	Nie wygenerowano
+Liczba eksportowanych towarów	9275
+Plik został ostatnio pobrany	Nigdy
+URL pliku eksportu
+[kopiuj]	https://hurt.sharg.pl/edi/export-offer.php?client=sklep@militarialodz.pl&language=pol&token=5118729380383a0c8d51a70&shop=3&type=gateway&format=xml&iof_2_5 -->
+</xsl:stylesheet>

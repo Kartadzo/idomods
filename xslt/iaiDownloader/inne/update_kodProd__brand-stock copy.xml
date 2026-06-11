@@ -1,0 +1,51 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <product>
+                            <xsl:copy-of select="../../producer"/>
+                            <price gross="{price/@gross}" net="{price/@net}" vat="{price/@vat}"/>
+                            <size id="{@id}" code_producer="{@code_producer}" code_external="swiatsypialni.net-{@iaiext:code_external}" code="{@code}" weight="{@weight}">
+                                <xsl:choose>
+                                    <xsl:when test="stock">
+                                        <stock id="0">
+                                            <xsl:attribute name="quantity">
+                                                <!-- Ile redukujemy -->
+                                                <xsl:variable name="redukowanaKwota">
+                                                    <xsl:text>0</xsl:text>
+                                                </xsl:variable>
+                                                <xsl:choose>
+                                                    <!-- Jeśli mają być redukowane tylko stany od zera do 'redukowanaKwota' to usunąć znak '>'. -->
+                                                    <xsl:when test="sum(stock/@available_stock_quantity) >= $redukowanaKwota">
+                                                        <xsl:value-of select="sum(stock/@available_stock_quantity) - $redukowanaKwota"/>
+                                                    </xsl:when>
+                                                    <xsl:when test="sum(stock/@available_stock_quantity) &gt; 0 and sum(stock/@available_stock_quantity) &lt; $redukowanaKwota">
+                                                        <xsl:value-of select="sum(stock/@available_stock_quantity) - sum(stock/@available_stock_quantity)"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:text>0</xsl:text>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:attribute>
+                                        </stock>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <stock id="0" quantity="0"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </size>
+                        </product>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

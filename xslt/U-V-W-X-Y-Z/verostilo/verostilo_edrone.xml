@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml">
+    <xsl:output method="xml" encoding="utf-8" indent="yes" cdata-section-elements="name long_desc" />
+    <xsl:template match="*" mode="copy-no-namespaces">
+        <xsl:element name="{local-name()}">
+            <xsl:copy-of select="@*" />
+            <xsl:apply-templates select="node()" mode="copy-no-namespaces" />
+        </xsl:element>
+    </xsl:template>
+    <xsl:template match="comment()| processing-instruction()" mode="copy-no-namespaces">
+        <xsl:copy />
+    </xsl:template>
+    <xsl:template match="/offer">
+        <offer xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+            xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" file_format="IOF"
+            generated="{@generated}" expires="{@expires}" version="3.0" extensions="yes">
+            <xsl:for-each select="/offer/products/product">
+                <product id="{@id}" currency="{@currency}" code_on_card="{@code_on_card}"
+                    type="{@type}" vat="{@vat}" iaiext:product_free="{@iaiext:product_free}"
+                    iaiext:save_serial_numbers="{@iaiext:save_serial_numbers}"
+                    iaiext:available="{@iaiext:available}" site="{@site}">
+                    <xsl:apply-templates select="producer" mode="copy-no-namespaces" /> 
+                    <xsl:apply-templates select="category" mode="copy-no-namespaces"/>
+                    <xsl:apply-templates select="category_idosell" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="unit" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="card" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="description" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="price" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="srp" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="sizes" mode="copy-no-namespaces" />
+                    <xsl:copy-of select="iaiext:price_wholesale" />
+                    <xsl:copy-of select="iaiext:price_pos" />
+                    <xsl:copy-of select="iaiext:price_minimal" />
+                    <xsl:copy-of select="iaiext:price_retail" />
+                    <xsl:apply-templates select="images" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="group" mode="copy-no-namespaces" />
+                    <xsl:apply-templates select="parameters" mode="copy-no-namespaces" />
+                    <xsl:copy-of select="iaiext:delivery_time_from_card" />
+                    <xsl:copy-of select="iaiext:sum_in_basket" />
+                    <xsl:copy-of select="iaiext:enable_in_pos" />
+                    <xsl:copy-of select="iaiext:availability_profile" />
+                    <xsl:copy-of select="iaiext:availability_management" /> <!--<xsl:apply-templates select="iaiext:loyalty_program" mode="copy-no-namespaces"/>-->
+                    <xsl:copy-of select="iaiext:sell_by" />
+                    <xsl:copy-of select="iaiext:inwrapper" />  <!--<xsl:apply-templates select="iaiext:last_purchase_price" mode="copy-no-namespaces"/> <xsl:apply-templates select="iaiext:average_purchase_price" mode="copy-no-namespaces"/>-->
+                    <xsl:copy-of select="iaiext:date_created" />
+                    <xsl:copy-of select="iaiext:availability" />
+                    <xsl:copy-of select="iaiext:visibility" />
+                    <xsl:copy-of select="iaiext:navigation" />
+                    <xsl:copy-of select="iaiext:prices_configuration_for_shops" />
+                    <xsl:copy-of select="iaiext:size_chart" />
+                    <xsl:copy-of select="iaiext:prices_config" />
+                    <xsl:copy-of select="iaiext:pos_prices_config" />
+                    <xsl:copy-of select="iaiext:priority" /> <!--<xsl:apply-templates select="iaiext:deliverer" mode="copy-no-namespaces"/>-->
+                    <xsl:copy-of select="iaiext:price_compare_categories" /> <!--<xsl:apply-templates select="iaiext:auctions_categories" mode="copy-no-namespaces"/>-->
+                    <xsl:copy-of select="iaiext:modification_date" />
+                    <xsl:copy-of select="iaiext:expiry_date" />
+                    <xsl:copy-of select="iaiext:priority_menu" />
+                    <xsl:copy-of select="iaiext:delivery_time" />
+                </product>
+            </xsl:for-each>
+        </offer>
+    </xsl:template>
+</xsl:stylesheet>

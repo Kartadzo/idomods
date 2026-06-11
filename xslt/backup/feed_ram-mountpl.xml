@@ -1,0 +1,57 @@
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl">
+<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <xsl:template match="/">
+        <offer>
+            <xsl:for-each select="/offer/products/product">
+                <xsl:for-each select="sizes/size">
+                    <product>
+                        <!-- kod zewnętrznego systemu -->
+                        <Code><xsl:value-of select="@iaiext:code_external"/></Code>
+                        <!-- kod producenta -->
+                        <ean><xsl:value-of select="@code_producer"/></ean>
+                        <!-- Marka -->
+                        <Brand><xsl:value-of select="../../producer/@name"/></Brand>
+                        <!-- nazwa towaru -->
+                        <Name><xsl:value-of select="../../description/name"/></Name>
+                        <!-- opis długi -->
+                        <Long_desc><xsl:value-of select="../../description/long_desc"/></Long_desc>
+                        <!-- zdjęcia oddzielane enterem -->
+                        <photos>
+                            <xsl:for-each select="../../images/large/image">
+                                <xsl:text>&#xa;</xsl:text>
+                                <xsl:value-of select="@url"/>
+                            </xsl:for-each>
+                            <xsl:text>&#xa;</xsl:text>
+                        </photos>
+                        <xsl:for-each select="../../parameters/parameter">
+                            <parameters>
+                                <xsl:choose>
+                                    <xsl:when test="@name = 'Compatibility'">
+                                        <!-- parametr wartość powiązany z nazwą parametru „Compatibility” -->
+                                        <xsl:for-each select="value">
+                                            <Compatibility><xsl:value-of select="@name"/></Compatibility>
+                                        </xsl:for-each>
+                                    </xsl:when>
+                                    <xsl:when test="@name = 'Product Feature'">
+                                        <!-- parametr wartość powiązany z nazwą parametru „Product feature” -->
+                                        <xsl:for-each select="value">
+                                            <Product_Feature><xsl:value-of select="@name"/></Product_Feature>  
+                                        </xsl:for-each>               
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <!-- nazwa parametru (bez compatibility oraz product feature) -->
+                                        <parameter_name><xsl:value-of select="@name"/></parameter_name>
+                                        <xsl:for-each select="value">
+                                            <!-- wartość parametru (bez compatibility oraz product feature) -->
+                                            <parameter_value><xsl:value-of select="@name"/></parameter_value>
+                                        </xsl:for-each>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </parameters>
+                        </xsl:for-each>
+                    </product>
+                </xsl:for-each>
+            </xsl:for-each>
+        </offer>
+    </xsl:template>
+</xsl:stylesheet>

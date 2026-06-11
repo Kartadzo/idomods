@@ -1,0 +1,207 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ'"/>
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż'"/>
+    <!-- wykluczone węzły menu, otoczone '\' -->
+    <xsl:variable name="excluded" select="'\'"/>
+    <!-- magazyny sprzedaży, identyfikator otoczony '\' -->
+    <xsl:variable name="sales_stocks" select="'\0\1\2\3\4\5\6\7\8\9\'"/>
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <!-- <xsl:variable name="sales_stocks_ver">
+                        <xsl:for-each select="sizes/size">
+                            <xsl:for-each select="stock[contains($sales_stocks, @id)]">
+                                <xsl:variable name="tmp">
+                                    <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                    <xsl:value-of select="@id"/>
+                                    <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                </xsl:variable>
+                                <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                <xsl:if test="contains($sales_stocks, $tmp)">
+                                    <xsl:value-of select="$tmp"/>
+                                </xsl:if>
+                                <xsl:text disable-output-escaping="yes">\</xsl:text>
+                            </xsl:for-each>
+                        </xsl:for-each>
+                    </xsl:variable>
+                    <xsl:if test="translate($sales_stocks_ver, '\', '') != ''"> -->
+                    <product id="{@id}" code_on_card="{@code_on_card}">
+                        <xsl:copy-of select="price"/>
+                        <xsl:copy-of select="iaiext:price_wholesale"/>
+                        <xsl:copy-of select="iaiext:omnibus_price_retail"/>
+                        <xsl:copy-of select="category"/>
+                        <card>
+                            <xsl:attribute name="url">
+                                <xsl:value-of select="substring-before(card/@url, '.feed')"/>
+                                <![CDATA[.html]]>
+                            </xsl:attribute>
+                        </card>
+                        <description>
+                            <name type="{description/name/@type}">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="description/name"/>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </name>
+                            <short_desc>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="description/short_desc"/>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </short_desc>
+                        </description>
+                        <!-- [contains($sales_stocks, stock[contains($sales_stocks, @id)]/@id)] -->
+                        <sizes iaiext:group_id="{sizes/@iaiext:group_name}" iaiext:group_name="{sizes/@iaiext:group_name}" iaiext:sizeList="{sizes/@iaiext:sizeList}">
+                            <xsl:for-each select="sizes/size">
+                                <size id="{@id}" name="{@name}" panel_name="{@panel_name}" code="{@code}" weight="{@weight}" iaiext:weight_net="{@iaiext:weight_net}" code_producer="{@code_producer}" iaiext:priority="{@iaiext:priority}">
+                                    <xsl:variable name="sales_stocks_ver">
+                                        <xsl:for-each select="stock[contains($sales_stocks, @id) and @available_stock_quantity &gt; 0]">
+                                            <xsl:variable name="tmp">
+                                                <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                                <xsl:value-of select="@id"/>
+                                                <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                            </xsl:variable>
+                                            <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                            <xsl:if test="contains($sales_stocks, $tmp)">
+                                                <xsl:value-of select="$tmp"/>
+                                            </xsl:if>
+                                            <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                        </xsl:for-each>
+                                    </xsl:variable>
+                                    <xsl:attribute name="available">
+                                        <xsl:choose>
+                                            <xsl:when test="@available = 'on_order' and contains($sales_stocks, '\0\')">
+                                                <xsl:text><![CDATA[on_order]]></xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="translate($sales_stocks_ver, '\', '') != ''">
+                                                <xsl:text><![CDATA[in_stock]]></xsl:text>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:text><![CDATA[unavailable]]></xsl:text>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:attribute>
+                                    <xsl:copy-of select="price"/>
+                                    <xsl:for-each select="stock">
+                                        <xsl:variable name="stocks_ver">
+                                            <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                            <xsl:value-of select="@id"/>
+                                            <xsl:text disable-output-escaping="yes">\</xsl:text>
+                                        </xsl:variable>
+                                        <xsl:if test="contains($sales_stocks, $stocks_ver) and @available_stock_quantity &gt; 0">
+                                            <xsl:copy-of select="."/>
+                                        </xsl:if>
+                                    </xsl:for-each>
+                                </size>
+                            </xsl:for-each>
+                        </sizes>
+                        <iaiext:priority_menu>
+                            <site id="{iaiext:priority_menu/site/@id}">
+                                <menu id="{iaiext:priority_menu/site/menu[1]/@id}">
+                                    <xsl:for-each select="iaiext:priority_menu/site/menu[1]/item">
+                                        <xsl:variable name="node_ver">
+                                            <xsl:call-template name="nodeRemove">
+                                                <xsl:with-param name="text" select="translate(@textId, '\', '/')" tunnel="yes"/>
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <xsl:if test="$node_ver != 'toRemove'">
+                                            <xsl:copy-of select="."/>
+                                        </xsl:if>
+                                    </xsl:for-each>
+                                </menu>
+                            </site>
+                        </iaiext:priority_menu>
+                        <xsl:copy-of select="iaiext:availability"/>
+                        <xsl:copy-of select="iaiext:visibility"/>
+                        <xsl:copy-of select="iaiext:expiry_date"/>
+                        <xsl:copy-of select="iaiext:hotspots"/>
+                        <xsl:copy-of select="images"/>
+                        <xsl:copy-of select="producer"/>
+                        <parameters>
+                            <xsl:for-each select="parameters/parameter[@name != 'meta keys']">
+                                <xsl:copy-of select="."/>
+                            </xsl:for-each>
+                        </parameters>
+                        <xsl:copy-of select="iaiext:priority"/>
+                        <meta_keys>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:for-each select="parameters/parameter[@name = 'meta keys']/value">
+                                <xsl:value-of select="@name"/>
+                            </xsl:for-each>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </meta_keys>
+                        <opinions>
+                            <xsl:variable name="numberOpinions" select="count(iaiext:opinions/iaiext:opinion)"/>
+                            <averageRating>
+                                <xsl:if test="$numberOpinions &gt; 0">
+                                    <xsl:value-of select="format-number(sum(iaiext:opinions/iaiext:opinion/note) div $numberOpinions, '#.##')"/>
+                                </xsl:if>
+                            </averageRating>
+                            <opinionsCount>
+                                <xsl:if test="$numberOpinions &gt; 0">
+                                    <xsl:value-of select="$numberOpinions"/>
+                                </xsl:if>
+                            </opinionsCount>
+                        </opinions>
+                    </product>
+                    <!-- </xsl:if> -->
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+
+    <xsl:template name="nodeRemove">
+        <xsl:param name="text"/>
+        <xsl:variable name="pom">
+            <xsl:text><![CDATA[\]]></xsl:text>
+            <xsl:value-of select="translate($text, '\ ', '')"/>
+            <xsl:text><![CDATA[\]]></xsl:text>
+        </xsl:variable>
+        <xsl:choose>
+            <xsl:when test="contains(translate($excluded, ' ', ''), $pom)">
+                <xsl:text><![CDATA[toRemove]]></xsl:text>
+            </xsl:when>
+            <xsl:when test="contains($pom, '/')">
+                <xsl:variable name="part">
+                    <xsl:call-template name="cutLastNode">
+                        <xsl:with-param name="text" select="$pom" tunnel="yes"/>
+                    </xsl:call-template>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="contains(translate($excluded, ' ', ''), $part)">
+                        <xsl:text><![CDATA[toRemove]]></xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="cutLastNode">
+                            <xsl:with-param name="text" select="$part" tunnel="yes"/>
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text><![CDATA[ok]]></xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="cutLastNode">
+        <xsl:param name="text"/>
+        <xsl:value-of select="substring-before($text, '/')"/>
+        <xsl:choose>
+            <xsl:when test="not(contains(substring-after($text, '/'), '/'))">
+                <xsl:text><![CDATA[\]]></xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text><![CDATA[/]]></xsl:text>
+                <xsl:call-template name="cutLastNode">
+                    <xsl:with-param name="text" select="substring-after($text, '/')" tunnel="yes"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

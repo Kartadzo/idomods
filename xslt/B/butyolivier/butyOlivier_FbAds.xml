@@ -1,0 +1,463 @@
+<xsl:stylesheet
+version="1.0"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+xmlns:php="http://php.net/xsl">
+
+<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+
+<xsl:template match="/">
+    <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <channel>
+
+            <xsl:for-each select="/offer/products/product">
+         
+                    <!-- Ten blok sprawdza czy mamy do czynienia z akcesorium  (tą opcją wyodrębnienić możemy produkty dla black friday) -->
+            <xsl:variable name="menu_">
+                <xsl:for-each select="iaiext:navigation/iaiext:site/iaiext:menu">
+                    <xsl:for-each select="iaiext:item">
+                        <xsl:choose>
+                            <xsl:when test="contains(@textid,'Akcesoria')">
+                                <xsl:text>true</xsl:text>
+                            </xsl:when>
+
+                            <xsl:otherwise>
+                                <xsl:text>false</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </xsl:variable>
+          
+
+
+                <xsl:if test="not(contains($menu_,'true'))">
+                    <item>
+                        <!-- Id towaru -->
+                        <g:id>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="@id" />
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:id>
+                        <g:title>
+                            <xsl:value-of select="description/name" />
+                        </g:title>
+                        <!-- Opis -->
+                        <!-- short descr -->
+                        <xsl:variable name="from_parameters_raw">
+                            <xsl:for-each select="parameters/parameter[@hide = 'n' and value/@name != '']">
+                                <xsl:text>&#xa;</xsl:text>
+                                <xsl:value-of select="@name"/>
+                                <xsl:text>: </xsl:text>
+                                <xsl:for-each select="value">
+                                    <xsl:value-of select="@name"/>
+                                    <xsl:text>; </xsl:text>
+                                </xsl:for-each>
+                            </xsl:for-each>
+                        </xsl:variable>
+                        <xsl:variable name="from_parameters">
+                            <xsl:choose>
+                                <xsl:when test="$from_parameters_raw != ''">
+                                    <xsl:call-template name="tokenize">
+                                        <xsl:with-param name="text" select="substring($from_parameters_raw, 1, 600)"/>
+                                        <xsl:with-param name="delimeter" select="' '"/>
+                                    </xsl:call-template>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text></xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:variable>
+                        <description>
+                            <xsl:choose>
+                                <xsl:when test="description/short_desc = '' and description/long_desc = ''">
+                                    <!-- nie jest git bo nie ma opisów  -->
+                                    <xsl:if test="$from_parameters != ''">
+                                        <xsl:value-of select="description/name"/>
+                                        <xsl:value-of select="$from_parameters"/>
+                                    </xsl:if>
+                                </xsl:when>
+                                <xsl:when test="description/short_desc = ''">
+                                    <xsl:variable name = "returned_value_without_html">
+                                        <xsl:call-template name="strip-tags">
+                                            <xsl:with-param name="text" select="description/long_desc" tunnel="yes"/>
+                                        </xsl:call-template>
+                                    </xsl:variable>
+                                    <xsl:variable name="returned_value_600_char" select="substring(normalize-space($returned_value_without_html),1,600)"/>
+                                    <xsl:variable name="value_cut">
+                                        <xsl:call-template name="tokenize">
+                                            <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,600)"/>
+                                        </xsl:call-template>
+                                    </xsl:variable>
+                                    <xsl:variable name="last_char" select="substring($returned_value_600_char, string-length($returned_value_600_char), 1)"/>
+                                    <xsl:choose>
+                                        <xsl:when test="$last_char != '.'">
+                                            <!-- chodzi oto ze nie ma przed kropka nic  -->
+                                            <xsl:choose>
+                                                <xsl:when test="normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut)) = ''">
+                                                    <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze wgl nie ma kropki lool-->
+                                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                    <xsl:value-of select="$returned_value_600_char"/>
+                                                    <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))) &lt; 400 and $from_parameters != ''">
+                                                        <xsl:text>&#xa;</xsl:text>
+                                                        <xsl:value-of select="description/name"/>
+                                                        <xsl:value-of select="$from_parameters"/>
+                                                    </xsl:if>
+                                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <!-- jest przed kropka text -->
+                                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                    <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))"/>
+                                                    <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))) &lt; 400 and $from_parameters != ''">
+                                                        <xsl:text>&#xa;</xsl:text>
+                                                        <xsl:value-of select="description/name"/>
+                                                        <xsl:value-of select="$from_parameters"/>
+                                                    </xsl:if>
+                                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <!-- Mamy kropke na koncu i jest git -->
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="$returned_value_600_char"/>
+                                            <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))) &lt; 400 and $from_parameters != ''">
+                                                <xsl:text>&#xa;</xsl:text>
+                                                <xsl:value-of select="description/name"/>
+                                                <xsl:value-of select="$from_parameters"/>
+                                            </xsl:if>
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <!-- tutaj jeśli opis nie bedzie mial X znakow to zastapic go długim opisem mimo wszystko -->
+                                    <!-- załóżmy -->
+                                    <xsl:choose>
+                                        <xsl:when test="string-length(description/short_desc) > 200">
+                                            <!-- jest git bo ma wiecej niz  -->
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="description/short_desc"/>
+                                            <xsl:if test="string-length(description/short_desc) &lt; 400 and $from_parameters != ''">
+                                                <xsl:text>&#xa;</xsl:text>
+                                                <xsl:value-of select="description/name"/>
+                                                <xsl:value-of select="$from_parameters"/>
+                                            </xsl:if>
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:variable name = "returned_value_without_html">
+                                                <xsl:call-template name="strip-tags">
+                                                    <xsl:with-param name="text" select="description/long_desc" tunnel="yes"/>
+                                                </xsl:call-template>
+                                            </xsl:variable>
+                                            <xsl:variable name="returned_value_600_char" select="substring(normalize-space($returned_value_without_html),1,600)"/>
+                                            <xsl:variable name="value_cut">
+                                                <xsl:call-template name="tokenize">
+                                                    <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,600)"/>
+                                                </xsl:call-template>
+                                            </xsl:variable>
+                                            <xsl:variable name="last_char" select="substring($returned_value_600_char, string-length($returned_value_600_char), 1)"/>
+                                            <xsl:choose>
+                                                <xsl:when test="$last_char != '.'">
+                                                    <!-- chodzi oto ze nie ma przed kropka nic  -->
+                                                    <xsl:choose>
+                                                        <xsl:when test="normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut)) = ''">
+                                                            <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze wgl nie ma kropki lool-->
+                                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                            <xsl:value-of select="$returned_value_600_char"/>
+                                                            <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))) &lt; 400 and $from_parameters != ''">
+                                                                <xsl:text>&#xa;</xsl:text>
+                                                                <xsl:value-of select="description/name"/>
+                                                                <xsl:value-of select="$from_parameters"/>
+                                                            </xsl:if>
+                                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <!-- jest przed kropka text -->
+                                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                            <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))"/>
+                                                            <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))) &lt; 400 and $from_parameters != ''">
+                                                                <xsl:text>&#xa;</xsl:text>
+                                                                <xsl:value-of select="description/name"/>
+                                                                <xsl:value-of select="$from_parameters"/>
+                                                            </xsl:if>
+                                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <!-- Mamy kropke na koncu i jest git -->
+                                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                    <xsl:value-of select="$returned_value_600_char"/>
+                                                    <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_600_char), $value_cut))) &lt; 400 and $from_parameters != ''">
+                                                        <xsl:text>&#xa;</xsl:text>
+                                                        <xsl:value-of select="description/name"/>
+                                                        <xsl:value-of select="$from_parameters"/>
+                                                    </xsl:if>
+                                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </description>
+                        <!-- Link -->
+                        <g:link><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:link>
+                        <g:ios_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:ios_url>
+                        <g:iphone_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:iphone_url>
+                        <g:ipad_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:ipad_url>
+                        <g:android_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:android_url>
+                        <g:windows_phone_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:windows_phone_url>
+                        <!-- Zdjęcia -->
+                        <xsl:variable name="vLowest">
+                            <xsl:for-each select="images/large/image/@iaiext:priority">
+                             <xsl:sort data-type="number"/>
+                             <xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
+                            </xsl:for-each>
+                           </xsl:variable>
+
+                            <xsl:for-each select="images/large/image[position() &lt; 21]">
+                            <xsl:choose>
+                                    <xsl:when test="@iaiext:priority = number($vLowest)">
+                            <g:image_link>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></g:image_link>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                <g:additional_image_link>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></g:additional_image_link>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:for-each> 
+                     <!-- Brand -->
+                     <g:brand><xsl:value-of select="producer/@name"></xsl:value-of></g:brand>
+                     <g:gtin><xsl:value-of select="sizes/size/@code_producer"></xsl:value-of></g:gtin>
+                     <g:condition><![CDATA[new]]></g:condition>
+                     <!-- Dostępność -->
+                  
+                    <g:availability>
+                        <xsl:choose>
+                            <xsl:when test="sizes/size/@available= 'on_order'">
+                                <![CDATA[in stock]]>
+                            </xsl:when>
+                            <xsl:when test="sizes/size/@available= 'in_stock'">
+                                <![CDATA[in stock]]>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <![CDATA[out of stock]]>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </g:availability>
+
+                    <!-- cena -->
+                    <xsl:choose>
+					<!-- kiedy hurtowa cena detaliczna -->
+						<xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+							<xsl:choose>
+								<!-- kiedy cena promocyjna jest wieksza niz cena dla serwisu zewnetrznego -->
+								<xsl:when test="promotion/price/normal_retail_price/@gross > iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+									<price>
+										<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+										<xsl:value-of select="promotion/price/normal_retail_price/@gross"></xsl:value-of>
+										<xsl:text><![CDATA[ ]]></xsl:text>
+										<xsl:value-of select="@currency"/>  
+										<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+									</price>
+								</xsl:when>
+								<!-- inaczej bierze cena dla serwisu zewnetrznego -->
+								<xsl:otherwise>
+									<price><xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="iaiext:pricecomparator_price/iaiext:site[1]/@gross"></xsl:value-of><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/>  <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></price>
+									<!-- początek dostawy -->
+								<!-- koniec dostawy -->
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:when>
+						<!-- kiedy nie wystepuje hurtowa cena detaliczna -->
+						<xsl:when test="price/@gross">
+							<xsl:choose>
+								<!-- kiedy promocyjna bedzie wieksza  -->
+								<xsl:when test="promotion/price/normal_retail_price/@gross > price/@gross">
+									<price><xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="promotion/price/normal_retail_price/@gross"></xsl:value-of><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/>  <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></price>
+									<!-- poczatek dostawy -->
+								<!-- koniec dostawy -->
+								</xsl:when>
+								<xsl:otherwise>
+									<!-- bierzemy normalna price/gorss -->
+									<price><xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="price/@gross"></xsl:value-of><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/>  <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></price>
+									<!-- poczatek dostawy -->
+								<!-- koniec dostawy -->
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:when>
+					</xsl:choose>
+					<!-- jesli bedzie promocja o od razu promocyjna cene -->
+					<!-- ????????????? -->
+					<xsl:if test="promotion/price/normal_retail_price">
+						<xsl:choose>
+							<xsl:when test = "promotion/price/normal_retail_price">
+								<sale_price>
+									<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+									<xsl:value-of select="price/@gross"></xsl:value-of>
+									<xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/>    
+									<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+								</sale_price>
+							</xsl:when>
+							<xsl:when test="price/@gross">
+								<sale_price>
+									<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+									<xsl:value-of select="price/@gross"></xsl:value-of>
+									<xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"/>    
+									<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+								</sale_price>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:if>
+                    <!-- waga -->
+                    <g:shipping_weight><xsl:value-of select="sizes/size/@weight"></xsl:value-of></g:shipping_weight>
+                    <!-- Product type -->
+                    <!-- Testy -->
+                    <xsl:for-each select="iaiext:navigation/iaiext:site/iaiext:menu">
+                    <xsl:for-each select="iaiext:item">
+                      <g:product_type>   <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="translate(@textid,'\','>')"/>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></g:product_type>    
+                    </xsl:for-each>
+                    </xsl:for-each>
+                    <!-- Testy -->
+                    <!-- grupa towarów -->
+                    <g:item_group_id><xsl:value-of select="@id"></xsl:value-of></g:item_group_id>
+                    <!-- rozmiar -->
+                    <g:size><xsl:value-of select="sizes/size/@name"></xsl:value-of></g:size>
+
+                    <!-- płeć -->
+                    <xsl:if test="parameters/parameter[@name = 'Płeć']">
+                        <xsl:choose>
+                            <xsl:when test="parameters/parameter[@name = 'Płeć']/value/@name = 'Damskie'">
+                                <gender>
+                                    <![CDATA[female]]>
+                                </gender>
+                            </xsl:when>
+                            <xsl:when test="parameters/parameter[@name = 'Płeć']/value/@name = 'Męskie'">
+                                <gender>
+                                    <![CDATA[male]]>
+                                </gender>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <gender>
+                                    <![CDATA[unisex]]>
+                                </gender>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:if>
+                        <!-- kolor dodatkowy -->
+                        <xsl:choose>
+                            <xsl:when test="parameters/parameter[@name != 'Dostępne kolory'] and parameters/parameter[@name = 'Kolor']">
+                                <g:color>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>   
+                                    <xsl:value-of select="parameters/parameter[@name = 'Kolor']/value/@name"></xsl:value-of>
+                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </g:color>
+                            </xsl:when>
+                            <xsl:when test="parameters/parameter[@name = 'Dostępne kolory'] and not(parameters/parameter[@name = 'Kolor'])">
+                                <g:color>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>   
+                                    <xsl:value-of select="parameters/parameter[@name = 'Dostępne kolory']/value/@name"></xsl:value-of>
+                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </g:color>
+                            </xsl:when>
+                        </xsl:choose>
+
+                        <!-- materiał -->
+                        <xsl:choose>
+                            <xsl:when test="parameters/parameter[@name = 'Materiał']">
+                                <g:material>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>   
+                                    <xsl:value-of select="parameters/parameter[@name = 'Materiał']/value/@name"></xsl:value-of>
+                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </g:material>
+                            </xsl:when>
+                            <xsl:when test="parameters/parameter[@name = 'Wykonanie']">
+                                <g:material>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>   
+                                    <xsl:value-of select="parameters/parameter[@name = 'Wykonanie']/value/@name"></xsl:value-of>
+                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </g:material>
+                            </xsl:when>
+                        </xsl:choose>
+                        <!-- Google product category -->
+                        <g:google_product_category>
+                            <xsl:choose>
+                                <xsl:when test="contains(category/@name, 'Listonoszki')">
+                                    <xsl:text disable-output-escaping="yes">106</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="contains(category/@name, 'Akcesoria')">
+                                    <xsl:text disable-output-escaping="yes">1933</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="contains(category/@name, 'Torebki') 
+                                            or contains(category/@name, 'torebki')
+                                            or contains(category/@name, 'Torby')
+                                            or contains(category/@name, 'portfele')
+                                            or contains(category/@name, 'saszetki')
+                                            or contains(category/@name, 'etui')
+                                            or contains(category/@name, 'Aktówki')">
+                                    <xsl:text disable-output-escaping="yes">3032 </xsl:text>
+                                </xsl:when>
+                                <xsl:when test="contains(category/@name, 'Buty')">
+                                    <xsl:text disable-output-escaping="yes">187</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="category/@name"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </g:google_product_category>
+                    <xsl:if test="contains(iaiext:navigation/iaiext:site[1]/iaiext:menu[1]/iaiext:item/@textid, 'Buty')">
+                        <g:custom_label_4>
+                            <xsl:for-each select="sizes/size">
+                                <xsl:if test="stock/@available_stock_quantity &gt; 0">
+                                    <xsl:value-of select="@name"></xsl:value-of>
+                                    <xsl:text><![CDATA[ ]]></xsl:text>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </g:custom_label_4>
+                    </xsl:if>
+                    </item>
+                </xsl:if>
+  
+
+            </xsl:for-each>
+
+        </channel>
+    </rss>
+
+</xsl:template>
+
+<xsl:template name="strip-tags">
+    <xsl:param name="text" />
+    <xsl:param name="depth" select="0" />
+    <xsl:choose>
+        <xsl:when test="contains($text, '&lt;') and $depth &lt; 1000">
+            <xsl:value-of select="substring-before($text, '&lt;')" />
+            <xsl:call-template name="strip-tags">
+                <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true"/>
+                <xsl:with-param name="depth" select="$depth + 1" />
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="normalize-space($text)" tunnel="true"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template name="tokenize">
+    <xsl:param name="text"/>
+    <xsl:param name="delimiter" select="'.'"/>
+    <xsl:choose>
+        <xsl:when test="contains($text, $delimiter)">
+            <xsl:call-template name="tokenize">
+                <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="$text"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+</xsl:stylesheet>

@@ -1,0 +1,166 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+
+    <xsl:variable name="upperLetters" select="'AÁBCČDĎEÉĚFGHChIÍJKLMNŇOÓPQRŘSŠTŤUÚŮVWXYÝZŽ'"/>
+    <xsl:variable name="lowerLetters" select="'aábcčdďeéěfghchiíjklmnňoópqrřsštťuúůvwxyýzž'"/>
+    <!-- słowa formatowane do pisanych z dużej litery w tytule -->
+    <xsl:variable name="corrected" select="'\KONWERSJI\'"/>
+    <!-- kwoty stawek wysyłek do ustalenia -->
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <item>
+
+                            <!--Unikalny identyfikator produktu  -->
+                            <g:id>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="@code" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:id>
+
+                            <g:custom_label_0>
+                                <xsl:choose>
+                                    <xsl:when test="price/@gross &lt;= 500">
+                                        <xsl:text disable-output-escaping="yes">0-500 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 500 and price/@gross &lt;= 1000">
+                                        <xsl:text disable-output-escaping="yes">500-1000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 1000 and price/@gross &lt;= 1500">
+                                        <xsl:text disable-output-escaping="yes">1000-1500 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 1500 and price/@gross &lt;= 2000">
+                                        <xsl:text disable-output-escaping="yes">1500-2000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 2000 and price/@gross &lt;= 3000">
+                                        <xsl:text disable-output-escaping="yes">2000-3000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 3000 and price/@gross &lt;= 4000">
+                                        <xsl:text disable-output-escaping="yes">3000-4000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 4000 and price/@gross &lt;= 5000">
+                                        <xsl:text disable-output-escaping="yes">4000-5000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 5000 and price/@gross &lt;= 6000">
+                                        <xsl:text disable-output-escaping="yes">5000-6000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 6000 and price/@gross &lt;= 7000">
+                                        <xsl:text disable-output-escaping="yes">6000-7000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 7000 and price/@gross &lt;= 8000">
+                                        <xsl:text disable-output-escaping="yes">7000-8000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 8000 and price/@gross &lt;= 9000">
+                                        <xsl:text disable-output-escaping="yes">8000-9000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 9000 and price/@gross &lt;= 10000">
+                                        <xsl:text disable-output-escaping="yes">9000-10000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 10000 and price/@gross &lt;= 11000">
+                                        <xsl:text disable-output-escaping="yes">10000-11000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 11000 and price/@gross &lt;= 12000">
+                                        <xsl:text disable-output-escaping="yes">11000-12000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 12000 and price/@gross &lt;= 13000">
+                                        <xsl:text disable-output-escaping="yes">12000-13000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 13000 and price/@gross &lt;= 14000">
+                                        <xsl:text disable-output-escaping="yes">13000-14000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 14000 and price/@gross &lt;= 15000">
+                                        <xsl:text disable-output-escaping="yes">14000-15000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross &gt; 15000">
+                                        <xsl:text disable-output-escaping="yes">15000- </xsl:text>
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                </xsl:choose>
+                            </g:custom_label_0>
+                            <g:custom_label_1>
+                                <xsl:variable name='id_skorzana'>|269|249|283|284|</xsl:variable>
+                                <xsl:variable name='id_puchowa'>|815|817|818|822|825|827|789|790|791|792|793|799|800|803|804|808|811|814|720|746|750|751|753|754|768|769|771|273|638|651|653|718|214|215|243|825|273|811|822|818|638|917|808|720|718|790|792|768|804|803|243|651|814|651|815|653|800|799|719|73|147|805|793|791|</xsl:variable>
+                                <xsl:variable name='id_puchowa_wer'>
+                                    <xsl:text>|</xsl:text>
+                                    <xsl:value-of select="../../@id"/>
+                                    <xsl:text>|</xsl:text>
+                                </xsl:variable>
+                                <xsl:if test="not(contains($id_skorzana,$id_puchowa_wer))">
+                                    <xsl:choose>
+                                        <xsl:when test="
+                                    (contains(translate(../../category/@name, $upperLetters, $lowerLetters), 'kurtka puchowa') or 
+                                    contains(translate(../../description, $upperLetters, $lowerLetters), 'péřová bunda') or 
+                                    contains(translate(../../description, $upperLetters, $lowerLetters), 'péřový oblek')) and 
+                                    not(contains(translate(../../category/@name, $upperLetters, $lowerLetters), 'męsk')) and 
+                                    not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'pánsk')) or
+                                    contains($id_puchowa,$id_puchowa_wer)">
+                                            <xsl:text disable-output-escaping="yes">damska-puchowa</xsl:text>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                </xsl:if>
+                            </g:custom_label_1>
+                        </item>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+
+    <xsl:template name="strip-tags">
+        <xsl:param name="text" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, '&lt;') and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text, '&lt;')" />
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true"/>
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)" tunnel="true"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+
+    <xsl:template name="tokenize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="'.'"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

@@ -1,0 +1,225 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'"/>
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźżäöüßáčďéěíňóřšťúůýžáäčďžéíĺľňóôŕšťúýžăâîșțабвгґдеєжзиіїйклмнопрстуфхцчшщьюя'"/>
+
+
+    <xsl:template match="/">
+        <sales xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <xsl:for-each select="/offer/products/product">
+
+
+                <xsl:variable name="cena_serwis">
+                    <xsl:choose>
+                        <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                            <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>0</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="cena_przekreslona">
+                    <xsl:choose>
+                        <!-- cena przekreslona domyslna -->
+                        <xsl:when test="strikethrough_retail_price and not(sizes/size/strikethrough_retail_price and strikethrough_retail_price/@gross &lt; sizes/size/strikethrough_retail_price/@gross)">
+                            <xsl:value-of select="strikethrough_retail_price/@gross"/>
+                        </xsl:when>
+                        <!-- cena przekreslona dla rozmiaru -->
+                        <xsl:when test="sizes/size/strikethrough_retail_price">
+                            <xsl:value-of select="sizes/size/strikethrough_retail_price/@gross"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>0</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="size_id">
+                    <xsl:value-of select="sizes/size/@id"/>
+                </xsl:variable>
+                <xsl:variable name="cena_przedpromocyjna">
+                    <xsl:choose>
+                        <!-- cena standard gdy jest cena promocyjna rozmiaru -->
+                        <xsl:when test="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@panel_name != '' and
+                                      promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross > sizes/size/price/@gross">
+                            <xsl:value-of select="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
+                        </xsl:when>
+                        <!-- cena standard gdy jest cena promocyna standardowej ceny -->
+                        <xsl:when test="promotion/price/normal_retail_price and promotion/price/normal_retail_price/@gross > sizes/size/price/@gross">
+                            <xsl:value-of select="promotion/price/normal_retail_price/@gross"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>0</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="mainPrice">
+                    <xsl:choose>
+                        <xsl:when test="$cena_serwis > 0">
+                            <xsl:choose>
+                                <xsl:when test="$cena_przedpromocyjna > $cena_serwis or $cena_przekreslona > $cena_serwis">
+                                    <xsl:choose>
+                                        <xsl:when test="$cena_przedpromocyjna > 0">
+                                            <!-- <xsl:when test="$cena_przedpromocyjna > $cena_przekreslona"> priotytet cena promocji-->
+                                            <xsl:value-of select="$cena_przedpromocyjna"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="$cena_przekreslona"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="$cena_serwis"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:choose>
+                                <xsl:when test="$cena_przedpromocyjna > sizes/size/price/@gross or $cena_przekreslona > sizes/size/price/@gross">
+                                    <xsl:choose>
+                                        <xsl:when test="$cena_przedpromocyjna > 0">
+                                            <!-- <xsl:when test="$cena_przedpromocyjna > $cena_przekreslona"> -->
+                                            <xsl:value-of select="$cena_przedpromocyjna"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="$cena_przekreslona"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="sizes/size/price/@gross"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+
+
+                <xsl:for-each select="sizes/size[
+                ($cena_serwis > 0 and $mainPrice > $cena_serwis) or 
+                ($mainPrice > price/@gross and $mainPrice > $cena_serwis)]">
+                    <sale>
+                        <!-- czas trwania -->
+                        <date_start>
+                            <xsl:choose>
+                                <xsl:when test="../../promotion/@start_date != ''">
+                                    <xsl:value-of select="../../promotion/@start_date"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="../../../../@generated"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </date_start>
+                        <date_end>
+                            <xsl:choose>
+                                <xsl:when test="../../promotion/@ending_date != ''">
+                                    <xsl:value-of select="../../promotion/@ending_date"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <!-- Pobieramy wartość daty -->
+                                    <xsl:variable name="date-time" select="../../../../@generated"/>
+
+                                    <!-- Wyodrębniamy komponenty daty i czasu -->
+                                    <xsl:variable name="year" select="substring($date-time, 1, 4)"/>
+                                    <xsl:variable name="month" select="substring($date-time, 6, 2)"/>
+                                    <xsl:variable name="day" select="substring($date-time, 9, 2)"/>
+                                    <xsl:variable name="hour" select="substring($date-time, 12, 2)"/>
+                                    <xsl:variable name="minute" select="substring($date-time, 15, 2)"/>
+                                    <xsl:variable name="second" select="substring($date-time, 18, 2)"/>
+
+                                    <!-- Dodajemy 7 dni do dnia -->
+                                    <xsl:variable name="new_day" select="number($day) + 3"/>
+
+                                    <!-- Pobieramy liczbę dni w bieżącym miesiącu -->
+                                    <xsl:variable name="days_in_current_month">
+                                        <xsl:call-template name="get-days-in-month">
+                                            <xsl:with-param name="month" select="$month"/>
+                                        </xsl:call-template>
+                                    </xsl:variable>
+
+                                    <!-- Ustalamy nowy dzień, nie przekraczając ostatniego dnia miesiąca -->
+                                    <xsl:variable name="adjusted_day">
+                                        <xsl:choose>
+                                            <xsl:when test="$new_day &lt;= $days_in_current_month">
+                                                <xsl:value-of select="$new_day"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <!-- Jeśli przekracza, ustalamy na ostatni dzień miesiąca -->
+                                                <xsl:value-of select="$days_in_current_month"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+
+                                    <!-- Formatowanie dnia, aby zawsze miało dwie cyfry -->
+                                    <xsl:variable name="formatted_day">
+                                        <xsl:choose>
+                                            <xsl:when test="string-length($adjusted_day) = 1">
+                                                <xsl:value-of select="concat('0', $adjusted_day)"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="$adjusted_day"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+
+                                    <xsl:value-of select="concat($year, '-', $month, '-', $formatted_day, ' ', $hour, ':', $minute, ':', $second)"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </date_end>
+                        <type>
+                            <xsl:text disable-output-escaping="yes">Знижка</xsl:text>
+                        </type>
+                        <happy_day>
+                            <xsl:choose>
+                                <xsl:when test="../../promotion/@name != ''">
+                                    <xsl:value-of select="../../promotion/@name"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text>Знижка</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </happy_day>
+                        <!-- produkt -->
+                        <products>
+                            <!-- cena regularna -->
+                            <discount_old_price>
+                                <xsl:value-of select="$mainPrice"/>
+                            </discount_old_price>
+                            <!--Unikalny identyfikator produktu  -->
+                            <product id="{@code}">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="../../card/@url"/>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </product>
+                        </products>
+                    </sale>
+                </xsl:for-each>
+            </xsl:for-each>
+        </sales>
+    </xsl:template>
+
+
+    <!-- Szablon zwracający liczbę dni w miesiącu -->
+    <xsl:template name="get-days-in-month">
+        <xsl:param name="month"/>
+        <xsl:choose>
+            <xsl:when test="$month='01' or $month='03' or $month='05' or $month='07' or $month='08' or $month='10' or $month='12'">
+                <xsl:value-of select="31"/>
+            </xsl:when>
+            <xsl:when test="$month='04' or $month='06' or $month='09' or $month='11'">
+                <xsl:value-of select="30"/>
+            </xsl:when>
+            <xsl:when test="$month='02'">
+                <xsl:value-of select="28"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- Domyślna wartość, w razie błędu -->
+                <xsl:value-of select="30"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

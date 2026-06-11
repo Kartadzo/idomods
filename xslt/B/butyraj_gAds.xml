@@ -1,0 +1,536 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'" />
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźżäöüßáčďéěíňóřšťúůýžáäčďžéíĺľňóôŕšťúýžăâîșțабвгґдеєжзиіїйклмнопрстуфхцчшщьюя'" />
+    <xsl:variable name="corrected" select="'\GRATIS\'" />
+    <!-- dane potrzebne aby przekazywać informacje o płci -->
+    <xsl:variable name='gender_nazwa_w_panelu'>Płeć</xsl:variable>
+    <xsl:variable name='gender_male'>|Chłopiec|męska|Mężczyzna|produkt męski|</xsl:variable>
+    <xsl:variable name='gender_female'>|damska|Dziewczynka|kobieta|Produkt damski|</xsl:variable>
+    <xsl:variable name='gender_unisex'>|Unisex|młodzieżowe|</xsl:variable>
+    <!-- dane potrzebne aby przekazywać informacje o grupie wiekowej -->
+    <xsl:variable name='age_group_nazwa_w_panelu'></xsl:variable>
+    <xsl:variable name='age_group_newborn'>|</xsl:variable>
+    <xsl:variable name='age_group_infant'>|</xsl:variable>
+    <xsl:variable name='age_group_toddler'>|</xsl:variable>
+    <xsl:variable name='age_group_kids'>|</xsl:variable>
+    <xsl:variable name='age_group_adult'>|</xsl:variable>
+    <xsl:variable name='age_group_id_w_menu'>Tak</xsl:variable>
+    <xsl:variable name='age_group_newborn_id_menu'></xsl:variable>
+    <xsl:variable name='age_group_infant_id_menu'></xsl:variable>
+    <xsl:variable name='age_group_toddler_id_menu'></xsl:variable>
+    <xsl:variable name='age_group_kids_id_menu'>154</xsl:variable>
+    <xsl:variable name='age_group_adult_id_menu'>155</xsl:variable>
+    <!-- dane potrzebne aby przekazywać informacje o kolorze -->
+    <xsl:variable name='kolor_nazwa_w_panelu'>|kolor produktu|</xsl:variable>
+    <!-- dane potrzebne aby przekazywać informacje -->
+    <xsl:variable name='material_nazwa_w_panelu'>|materiał|materiał cholewki|materiał podeszwy|materiał wewnętrzny|materiał zewnętrzny|</xsl:variable>
+    
+    
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>www.butyraj.pl</title>
+                <link>https://www.butyraj.pl/</link>
+                <description>Produkty ze sklepu https://www.butyraj.pl/</description>
+                <xsl:for-each select="/offer/products/product[
+                                      price/@gross &gt; 0 and 
+                                  description/name/. != '']">
+                    <!-- Id towaru -->
+                    <xsl:choose>
+                        <xsl:when test="count(sizes/size) &lt; 1">
+                            <item>
+                                <g:id>
+                                    <xsl:value-of select="@id" />
+                                </g:id>
+                                <xsl:call-template name="product" />
+                                <xsl:call-template name="productSizeMatter" />
+                            </item>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="sizes/size">
+                                <item>
+                                    <xsl:choose>
+                                        <xsl:when test="position() = 1">
+                                            <!-- Id produktu -->
+                                            <g:id>
+                                                <xsl:value-of select="@code" />
+                                            </g:id>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product" />
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter" />
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <!-- Id rozmiaru produktu -->
+                                            <g:id>
+                                                <xsl:value-of select="@code" />
+                                            </g:id>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product" />
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter" />
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </item>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+    
+    <xsl:template name="product" xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <!-- Grupuj tylko rozmiary -->
+        <g:item_group_id>
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:value-of select="@id" />
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </g:item_group_id>
+        
+        <!-- jeśli na sklepie są jakieś zestawy -->
+        <g:is_bundle>
+            <xsl:choose>
+                <xsl:when test="sum(bundled/product/@quantity) > 1">
+                    <xsl:text>yes</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>no</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </g:is_bundle>
+        
+        <!-- kolor -->
+        <xsl:choose>
+            <xsl:when test="parameters/parameter/@context_id = 'CONTEXT_COLOR'">
+                <g:color>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:for-each select="parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]">
+                        <xsl:choose>
+                            <xsl:when test="position() = 1">
+                                <xsl:value-of select="@name" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>/</xsl:text>
+                                <xsl:value-of select="@name" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:color>
+            </xsl:when>
+            <xsl:when test="parameters/parameter[@name = 'Kolor']/@group_distinction = 'y'">
+                <g:color>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:for-each select="parameters/parameter[@name = 'Kolor']/value[position() &lt; 5]">
+                        <xsl:choose>
+                            <xsl:when test="position() = 1">
+                                <xsl:value-of select="@name" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>/</xsl:text>
+                                <xsl:value-of select="@name" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:color>
+            </xsl:when>
+            <xsl:when test="$kolor_nazwa_w_panelu != '' and parameters/parameter[
+                            contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
+                <xsl:variable name='kolor_get' select="parameters/parameter[
+                                                       contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                       ]/@name" />
+                <g:color>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:for-each select="parameters/parameter[@name= $kolor_get]/value[position() &lt; 5]">
+                        <xsl:choose>
+                            <xsl:when test=" position()= 1">
+                                <xsl:value-of select="@name" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>/</xsl:text>
+                                <xsl:value-of select="@name" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:color>
+            </xsl:when>
+        </xsl:choose>
+        <!-- płeć -->
+        <xsl:if test="$gender_nazwa_w_panelu != '' and parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name != ''">
+            <g:gender>
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:variable name='gender_wer'>
+                    <xsl:text>|</xsl:text>
+                    <xsl:value-of select="parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name" />
+                    <xsl:text>|</xsl:text>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="contains($gender_male, $gender_wer)">
+                        <![CDATA[male]]>
+                    </xsl:when>
+                    <xsl:when test="contains($gender_female, $gender_wer)">
+                        <![CDATA[female]]>
+                    </xsl:when>
+                    <xsl:when test="contains($gender_unisex, $gender_wer)">
+                        <![CDATA[unisex]]>
+                    </xsl:when>
+                </xsl:choose>
+                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </g:gender>
+        </xsl:if>
+        
+        <!-- materiał -->
+        <xsl:if test="$material_nazwa_w_panelu != '' and parameters/parameter[
+                      contains($material_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
+            <xsl:variable name='material_get' select="parameters/parameter[
+                                                      contains($material_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                      ]/@name" />
+            <g:material>
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:for-each select="parameters/parameter[@name= $material_get]/value[position() &lt; 5]">
+                    <xsl:choose>
+                        <xsl:when test=" position()= 1">
+                            <xsl:value-of select="@name" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>/</xsl:text>
+                            <xsl:value-of select="@name" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </g:material>
+        </xsl:if>
+        
+        <!-- 08.10.2025 MD -->
+        <!-- wiek -->
+        <xsl:if test="$age_group_id_w_menu != '' or 
+                      $age_group_nazwa_w_panelu != '' and parameters/parameter[@name = $age_group_nazwa_w_panelu]/value/@name != ''">
+            <xsl:element name="g:age_group">
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:variable name='age_wer'>
+                    <xsl:text>|</xsl:text>
+                    <xsl:value-of select="parameters/parameter[@name = $age_group_nazwa_w_panelu]/value/@name" />
+                    <xsl:text>|</xsl:text>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="contains($age_group_newborn, $age_wer) or 
+                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_newborn_id_menu]/@textId != ''">
+                        <![CDATA[newborn]]>
+                    </xsl:when>
+                    <xsl:when test="contains($age_group_infant, $age_wer) or 
+                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_infant_id_menu]/@textId != ''">
+                        <![CDATA[infant]]>
+                    </xsl:when>
+                    <xsl:when test="contains($age_group_toddler, $age_wer) or 
+                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_toddler_id_menu]/@textId != ''">
+                        <![CDATA[toddler]]>
+                    </xsl:when>
+                    <xsl:when test="contains($age_group_kids, $age_wer) or 
+                                    iaiext:priority_menu/site/menu[1]/item[@id = 153 or @id = $age_group_kids_id_menu]/@textId != ''">
+                        <![CDATA[kids]]>
+                    </xsl:when>
+                    <xsl:when test="contains($age_group_adult, $age_wer) or 
+                                    iaiext:priority_menu/site/menu[1]/item[@id = 156 or @id = $age_group_adult_id_menu]/@textId != ''">
+                        <![CDATA[adult]]>
+                    </xsl:when>
+                </xsl:choose>
+                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </xsl:element>
+        </xsl:if>
+        
+        <!-- 04.07.2025 MD -->
+        <xsl:variable name="final_form_unit_measure">
+            <xsl:choose>
+                <!-- Jeśli wartość pochodzi z parametru z kontekstem CONTEXT_STD_UNIT_WEIGHT -->
+                <xsl:when test="parameters/parameter[@context_id='CONTEXT_STD_UNIT_WEIGHT']/value/@name != ''">
+                    <xsl:variable name="raw" select="translate(parameters/parameter[@context_id='CONTEXT_STD_UNIT_WEIGHT']/value/@name, ',', '.')"/>
+                    <xsl:variable name="number_part">
+                        <xsl:choose>
+                            <xsl:when test="contains($raw,' kg')">
+                                <xsl:value-of select="number(substring-before(concat($raw, ' '), ' '))*1000"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="substring-before(concat($raw, ' '), ' ')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:choose>
+                        <xsl:when test="number($number_part) &gt;= 1000">
+                            <xsl:value-of select="format-number(number($number_part) div 1000, '#.##')"/>
+                            <xsl:text> kg</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$number_part"/>
+                            <xsl:text> g</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:when test="parameters/parameter[@context_id='CONTEXT_STD_UNIT_VOLUME']/value/@name != ''">
+                    <xsl:variable name="raw" select="translate(parameters/parameter[@context_id='CONTEXT_STD_UNIT_VOLUME']/value/@name, ',', '.')" />
+                    <xsl:variable name="number_part">
+                        <xsl:choose>
+                            <xsl:when test="contains($raw,' l')">
+                                <xsl:value-of select="number(substring-before(concat($raw, ' '), ' '))*1000"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="substring-before(concat($raw, ' '), ' ')"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:choose>
+                        <xsl:when test="number($number_part) &gt;= 1000">
+                            <xsl:value-of select="format-number(number($number_part) div 1000, '#.##')"/>
+                            <xsl:text> l</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$number_part"/>
+                            <xsl:text> ml</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <!-- Wyświetlenie jednostek -->
+        <xsl:choose>
+            <xsl:when test="$final_form_unit_measure != ''">
+                <xsl:choose>
+                    <xsl:when test="contains($final_form_unit_measure,' kg')">
+                        <!-- Jeśli przeliczona wartość (w kg) jest >= 1, wyświetlamy kg -->
+                        <g:unit_pricing_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="$final_form_unit_measure"/>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:unit_pricing_measure>
+                        <g:unit_pricing_base_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[1 kg]]&gt;</xsl:text>
+                        </g:unit_pricing_base_measure>
+                    </xsl:when>
+                    <xsl:when test="contains($final_form_unit_measure,' g')">
+                        <g:unit_pricing_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="$final_form_unit_measure"/>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:unit_pricing_measure>
+                        <g:unit_pricing_base_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[100 g]]&gt;</xsl:text>
+                        </g:unit_pricing_base_measure>
+                    </xsl:when>
+                    <xsl:when test="contains($final_form_unit_measure,' l')">
+                        <g:unit_pricing_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="$final_form_unit_measure"/>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:unit_pricing_measure>
+                        <g:unit_pricing_base_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[1 l]]&gt;</xsl:text>
+                        </g:unit_pricing_base_measure>
+                    </xsl:when>
+                    <xsl:when test="contains($final_form_unit_measure,' ml')">
+                        <g:unit_pricing_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="$final_form_unit_measure"/>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:unit_pricing_measure>
+                        <g:unit_pricing_base_measure>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[100 ml]]&gt;</xsl:text>
+                        </g:unit_pricing_base_measure>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:when>
+        </xsl:choose>
+        
+        <g:custom_label_0>
+            <xsl:choose>
+                <xsl:when test="price/@gross &lt;= 50">
+                    <xsl:text>0-50 </xsl:text>
+                    <xsl:value-of select="@currency" />
+                </xsl:when>
+                <xsl:when test="price/@gross &gt; 50 and price/@gross &lt;= 100">
+                    <xsl:text>50-100 </xsl:text>
+                    <xsl:value-of select="@currency" />
+                </xsl:when>
+                <xsl:when test="price/@gross &gt; 100 and price/@gross &lt;= 150">
+                    <xsl:text>100-150 </xsl:text>
+                    <xsl:value-of select="@currency" />
+                </xsl:when>
+                <xsl:when test="price/@gross &gt; 150 and price/@gross &lt;= 200">
+                    <xsl:text>150-200 </xsl:text>
+                    <xsl:value-of select="@currency" />
+                </xsl:when>
+                <xsl:when test="price/@gross &gt; 200 and price/@gross &lt;= 500">
+                    <xsl:text>200-500 </xsl:text>
+                    <xsl:value-of select="@currency" />
+                </xsl:when>
+                <xsl:when test="price/@gross &gt; 500">
+                    <xsl:text>500+ </xsl:text>
+                    <xsl:value-of select="@currency" />
+                </xsl:when>
+            </xsl:choose>
+        </g:custom_label_0>
+        <g:custom_label_1>
+            <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='newproduct' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Nowość|</xsl:text>
+            </xsl:if>
+            <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='bestseller' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Bestseller|</xsl:text>
+            </xsl:if>
+            <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='promotion' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Promocja|</xsl:text>
+            </xsl:if>
+        </g:custom_label_1>
+    </xsl:template>
+    
+    <xsl:template name="productSizeMatter"
+                  xmlns:g="http://base.google.com/ns/1.0" 
+                  version="2.0">
+        <xsl:variable name="sell_by">
+            <xsl:choose>
+                <xsl:when test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="../../iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:when test="iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>1</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <!-- Dostępność -->
+        <xsl:variable name="stocksGobalCheck">
+            <xsl:for-each select="stock">
+                <xsl:choose>
+                    <xsl:when test="@available_stock_quantity &gt; 0">
+                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                        <xsl:text>/</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="@available_stock_quantity = -1 ">
+                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                        <xsl:text>/</xsl:text>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="avail">
+            <xsl:choose>
+                <xsl:when test="contains($stocksGobalCheck,'-1')">
+                    <xsl:text>999999</xsl:text>
+                </xsl:when>
+                <xsl:when test="string-length($stocksGobalCheck) = 0">
+                    <xsl:text>0</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="sum(stock/@available_stock_quantity)"></xsl:value-of>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <g:availability>
+            <xsl:choose>
+                <xsl:when test="@available = 'on_order' and $avail >= $sell_by">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                </xsl:when>
+                <xsl:when test="@available = 'in_stock' and $avail >= $sell_by">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[out of stock]]&gt;</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </g:availability>
+        <g:shipping_weight>
+            <xsl:if test="@weight">
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:value-of select="format-number(@weight div 1000, '#.##')" />
+                <xsl:text disable-output-escaping="yes"> kg]]&gt;</xsl:text>
+            </xsl:if>
+        </g:shipping_weight>                            
+        
+        <xsl:element name="g:title">
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            
+            <xsl:variable name="mainBrand" select="../../producer/@name" />
+            <xsl:value-of select="$mainBrand" />
+            <xsl:text> </xsl:text>
+            
+            <xsl:variable name="matName" select="../../parameters/parameter[@name='Materiał zewnętrzny' or @name='Materiał dominujący']/value/@name" />
+            <xsl:choose>
+                <xsl:when test="contains($matName, 'Skóra naturalna')">Skórzane </xsl:when>
+                <xsl:when test="contains($matName, 'Zamsz naturalny')">Zamszowe </xsl:when>
+                <xsl:when test="contains($matName, 'Lakierowana')">Lakierowane </xsl:when>
+                <xsl:when test="contains($matName, 'tekstylny')">Tekstylne </xsl:when>
+            </xsl:choose>
+            
+            <xsl:variable name="rawName">
+                <xsl:choose>
+                    <xsl:when test="../../iaiext:pricecomparator_name and ../../iaiext:pricecomparator_name != ''">
+                        <xsl:value-of select="../../iaiext:pricecomparator_name/." />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="../../description/name/." />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <xsl:call-template name="cleanTitle">
+                <xsl:with-param name="text" select="$rawName" />
+                <xsl:with-param name="brand" select="$mainBrand" />
+            </xsl:call-template>
+            
+            <xsl:text> roz. </xsl:text>
+            <xsl:value-of select="@name" />
+            
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </xsl:element>
+    </xsl:template>   
+    <xsl:template name="cleanTitle">
+        <xsl:param name="text" />
+        <xsl:param name="brand" />
+        <xsl:variable name="normText" select="normalize-space($text)" />
+        <xsl:variable name="firstWord" select="substring-before(concat($normText, ' '), ' ')" />
+        <xsl:variable name="rest" select="substring-after($normText, ' ')" />
+        
+        <xsl:if test="$firstWord != ''">
+            <xsl:variable name="lowerWord" select="translate($firstWord, $upperLetters, $lowerLetters)" />
+            <xsl:variable name="lowerBrand" select="translate($brand, $upperLetters, $lowerLetters)" />
+            
+            <xsl:variable name="hasDigits" select="translate($firstWord, '0123456789', '') != $firstWord" />
+            
+            <xsl:variable name="isBrandPart" select="contains($lowerBrand, $lowerWord) or contains($lowerWord, $lowerBrand)" />
+            
+            <xsl:variable name="isForbidden" select="$lowerWord = 'uniwersalny' or $lowerWord = 'szt' or $lowerWord = 'szt.'" />
+            
+            <xsl:if test="not($hasDigits) and not($isBrandPart) and not($isForbidden)">
+                <xsl:value-of select="$firstWord" />
+                <xsl:text> </xsl:text>
+            </xsl:if>
+        </xsl:if>
+        
+        <xsl:if test="$rest != ''">
+            <xsl:call-template name="cleanTitle">
+                <xsl:with-param name="text" select="$rest" />
+                <xsl:with-param name="brand" select="$brand" />
+            </xsl:call-template>
+        </xsl:if>
+    </xsl:template>    
+    
+    <xsl:template name="wordFormat"><xsl:param name="text" /><xsl:value-of select="$text" /></xsl:template>
+    <xsl:template name="upperCaseCount">
+        <xsl:param name="text"/><xsl:variable name="uppercaseOnly" select="translate($text, concat($lowerLetters,'0123456789., *%&amp;;\/-+()'), '')"/>
+        <xsl:value-of select="string-length($uppercaseOnly)"/>
+    </xsl:template>
+    <xsl:template name="lowerCaseCount">
+        <xsl:param name="text"/><xsl:variable name="lowercaseOnly" select="translate($text, concat($upperLetters,'0123456789., *%&amp;;\/-+()'), '')"/>
+        <xsl:value-of select="string-length($lowercaseOnly)"/>
+    </xsl:template>
+</xsl:stylesheet>

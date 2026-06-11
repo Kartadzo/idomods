@@ -1,0 +1,94 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
+    <xsl:variable name="upperLetters"
+        select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'" />
+    <xsl:variable name="lowerLetters"
+        select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźżäöüßáčďéěíňóřšťúůýžáäčďžéíĺľňóôŕšťúýžăâîșțабвгґдеєжзиіїйклмнопрстуфхцчшщьюя'" />
+
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>matfel.pl - FB</title>
+                <link>https://matfel.pl/</link>
+                <description>Produkty ze sklepu https://matfel.pl/</description>
+                <xsl:for-each
+                    select="/offer/products/product[
+                price/@gross &gt; 0 and 
+                description/name/. != '']">
+                    <!-- Id towaru -->
+                    <xsl:choose>
+                        <xsl:when test="count(sizes/size) &lt; 1">
+                            <item>
+                                <g:id>
+                                    <xsl:value-of select="@id" />
+                                </g:id>
+                                <xsl:call-template name="product" />
+                                <xsl:call-template name="productSizeMatter" />
+                            </item>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="sizes/size">
+                                <item>
+                                    <xsl:choose>
+                                        <xsl:when test="position() = 1">
+                                            <!-- Id produktu -->
+                                            <g:id>
+                                                <xsl:value-of select="../../@id" />
+                                            </g:id>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product" />
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter" />
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <!-- Id rozmiaru produktu -->
+                                            <g:id>
+                                                <xsl:value-of select="@code" />
+                                            </g:id>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product" />
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter" />
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </item>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+
+    <xsl:template name="product"
+        xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <g:title>
+            <xsl:value-of select="description/name/." />
+        </g:title>
+        <xsl:if test="images/icons/auction_icon/@url">
+            <list_icon>
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[ yes ]]&gt;</xsl:text>
+            </list_icon>
+        </xsl:if>
+        <xsl:if test="images/icons/auction_icon/@url">
+            <auction_icon>
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[ yes ]]&gt;</xsl:text>
+            </auction_icon>
+        </xsl:if>
+        <xsl:if test="count(images/large/image) > 0">
+            <img>
+                <xsl:value-of select="count(images/large/image)" />
+            </img>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="productSizeMatter"
+        xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+    </xsl:template>
+</xsl:stylesheet>

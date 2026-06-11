@@ -1,0 +1,105 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <item>
+                            <g:id>
+                                <xsl:value-of select="@code"/>
+                            </g:id>
+                            <!-- Nazwa towaru -->
+                            <g:title>
+                                <xsl:value-of select="../../description/name"></xsl:value-of>
+                            </g:title>
+                            <!-- Opis towaru -->
+                            <g:description>
+                                <xsl:choose>
+                                    <xsl:when test="../../description/long_desc = '' or string-length(../../description/long_desc) &gt; 10000">
+                                        <xsl:value-of select="../../description/short_desc"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="../../description/long_desc"></xsl:value-of>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </g:description>
+                            <!-- Link -->
+                            <g:link>
+                                <xsl:value-of select="substring-before(../../card/@url, '.feed')"></xsl:value-of>.pinterestads.html</g:link>
+                            <!-- Zdjęcia -->
+                            <xsl:variable name="vLowest">
+                                <xsl:for-each select="../../images/large/image/@iaiext:priority">
+                                    <xsl:sort data-type="number"/>
+                                    <xsl:if test="position()=1">
+                                        <xsl:value-of select="."/>
+                                    </xsl:if>
+                                </xsl:for-each>
+                            </xsl:variable>
+                            <xsl:for-each select="../../images/large/image">
+                                <xsl:choose>
+                                    <xsl:when test="@iaiext:priority = number($vLowest)">
+                                        <g:image_link>
+                                            <xsl:value-of select="@url"></xsl:value-of>
+                                        </g:image_link>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <g:additional_image_link>
+                                            <xsl:value-of select="@url"></xsl:value-of>
+                                        </g:additional_image_link>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
+                            <!-- cena -->
+                            <g:price>
+                                <xsl:value-of select="../../price/@gross"></xsl:value-of>
+                                <xsl:text><![CDATA[ ]]></xsl:text>
+                                <xsl:value-of select="@currency"></xsl:value-of>
+                            </g:price>
+                            <!-- Dostępność -->
+                            <g:availability>
+                                <xsl:choose>
+                                    <xsl:when test="@available = 'on_order'">
+                                        <xsl:text>preorder</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="@available = 'in_stock'">
+                                        <xsl:text>in stock</xsl:text>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>out of stock</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </g:availability>
+                            <!-- Brand -->
+                            <g:brand>
+                                <xsl:value-of select="../../producer/@name"></xsl:value-of>
+                            </g:brand>
+                            <xsl:choose>
+                                <xsl:when test="../../@producer_code_standard = 'MPN' or ../../@producer_code_standard = 'OTHER'">
+                                    <g:mpn>
+                                        <xsl:value-of select="@iaiext:code_external"></xsl:value-of>
+                                    </g:mpn>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <g:gtin>
+                                        <xsl:value-of select="@code_producer"></xsl:value-of>
+                                    </g:gtin>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <g:google_product_category>
+                                <xsl:text>638</xsl:text>
+                            </g:google_product_category>
+                            <g:condition>
+                                <xsl:text>new</xsl:text>
+                            </g:condition>
+                        </item>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

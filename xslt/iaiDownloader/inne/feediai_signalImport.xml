@@ -1,0 +1,31 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <!-- długoś aktualizacji 
+    - zaczynamy od pierwszego, w razie powolnego aktualizowania produktów -> zmniejszyć -->
+    <xsl:variable name='pierwszy_produkt'>0</xsl:variable>
+    <xsl:variable name='ostatni_produkt'>123648</xsl:variable>
+
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/products/product[
+                position() &gt;= $pierwszy_produkt and 
+                position() &lt;= $ostatni_produkt
+                ]">
+                    <product id="{position()+12121212}" brands='Signal' visible='no'>
+                    <xsl:attribute name="waga">
+                        <xsl:value-of select="translate(weight,'.','')"/>
+                    </xsl:attribute>
+                        <xsl:copy-of select="."/>
+                    </product>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>
