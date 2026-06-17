@@ -1072,6 +1072,9 @@
          <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'promotion']/@visible='yes'">
             <xsl:text>|Promocja|</xsl:text>
          </xsl:if>
+         <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'distinguished']/@visible='yes'">
+            <xsl:text>|Wyróżniony|</xsl:text>
+         </xsl:if>
       </g:custom_label_1>
       
       <g:custom_label_2>

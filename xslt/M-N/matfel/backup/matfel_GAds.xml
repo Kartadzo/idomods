@@ -1,0 +1,737 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ'"/>
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż'"/>
+    
+    <!-- 
+         Feed dodatkowy
+         Version: 1.0
+    -->
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <xsl:for-each select="/offer/products/product[
+                                      not(contains(translate(description/name, $upperLetters, $lowerLetters), 'misoprostol')) and 
+                                      not(contains(translate(description/short_desc, $upperLetters, $lowerLetters), 'misoprostol')) and 
+                                      not(contains(translate(description/long_desc, $upperLetters, $lowerLetters), 'misoprostol'))]">
+                    <item>
+                        <g:id>
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:value-of select="@id" />-uniw<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:id>
+                        
+                        <xsl:variable name="upperCaseCount">
+                            <xsl:call-template name="count-uppercase">
+                                <xsl:with-param name="text" select="description/name"/>
+                            </xsl:call-template>
+                        </xsl:variable>
+                        
+                        <xsl:variable name="lowerCaseCount">
+                            <xsl:call-template name="count-lowercase">
+                                <xsl:with-param name="text" select="description/name"/>
+                            </xsl:call-template>
+                        </xsl:variable>
+                        
+                        <xsl:choose>
+                            <xsl:when test="$upperCaseCount > $lowerCaseCount">
+                                <title>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                    <xsl:call-template name="capitalize">
+                                        <xsl:with-param name="text" select="description/name"/>
+                                    </xsl:call-template>
+                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                </title>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <title>
+                                    <xsl:value-of select="description/name"/>
+                                </title>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        
+                        <xsl:if test="sizes/size/@code_producer and sizes/size/@code_producer != ''">
+                            <g:gtin>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="sizes/size/@code_producer" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:gtin>
+                        </xsl:if>
+                        <xsl:variable name='before_promotion'>
+                            <xsl:if test="promotion/price/normal_retail_price/@gross">
+                                <xsl:value-of select="promotion/price/normal_retail_price/@gross" />
+                            </xsl:if>
+                        </xsl:variable>
+                        <!-- <g:price><xsl:value-of
+                             select="price/@gross"></xsl:value-of><xsl:text><![CDATA[
+                             ]]></xsl:text><xsl:value-of select="@currency"></xsl:value-of></g:price> -->
+                        <!-- <xsl:choose>
+                             <xsl:when test="string-length($before_promotion) = '0'">
+                             <g:price>
+                             <xsl:value-of select="price/@gross"></xsl:value-of>
+                             <xsl:text><![CDATA[ ]]></xsl:text>
+                             <xsl:value-of select="../../@currency"></xsl:value-of>
+                             </g:price>
+                             </xsl:when>
+                             <xsl:when test="$before_promotion">
+                             <g:price>
+                             <xsl:value-of select="$before_promotion"></xsl:value-of>
+                             <xsl:text><![CDATA[ ]]></xsl:text>
+                             <xsl:value-of select="../../@currency"></xsl:value-of>
+                             </g:price>
+                             <g:sale_price>
+                             <xsl:value-of select="price/@gross"></xsl:value-of>
+                             <xsl:text><![CDATA[ ]]></xsl:text>
+                             <xsl:value-of select="../../@currency"></xsl:value-of>
+                             </g:sale_price>
+                             </xsl:when>
+                             <xsl:otherwise>
+                             <g:price>
+                             <xsl:value-of select="price/@gross"></xsl:value-of>
+                             <xsl:text><![CDATA[ ]]></xsl:text>
+                             <xsl:value-of select="../../@currency"></xsl:value-of>
+                             </g:price>
+                             </xsl:otherwise>
+                             </xsl:choose> -->
+                        
+                        
+                        <xsl:choose>
+                            <xsl:when test="description/short_desc = ''">
+                                <xsl:variable name="returned_value_without_html">
+                                    <xsl:call-template name="strip-tags">
+                                        <xsl:with-param name="text" select="description/long_desc" tunnel="yes" />
+                                    </xsl:call-template>
+                                </xsl:variable>
+                                <xsl:variable name="returned_value_300_char" select="substring(normalize-space($returned_value_without_html),1,300)" />
+                                <xsl:variable name="value_cut">
+                                    <xsl:call-template name="tokenize">
+                                        <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,300)" />
+                                    </xsl:call-template>
+                                </xsl:variable>
+                                <xsl:variable name="last_char" select="substring($returned_value_300_char, string-length($returned_value_300_char), 1)" />
+                                
+                                <xsl:choose>
+                                    <xsl:when test="$last_char != '.'">
+                                        <!-- chodzi oto ze nie ma przed kropka nic  -->
+                                        <xsl:choose>
+                                            <xsl:when test="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut)) = ''">
+                                                <!-- Nie ma przed kropka nic wiec podajemy co mamy
+                                                     bo mozliwe ze wgl nie ma kropki lool-->
+                                                <g:description>
+                                                    
+                                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                    
+                                                    
+                                                    <xsl:if test="string-length($returned_value_300_char) = 0">
+                                                        <xsl:value-of select="description/name" />
+                                                        <xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+                                                    </xsl:if>
+                                                    
+                                                    <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                                                    <xsl:for-each select="parameters/parameter">
+                                                        <xsl:text disable-output-escaping="yes">&lt;li&gt;</xsl:text>
+                                                        <xsl:value-of select="@name" />
+                                                        <xsl:text disable-output-escaping="yes">: &lt;strong&gt;</xsl:text>
+                                                        <xsl:value-of select="value/@name" />
+                                                        <xsl:text disable-output-escaping="yes">&lt;/strong&gt; &lt;/li&gt;</xsl:text>
+                                                    </xsl:for-each>
+                                                    
+                                                    
+                                                    <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                                                    <xsl:value-of select="$returned_value_300_char" />
+                                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                </g:description>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <!-- jest przed kropka text -->
+                                                <g:description>
+                                                    
+                                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                    
+                                                    <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) = 0">
+                                                        <xsl:value-of select="description/name" />
+                                                        <xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+                                                    </xsl:if>
+                                                    
+                                                    <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                                                    <xsl:for-each select="parameters/parameter">
+                                                        <xsl:text disable-output-escaping="yes">&lt;li&gt;</xsl:text>
+                                                        <xsl:value-of select="@name" />
+                                                        <xsl:text disable-output-escaping="yes">: &lt;strong&gt;</xsl:text>
+                                                        <xsl:value-of select="value/@name" />
+                                                        <xsl:text disable-output-escaping="yes">&lt;/strong&gt; &lt;/li&gt;</xsl:text>
+                                                    </xsl:for-each>
+                                                    <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                                                    <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))" />
+                                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                </g:description>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <!-- Mamy kropke na koncu i jest git -->
+                                        <g:description>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:if test="string-length($returned_value_300_char) = 0">
+                                                <xsl:value-of select="description/name" />
+                                                <xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+                                            </xsl:if>
+                                            
+                                            <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                                            <xsl:for-each select="parameters/parameter">
+                                                <xsl:text disable-output-escaping="yes">&lt;li&gt;</xsl:text>
+                                                <xsl:value-of select="@name" />
+                                                <xsl:text disable-output-escaping="yes">: &lt;strong&gt;</xsl:text>
+                                                <xsl:value-of select="value/@name" />
+                                                <xsl:text disable-output-escaping="yes">&lt;/strong&gt; &lt;/li&gt;</xsl:text>
+                                            </xsl:for-each>
+                                            <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                                            <xsl:value-of select="$returned_value_300_char" />
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:description>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <!-- tutaj jeśli opis nie bedzie mial X znakow to zastapic go długim
+                                     opisem mimo wszystko -->
+                                <!-- załóżmy -->
+                                <xsl:choose>
+                                    <xsl:when test="string-length(description/short_desc) &gt; 30">
+                                        <!-- jest git bo ma wiecej niz  -->
+                                        <g:description>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            
+                                            <xsl:if test="string-length(description/short_desc) = 0">
+                                                <xsl:value-of select="description/name" />
+                                                <xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+                                            </xsl:if>
+                                            
+                                            <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                                            <xsl:for-each select="parameters/parameter">
+                                                <xsl:text disable-output-escaping="yes">&lt;li&gt;</xsl:text>
+                                                <xsl:value-of select="@name" />
+                                                <xsl:text disable-output-escaping="yes">: &lt;strong&gt;</xsl:text>
+                                                <xsl:value-of select="value/@name" />
+                                                <xsl:text disable-output-escaping="yes">&lt;/strong&gt; &lt;/li&gt;</xsl:text>
+                                            </xsl:for-each>
+                                            <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                                            <xsl:value-of select="description/short_desc" />
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </g:description>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:variable name="returned_value_without_html">
+                                            <xsl:call-template name="strip-tags">
+                                                <xsl:with-param name="text" select="description/long_desc" tunnel="yes" />
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <xsl:variable name="returned_value_300_char" select="substring(normalize-space($returned_value_without_html),1,300)" />
+                                        <xsl:variable name="value_cut">
+                                            <xsl:call-template name="tokenize">
+                                                <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,300)" />
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <xsl:variable name="last_char" select="substring($returned_value_300_char, string-length($returned_value_300_char), 1)" />
+                                        <xsl:choose>
+                                            <xsl:when test="$last_char != '.'">
+                                                <!-- chodzi oto ze nie ma przed kropka nic  -->
+                                                <xsl:choose>
+                                                    <xsl:when test="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut)) = ''">
+                                                        <!-- Nie ma przed kropka nic wiec podajemy
+                                                             co mamy bo mozliwe ze wgl nie ma kropki
+                                                             lool-->
+                                                        <g:description>
+                                                            
+                                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                            <xsl:if test="string-length($returned_value_300_char) = 0">
+                                                                <xsl:value-of select="description/name" />
+                                                                <xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+                                                            </xsl:if>
+                                                            <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                                                            <xsl:for-each select="parameters/parameter">
+                                                                <xsl:text disable-output-escaping="yes">&lt;li&gt;</xsl:text>
+                                                                <xsl:value-of select="@name" />
+                                                                <xsl:text disable-output-escaping="yes">: &lt;strong&gt;</xsl:text>
+                                                                <xsl:value-of select="value/@name" />
+                                                                <xsl:text disable-output-escaping="yes">&lt;/strong&gt; &lt;/li&gt;</xsl:text>
+                                                            </xsl:for-each>
+                                                            <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                                                            <xsl:value-of select="$returned_value_300_char" />
+                                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                        </g:description>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <!-- jest przed kropka text -->
+                                                        <g:description>
+                                                            
+                                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                            <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) = 0">
+                                                                <xsl:value-of select="description/name" />
+                                                                <xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+                                                            </xsl:if>
+                                                            <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                                                            <xsl:for-each select="parameters/parameter">
+                                                                <xsl:text disable-output-escaping="yes">&lt;li&gt;</xsl:text>
+                                                                <xsl:value-of select="@name" />
+                                                                <xsl:text disable-output-escaping="yes">: &lt;strong&gt;</xsl:text>
+                                                                <xsl:value-of select="value/@name" />
+                                                                <xsl:text disable-output-escaping="yes">&lt;/strong&gt; &lt;/li&gt;</xsl:text>
+                                                            </xsl:for-each>
+                                                            <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                                                            <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))" />
+                                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                        </g:description>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <!-- Mamy kropke na koncu i jest git -->
+                                                <g:description>
+                                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                    <xsl:if test="string-length($returned_value_300_char) = 0">
+                                                        <xsl:value-of select="description/name" />
+                                                        <xsl:text disable-output-escaping="yes">&lt;br&gt;</xsl:text>
+                                                    </xsl:if>
+                                                    <xsl:text disable-output-escaping="yes">&lt;ul&gt;</xsl:text>
+                                                    
+                                                    <xsl:for-each select="parameters/parameter">
+                                                        <xsl:text disable-output-escaping="yes">&lt;li&gt;</xsl:text>
+                                                        <xsl:value-of select="@name" />
+                                                        <xsl:text disable-output-escaping="yes">: &lt;strong&gt;</xsl:text>
+                                                        <xsl:value-of select="value/@name" />
+                                                        <xsl:text disable-output-escaping="yes">&lt;/strong&gt; &lt;/li&gt;</xsl:text>
+                                                    </xsl:for-each>
+                                                    <xsl:text disable-output-escaping="yes">&lt;/ul&gt;</xsl:text>
+                                                    <xsl:value-of select="$returned_value_300_char" />
+                                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                </g:description>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        
+                        <g:display_ads_link><xsl:value-of select="substring-before(card/@url, '.feed')"/><![CDATA[.html]]></g:display_ads_link>
+                        <g:link><xsl:value-of select="substring-before(card/@url, '.feed')"/><![CDATA[.html]]></g:link>
+                        <g:mobile_link><xsl:value-of select="substring-before(card/@url, '.feed')"/><![CDATA[.html]]></g:mobile_link>
+                        
+                        <!-- product category -->
+                        <category>
+                            <!-- <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text> -->
+                            <xsl:value-of select="category/@name"/>   
+                            <!-- <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text> -->
+                        </category>    
+                        <!-- zdjęcia -->
+                        <xsl:variable name="vLowest">
+                            <xsl:for-each select="images/large/image/@iaiext:priority">
+                                <xsl:sort data-type="number"/>
+                                <xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
+                            </xsl:for-each>
+                        </xsl:variable>
+                        <xsl:for-each select="images/large/image[position() &lt; 6]">
+                            <xsl:choose>
+                                <xsl:when test="@iaiext:priority = number($vLowest)">
+                                    <image_link>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></image_link>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <additional_image_link>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></additional_image_link>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:for-each> 
+                        
+                        <!-- Dostępność -->
+                        <g:availability>
+                            <xsl:choose>
+                                <xsl:when test="sizes/size[@available='on_order']/@available = 'on_order'">
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="sizes/size[@available='in_stock']/@available = 'in_stock'">
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[out of stock]]&gt;</xsl:text>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </g:availability>
+                        
+                        <xsl:choose>
+                            <!-- kiedy hurtowa cena detaliczna -->
+                            <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                                <xsl:choose>
+                                    <!-- kiedy cena promocyjna jest wieksza niz cena dla serwisu zewnetrznego -->
+                                    <xsl:when test="promotion/price/normal_retail_price/@gross > iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                        <price>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="promotion/price/normal_retail_price/@gross"></xsl:value-of>
+                                            <xsl:text><![CDATA[ ]]></xsl:text>
+                                            <xsl:value-of select="@currency"/>  
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </price>
+                                    </xsl:when>
+                                    <!-- inaczej bierze cena dla serwisu zewnetrznego -->
+                                    <xsl:otherwise>
+                                        <price>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site[1]/@gross"></xsl:value-of>
+                                            <xsl:text><![CDATA[ ]]></xsl:text>
+                                            <xsl:value-of select="@currency"/>  
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </price>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <!-- kiedy nie wystepuje hurtowa cena detaliczna -->
+                            <xsl:when test="price/@gross">
+                                <xsl:choose>
+                                    <!-- kiedy promocyjna bedzie wieksza  -->
+                                    <xsl:when test="promotion/price/normal_retail_price/@gross > price/@gross">
+                                        <price>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="promotion/price/normal_retail_price/@gross"></xsl:value-of>
+                                            <xsl:text><![CDATA[ ]]></xsl:text>
+                                            <xsl:value-of select="@currency"/>  
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </price>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <!-- bierzemy normalna price/gorss -->
+                                        <price>
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="price/@gross"></xsl:value-of>
+                                            <xsl:text><![CDATA[ ]]></xsl:text>
+                                            <xsl:value-of select="@currency"/>  
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </price>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                        </xsl:choose>
+                        <!-- jesli bedzie promocja to od razu promocyjna cene -->
+                        <xsl:if test="promotion/price/normal_retail_price">
+                            <xsl:choose>
+                                <xsl:when test = "promotion/price/normal_retail_price">
+                                    <sale_price>
+                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                        <xsl:value-of select="price/@gross"></xsl:value-of>
+                                        <xsl:text><![CDATA[ ]]></xsl:text>
+                                        <xsl:value-of select="@currency"/>    
+                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                    </sale_price>
+                                </xsl:when>
+                                <xsl:when test="price/@gross">
+                                    <sale_price>
+                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                        <xsl:value-of select="price/@gross"></xsl:value-of>
+                                        <xsl:text><![CDATA[ ]]></xsl:text>
+                                        <xsl:value-of select="@currency"/>    
+                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                    </sale_price>
+                                </xsl:when>
+                            </xsl:choose>
+                        </xsl:if>
+                        
+                        <g:custom_label_0>
+                            <xsl:choose>
+                                <xsl:when test="price/@gross &gt; 2000.00"><xsl:text disable-output-escaping="yes">2000.00zł-</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1900.00 and price/@gross &lt;= 2000.00"><xsl:text disable-output-escaping="yes">1900.00-2000.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1800.00 and price/@gross &lt;= 1900.00"><xsl:text disable-output-escaping="yes">1800.00-1900.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1700.00 and price/@gross &lt;= 1800.00"><xsl:text disable-output-escaping="yes">1700.00-1800.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1600.00 and price/@gross &lt;= 1700.00"><xsl:text disable-output-escaping="yes">1600.00-1700.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1500.00 and price/@gross &lt;= 1600.00"><xsl:text disable-output-escaping="yes">1500.00-1600.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1400.00 and price/@gross &lt;= 1500.00"><xsl:text disable-output-escaping="yes">1400.00-1500.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1300.00 and price/@gross &lt;= 1400.00"><xsl:text disable-output-escaping="yes">1300.00-1400.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1200.00 and price/@gross &lt;= 1300.00"><xsl:text disable-output-escaping="yes">1200.00-1300.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1100.00 and price/@gross &lt;= 1200.00"><xsl:text disable-output-escaping="yes">1100.00-1200.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 1000.00 and price/@gross &lt;= 1100.00"><xsl:text disable-output-escaping="yes">1000.00-1100.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 900.00 and price/@gross &lt;= 1000.00"><xsl:text disable-output-escaping="yes">900.00-1000.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 850.00 and price/@gross &lt;= 900.00"><xsl:text disable-output-escaping="yes">850.00-900.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 800.00 and price/@gross &lt;= 850.00"><xsl:text disable-output-escaping="yes">800.00-850.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 750.00 and price/@gross &lt;= 800.00"><xsl:text disable-output-escaping="yes">750.00-800.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 725.00 and price/@gross &lt;= 750.00"><xsl:text disable-output-escaping="yes">725.00-750.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 700.00 and price/@gross &lt;= 725.00"><xsl:text disable-output-escaping="yes">700.00-725.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 675.00 and price/@gross &lt;= 700.00"><xsl:text disable-output-escaping="yes">675.00-700.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 650.00 and price/@gross &lt;= 675.00"><xsl:text disable-output-escaping="yes">650.00-675.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 625.00 and price/@gross &lt;= 650.00"><xsl:text disable-output-escaping="yes">625.00-650.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 600.00 and price/@gross &lt;= 625.00"><xsl:text disable-output-escaping="yes">600.00-625.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 580.00 and price/@gross &lt;= 600.00"><xsl:text disable-output-escaping="yes">580.00-600.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 560.00 and price/@gross &lt;= 580.00"><xsl:text disable-output-escaping="yes">560.00-580.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 540.00 and price/@gross &lt;= 560.00"><xsl:text disable-output-escaping="yes">540.00-560.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 520.00 and price/@gross &lt;= 540.00"><xsl:text disable-output-escaping="yes">520.00-540.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 500.00 and price/@gross &lt;= 520.00"><xsl:text disable-output-escaping="yes">500.00-520.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 480.00 and price/@gross &lt;= 500.00"><xsl:text disable-output-escaping="yes">480.00-500.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 460.00 and price/@gross &lt;= 480.00"><xsl:text disable-output-escaping="yes">460.00-480.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 450.00 and price/@gross &lt;= 460.00"><xsl:text disable-output-escaping="yes">450.00-460.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 440.00 and price/@gross &lt;= 450.00"><xsl:text disable-output-escaping="yes">440.00-450.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 430.00 and price/@gross &lt;= 440.00"><xsl:text disable-output-escaping="yes">430.00-440.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 420.00 and price/@gross &lt;= 430.00"><xsl:text disable-output-escaping="yes">420.00-430.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 410.00 and price/@gross &lt;= 420.00"><xsl:text disable-output-escaping="yes">410.00-420.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 400.00 and price/@gross &lt;= 410.00"><xsl:text disable-output-escaping="yes">400.00-410.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 390.00 and price/@gross &lt;= 400.00"><xsl:text disable-output-escaping="yes">390.00-400.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 385.00 and price/@gross &lt;= 390.00"><xsl:text disable-output-escaping="yes">385.00-390.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 380.00 and price/@gross &lt;= 385.00"><xsl:text disable-output-escaping="yes">380.00-385.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 375.00 and price/@gross &lt;= 380.00"><xsl:text disable-output-escaping="yes">375.00-380.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 365.00 and price/@gross &lt;= 375.00"><xsl:text disable-output-escaping="yes">365.00-375.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 360.00 and price/@gross &lt;= 365.00"><xsl:text disable-output-escaping="yes">360.00-365.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 355.00 and price/@gross &lt;= 360.00"><xsl:text disable-output-escaping="yes">355.00-360.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 345.00 and price/@gross &lt;= 355.00"><xsl:text disable-output-escaping="yes">345.00-355.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 335.00 and price/@gross &lt;= 345.00"><xsl:text disable-output-escaping="yes">335.00-345.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 325.00 and price/@gross &lt;= 335.00"><xsl:text disable-output-escaping="yes">325.00-335.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 315.00 and price/@gross &lt;= 325.00"><xsl:text disable-output-escaping="yes">315.00-325.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 305.00 and price/@gross &lt;= 315.00"><xsl:text disable-output-escaping="yes">305.00-315.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 295.00 and price/@gross &lt;= 305.00"><xsl:text disable-output-escaping="yes">295.00-305.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 285.00 and price/@gross &lt;= 295.00"><xsl:text disable-output-escaping="yes">285.00-295.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 280.00 and price/@gross &lt;= 285.00"><xsl:text disable-output-escaping="yes">280.00-285.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 275.00 and price/@gross &lt;= 280.00"><xsl:text disable-output-escaping="yes">275.00-280.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 270.00 and price/@gross &lt;= 275.00"><xsl:text disable-output-escaping="yes">270.00-275.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 265.00 and price/@gross &lt;= 270.00"><xsl:text disable-output-escaping="yes">265.00-270.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 260.00 and price/@gross &lt;= 265.00"><xsl:text disable-output-escaping="yes">260.00-265.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 255.00 and price/@gross &lt;= 260.00"><xsl:text disable-output-escaping="yes">255.00-260.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 250.00 and price/@gross &lt;= 255.00"><xsl:text disable-output-escaping="yes">250.00-255.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 245.00 and price/@gross &lt;= 250.00"><xsl:text disable-output-escaping="yes">245.00-250.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 240.00 and price/@gross &lt;= 245.00"><xsl:text disable-output-escaping="yes">240.00-245.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 235.00 and price/@gross &lt;= 240.00"><xsl:text disable-output-escaping="yes">235.00-240.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 230.00 and price/@gross &lt;= 235.00"><xsl:text disable-output-escaping="yes">230.00-235.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 225.00 and price/@gross &lt;= 230.00"><xsl:text disable-output-escaping="yes">225.00-230.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 220.00 and price/@gross &lt;= 225.00"><xsl:text disable-output-escaping="yes">220.00-225.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 215.00 and price/@gross &lt;= 220.00"><xsl:text disable-output-escaping="yes">215.00-220.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 210.00 and price/@gross &lt;= 215.00"><xsl:text disable-output-escaping="yes">210.00-215.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 205.00 and price/@gross &lt;= 210.00"><xsl:text disable-output-escaping="yes">205.00-210.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 200.00 and price/@gross &lt;= 205.00"><xsl:text disable-output-escaping="yes">200.00-205.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 195.00 and price/@gross &lt;= 200.00"><xsl:text disable-output-escaping="yes">195.00-200.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 190.00 and price/@gross &lt;= 195.00"><xsl:text disable-output-escaping="yes">190.00-195.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 185.00 and price/@gross &lt;= 190.00"><xsl:text disable-output-escaping="yes">185.00-190.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 180.00 and price/@gross &lt;= 185.00"><xsl:text disable-output-escaping="yes">180.00-185.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 177.5 and price/@gross &lt;= 180.00"><xsl:text disable-output-escaping="yes">177.5-180.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 175.00 and price/@gross &lt;= 177.5"><xsl:text disable-output-escaping="yes">175.00-177.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 172.5 and price/@gross &lt;= 175.00"><xsl:text disable-output-escaping="yes">172.5-175.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 170.00 and price/@gross &lt;= 172.5"><xsl:text disable-output-escaping="yes">170.00-172.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 167.5 and price/@gross &lt;= 170.00"><xsl:text disable-output-escaping="yes">167.5-170.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 165.00 and price/@gross &lt;= 167.5"><xsl:text disable-output-escaping="yes">165.00-167.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 162.5 and price/@gross &lt;= 165.00"><xsl:text disable-output-escaping="yes">162.5-165.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 160.00 and price/@gross &lt;= 162.5"><xsl:text disable-output-escaping="yes">160.00-162.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 157.5 and price/@gross &lt;= 160.00"><xsl:text disable-output-escaping="yes">157.5-160.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 155.00 and price/@gross &lt;= 157.5"><xsl:text disable-output-escaping="yes">155.00-157.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 152.5 and price/@gross &lt;= 155.00"><xsl:text disable-output-escaping="yes">152.5-155.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 150.00 and price/@gross &lt;= 152.5"><xsl:text disable-output-escaping="yes">150.00-152.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 147.5 and price/@gross &lt;= 150.00"><xsl:text disable-output-escaping="yes">147.5-150.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 145.00 and price/@gross &lt;= 147.5"><xsl:text disable-output-escaping="yes">145.00-147.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 142.5 and price/@gross &lt;= 145.00"><xsl:text disable-output-escaping="yes">142.5-145.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 140.00 and price/@gross &lt;= 142.5"><xsl:text disable-output-escaping="yes">140.00-142.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 137.5 and price/@gross &lt;= 140.00"><xsl:text disable-output-escaping="yes">137.5-140.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 135.00 and price/@gross &lt;= 137.5"><xsl:text disable-output-escaping="yes">135.00-137.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 132.5 and price/@gross &lt;= 135.00"><xsl:text disable-output-escaping="yes">132.5-135.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 130.00 and price/@gross &lt;= 132.5"><xsl:text disable-output-escaping="yes">130.00-132.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 127.5 and price/@gross &lt;= 130.00"><xsl:text disable-output-escaping="yes">127.5-130.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 125.00 and price/@gross &lt;= 127.5"><xsl:text disable-output-escaping="yes">125.00-127.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 122.5 and price/@gross &lt;= 125.00"><xsl:text disable-output-escaping="yes">122.5-125.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 120.00 and price/@gross &lt;= 122.5"><xsl:text disable-output-escaping="yes">120.00-122.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 117.5 and price/@gross &lt;= 120.00"><xsl:text disable-output-escaping="yes">117.5-120.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 115.00 and price/@gross &lt;= 117.5"><xsl:text disable-output-escaping="yes">115.00-117.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 112.5 and price/@gross &lt;= 115.00"><xsl:text disable-output-escaping="yes">112.5-115.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 110.00 and price/@gross &lt;= 112.5"><xsl:text disable-output-escaping="yes">110.00-112.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 107.5 and price/@gross &lt;= 110.00"><xsl:text disable-output-escaping="yes">107.5-110.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 105.00 and price/@gross &lt;= 107.5"><xsl:text disable-output-escaping="yes">105.00-107.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 102.5 and price/@gross &lt;= 105.00"><xsl:text disable-output-escaping="yes">102.5-105.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 100.00 and price/@gross &lt;= 102.5"><xsl:text disable-output-escaping="yes">100.00-102.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 97.5 and price/@gross &lt;= 100.00"><xsl:text disable-output-escaping="yes">97.5-100.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 95.00 and price/@gross &lt;= 97.5"><xsl:text disable-output-escaping="yes">95.00-97.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 92.5 and price/@gross &lt;= 95.00"><xsl:text disable-output-escaping="yes">92.5-95.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 90.00 and price/@gross &lt;= 92.5"><xsl:text disable-output-escaping="yes">90.00-92.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 87.5 and price/@gross &lt;= 90.00"><xsl:text disable-output-escaping="yes">87.5-90.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 85.00 and price/@gross &lt;= 87.5"><xsl:text disable-output-escaping="yes">85.00-87.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 82.5 and price/@gross &lt;= 85.00"><xsl:text disable-output-escaping="yes">82.5-85.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 80.00 and price/@gross &lt;= 82.5"><xsl:text disable-output-escaping="yes">80.00-82.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 77.5 and price/@gross &lt;= 80.00"><xsl:text disable-output-escaping="yes">77.5-80.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 75.00 and price/@gross &lt;= 77.5"><xsl:text disable-output-escaping="yes">75.00-77.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 72.5 and price/@gross &lt;= 75.00"><xsl:text disable-output-escaping="yes">72.5-75.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 70.00 and price/@gross &lt;= 72.5"><xsl:text disable-output-escaping="yes">70.00-72.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 67.5 and price/@gross &lt;= 70.00"><xsl:text disable-output-escaping="yes">67.5-70.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 65.00 and price/@gross &lt;= 67.5"><xsl:text disable-output-escaping="yes">65.00-67.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 62.5 and price/@gross &lt;= 65.00"><xsl:text disable-output-escaping="yes">62.5-65.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 60.00 and price/@gross &lt;= 62.5"><xsl:text disable-output-escaping="yes">60.00-62.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 57.5 and price/@gross &lt;= 60.00"><xsl:text disable-output-escaping="yes">57.5-60.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 55.00 and price/@gross &lt;= 57.5"><xsl:text disable-output-escaping="yes">55.00-57.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 52.5 and price/@gross &lt;= 55.00"><xsl:text disable-output-escaping="yes">52.5-55.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 50.00 and price/@gross &lt;= 52.5"><xsl:text disable-output-escaping="yes">50.00-52.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 47.5 and price/@gross &lt;= 50.00"><xsl:text disable-output-escaping="yes">47.5-50.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 45.00 and price/@gross &lt;= 47.5"><xsl:text disable-output-escaping="yes">45.00-47.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 42.5 and price/@gross &lt;= 45.00"><xsl:text disable-output-escaping="yes">42.5-45.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 40.00 and price/@gross &lt;= 42.5"><xsl:text disable-output-escaping="yes">40.00-42.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 37.5 and price/@gross &lt;= 40.00"><xsl:text disable-output-escaping="yes">37.5-40.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 35.00 and price/@gross &lt;= 37.5"><xsl:text disable-output-escaping="yes">35.00-37.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 32.5 and price/@gross &lt;= 35.00"><xsl:text disable-output-escaping="yes">32.5-35.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 30.00 and price/@gross &lt;= 32.5"><xsl:text disable-output-escaping="yes">30.00-32.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 27.5 and price/@gross &lt;= 30.00"><xsl:text disable-output-escaping="yes">27.5-30.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 25.00 and price/@gross &lt;= 27.5"><xsl:text disable-output-escaping="yes">25.00-27.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 22.5 and price/@gross &lt;= 25.00"><xsl:text disable-output-escaping="yes">22.5-25.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 20.00 and price/@gross &lt;= 22.5"><xsl:text disable-output-escaping="yes">20.00-22.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 17.5 and price/@gross &lt;= 20.00"><xsl:text disable-output-escaping="yes">17.5-20.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 15.00 and price/@gross &lt;= 17.5"><xsl:text disable-output-escaping="yes">15.00-17.5zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 12.50 and price/@gross &lt;= 15.00"><xsl:text disable-output-escaping="yes">12.50-15.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 10.00 and price/@gross &lt;= 12.50"><xsl:text disable-output-escaping="yes">10.00-12.50zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 7.50 and price/@gross &lt;= 10.00"><xsl:text disable-output-escaping="yes">7.50-10.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 5.00 and price/@gross &lt;= 7.50"><xsl:text disable-output-escaping="yes">5.00-7.50zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 2.50 and price/@gross &lt;= 5.00"><xsl:text disable-output-escaping="yes">2.50-5.00zł</xsl:text></xsl:when>
+                                <xsl:when test="price/@gross &gt; 0.00 and price/@gross &lt;= 2.50"><xsl:text disable-output-escaping="yes">0.00-2.50zł</xsl:text></xsl:when>
+                            </xsl:choose>
+                        </g:custom_label_0>
+                        <g:custom_label_1>
+                            <xsl:choose>
+                                <xsl:when test="price/@gross &lt;= 50">
+                                    <xsl:text>0-50 </xsl:text><xsl:value-of select="../../@currency"/>
+                                </xsl:when>
+                                <xsl:when test="price/@gross &gt; 50 and price/@gross &lt;= 100">
+                                    <xsl:text>50-100 </xsl:text><xsl:value-of select="../../@currency"/>
+                                </xsl:when>
+                                <xsl:when test="price/@gross &gt; 100 and price/@gross &lt;= 150">
+                                    <xsl:text>100-150 </xsl:text><xsl:value-of select="../../@currency"/>
+                                </xsl:when>
+                                <xsl:when test="price/@gross &gt; 150 and price/@gross &lt;= 200">
+                                    <xsl:text>150-200 </xsl:text><xsl:value-of select="../../@currency"/>
+                                </xsl:when>
+                                <xsl:when test="price/@gross &gt; 200 and price/@gross &lt;= 500">
+                                    <xsl:text>200-500 </xsl:text><xsl:value-of select="../../@currency"/>
+                                </xsl:when>
+                                <xsl:when test="price/@gross &gt; 500">
+                                    <xsl:text>500+ </xsl:text><xsl:value-of select="../../@currency"/>
+                                </xsl:when>
+                            </xsl:choose>
+                        </g:custom_label_1>
+                        
+                    </item>
+                </xsl:for-each>
+            </channel>
+        </rss>
+        
+    </xsl:template>
+    <xsl:template name="strip-tags">
+        <xsl:param name="text" />
+        <xsl:choose>
+            <xsl:when test="contains($text, '&lt;')">
+                <xsl:value-of select="substring-before($text, '&lt;')" />
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="tokenize">
+        <xsl:param name="text" />
+        <xsl:param name="delimiter" select="'.'" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- Konrad -->
+    <xsl:template name="count-lowercase">
+        <xsl:param name="text"/>
+        <xsl:param name="index" select="1"/>
+        <xsl:param name="count" select="0"/>
+        <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyząćęłńóśżź'"/>
+        <xsl:variable name="length" select="string-length($text)"/>
+        <xsl:choose>
+            <xsl:when test="$index &lt;= $length">
+                <xsl:variable name="char" select="substring($text,$index,1)"/>
+                <xsl:if test="contains($lowercase,$char)">
+                    <xsl:variable name="newcount" select="$count + 1"/>
+                    <xsl:call-template name="count-lowercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$newcount"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="not(contains($lowercase,$char))">
+                    <xsl:call-template name="count-lowercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$count"/>
+                    </xsl:call-template>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$count"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="count-uppercase">
+        <xsl:param name="text"/>
+        <xsl:param name="index" select="1"/>
+        <xsl:param name="count" select="0"/>
+        <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZĄĆĘŁŃÓŚŻŹ'"/>
+        <xsl:variable name="length" select="string-length($text)"/>
+        <xsl:choose>
+            <xsl:when test="$index &lt;= $length">
+                <xsl:variable name="char" select="substring($text,$index,1)"/>
+                <xsl:if test="contains($uppercase,$char)">
+                    <xsl:variable name="newcount" select="$count + 1"/>
+                    <xsl:call-template name="count-uppercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$newcount"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="not(contains($uppercase,$char))">
+                    <xsl:call-template name="count-uppercase">
+                        <xsl:with-param name="text" select="$text"/>
+                        <xsl:with-param name="index" select="$index + 1"/>
+                        <xsl:with-param name="count" select="$count"/>
+                    </xsl:call-template>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$count"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <!-- Konrad -->
+    <!-- TEN SKRYPT NA PRZEKSZTAŁCANIE WYRAZÓW 1 LIERA WIELKA RESZTA MAŁA / trzeba dopracować po nawiasie jest dalej z małej litery ! -->
+    <xsl:template name="capitalize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="' '"/>
+        
+        <xsl:variable name="upper-case" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZĄĆĘŁŃÓŚŻŹ'"/>
+        <xsl:variable name="lower-case" select="'abcdefghijklmnopqrstuvwxyząćęłńóśżź'"/>
+        
+        <xsl:variable name="word" select="substring-before(concat($text, $delimiter), $delimiter)" />
+        <xsl:choose>
+            <xsl:when test="$delimiter=' '">
+                <!-- tokenize word by 2nd delimiter -->
+                <xsl:call-template name="capitalize">
+                    <xsl:with-param name="text" select="$word"/>
+                    <xsl:with-param name="delimiter" select="'/'"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- capitalize word -->
+                <xsl:value-of select="translate(substring($word, 1, 1), $lower-case, $upper-case)"/>
+                <xsl:value-of select="translate(substring($word, 2), $upper-case, $lower-case)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:if test="contains($text, $delimiter)">
+            <xsl:value-of select="$delimiter"/>
+            <!-- recursive call -->
+            <xsl:call-template name="capitalize">
+                <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                <xsl:with-param name="delimiter" select="$delimiter"/>
+            </xsl:call-template>
+        </xsl:if>
+    </xsl:template>
+    
+</xsl:stylesheet>

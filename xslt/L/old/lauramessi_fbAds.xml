@@ -1,0 +1,315 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ'" />
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż'" />
+    <!-- dane potrzebne aby przekazywać informacje o płci -->
+    <xsl:variable name='gender_nazwa_w_panelu'>Płeć</xsl:variable>
+    <xsl:variable name='gender_male'>|</xsl:variable>
+    <xsl:variable name='gender_female'>|kobieta|</xsl:variable>
+    <xsl:variable name='gender_unisex'>|</xsl:variable>
+    <!-- dane potrzebne aby przekazywać informacje o kolorze -->
+    <xsl:variable name='kolor_nazwa_w_panelu'>Kolor</xsl:variable>
+
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each
+                    select="/offer/products/product[
+                price/@gross &gt; 0 and 
+                description/name/. != '']">
+                    <!-- Id towaru -->
+                    <xsl:choose>
+                        <xsl:when test="count(sizes/size) &lt; 1">
+                            <item>
+                                <g:id>
+                                    <xsl:value-of select="@id" />
+                                </g:id>
+                                <xsl:call-template name="product" />
+                                <xsl:call-template name="productSizeMatter" />
+                            </item>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="sizes/size">
+                                <xsl:choose>
+                                    <xsl:when test="position() = 1">
+                                        <item>
+                                            <!-- Id produktu -->
+                                            <g:id>
+                                                <xsl:value-of select="../../@id" />
+                                            </g:id>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product" />
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter" />
+                                        </item>
+                                    </xsl:when>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+
+    <xsl:template name="product"
+        xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <xsl:choose>
+            <xsl:when test="images/icons/auction_icon/@url">
+                <g:image_link>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:value-of select="images/icons/auction_icon/@url"></xsl:value-of>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:image_link>
+                <xsl:for-each select="images/large/image[position() &lt; 5]">
+                    <g:additional_image_link>
+                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                        <xsl:value-of select="@url" />
+                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                    </g:additional_image_link>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="vLowest">
+                    <xsl:for-each select="images/large/image/@iaiext:priority">
+                        <xsl:sort data-type="number" />
+                        <xsl:if test="position()=1">
+                            <xsl:value-of select="." />
+                        </xsl:if>
+                    </xsl:for-each>
+                </xsl:variable>
+
+                <xsl:for-each select="images/large/image[position() &lt; 5]">
+                    <xsl:choose>
+                        <xsl:when test="@iaiext:priority = number($vLowest)">
+                            <g:image_link>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="@url" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:image_link>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <g:additional_image_link>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="@url" />
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:additional_image_link>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </xsl:otherwise>
+        </xsl:choose>
+        <!-- Grupuj rozmiary i warianty -->
+        <xsl:choose>
+            <xsl:when test="group/@id">
+                <g:item_group_id>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:value-of select="group/@id" />
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:item_group_id>
+            </xsl:when>
+            <xsl:when test="not(group/@id) and count(sizes/size) &gt; 1">
+                <g:item_group_id>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:value-of select="@id" />
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:item_group_id>
+            </xsl:when>
+        </xsl:choose>
+
+        <!-- kolor -->
+        <xsl:choose>
+            <xsl:when test="parameters/parameter/@context_id = 'CONTEXT_COLOR'">
+                <g:color>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:for-each
+                        select="parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]">
+                        <xsl:choose>
+                            <xsl:when test="position() = 1">
+                                <xsl:value-of select="@name" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>/</xsl:text>
+                                <xsl:value-of select="@name" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:color>
+            </xsl:when>
+            <xsl:when test="parameters/parameter[@name = 'Kolor']/@group_distinction = 'y'">
+                <g:color>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:for-each
+                        select="parameters/parameter[@name = 'Kolor']/value[position() &lt; 5]">
+                        <xsl:choose>
+                            <xsl:when test="position() = 1">
+                                <xsl:value-of select="@name" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>/</xsl:text>
+                                <xsl:value-of select="@name" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:color>
+            </xsl:when>
+            <xsl:when
+                test="$kolor_nazwa_w_panelu != '' and parameters/parameter/@name = $kolor_nazwa_w_panelu">
+                <g:color>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:for-each
+                        select="parameters/parameter[@name = $kolor_nazwa_w_panelu]/value[position() &lt; 5]">
+                        <xsl:choose>
+                            <xsl:when test="position() = 1">
+                                <xsl:value-of select="@name" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>/</xsl:text>
+                                <xsl:value-of select="@name" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </g:color>
+            </xsl:when>
+        </xsl:choose>
+        <!-- płeć -->
+        <xsl:if
+            test="$gender_nazwa_w_panelu != '' and parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name != ''">
+            <g:gender>
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:variable name='gender_wer'>
+                    <xsl:text>|</xsl:text>
+                    <xsl:value-of
+                        select="parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name" />
+                    <xsl:text>|</xsl:text>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="contains($gender_male, $gender_wer)">
+                        <![CDATA[male]]>
+                    </xsl:when>
+                    <xsl:when test="contains($gender_female, $gender_wer)">
+                        <![CDATA[female]]>
+                    </xsl:when>
+                    <xsl:when test="contains($gender_unisex, $gender_wer)">
+                        <![CDATA[unisex]]>
+                    </xsl:when>
+                </xsl:choose>
+                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </g:gender>
+        </xsl:if>
+
+        <g:custom_label_1>
+            <xsl:if
+                test="iaiext:hotspots/iaiext:site/flag/@type='newproduct' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Nowość|</xsl:text>
+            </xsl:if>
+            <xsl:if
+                test="iaiext:hotspots/iaiext:site/flag/@type='bestseller' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Bestseller|</xsl:text>
+            </xsl:if>
+            <xsl:if
+                test="iaiext:hotspots/iaiext:site/flag/@type='promotion' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
+                <xsl:text>|Promocja|</xsl:text>
+            </xsl:if>
+        </g:custom_label_1>
+    </xsl:template>
+
+    <xsl:template name="productSizeMatter"
+        xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <xsl:variable name="sell_by">
+            <xsl:choose>
+                <xsl:when
+                    test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="../../iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:when
+                    test="iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>1</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <!-- Dostępność -->
+        <xsl:variable name="stocksGobalCheck">
+            <xsl:for-each select="../size">
+                <xsl:for-each select="stock">
+                    <xsl:choose>
+                        <xsl:when test="@available_stock_quantity &gt; 0">
+                            <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                            <xsl:text>/</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="@available_stock_quantity = -1 ">
+                            <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                            <xsl:text>/</xsl:text>
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:for-each>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="avail">
+            <xsl:choose>
+                <xsl:when test="contains($stocksGobalCheck,'-1')">
+                    <xsl:text>999999</xsl:text>
+                </xsl:when>
+                <xsl:when test="string-length($stocksGobalCheck) = 0">
+                    <xsl:text>0</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="sum(../size/stock/@available_stock_quantity)" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <g:availability>
+            <xsl:choose>
+                <xsl:when test="@available = 'on_order' and $avail > $sell_by">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                </xsl:when>
+                <xsl:when test="@available = 'in_stock' and $avail > $sell_by">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[out of stock]]&gt;</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </g:availability>
+        <!-- Gtin / MPN -->
+        <xsl:choose>
+            <xsl:when
+                test="(../../@producer_code_standard = 'ISBN10' or ../../@producer_code_standard = 'ISBN13' or 
+            ../../@producer_code_standard = 'GTIN8' or ../../@producer_code_standard = 'GTIN13' or 
+            ../../@producer_code_standard = 'GTIN14' or ../../@producer_code_standard = 'GTIN12' or 
+            ../../@producer_code_standard = 'UPCE') and @code_producer!=''">
+                <xsl:element name="g:gtin">
+                    <xsl:value-of select="@code_producer" />
+                </xsl:element>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:element name="g:mpn">
+                    <xsl:choose>
+                        <xsl:when test="@code_producer!=''">
+                            <xsl:value-of select="@code_producer" />
+                        </xsl:when>
+                        <xsl:when test="@iaiext:code_external!=''">
+                            <xsl:value-of select="@iaiext:code_external" />
+                        </xsl:when>
+                        <xsl:when test="../../@code_on_card!=''">
+                            <xsl:value-of select="../../@code_on_card" />
+                        </xsl:when>
+                        <xsl:when test="@code_on_card!=''">
+                            <xsl:value-of select="@code_on_card" />
+                        </xsl:when>
+                    </xsl:choose>
+                </xsl:element>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

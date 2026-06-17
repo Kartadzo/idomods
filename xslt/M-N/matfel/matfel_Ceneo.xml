@@ -1,0 +1,496 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" cdata-section-elements="cat name desc a"></xsl:output>
+    <xsl:template match="/">
+        <offers version="1"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <xsl:for-each select="/offer/products/product">
+
+                <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyząćęłńóśżź'" />
+                <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZĄĆĘŁŃÓŚŻŹ'" />
+
+                <xsl:variable name="stocksGobalCheck">
+                    <xsl:for-each select="sizes/size/stock">
+                        <xsl:choose>
+                            <xsl:when test="@available_stock_quantity &gt; 0">
+                                <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                                <xsl:text>/</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="@available_stock_quantity = -1 ">
+                                <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                                <xsl:text>/</xsl:text>
+                            </xsl:when>
+                        </xsl:choose>
+                    </xsl:for-each>
+                </xsl:variable>
+
+                <xsl:choose>
+                    <xsl:when test="@type = 'virtual' and sizes/size[1]/@available != 'unavailable' and sizes/size[1]/@available != ''">
+                        <o>
+                            <!-- <xsl:attribute name="basket">0</xsl:attribute> -->
+                            <!-- <xsl:for-each select="parameters/parameter">
+                              <xsl:choose>
+                                  <xsl:when test="@name = 'Ceneo kup teraz'">
+                                      <xsl:choose>
+                                          <xsl:when test="value/@name = '1'">
+                                          <xsl:attribute name="basket">1</xsl:attribute>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:attribute name="basket">0</xsl:attribute>
+                                            </xsl:otherwise>
+                                      </xsl:choose>
+                                  </xsl:when>
+                              </xsl:choose>
+                            </xsl:for-each> -->
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@id"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="url">
+                                <xsl:value-of select="card/@url"/></xsl:attribute>
+                            <xsl:attribute name="price">
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:pricecomparator_price/iaiext:site/@gross">
+                                        <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="price/@gross"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            <!-- Jeśli towar wirtualny to zawsze dostępnosć = 1 -->
+                            <xsl:attribute name="avail">1</xsl:attribute>
+                            <xsl:attribute name="set">
+                                <xsl:choose>
+                                    <xsl:when test="bundled">1</xsl:when>
+                                    <xsl:otherwise>0</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            <xsl:if test="sizes/size[1]/@weight div 1000 > 0">
+                                <xsl:attribute name="weight">
+                                    <xsl:value-of select="sizes/size[1]/@weight div 1000"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <cat>
+                                <xsl:choose>
+                                    <xsl:when test="category/@name = '*Kategoria tymczasowa'">
+                                        <xsl:value-of select="translate(iaiext:navigation/iaiext:site/iaiext:menu[@id=1]/iaiext:item/@textid,'\','/')"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="translate(category/@name, '&gt;', '/')"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </cat>
+                            <name>
+                                <xsl:value-of select="description/name"/>
+                            </name>
+                            <imgs>
+                                <xsl:variable name="vLowest">
+                                    <xsl:for-each select="images/large/image/@iaiext:priority">
+                                        <xsl:sort data-type="number"/>
+                                        <xsl:if test="position()=1">
+                                            <xsl:value-of select="."/>
+                                        </xsl:if>
+                                    </xsl:for-each>
+                                </xsl:variable>
+                                <xsl:for-each select="images/large/image">
+                                    <xsl:choose>
+                                        <xsl:when test="@iaiext:priority = number($vLowest)">
+                                            <main>
+                                                <xsl:attribute name="url">
+                                                    <xsl:value-of select="@url"></xsl:value-of>
+                                                </xsl:attribute>
+                                            </main>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <i>
+                                                <xsl:attribute name="url">
+                                                    <xsl:value-of select="@url"></xsl:value-of>
+                                                </xsl:attribute>
+                                            </i>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:for-each>
+                                <xsl:if test="images/large/image[2]/@url != ''">
+                                </xsl:if>
+                            </imgs>
+                            <desc>
+                                <!-- Krótki opis < 250-->
+                                <xsl:choose>
+                                    <xsl:when test="string-length(normalize-space(description/long_desc)) &lt;= 250 and description/long_desc != ''">
+                                        <xsl:value-of select="description/long_desc"/>
+                                    </xsl:when>
+                                    <xsl:when test="string-length(normalize-space(description/long_desc)) &gt;= 250 and description/long_desc != ''">
+                                        <!-- desc bez html -->
+                                        <xsl:variable name = "returned_value_without_html">
+                                            <xsl:call-template name="strip-tags">
+                                                <xsl:with-param name="text" select="description/long_desc" tunnel="yes"/>
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <!-- wartosci do n znakow -->
+                                        <xsl:variable name="returned_value_n_char" select="substring(normalize-space($returned_value_without_html),1,250)"></xsl:variable>
+                                        <!-- wycinam to po kropce ostatniej  -->
+                                        <xsl:variable name="value_cut">
+                                            <xsl:call-template name="tokenize">
+                                                <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,250)"/>
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <xsl:variable name="last_char" select="substring($returned_value_n_char, string-length($returned_value_n_char), 1)"></xsl:variable>
+                                          
+                                        <xsl:choose>
+                                            <xsl:when test="$last_char != '.'">
+                                                <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_n_char), $value_cut))"></xsl:value-of>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="$returned_value_n_char"></xsl:value-of>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="description/short_desc"></xsl:value-of>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </desc>
+                            <attrs>
+                                <a name="Rozmiar">uniwersalny</a>
+                                <xsl:if test="producer/@name != ''">
+                                    <a name="Producent">
+                                        <xsl:value-of select="producer/@name"/>
+                                    </a>
+                                </xsl:if>
+                                <xsl:if test="sizes/size[1]/@code != ''">
+                                    <a name="Kod_producenta">
+                                        <xsl:value-of select="sizes/size[1]/@code"/>
+                                    </a>
+                                </xsl:if>
+                                <xsl:variable name="code_producer_variable">
+                                    <xsl:value-of select="sizes/size[1]/@code_producer"></xsl:value-of>
+                                </xsl:variable>
+                                <xsl:if test="$code_producer_variable != ''">
+                                    <a name="EAN">
+                                        <xsl:choose>
+                                            <xsl:when test="@producer_code_standard='OTHER'">
+                                                <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                                            </xsl:when>
+                                            <xsl:when test="@producer_code_standard='ISBN13'">
+                                                <xsl:value-of select="$code_producer_variable"/>
+                                            </xsl:when>
+                                        </xsl:choose>
+                                    </a>
+                                    <xsl:choose>
+                                        <xsl:when test="contains(translate(description/name,  $uppercase,$lowercase),'audiobook')">
+                                            <a name="Wersja">
+                                                <![CDATA[audiobook (MP3)]]>
+                                            </a>
+                                        </xsl:when>
+                                        <xsl:when test="contains(translate(description/name,  $uppercase,$lowercase),'ebook')">
+                                            <a name="Wersja">
+                                                <![CDATA[ebook (PDF)]]>
+                                            </a>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                </xsl:if>
+                                <xsl:for-each select="parameters/parameter">
+                                    <xsl:if test="value[1]/@name != ''">
+                                        <a>
+                                            <xsl:attribute name="name">
+                                                <xsl:value-of select="@name"/>
+                                            </xsl:attribute>
+                                            <xsl:value-of select="value[1]/@name"/>
+                                        </a>
+                                    </xsl:if>
+                                </xsl:for-each>
+                                <xsl:if test="iaiext:responsible_entity/producer/code != ''">
+                                    <a name="Producent odpowiedzialny">
+                                        <xsl:value-of select="iaiext:responsible_entity/producer/code"/>
+                                    </a>
+                                </xsl:if>
+                                <xsl:if test="iaiext:responsible_entity/persons/person/code != ''">
+                                    <a name="Podmiot odpowiedzialny">
+                                        <xsl:value-of select="iaiext:responsible_entity/persons/person/code"/>
+                                    </a>
+                                </xsl:if>
+                            </attrs>
+                        </o>
+                        <!-- Koniec virtualnego towaru  and @type != 'virtual'-->
+                    </xsl:when>
+                    <xsl:when test="string-length($stocksGobalCheck) = 0">
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <o>
+                            <!-- <xsl:attribute name="basket">0</xsl:attribute> -->
+                            <!-- <xsl:for-each select="parameters/parameter">
+                      <xsl:choose>
+                          <xsl:when test="@name = 'Ceneo kup teraz'">
+                              <xsl:choose>
+                                  <xsl:when test="value/@name = '1'">
+                                  <xsl:attribute name="basket">1</xsl:attribute>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="basket">0</xsl:attribute>
+                                    </xsl:otherwise>
+                              </xsl:choose>
+                          </xsl:when>
+                      </xsl:choose>
+                    </xsl:for-each> -->
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="@id"/>
+                            </xsl:attribute>
+                            <xsl:attribute name="url">
+                                <xsl:value-of select="card/@url"/></xsl:attribute>
+                            <xsl:attribute name="price">
+                                <xsl:choose>
+                                    <xsl:when test="iaiext:pricecomparator_price/iaiext:site/@gross">
+                                        <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="price/@gross"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            <xsl:choose>
+                                <xsl:when test="iaiext:delivery_time/@unit = 'minute' or iaiext:delivery_time/@unit = 'hour'">
+                                    <xsl:attribute name="avail">1</xsl:attribute>
+                                </xsl:when>
+                                <xsl:when test="iaiext:delivery_time/iaiext:time/@days = 1 and iaiext:delivery_time/@unit = 'day'">
+                                    <xsl:attribute name="avail">1</xsl:attribute>
+                                </xsl:when>
+                                <xsl:when test="iaiext:delivery_time/iaiext:time/@days = 2 and iaiext:delivery_time/@unit = 'day' or iaiext:delivery_time/iaiext:time/@days = 3 and iaiext:delivery_time/@unit = 'day'">
+                                    <xsl:attribute name="avail">3</xsl:attribute>
+                                </xsl:when>
+                                <xsl:when test="iaiext:delivery_time/iaiext:time/@days > 3 and iaiext:delivery_time/iaiext:time/@days &lt;= 7 and iaiext:delivery_time/@unit = 'day'">
+                                    <xsl:attribute name="avail">7</xsl:attribute>
+                                </xsl:when>
+                                <xsl:when test="iaiext:delivery_time/iaiext:time/@days > 7 and iaiext:delivery_time/iaiext:time/@days &lt;= 14 and iaiext:delivery_time/@unit = 'day'">
+                                    <xsl:attribute name="avail">14</xsl:attribute>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="avail">99</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:attribute name="set">
+                                <xsl:choose>
+                                    <xsl:when test="bundled">1</xsl:when>
+                                    <xsl:otherwise>0</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            <xsl:if test="sizes/size[1]/@weight div 1000 > 0">
+                                <xsl:attribute name="weight">
+                                    <xsl:value-of select="sizes/size[1]/@weight div 1000"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:attribute name="stock">
+                                <xsl:choose>
+                                    <xsl:when test="contains($stocksGobalCheck,'-1') and string-length($stocksGobalCheck) &gt;0">
+                                        <xsl:text>999999</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="string-length($stocksGobalCheck) = 0">
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="sum(sizes/size/stock[@id = '1' or @id = '0' or @id = '2' or @id = '3' or @id = '4' or @id = '5' or @id = '6' or @id = '7' or @id = '8' or @id = '9' or @id = '10' or @id = '-1' or @id = '-2' or @id = '-3']/@available_stock_quantity)"></xsl:value-of>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            <cat>
+                                <xsl:value-of select="translate(category/@name, '&gt;', '\')"/>
+                            </cat>
+                            <name>
+                                <xsl:value-of select="description/name"/>
+                            </name>
+                            <imgs>
+                                <xsl:variable name="vLowest">
+                                    <xsl:for-each select="images/large/image/@iaiext:priority">
+                                        <xsl:sort data-type="number"/>
+                                        <xsl:if test="position()=1">
+                                            <xsl:value-of select="."/>
+                                        </xsl:if>
+                                    </xsl:for-each>
+                                </xsl:variable>
+                                <xsl:for-each select="images/large/image">
+                                    <xsl:choose>
+                                        <xsl:when test="@iaiext:priority = number($vLowest)">
+                                            <main>
+                                                <xsl:attribute name="url">
+                                                    <xsl:value-of select="@url"></xsl:value-of>
+                                                </xsl:attribute>
+                                            </main>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <i>
+                                                <xsl:attribute name="url">
+                                                    <xsl:value-of select="@url"></xsl:value-of>
+                                                </xsl:attribute>
+                                            </i>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:for-each>
+                                <xsl:if test="images/large/image[2]/@url != ''">
+                                </xsl:if>
+                            </imgs>
+                            <desc>
+                                <!-- Krótki opis < 250-->
+                                <xsl:choose>
+                                    <xsl:when test="string-length(normalize-space(description/long_desc)) &lt;= 250 and description/long_desc != ''">
+                                        <xsl:value-of select="description/long_desc"/>
+                                    </xsl:when>
+                                    <xsl:when test="string-length(normalize-space(description/long_desc)) &gt;= 250 and description/long_desc != ''">
+                                        <!-- desc bez html -->
+                                        <xsl:variable name = "returned_value_without_html">
+                                            <xsl:call-template name="strip-tags">
+                                                <xsl:with-param name="text" select="description/long_desc" tunnel="yes"/>
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <!-- wartosci do n znakow -->
+                                        <xsl:variable name="returned_value_n_char" select="substring(normalize-space($returned_value_without_html),1,250)"></xsl:variable>
+                                        <!-- wycinam to po kropce ostatniej  -->
+                                        <xsl:variable name="value_cut">
+                                            <xsl:call-template name="tokenize">
+                                                <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,250)"/>
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <xsl:variable name="last_char" select="substring($returned_value_n_char, string-length($returned_value_n_char), 1)"></xsl:variable>
+                                          
+                                        <xsl:choose>
+                                            <xsl:when test="$last_char != '.'">
+                                                <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_n_char), $value_cut))"></xsl:value-of>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="$returned_value_n_char"></xsl:value-of>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="description/short_desc"></xsl:value-of>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </desc>
+                            <attrs>
+                                <a name="Rozmiar">uniwersalny</a>
+                                <xsl:if test="producer/@name != ''">
+                                    <a name="Producent">
+                                        <xsl:value-of select="producer/@name"/>
+                                    </a>
+                                </xsl:if>
+                                <xsl:if test="sizes/size[1]/@code != ''">
+                                    <a name="Kod_producenta">
+                                        <xsl:value-of select="sizes/size[1]/@code"/>
+                                    </a>
+                                </xsl:if>
+                                <xsl:variable name="code_producer_variable">
+                                    <xsl:value-of select="sizes/size[1]/@code_producer"></xsl:value-of>
+                                </xsl:variable>
+                                <xsl:if test="$code_producer_variable != ''">
+                                    <xsl:choose>
+                                        <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = ''">
+                                            <!-- Nie mamy nic -->
+                                            <a name="EAN">
+                                                <xsl:value-of select="substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1)))" />
+                                            </a>
+                                            <a name="Wersja">
+                                                <![CDATA[towar fizyczny]]>
+                                            </a>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:choose>
+                                                <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '1'">
+                                                    <a name="EAN">
+                                                        <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                                                    </a>
+                                                    <a name="Wersja">
+                                                        <![CDATA[audiobook (MP3)]]>
+                                                    </a>
+                                                </xsl:when>
+                                                <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '2'">
+                                                    <a name="EAN">
+                                                        <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                                                    </a>
+                                                    <a name="Wersja">
+                                                        <![CDATA[Audio CD]]>
+                                                    </a>
+                                                </xsl:when>
+                                                <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '3'">
+                                                    <a name="EAN">
+                                                        <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                                                    </a>
+                                                    <a name="Wersja">
+                                                        <![CDATA[ebook (PDF)]]>
+                                                    </a>
+                                                </xsl:when>
+                                                <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '4'">
+                                                    <a name="EAN">
+                                                        <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                                                    </a>
+                                                    <a name="Wersja">
+                                                        <![CDATA[DVD]]>
+                                                    </a>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <a name="EAN">
+                                                        <xsl:value-of select="substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1)))" />
+                                                    </a>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:if>
+                                <xsl:for-each select="parameters/parameter">
+                                    <xsl:if test="value[1]/@name != ''">
+                                        <a>
+                                            <xsl:attribute name="name">
+                                                <xsl:value-of select="@name"/>
+                                            </xsl:attribute>
+                                            <xsl:value-of select="value[1]/@name"/>
+                                        </a>
+                                    </xsl:if>
+                                </xsl:for-each>
+                                <xsl:if test="iaiext:responsible_entity/producer/code != ''">
+                                    <a name="Producent odpowiedzialny">
+                                        <xsl:value-of select="iaiext:responsible_entity/producer/code"/>
+                                    </a>
+                                </xsl:if>
+                                <xsl:if test="iaiext:responsible_entity/persons/person/code != ''">
+                                    <a name="Podmiot odpowiedzialny">
+                                        <xsl:value-of select="iaiext:responsible_entity/persons/person/code"/>
+                                    </a>
+                                </xsl:if>
+                            </attrs>
+                        </o>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+        </offers>
+    </xsl:template>
+    
+  <xsl:template name="strip-tags">
+    <xsl:param name="text"/>
+    <xsl:choose>
+        <xsl:when test="contains($text, '&lt;')">
+            <xsl:value-of select="substring-before($text, '&lt;')"/>
+            <xsl:call-template name="strip-tags">
+                <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true"/>
+            </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="normalize-space($text)"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+
+<xsl:template name="tokenize">
+  <xsl:param name="text"/>
+  <xsl:param name="delimiter" select="'.'"/>
+  <xsl:choose>
+      <xsl:when test="contains($text, $delimiter)">
+          <xsl:call-template name="tokenize">
+              <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+          </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+                  <xsl:value-of select="$text"/>
+      </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+</xsl:stylesheet>

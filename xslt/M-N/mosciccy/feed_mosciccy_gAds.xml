@@ -1,0 +1,1323 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+
+    <xsl:variable name="upperLetters" select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻ'"/>
+    <xsl:variable name="lowerLetters" select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż'"/>
+    <!-- słowa formatowane do pisanych z dużej litery w tytule -->
+    <xsl:variable name="corrected" select="'TAP.06/FLOWER/WOMAN/BURSZTYNOWE/BAUHAUS/AVANT/GARDE/BLACK/LITY/SZKŁO/DYMIONE/ZŁOTY/TRANSP./BETON/TEEN/FLEX/WATERLILY/ROUND/MIDNIGHT/POND/SKY/BLUE/NIEBIESKI/POMARAŃCZOWY/JASNY/AKSAMIT/TAP./ŁAWKA/IMPERIAL/GREY/BLUE/MARBLE/SOFA/BIAŁA/CYNAMON/PÓŁKA/VELVET/CURRY/PODNÓŻEK/STOPKI/DO/FOTELI/OBROTOWYCH-ZESTAW/WHITE/GOLD/LAKIER/TRANSPARENTNY/KONSOLKA/PIANKA/KREM/OBRAZ/ZIELONY/MATERAC/BURSZTYNOWY/ORZECH/BIAŁY/SZAFKA/NOCNA/BEŻOWY/RÓŻOWY/ŁÓŻKO/STÓŁ/KRZESŁO/FOTEL/ŁAWA/REGAŁ/EFEKT/ZESTAW/CIEMNY/MARMUR/CHROM/KOLOR/SKÓRA/SYNT./OKLEINA/SREBRNY/NATURALNA/DĄB/OLIWKA/STELAŻ/BEŻ/BRĄZOWY/DREWNA/CZARNY/GRANATOWY/ROZKŁADANY/SZARY'"/>
+    <!-- kwoty stawek wysyłek do ustalenia -->
+    <xsl:variable name='Kwota_za_darmo_wysylka'>1500.00</xsl:variable>
+    <xsl:variable name='Kwota_za_darmo_wysylka_large'>500.00</xsl:variable>
+    <xsl:variable name="Kwota_wysylki">49.00</xsl:variable>
+    <xsl:variable name="Kwota_wysylki_large">25.00</xsl:variable>
+
+    <xsl:key name="subcategories" match="item[starts-with(@textId, 'Meble')]" use="substring-before(substring-after(@textId, '\'), '\')"/>
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/offer/products/product">
+                    <xsl:for-each select="sizes/size">
+                        <item>
+                            <!--Unikalny identyfikator produktu  -->
+                            <g:id>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="@code"></xsl:value-of>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:id>
+                            <!-- Tytuł -->
+                            <g:title>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:call-template name="wordFormat">
+                                    <xsl:with-param name="text" select="../../description/name/." tunnel="yes"/>
+                                </xsl:call-template>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </g:title>
+                            <!-- Opis -->
+                            <!-- short descr -->
+                            <xsl:variable name="from_parameters">
+                                <xsl:for-each select="../../parameters/parameter">
+                                    <xsl:text>&#xa;</xsl:text>
+                                    <xsl:value-of select="@name"/>
+                                    <xsl:text>: </xsl:text>
+                                    <xsl:value-of select="value/@name"/>
+                                </xsl:for-each>
+                            </xsl:variable>
+                            <xsl:choose>
+                                <xsl:when test="../../description/short_desc = '' and ../../description/long_desc = ''">
+                                    <!-- nie jest git bo nie ma opisów  -->
+                                    <xsl:if test="$from_parameters != ''">
+                                        <g:description>
+                                            <xsl:value-of select="../../description/name"/>
+                                            <xsl:value-of select="$from_parameters"/>
+                                        </g:description>
+                                    </xsl:if>
+                                </xsl:when>
+                                <xsl:when test="../../description/short_desc = ''">
+                                    <xsl:variable name = "returned_value_without_html">
+                                        <xsl:call-template name="strip-tags">
+                                            <xsl:with-param name="text" select="../../description/long_desc" tunnel="yes"/>
+                                        </xsl:call-template>
+                                    </xsl:variable>
+                                    <xsl:variable name="returned_value_300_char" select="substring(normalize-space($returned_value_without_html),1,300)"/>
+                                    <xsl:variable name="value_cut">
+                                        <xsl:call-template name="tokenize">
+                                            <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,300)"/>
+                                        </xsl:call-template>
+                                    </xsl:variable>
+                                    <xsl:variable name="last_char" select="substring($returned_value_300_char, string-length($returned_value_300_char), 1)"/>
+                                    <xsl:choose>
+                                        <xsl:when test="$last_char != '.'">
+                                            <!-- chodzi oto ze nie ma przed kropka nic  -->
+                                            <xsl:choose>
+                                                <xsl:when test="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut)) = ''">
+                                                    <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze wgl nie ma kropki lool-->
+                                                    <g:description>
+                                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                        <xsl:value-of select="$returned_value_300_char"/>
+                                                        <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) &lt; 30 and $from_parameters != ''">
+                                                            <xsl:text>&#xa;</xsl:text>
+                                                            <xsl:value-of select="../../description/name"/>
+                                                            <xsl:value-of select="$from_parameters"/>
+                                                        </xsl:if>
+                                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                    </g:description>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <!-- jest przed kropka text -->
+                                                    <g:description>
+                                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                        <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))"/>
+                                                        <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) &lt; 30 and $from_parameters != ''">
+                                                            <xsl:text>&#xa;</xsl:text>
+                                                            <xsl:value-of select="../../description/name"/>
+                                                            <xsl:value-of select="$from_parameters"/>
+                                                        </xsl:if>
+                                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                    </g:description>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <!-- Mamy kropke na koncu i jest git -->
+                                            <g:description>
+                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                <xsl:value-of select="$returned_value_300_char"/>
+                                                <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) &lt; 30 and $from_parameters != ''">
+                                                    <xsl:text>&#xa;</xsl:text>
+                                                    <xsl:value-of select="../../description/name"/>
+                                                    <xsl:value-of select="$from_parameters"/>
+                                                </xsl:if>
+                                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                            </g:description>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <!-- tutaj jeśli opis nie bedzie mial X znakow to zastapic go długim opisem mimo wszystko -->
+                                    <!-- załóżmy -->
+                                    <xsl:choose>
+                                        <xsl:when test="string-length(../../description/short_desc) > 30">
+                                            <!-- jest git bo ma wiecej niz  -->
+                                            <g:description>
+                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                <xsl:value-of select="../../description/short_desc"/>
+                                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                            </g:description>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:variable name = "returned_value_without_html">
+                                                <xsl:call-template name="strip-tags">
+                                                    <xsl:with-param name="text" select="../../description/long_desc" tunnel="yes"/>
+                                                </xsl:call-template>
+                                            </xsl:variable>
+                                            <xsl:variable name="returned_value_300_char" select="substring(normalize-space($returned_value_without_html),1,300)"/>
+                                            <xsl:variable name="value_cut">
+                                                <xsl:call-template name="tokenize">
+                                                    <xsl:with-param name="text" select="substring(normalize-space($returned_value_without_html),1,300)"/>
+                                                </xsl:call-template>
+                                            </xsl:variable>
+                                            <xsl:variable name="last_char" select="substring($returned_value_300_char, string-length($returned_value_300_char), 1)"/>
+                                            <xsl:choose>
+                                                <xsl:when test="$last_char != '.'">
+                                                    <!-- chodzi oto ze nie ma przed kropka nic  -->
+                                                    <xsl:choose>
+                                                        <xsl:when test="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut)) = ''">
+                                                            <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze wgl nie ma kropki lool-->
+                                                            <g:description>
+                                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                                <xsl:value-of select="$returned_value_300_char"/>
+                                                                <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) &lt; 30 and $from_parameters != ''">
+                                                                    <xsl:text>&#xa;</xsl:text>
+                                                                    <xsl:value-of select="../../description/name"/>
+                                                                    <xsl:value-of select="$from_parameters"/>
+                                                                </xsl:if>
+                                                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                            </g:description>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            <!-- jest przed kropka text -->
+                                                            <g:description>
+                                                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                                <xsl:value-of select="normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))"/>
+                                                                <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) &lt; 30 and $from_parameters != ''">
+                                                                    <xsl:text>&#xa;</xsl:text>
+                                                                    <xsl:value-of select="../../description/name"/>
+                                                                    <xsl:value-of select="$from_parameters"/>
+                                                                </xsl:if>
+                                                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                            </g:description>
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <!-- Mamy kropke na koncu i jest git -->
+                                                    <g:description>
+                                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                                        <xsl:value-of select="$returned_value_300_char"/>
+                                                        <xsl:if test="string-length(normalize-space(substring-before(normalize-space($returned_value_300_char), $value_cut))) &lt; 30 and $from_parameters != ''">
+                                                            <xsl:text>&#xa;</xsl:text>
+                                                            <xsl:value-of select="../../description/name"/>
+                                                            <xsl:value-of select="$from_parameters"/>
+                                                        </xsl:if>
+                                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                                    </g:description>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:variable name="cena_serwis">
+                                <xsl:choose>
+                                    <xsl:when test="../../iaiext:pricecomparator_price/iaiext:site">
+                                        <xsl:value-of select="../../iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="mainPrice">
+                                <xsl:choose>
+                                    <xsl:when test="../../strikethrough_retail_price and  ../../strikethrough_retail_price/@gross > 0 and
+                                      ../../strikethrough_retail_price/@gross > price/@gross and 
+                                      price/@gross = ../../price/@gross and 
+                                      ../../strikethrough_retail_price/@gross > $cena_serwis">
+                                        <xsl:choose>
+                                            <xsl:when test="../../strikethrough_retail_price/@gross > price/@gross">
+                                                <xsl:value-of select="../../strikethrough_retail_price/@gross"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="price/@gross"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:when test="../../iaiext:pricecomparator_price/iaiext:site and ../../price/@gross = price/@gross">
+                                        <xsl:choose>
+                                            <xsl:when test="../../promotion/price/normal_retail_price/@gross > ../../iaiext:pricecomparator_price/iaiext:site[1]/@gross">
+                                                <xsl:value-of select="../../promotion/price/normal_retail_price/@gross"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="../../iaiext:pricecomparator_price/iaiext:site[1]/@gross"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:when test="price/@gross">
+                                        <xsl:choose>
+                                            <xsl:when test="price/@gross != ../../price/@gross and
+                                            ../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross > price/@gross">
+                                                <xsl:value-of select="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross"/>
+                                            </xsl:when>
+                                            <xsl:when test="price/@gross = ../../price/@gross and
+                                            ../../promotion/price/normal_retail_price/@gross > price/@gross">
+                                                <xsl:value-of select="../../promotion/price/normal_retail_price/@gross"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="price/@gross"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:choose>
+                                <xsl:when test="$mainPrice >= $Kwota_za_darmo_wysylka">
+                                    <g:shipping>
+                                        <g:price>
+                                            <xsl:text><![CDATA[0 ]]></xsl:text>
+                                            <xsl:value-of select="../../@currency"/>
+                                        </g:price>
+                                        <g:country>PL</g:country>
+                                    </g:shipping>
+                                </xsl:when>
+                                <xsl:when test="$mainPrice >= $Kwota_za_darmo_wysylka_large">
+                                    <g:shipping>
+                                        <g:price>
+                                            <xsl:value-of select="$Kwota_wysylki_large"/>
+                                            <xsl:text><![CDATA[ ]]></xsl:text>
+                                            <xsl:value-of select="../../@currency"/>
+                                        </g:price>
+                                        <g:country>PL</g:country>
+                                    </g:shipping>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <g:shipping>
+                                        <g:price>
+                                            <xsl:value-of select="$Kwota_wysylki"/>
+                                            <xsl:text><![CDATA[ ]]></xsl:text>
+                                            <xsl:value-of select="../../@currency"/>
+                                        </g:price>
+                                        <g:country>PL</g:country>
+                                    </g:shipping>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <g:custom_label_0>
+                                <xsl:choose>
+                                    <xsl:when test="../../price/@gross &lt;= 50">
+                                        <xsl:text disable-output-escaping="yes">0-50 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 50 and ../../price/@gross &lt;= 100">
+                                        <xsl:text disable-output-escaping="yes">50-100 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 100 and ../../price/@gross &lt;= 250">
+                                        <xsl:text disable-output-escaping="yes">100-250 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 250 and ../../price/@gross &lt;= 500">
+                                        <xsl:text disable-output-escaping="yes">250-500 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 500 and ../../price/@gross &lt;= 1000">
+                                        <xsl:text disable-output-escaping="yes">500-1000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 1000 and ../../price/@gross &lt;= 2000">
+                                        <xsl:text disable-output-escaping="yes">1000-2000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 2000 and ../../price/@gross &lt;= 3000">
+                                        <xsl:text disable-output-escaping="yes">2000-3000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 3000 and ../../price/@gross &lt;= 5000">
+                                        <xsl:text disable-output-escaping="yes">3000-5000 </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                    <xsl:when test="../../price/@gross &gt; 5000">
+                                        <xsl:text disable-output-escaping="yes">5000- </xsl:text>
+                                        <xsl:value-of select="../../@currency"></xsl:value-of>
+                                    </xsl:when>
+                                </xsl:choose>
+                            </g:custom_label_0>
+                            <!-- check hotspots for promotions and discounts -->
+                            <xsl:if test="../../promotion/price/normal_retail_price or ../../strikethrough_retail_price">
+                                <xsl:choose>
+                                    <xsl:when test = "(../../strikethrough_retail_price and (../../strikethrough_retail_price/@gross > price/@gross)) or 
+                                    (price/@iaiext:promotional_gross and (price/@gross > price/@iaiext:promotional_gross)) or
+                                    (../../promotion/price/normal_retail_price and  
+                                    (../../promotion/price/normal_retail_price/@gross > price/@gross or 
+                                    (price/@gross != ../../price/@gross and 
+                                    ../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross > price/@gross)))">
+                                        <g:custom_label_1>promocja</g:custom_label_1>
+                                    </xsl:when>
+                                </xsl:choose>
+                            </xsl:if>
+                            <!-- check hotspots for promotions and discounts -->
+                            <xsl:if test="../../@id = '1027' or ../../@id = '11455' or ../../@id = '3334' or
+                            ../../@id = '3352' or ../../@id = '3372' or ../../@id = '3502' or ../../@id = '3506' or
+                            ../../@id = '3507' or ../../@id = '3547' or ../../@id = '3552' or ../../@id = '3559' or
+                            ../../@id = '3581' or ../../@id = '3600' or ../../@id = '3617' or ../../@id = '3647' or
+                            ../../@id = '3669' or ../../@id = '3675' or ../../@id = '3676' or ../../@id = '3702' or
+                            ../../@id = '3705' or ../../@id = '3709' or ../../@id = '3757' or ../../@id = '3760' or
+                            ../../@id = '3786' or ../../@id = '3788' or ../../@id = '3790' or ../../@id = '3802' or
+                            ../../@id = '3809' or ../../@id = '3837' or ../../@id = '4259' or ../../@id = '4260' or
+                            ../../@id = '4261' or ../../@id = '4264' or ../../@id = '4265' or ../../@id = '4268' or
+                            ../../@id = '4269' or ../../@id = '4273' or ../../@id = '4274' or ../../@id = '4301' or
+                            ../../@id = '4329' or ../../@id = '4330' or ../../@id = '4392' or ../../@id = '48065' or
+                            ../../@id = '48607' or ../../@id = '4983' or ../../@id = '50282' or ../../@id = '56337' or
+                            ../../@id = '56338' or ../../@id = '56340' or ../../@id = '57648' or ../../@id = '59199' or
+                            ../../@id = '59904' or ../../@id = '61805' or ../../@id = '64256' or ../../@id = '64542' or
+                            ../../@id = '64549' or ../../@id = '64621' or ../../@id = '64624' or ../../@id = '64626' or
+                            ../../@id = '65389' or ../../@id = '65444' or ../../@id = '65450' or ../../@id = '66958' or
+                            ../../@id = '8319' or ../../@id = '901' or ../../@id = '952' or ../../@id = '966'">
+                                <g:custom_label_2>CTR powyżej 2,5% i ponad 5 kliknięć</g:custom_label_2>
+                            </xsl:if>
+                            <g:custom_label_4>
+                                <xsl:variable name="subcategory">
+                                    <xsl:for-each select="../../iaiext:navigation/iaiext:site[@id = '1']/iaiext:menu[@id = '1']/iaiext:item[contains(@textid, 'Meble\')]">
+                                        <xsl:if test="not(position()=1)">
+                                            <xsl:text disable-output-escaping="yes">, </xsl:text>
+                                        </xsl:if>
+                                        <xsl:call-template name="string-subcategory">
+                                            <xsl:with-param name="text" select="substring-after(@textid, 'Meble\')" tunnel="yes"/>
+                                        </xsl:call-template>
+                                    </xsl:for-each>
+                                </xsl:variable>
+
+                                <xsl:choose>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'zestaw') or
+                                                contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu') or @type='bundle')">
+                                        <xsl:text disable-output-escaping="yes">Zestaw</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'barek')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Barek</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'biurko')
+                                                or @code = '47855-uniw' or @code = '47856-uniw' or @code = '47857-uniw'
+                                                or @code = '47858-uniw' or @code = '47859-uniw' or @code = '47860-uniw'
+                                                or @code = '47861-uniw' or @code = '47862-uniw' or @code = '47863-uniw'
+                                                or @code = '47864-uniw' or @code = '47865-uniw' or @code = '47866-uniw') and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'toaletka')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'nadstawka')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Biurka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'bufet')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'front')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Bufet</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'fotel')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'fotele obrotowy')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'siłownik')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'komplet nóżek')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Fotel</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'kanapa')or @code = '59800-uniw'
+                                                or @code = '59774-uniw' or @code = '59785-uniw' or @code = '59870-uniw'
+                                                or @code = '59791-uniw' or @code = '59862-uniw' or @code = '59865-uniw'
+                                                or @code = '59860-uniw' or @code = '59787-uniw' or @code = '59764-uniw'
+                                                or @code = '59772-uniw' or @code = '59867-uniw' or @code = '59868-uniw'
+                                                or @code = '59790-uniw' or @code = '59778-uniw' or @code = '59775-uniw'
+                                                or @code = '59795-uniw' or @code = '59879-uniw' or @code = '53567-uniw'
+                                                or @code = '59872-uniw' or @code = '59861-uniw' or @code = '59855-uniw'
+                                                or @code = '59794-uniw' or @code = '60802-uniw' or @code = '60791-uniw'
+                                                or @code = '59796-uniw' or @code = '59773-uniw' or @code = '59863-uniw'
+                                                or @code = '59769-uniw' or @code = '59878-uniw' or @code = '59792-uniw'
+                                                or @code = '59866-uniw' or @code = '57234-uniw' or @code = '59788-uniw'
+                                                or @code = '59783-uniw' or @code = '59859-uniw' or @code = '59786-uniw'
+                                                or @code = '59798-uniw' or @code = '59874-uniw' or @code = '59858-uniw'
+                                                or @code = '59877-uniw' or @code = '59768-uniw' or @code = '59857-uniw'
+                                                or @code = '59781-uniw' or @code = '59793-uniw' or @code = '59789-uniw'
+                                                or @code = '59864-uniw' or @code = '59875-uniw' or @code = '59873-uniw'
+                                                or @code = '59771-uniw' or @code = '59876-uniw' or @code = '59803-uniw'
+                                                or @code = '59797-uniw' or @code = '58425-uniw' or @code = '59765-uniw'
+                                                or @code = '59871-uniw' or @code = '59802-uniw' or @code = '59777-uniw'
+                                                or @code = '59801-uniw' or @code = '59856-uniw' or @code = '59776-uniw'
+                                                or @code = '59805-uniw' or @code = '59799-uniw' or @code = '59804-uniw'
+                                                or @code = '59770-uniw' or @code = '59780-uniw' or @code = '59767-uniw'
+                                                or @code = '59766-uniw' or @code = '59782-uniw' or @code = '59779-uniw'
+                                                or @code = '59869-uniw' or @code = '57333-uniw' or @code = '59784-uniw'
+                                                )">
+                                        <xsl:text disable-output-escaping="yes">Kanapa</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'komoda')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Komoda</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'konsola')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Konsola</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'kredens')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Kredens</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'krzesł')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'toaletka')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'pokrowiec')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'nadstawka')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'zestaw')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Krzesło</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'lampa')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Lampa</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'lustro')) and
+                                                not(contains(../../description/long_desc, 'Grupa: Lustro')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Lustro</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'ławka')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Ławka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'łóżeczko')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Łóżeczko</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'łóżko')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'łóżka')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Łóżko</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'materac')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'bez materac'))">
+                                        <xsl:text disable-output-escaping="yes">Materac</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'narożnik')
+                                                or @code = '54958-uniw' or @code = '54906-uniw' or @code = '54920-uniw' or @code = '54943-uniw'
+                                                or @code = '54897-uniw' or @code = '54935-uniw' or @code = '54950-uniw' or @code = '54947-uniw'
+                                                or @code = '54951-uniw' or @code = '54938-uniw' or @code = '54909-uniw' or @code = '54881-uniw'
+                                                or @code = '54932-uniw' or @code = '54953-uniw' or @code = '54952-uniw' or @code = '54912-uniw'
+                                                or @code = '54930-uniw' or @code = '54901-uniw' or @code = '54875-uniw' or @code = '54921-uniw'
+                                                or @code = '54948-uniw' or @code = '54916-uniw' or @code = '54903-uniw' or @code = '54882-uniw'
+                                                or @code = '54886-uniw' or @code = '54878-uniw' or @code = '54888-uniw' or @code = '54922-uniw'
+                                                or @code = '54898-uniw' or @code = '54924-uniw' or @code = '54900-uniw' or @code = '54893-uniw' 
+                                                or @code = '54880-uniw' or @code = '54959-uniw' or @code = '54877-uniw' or @code = '54890-uniw'
+                                                or @code = '54915-uniw' or @code = '54944-uniw' or @code = '54929-uniw' or @code = '54956-uniw'
+                                                or @code = '54918-uniw' or @code = '54927-uniw' or @code = '54928-uniw' or @code = '54914-uniw'
+                                                or @code = '54937-uniw' or @code = '54919-uniw' or @code = '54884-uniw' or @code = '54945-uniw'
+                                                or @code = '54926-uniw' or @code = '54910-uniw' or @code = '54917-uniw' or @code = '54883-uniw'
+                                                or @code = '54960-uniw' or @code = '54887-uniw' or @code = '54931-uniw' or @code = '54908-uniw'
+                                                or @code = '54942-uniw' or @code = '54905-uniw' or @code = '54939-uniw' or @code = '54925-uniw' 
+                                                or @code = '54933-uniw' or @code = '54954-uniw' or @code = '54907-uniw' or @code = '54941-uniw' 
+                                                or @code = '54957-uniw' or @code = '54894-uniw' or @code = '54911-uniw' or @code = '54913-uniw' 
+                                                or @code = '54940-uniw' or @code = '54946-uniw' or @code = '54949-uniw' or @code = '54896-uniw' 
+                                                or @code = '54885-uniw' or @code = '54891-uniw' or @code = '54904-uniw' or @code = '54873-uniw' 
+                                                or @code = '54955-uniw' or @code = '54899-uniw' or @code = '54874-uniw' or @code = '54936-uniw' 
+                                                or @code = '54902-uniw' or @code = '54923-uniw' or @code = '54889-uniw' or @code = '54895-uniw' 
+                                                or @code = '54879-uniw' or @code = '54876-uniw' or @code = '54934-uniw' or @code = '54892-uniw' 
+                                                or @code = '59391-uniw' or @code = '59380-uniw' or @code = '59354-uniw' or @code = '59389-uniw' 
+                                                or @code = '59932-uniw' or @code = '59924-uniw' or @code = '59358-uniw' or @code = '56278-uniw' 
+                                                or @code = '59356-uniw' or @code = '59405-uniw' or @code = '59371-uniw' or @code = '56316-uniw' 
+                                                or @code = '59919-uniw' or @code = '56286-uniw' or @code = '59922-uniw' or @code = '56276-uniw' 
+                                                or @code = '56318-uniw' or @code = '59365-uniw' or @code = '56301-uniw' or @code = '59931-uniw' 
+                                                or @code = '59379-uniw' or @code = '56320-uniw' or @code = '59368-uniw' or @code = '56302-uniw' 
+                                                or @code = '56292-uniw' or @code = '59408-uniw' or @code = '59383-uniw' or @code = '59964-uniw' 
+                                                or @code = '59353-uniw' or @code = '56295-uniw' or @code = '59372-uniw' or @code = '56279-uniw' 
+                                                or @code = '59936-uniw' or @code = '59351-uniw' or @code = '56314-uniw' or @code = '59957-uniw' 
+                                                or @code = '56288-uniw' or @code = '59361-uniw' or @code = '56309-uniw' or @code = '56290-uniw' 
+                                                or @code = '59947-uniw' or @code = '59951-uniw' or @code = '59362-uniw' or @code = '59956-uniw' 
+                                                or @code = '59940-uniw' or @code = '59926-uniw' or @code = '59948-uniw' or @code = '56324-uniw' 
+                                                or @code = '59378-uniw' or @code = '59397-uniw' or @code = '59392-uniw' or @code = '59409-uniw' 
+                                                or @code = '56296-uniw' or @code = '56299-uniw' or @code = '59388-uniw' or @code = '59374-uniw' 
+                                                or @code = '56317-uniw' or @code = '59925-uniw' or @code = '59381-uniw' or @code = '59920-uniw' 
+                                                or @code = '56312-uniw' or @code = '56307-uniw' or @code = '59938-uniw' or @code = '59401-uniw' 
+                                                or @code = '59357-uniw' or @code = '59915-uniw' or @code = '59363-uniw' or @code = '56303-uniw' 
+                                                or @code = '59402-uniw' or @code = '59935-uniw' or @code = '56280-uniw' or @code = '56305-uniw' 
+                                                or @code = '56322-uniw' or @code = '54658-uniw' or @code = '59373-uniw' or @code = '56285-uniw' 
+                                                or @code = '59968-uniw' or @code = '59960-uniw' or @code = '59355-uniw' or @code = '59963-uniw' 
+                                                or @code = '59918-uniw' or @code = '59364-uniw' or @code = '59403-uniw' or @code = '59965-uniw' 
+                                                or @code = '59369-uniw' or @code = '59955-uniw' or @code = '59933-uniw' or @code = '59959-uniw' 
+                                                or @code = '59958-uniw' or @code = '59390-uniw' or @code = '56293-uniw' or @code = '56287-uniw' 
+                                                or @code = '59375-uniw' or @code = '59943-uniw' or @code = '59406-uniw' or @code = '56284-uniw' 
+                                                or @code = '56282-uniw' or @code = '59398-uniw' or @code = '56291-uniw' or @code = '59928-uniw' 
+                                                or @code = '56281-uniw' or @code = '59404-uniw' or @code = '56313-uniw' or @code = '59382-uniw' 
+                                                or @code = '59952-uniw' or @code = '56283-uniw' or @code = '59385-uniw' or @code = '56306-uniw' 
+                                                or @code = '59967-uniw' or @code = '59387-uniw' or @code = '59377-uniw' or @code = '59394-uniw' 
+                                                or @code = '59962-uniw' or @code = '59407-uniw' or @code = '59921-uniw' or @code = '59399-uniw' 
+                                                or @code = '59367-uniw' or @code = '56298-uniw' or @code = '56325-uniw' or @code = '59917-uniw' 
+                                                or @code = '59916-uniw' or @code = '56310-uniw' or @code = '59934-uniw' or @code = '59953-uniw' 
+                                                or @code = '56319-uniw' or @code = '56304-uniw' or @code = '56311-uniw' or @code = '59395-uniw' 
+                                                or @code = '59350-uniw' or @code = '59366-uniw' or @code = '59352-uniw' or @code = '59393-uniw' 
+                                                or @code = '59961-uniw' or @code = '59930-uniw' or @code = '56294-uniw' or @code = '54659-uniw' 
+                                                or @code = '59386-uniw' or @code = '56321-uniw' or @code = '59370-uniw' or @code = '59945-uniw' 
+                                                or @code = '59941-uniw' or @code = '59966-uniw' or @code = '59396-uniw' or @code = '59946-uniw' 
+                                                or @code = '59923-uniw' or @code = '59950-uniw' or @code = '59376-uniw' or @code = '56277-uniw' 
+                                                or @code = '56297-uniw' or @code = '59359-uniw' or @code = '56308-uniw' or @code = '59942-uniw' 
+                                                or @code = '59954-uniw' or @code = '59360-uniw' or @code = '59929-uniw' or @code = '56300-uniw' 
+                                                or @code = '56315-uniw' or @code = '59937-uniw' or @code = '56289-uniw' or @code = '59944-uniw' 
+                                                or @code = '59949-uniw' or @code = '59400-uniw' or @code = '59927-uniw' or @code = '56323-uniw' 
+                                                or @code = '59939-uniw' or @code = '59384-uniw' or @code = '60704-uniw' or @code = '58798-uniw' 
+                                                or @code = '56892-uniw' or @code = '54713-uniw' or @code = '54145-uniw' or @code = '54246-uniw' 
+                                                or @code = '54652-uniw' or @code = '54104-uniw' or @code = '54128-uniw' or @code = '60739-uniw' 
+                                                or @code = '54194-uniw' or @code = '54808-uniw' or @code = '51495-uniw' or @code = '58645-uniw' 
+                                                or @code = '51496-uniw' or @code = '58683-uniw' or @code = '53638-uniw' or @code = '57296-uniw' 
+                                                or @code = '58783-uniw' or @code = '57261-uniw' or @code = '54738-uniw' or @code = '54437-uniw' 
+                                                or @code = '54223-uniw' or @code = '55419-uniw' or @code = '58791-uniw' or @code = '57286-uniw' 
+                                                or @code = '58762-uniw' or @code = '54161-uniw' or @code = '54138-uniw' or @code = '54866-uniw' 
+                                                or @code = '60693-uniw' or @code = '55495-uniw' or @code = '55445-uniw' or @code = '60761-uniw' 
+                                                or @code = '55503-uniw' or @code = '54625-uniw' or @code = '54172-uniw' or @code = '54073-uniw' 
+                                                or @code = '61120-uniw' or @code = '54114-uniw' or @code = '58695-uniw' or @code = '54103-uniw' 
+                                                or @code = '53654-uniw' or @code = '54579-uniw' or @code = '61112-uniw' or @code = '54606-uniw' 
+                                                or @code = '57326-uniw' or @code = '56913-uniw' or @code = '54083-uniw' or @code = '54237-uniw' 
+                                                or @code = '53636-uniw' or @code = '58658-uniw' or @code = '54247-uniw' or @code = '54117-uniw' 
+                                                or @code = '57268-uniw' or @code = '60738-uniw' or @code = '54071-uniw' or @code = '51494-uniw' 
+                                                or @code = '54779-uniw' or @code = '58775-uniw' or @code = '54716-uniw' or @code = '54857-uniw' 
+                                                or @code = '56903-uniw' or @code = '54788-uniw' or @code = '55956-uniw' or @code = '54270-uniw' 
+                                                or @code = '54720-uniw' or @code = '58700-uniw' or @code = '58709-uniw' or @code = '54102-uniw' 
+                                                or @code = '58761-uniw' or @code = '54228-uniw' or @code = '54747-uniw' or @code = '54436-uniw' 
+                                                or @code = '51504-uniw' or @code = '55478-uniw' or @code = '55979-uniw' or @code = '54440-uniw' 
+                                                or @code = '55482-uniw' or @code = '54109-uniw' or @code = '53676-uniw' or @code = '61101-uniw' 
+                                                or @code = '57285-uniw' or @code = '54622-uniw' or @code = '58650-uniw' or @code = '54133-uniw' 
+                                                or @code = '54175-uniw' or @code = '53688-uniw' or @code = '58707-uniw' or @code = '61106-uniw' 
+                                                or @code = '55957-uniw' or @code = '54585-uniw' or @code = '51498-uniw' or @code = '57306-uniw' 
+                                                or @code = '54240-uniw' or @code = '56909-uniw' or @code = '60767-uniw' or @code = '56899-uniw' 
+                                                or @code = '54864-uniw' or @code = '58687-uniw' or @code = '54757-uniw' or @code = '60734-uniw' 
+                                                or @code = '53646-uniw' or @code = '54841-uniw' or @code = '58800-uniw' or @code = '54776-uniw' 
+                                                or @code = '54092-uniw' or @code = '60720-uniw' or @code = '57330-uniw' or @code = '57262-uniw' 
+                                                or @code = '54107-uniw' or @code = '54450-uniw' or @code = '57304-uniw' or @code = '55516-uniw' 
+                                                or @code = '57515-uniw' or @code = '54594-uniw' or @code = '54802-uniw' or @code = '54600-uniw' 
+                                                or @code = '55106-uniw' or @code = '55952-uniw' or @code = '61125-uniw' or @code = '58637-uniw' 
+                                                or @code = '54220-uniw' or @code = '55982-uniw' or @code = '60744-uniw' or @code = '54203-uniw' 
+                                                or @code = '60467-uniw' or @code = '54264-uniw' or @code = '54800-uniw' or @code = '60427-uniw' 
+                                                or @code = '60772-uniw' or @code = '60469-uniw' or @code = '60446-uniw' or @code = '58702-uniw' 
+                                                or @code = '54074-uniw' or @code = '61113-uniw' or @code = '60694-uniw' or @code = '57529-uniw' 
+                                                or @code = '57294-uniw' or @code = '54180-uniw' or @code = '58757-uniw' or @code = '58690-uniw' 
+                                                or @code = '54647-uniw' or @code = '57511-uniw' or @code = '54255-uniw' or @code = '58653-uniw' 
+                                                or @code = '57218-uniw' or @code = '55976-uniw' or @code = '58681-uniw' or @code = '54826-uniw' 
+                                                or @code = '54634-uniw' or @code = '58777-uniw' or @code = '58677-uniw' or @code = '54819-uniw' 
+                                                or @code = '54135-uniw' or @code = '53657-uniw' or @code = '60746-uniw' or @code = '54828-uniw' 
+                                                or @code = '54248-uniw' or @code = '60732-uniw' or @code = '60748-uniw' or @code = '55466-uniw' 
+                                                or @code = '54449-uniw' or @code = '57266-uniw' or @code = '54422-uniw' or @code = '56898-uniw' 
+                                                or @code = '55118-uniw' or @code = '55477-uniw' or @code = '60472-uniw' or @code = '55113-uniw' 
+                                                or @code = '55954-uniw' or @code = '60440-uniw' or @code = '53685-uniw' or @code = '51513-uniw' 
+                                                or @code = '54123-uniw' or @code = '54831-uniw' or @code = '54752-uniw' or @code = '58663-uniw' 
+                                                or @code = '60709-uniw' or @code = '58703-uniw' or @code = '54080-uniw' or @code = '57525-uniw' 
+                                                or @code = '55505-uniw' or @code = '60465-uniw' or @code = '54224-uniw' or @code = '54715-uniw' 
+                                                or @code = '54116-uniw' or @code = '53653-uniw' or @code = '53656-uniw' or @code = '57229-uniw' 
+                                                or @code = '54121-uniw' or @code = '56891-uniw' or @code = '56907-uniw' or @code = '60696-uniw' 
+                                                or @code = '55413-uniw' or @code = '55449-uniw' or @code = '53663-uniw' or @code = '58660-uniw' 
+                                                or @code = '54177-uniw' or @code = '54120-uniw' or @code = '53682-uniw' or @code = '55946-uniw' 
+                                                or @code = '54773-uniw' or @code = '60715-uniw' or @code = '55971-uniw' or @code = '58795-uniw' 
+                                                or @code = '55469-uniw' or @code = '55481-uniw' or @code = '53644-uniw' or @code = '54620-uniw' 
+                                                or @code = '60707-uniw' or @code = '58640-uniw' or @code = '60777-uniw' or @code = '54229-uniw' 
+                                                or @code = '54197-uniw' or @code = '54727-uniw' or @code = '61116-uniw' or @code = '54751-uniw' 
+                                                or @code = '54423-uniw' or @code = '60457-uniw' or @code = '55517-uniw' or @code = '54653-uniw' 
+                                                or @code = '57521-uniw' or @code = '51507-uniw' or @code = '56894-uniw' or @code = '57228-uniw' 
+                                                or @code = '54238-uniw' or @code = '55444-uniw' or @code = '58784-uniw' or @code = '60787-uniw' 
+                                                or @code = '55963-uniw' or @code = '54799-uniw' or @code = '55414-uniw' or @code = '60453-uniw' 
+                                                or @code = '60721-uniw' or @code = '54781-uniw' or @code = '54731-uniw' or @code = '60788-uniw' 
+                                                or @code = '53667-uniw' or @code = '54868-uniw' or @code = '54129-uniw' or @code = '54596-uniw' 
+                                                or @code = '58793-uniw' or @code = '53655-uniw' or @code = '58657-uniw' or @code = '54613-uniw' 
+                                                or @code = '60421-uniw' or @code = '55519-uniw' or @code = '54840-uniw' or @code = '54086-uniw' 
+                                                or @code = '57226-uniw' or @code = '58708-uniw' or @code = '58698-uniw' or @code = '54147-uniw' 
+                                                or @code = '60428-uniw' or @code = '55123-uniw' or @code = '54439-uniw' or @code = '55966-uniw' 
+                                                or @code = '58790-uniw' or @code = '60750-uniw' or @code = '57263-uniw' or @code = '55468-uniw' 
+                                                or @code = '61110-uniw' or @code = '54198-uniw' or @code = '57514-uniw' or @code = '60474-uniw' 
+                                                or @code = '53680-uniw' or @code = '54144-uniw' or @code = '57302-uniw' or @code = '54783-uniw' 
+                                                or @code = '60708-uniw' or @code = '54433-uniw' or @code = '55420-uniw' or @code = '54098-uniw' 
+                                                or @code = '54085-uniw' or @code = '54714-uniw' or @code = '60728-uniw' or @code = '55441-uniw' 
+                                                or @code = '54434-uniw' or @code = '54603-uniw' or @code = '54185-uniw' or @code = '53658-uniw' 
+                                                or @code = '57513-uniw' or @code = '54628-uniw' or @code = '61119-uniw' or @code = '60447-uniw' 
+                                                or @code = '54847-uniw' or @code = '53687-uniw' or @code = '54793-uniw' or @code = '54742-uniw' 
+                                                or @code = '55487-uniw' or @code = '53684-uniw' or @code = '54581-uniw' or @code = '58651-uniw' 
+                                                or @code = '54193-uniw' or @code = '54126-uniw' or @code = '54589-uniw' or @code = '51510-uniw' 
+                                                or @code = '51505-uniw' or @code = '57523-uniw' or @code = '55942-uniw' or @code = '55506-uniw' 
+                                                or @code = '54139-uniw' or @code = '54842-uniw' or @code = '60695-uniw' or @code = '54582-uniw' 
+                                                or @code = '60757-uniw' or @code = '51512-uniw' or @code = '61115-uniw' or @code = '51491-uniw' 
+                                                or @code = '54604-uniw' or @code = '55451-uniw' or @code = '53651-uniw' or @code = '51490-uniw' 
+                                                or @code = '55491-uniw' or @code = '57322-uniw' or @code = '55433-uniw' or @code = '56901-uniw' 
+                                                or @code = '51511-uniw' or @code = '60760-uniw' or @code = '60452-uniw' or @code = '54712-uniw' 
+                                                or @code = '53671-uniw' or @code = '60716-uniw' or @code = '54599-uniw' or @code = '57225-uniw' 
+                                                or @code = '54179-uniw' or @code = '54601-uniw' or @code = '60437-uniw' or @code = '54154-uniw' 
+                                                or @code = '58792-uniw' or @code = '54232-uniw' or @code = '55472-uniw' or @code = '58675-uniw' 
+                                                or @code = '55490-uniw' or @code = '60473-uniw' or @code = '55978-uniw' or @code = '54195-uniw' 
+                                                or @code = '55937-uniw' or @code = '56912-uniw' or @code = '54136-uniw' or @code = '55507-uniw' 
+                                                or @code = '54729-uniw' or @code = '54217-uniw' or @code = '54211-uniw' or @code = '54199-uniw' 
+                                                or @code = '54072-uniw' or @code = '58654-uniw' or @code = '55940-uniw' or @code = '54860-uniw' 
+                                                or @code = '56905-uniw' or @code = '55510-uniw' or @code = '54641-uniw' or @code = '54576-uniw' 
+                                                or @code = '58763-uniw' or @code = '55119-uniw' or @code = '53691-uniw' or @code = '54082-uniw' 
+                                                or @code = '58780-uniw' or @code = '54741-uniw' or @code = '55458-uniw' or @code = '54158-uniw' 
+                                                or @code = '58797-uniw' or @code = '54262-uniw' or @code = '56914-uniw' or @code = '54761-uniw' 
+                                                or @code = '55972-uniw' or @code = '54791-uniw' or @code = '55936-uniw' or @code = '60478-uniw' 
+                                                or @code = '54110-uniw' or @code = '54775-uniw' or @code = '55448-uniw' or @code = '58682-uniw' 
+                                                or @code = '57520-uniw' or @code = '58638-uniw' or @code = '60755-uniw' or @code = '58686-uniw' 
+                                                or @code = '54235-uniw' or @code = '54633-uniw' or @code = '54777-uniw' or @code = '57527-uniw' 
+                                                or @code = '54250-uniw' or @code = '57232-uniw' or @code = '54178-uniw' or @code = '57275-uniw' 
+                                                or @code = '57534-uniw' or @code = '60724-uniw' or @code = '55429-uniw' or @code = '56904-uniw' 
+                                                or @code = '60705-uniw' or @code = '60766-uniw' or @code = '53700-uniw' or @code = '58764-uniw' 
+                                                or @code = '54187-uniw' or @code = '58694-uniw' or @code = '60436-uniw' or @code = '54059-uniw' 
+                                                or @code = '55514-uniw' or @code = '58652-uniw' or @code = '54822-uniw' or @code = '54855-uniw' 
+                                                or @code = '54065-uniw' or @code = '54442-uniw' or @code = '55947-uniw' or @code = '57265-uniw' 
+                                                or @code = '60470-uniw' or @code = '54792-uniw' or @code = '54170-uniw' or @code = '57270-uniw' 
+                                                or @code = '57269-uniw' or @code = '57298-uniw' or @code = '58659-uniw' or @code = '54657-uniw' 
+                                                or @code = '54718-uniw' or @code = '54432-uniw' or @code = '60432-uniw' or @code = '54140-uniw' 
+                                                or @code = '54119-uniw' or @code = '53701-uniw' or @code = '54858-uniw' or @code = '58759-uniw' 
+                                                or @code = '58642-uniw' or @code = '53698-uniw' or @code = '54421-uniw' or @code = '54717-uniw' 
+                                                or @code = '58678-uniw' or @code = '60714-uniw' or @code = '54767-uniw' or @code = '54732-uniw' 
+                                                or @code = '54095-uniw' or @code = '54809-uniw' or @code = '61107-uniw' or @code = '54839-uniw' 
+                                                or @code = '58801-uniw' or @code = '55943-uniw' or @code = '55983-uniw' or @code = '54201-uniw' 
+                                                or @code = '54872-uniw' or @code = '55423-uniw' or @code = '54739-uniw' or @code = '54722-uniw' 
+                                                or @code = '55462-uniw' or @code = '54639-uniw' or @code = '55455-uniw' or @code = '55418-uniw' 
+                                                or @code = '58799-uniw' or @code = '54106-uniw' or @code = '57272-uniw' or @code = '58679-uniw' 
+                                                or @code = '55425-uniw' or @code = '54608-uniw' or @code = '60743-uniw' or @code = '57319-uniw' 
+                                                or @code = '57312-uniw' or @code = '55438-uniw' or @code = '54848-uniw' or @code = '58661-uniw' 
+                                                or @code = '54645-uniw' or @code = '54869-uniw' or @code = '61108-uniw' or @code = '54079-uniw' 
+                                                or @code = '54719-uniw' or @code = '60747-uniw' or @code = '57307-uniw' or @code = '54580-uniw' 
+                                                or @code = '54196-uniw' or @code = '58768-uniw' or @code = '54587-uniw' or @code = '55408-uniw' 
+                                                or @code = '54801-uniw' or @code = '57303-uniw' or @code = '55980-uniw' or @code = '54804-uniw' 
+                                                or @code = '60784-uniw' or @code = '57220-uniw' or @code = '54769-uniw' or @code = '56896-uniw' 
+                                                or @code = '54618-uniw' or @code = '54806-uniw' or @code = '55434-uniw' or @code = '55456-uniw' 
+                                                or @code = '60455-uniw' or @code = '54167-uniw' or @code = '54164-uniw' or @code = '53652-uniw' 
+                                                or @code = '61111-uniw' or @code = '53662-uniw' or @code = '54824-uniw' or @code = '54137-uniw' 
+                                                or @code = '58770-uniw' or @code = '55424-uniw' or @code = '55120-uniw' or @code = '54215-uniw' 
+                                                or @code = '54254-uniw' or @code = '57524-uniw' or @code = '54429-uniw' or @code = '57321-uniw' 
+                                                or @code = '57311-uniw' or @code = '55499-uniw' or @code = '54441-uniw' or @code = '54748-uniw' 
+                                                or @code = '54577-uniw' or @code = '58644-uniw' or @code = '53665-uniw' or @code = '60726-uniw' 
+                                                or @code = '55430-uniw' or @code = '55105-uniw' or @code = '55961-uniw' or @code = '57323-uniw' 
+                                                or @code = '60439-uniw' or @code = '54784-uniw' or @code = '51489-uniw' or @code = '53689-uniw' 
+                                                or @code = '60745-uniw' or @code = '58639-uniw' or @code = '58701-uniw' or @code = '51488-uniw' 
+                                                or @code = '54851-uniw' or @code = '61098-uniw' or @code = '54272-uniw' or @code = '54174-uniw' 
+                                                or @code = '60699-uniw' or @code = '60435-uniw' or @code = '54811-uniw' or @code = '61109-uniw' 
+                                                or @code = '54711-uniw' or @code = '54723-uniw' or @code = '57299-uniw' or @code = '60423-uniw' 
+                                                or @code = '57283-uniw' or @code = '51516-uniw' or @code = '60751-uniw' or @code = '51503-uniw' 
+                                                or @code = '57509-uniw' or @code = '55454-uniw' or @code = '58766-uniw' or @code = '54862-uniw' 
+                                                or @code = '55939-uniw' or @code = '54631-uniw' or @code = '57223-uniw' or @code = '60476-uniw' 
+                                                or @code = '55496-uniw' or @code = '54094-uniw' or @code = '53670-uniw' or @code = '57284-uniw' 
+                                                or @code = '58692-uniw' or @code = '60758-uniw' or @code = '54838-uniw' or @code = '54206-uniw' 
+                                                or @code = '54823-uniw' or @code = '57327-uniw' or @code = '60774-uniw' or @code = '57531-uniw' 
+                                                or @code = '54814-uniw' or @code = '55415-uniw' or @code = '54770-uniw' or @code = '58787-uniw' 
+                                                or @code = '60763-uniw' or @code = '54774-uniw' or @code = '54435-uniw' or @code = '54131-uniw' 
+                                                or @code = '55951-uniw' or @code = '61100-uniw' or @code = '58648-uniw' or @code = '53647-uniw' 
+                                                or @code = '54266-uniw' or @code = '54849-uniw' or @code = '55422-uniw' or @code = '58689-uniw' 
+                                                or @code = '54443-uniw' or @code = '57290-uniw' or @code = '60711-uniw' or @code = '55479-uniw' 
+                                                or @code = '55416-uniw' or @code = '54789-uniw' or @code = '54798-uniw' or @code = '57300-uniw' 
+                                                or @code = '56897-uniw' or @code = '56906-uniw' or @code = '53692-uniw' or @code = '55483-uniw' 
+                                                or @code = '54427-uniw' or @code = '54268-uniw' or @code = '54790-uniw' or @code = '54208-uniw' 
+                                                or @code = '55941-uniw' or @code = '60702-uniw' or @code = '58680-uniw' or @code = '54184-uniw' 
+                                                or @code = '57231-uniw' or @code = '57267-uniw' or @code = '57533-uniw' or @code = '57519-uniw' 
+                                                or @code = '57282-uniw' or @code = '51499-uniw' or @code = '60459-uniw' or @code = '60779-uniw' 
+                                                or @code = '60433-uniw' or @code = '55110-uniw' or @code = '60727-uniw' or @code = '55948-uniw' 
+                                                or @code = '58769-uniw' or @code = '54096-uniw' or @code = '54591-uniw' or @code = '60773-uniw' 
+                                                or @code = '60765-uniw' or @code = '54438-uniw' or @code = '54069-uniw' or @code = '51515-uniw' 
+                                                or @code = '54640-uniw' or @code = '53650-uniw' or @code = '54768-uniw' or @code = '54646-uniw' 
+                                                or @code = '54156-uniw' or @code = '54573-uniw' or @code = '54134-uniw' or @code = '60449-uniw' 
+                                                or @code = '58710-uniw' or @code = '60712-uniw' or @code = '54258-uniw' or @code = '55117-uniw' 
+                                                or @code = '55412-uniw' or @code = '55407-uniw' or @code = '54188-uniw' or @code = '54159-uniw' 
+                                                or @code = '54810-uniw' or @code = '54239-uniw' or @code = '54733-uniw' or @code = '55122-uniw' 
+                                                or @code = '54183-uniw' or @code = '55467-uniw' or @code = '54654-uniw' or @code = '53694-uniw' 
+                                                or @code = '54067-uniw' or @code = '58789-uniw' or @code = '54586-uniw' or @code = '54157-uniw' 
+                                                or @code = '55427-uniw' or @code = '60468-uniw' or @code = '58699-uniw' or @code = '57292-uniw' 
+                                                or @code = '54845-uniw' or @code = '54753-uniw' or @code = '57522-uniw' or @code = '54871-uniw' 
+                                                or @code = '54214-uniw' or @code = '54146-uniw' or @code = '55512-uniw' or @code = '55974-uniw' 
+                                                or @code = '58691-uniw' or @code = '61099-uniw' or @code = '54088-uniw' or @code = '61104-uniw' 
+                                                or @code = '54737-uniw' or @code = '60775-uniw' or @code = '54222-uniw' or @code = '56900-uniw' 
+                                                or @code = '55432-uniw' or @code = '54420-uniw' or @code = '54592-uniw' or @code = '56910-uniw'
+                                                or @code = '54431-uniw' or @code = '55515-uniw' or @code = '54205-uniw' or @code = '51484-uniw'
+                                                or @code = '53686-uniw' or @code = '54091-uniw' or @code = '54825-uniw' or @code = '54210-uniw' 
+                                                or @code = '57222-uniw' or @code = '60730-uniw' or @code = '54614-uniw' or @code = '55452-uniw' 
+                                                or @code = '58656-uniw' or @code = '54834-uniw' or @code = '54251-uniw' or @code = '54451-uniw' 
+                                                or @code = '51485-uniw' or @code = '56902-uniw' or @code = '54598-uniw' or @code = '54093-uniw' 
+                                                or @code = '51487-uniw' or @code = '57510-uniw' or @code = '60740-uniw' or @code = '55446-uniw' 
+                                                or @code = '53690-uniw' or @code = '54213-uniw' or @code = '60778-uniw' or @code = '60426-uniw' 
+                                                or @code = '53679-uniw' or @code = '53678-uniw' or @code = '54817-uniw' or @code = '55977-uniw' 
+                                                or @code = '54143-uniw' or @code = '58706-uniw' or @code = '54734-uniw' or @code = '54169-uniw' 
+                                                or @code = '54629-uniw' or @code = '57320-uniw' or @code = '55453-uniw' or @code = '54084-uniw' 
+                                                or @code = '54430-uniw' or @code = '54820-uniw' or @code = '54231-uniw' or @code = '57264-uniw' 
+                                                or @code = '55440-uniw' or @code = '60786-uniw' or @code = '53649-uniw' or @code = '58705-uniw' 
+                                                or @code = '55970-uniw' or @code = '54070-uniw' or @code = '58774-uniw' or @code = '54265-uniw' 
+                                                or @code = '54627-uniw' or @code = '60742-uniw' or @code = '57301-uniw' or @code = '54648-uniw' 
+                                                or @code = '56893-uniw' or @code = '57512-uniw' or @code = '54105-uniw' or @code = '57530-uniw' 
+                                                or @code = '54807-uniw' or @code = '54256-uniw' or @code = '54100-uniw' or @code = '55981-uniw' 
+                                                or @code = '58772-uniw' or @code = '55493-uniw' or @code = '60783-uniw' or @code = '54063-uniw' 
+                                                or @code = '55410-uniw' or @code = '54730-uniw' or @code = '54165-uniw' or @code = '54642-uniw' 
+                                                or @code = '53639-uniw' or @code = '54572-uniw' or @code = '54204-uniw' or @code = '54745-uniw' 
+                                                or @code = '54636-uniw' or @code = '55962-uniw' or @code = '60769-uniw' or @code = '60438-uniw' 
+                                                or @code = '58760-uniw' or @code = '51492-uniw' or @code = '57310-uniw' or @code = '53675-uniw' 
+                                                or @code = '54724-uniw' or @code = '55968-uniw' or @code = '53669-uniw' or @code = '54584-uniw' 
+                                                or @code = '54771-uniw' or @code = '55494-uniw' or @code = '60789-uniw' or @code = '60477-uniw' 
+                                                or @code = '53677-uniw' or @code = '57324-uniw' or @code = '54066-uniw' or @code = '54259-uniw' 
+                                                or @code = '60771-uniw' or @code = '53693-uniw' or @code = '60718-uniw' or @code = '61102-uniw' 
+                                                or @code = '54150-uniw' or @code = '54064-uniw' or @code = '58794-uniw' or @code = '60776-uniw' 
+                                                or @code = '60430-uniw' or @code = '55457-uniw' or @code = '60725-uniw' or @code = '57313-uniw' 
+                                                or @code = '60782-uniw' or @code = '57277-uniw' or @code = '54743-uniw' or @code = '55464-uniw' 
+                                                or @code = '55109-uniw' or @code = '54787-uniw' or @code = '54578-uniw' or @code = '57308-uniw' 
+                                                or @code = '57532-uniw' or @code = '53668-uniw' or @code = '60461-uniw' or @code = '54078-uniw' 
+                                                or @code = '54853-uniw' or @code = '55944-uniw' or @code = '54805-uniw' or @code = '54200-uniw' 
+                                                or @code = '54626-uniw' or @code = '60448-uniw' or @code = '54446-uniw' or @code = '60753-uniw' 
+                                                or @code = '54593-uniw' or @code = '57281-uniw' or @code = '57309-uniw' or @code = '57318-uniw' 
+                                                or @code = '54785-uniw' or @code = '54226-uniw' or @code = '58804-uniw' or @code = '58643-uniw' 
+                                                or @code = '58711-uniw' or @code = '55439-uniw' or @code = '60431-uniw' or @code = '54758-uniw' 
+                                                or @code = '54113-uniw' or @code = '54756-uniw' or @code = '54190-uniw' or @code = '54856-uniw' 
+                                                or @code = '54447-uniw' or @code = '54597-uniw' or @code = '61122-uniw' or @code = '54273-uniw' 
+                                                or @code = '54638-uniw' or @code = '54837-uniw' or @code = '58782-uniw' or @code = '54162-uniw' 
+                                                or @code = '54605-uniw' or @code = '54090-uniw' or @code = '54189-uniw' or @code = '51514-uniw' 
+                                                or @code = '54171-uniw' or @code = '57325-uniw' or @code = '54234-uniw' or @code = '54168-uniw' 
+                                                or @code = '55111-uniw' or @code = '54060-uniw' or @code = '54827-uniw' or @code = '55965-uniw' 
+                                                or @code = '54263-uniw' or @code = '60756-uniw' or @code = '61128-uniw' or @code = '57317-uniw' 
+                                                or @code = '55518-uniw' or @code = '55476-uniw' or @code = '57289-uniw' or @code = '54803-uniw' 
+                                                or @code = '60785-uniw' or @code = '55945-uniw' or @code = '58693-uniw' or @code = '54725-uniw' 
+                                                or @code = '53913-uniw' or @code = '54836-uniw' or @code = '61103-uniw' or @code = '60458-uniw' 
+                                                or @code = '55461-uniw' or @code = '54782-uniw' or @code = '54754-uniw' or @code = '55431-uniw' 
+                                                or @code = '57297-uniw' or @code = '58776-uniw' or @code = '55509-uniw' or @code = '54813-uniw' 
+                                                or @code = '58662-uniw' or @code = '55960-uniw' or @code = '54812-uniw' or @code = '60706-uniw' 
+                                                or @code = '53681-uniw' or @code = '54780-uniw' or @code = '54212-uniw' or @code = '54245-uniw' 
+                                                or @code = '54225-uniw' or @code = '55955-uniw' or @code = '55428-uniw' or @code = '51493-uniw' 
+                                                or @code = '61124-uniw' or @code = '58785-uniw' or @code = '54846-uniw' or @code = '55470-uniw' 
+                                                or @code = '53673-uniw' or @code = '58641-uniw' or @code = '57518-uniw' or @code = '51502-uniw' 
+                                                or @code = '60429-uniw' or @code = '57230-uniw' or @code = '60713-uniw' or @code = '57224-uniw' 
+                                                or @code = '51508-uniw' or @code = '60689-uniw' or @code = '54176-uniw' or @code = '54816-uniw' 
+                                                or @code = '54764-uniw' or @code = '54260-uniw' or @code = '55485-uniw' or @code = '54649-uniw' 
+                                                or @code = '60764-uniw' or @code = '53912-uniw' or @code = '55437-uniw' or @code = '58646-uniw' 
+                                                or @code = '58685-uniw' or @code = '60690-uniw' or @code = '54766-uniw' or @code = '58796-uniw' 
+                                                or @code = '60460-uniw' or @code = '54763-uniw' or @code = '55500-uniw' or @code = '54850-uniw' 
+                                                or @code = '55465-uniw' or @code = '60464-uniw' or @code = '58688-uniw' or @code = '54795-uniw' 
+                                                or @code = '54182-uniw' or @code = '55108-uniw' or @code = '54762-uniw' or @code = '55114-uniw' 
+                                                or @code = '54815-uniw' or @code = '57287-uniw' or @code = '54115-uniw' or @code = '54746-uniw' 
+                                                or @code = '54583-uniw' or @code = '58786-uniw' or @code = '57293-uniw' or @code = '54651-uniw' 
+                                                or @code = '57227-uniw' or @code = '54863-uniw' or @code = '54744-uniw' or @code = '60442-uniw' 
+                                                or @code = '54607-uniw' or @code = '61117-uniw' or @code = '60754-uniw' or @code = '60741-uniw' 
+                                                or @code = '55502-uniw' or @code = '60710-uniw' or @code = '54249-uniw' or @code = '54759-uniw' 
+                                                or @code = '60450-uniw' or @code = '55426-uniw' or @code = '61118-uniw' or @code = '54750-uniw' 
+                                                or @code = '54833-uniw' or @code = '60723-uniw' or @code = '54736-uniw' or @code = '56908-uniw' 
+                                                or @code = '60752-uniw' or @code = '54221-uniw' or @code = '57276-uniw' or @code = '58704-uniw' 
+                                                or @code = '54796-uniw' or @code = '54426-uniw' or @code = '54835-uniw' or @code = '58712-uniw' 
+                                                or @code = '51486-uniw' or @code = '55959-uniw' or @code = '54112-uniw' or @code = '51509-uniw' 
+                                                or @code = '58781-uniw' or @code = '53645-uniw' or @code = '56895-uniw' or @code = '53674-uniw' 
+                                                or @code = '53697-uniw' or @code = '60781-uniw' or @code = '54209-uniw' or @code = '55969-uniw' 
+                                                or @code = '54760-uniw' or @code = '54077-uniw' or @code = '54166-uniw' or @code = '54624-uniw' 
+                                                or @code = '57219-uniw' or @code = '57280-uniw' or @code = '54830-uniw' or @code = '55411-uniw' 
+                                                or @code = '54726-uniw' or @code = '57516-uniw' or @code = '57291-uniw' or @code = '54870-uniw' 
+                                                or @code = '57288-uniw' or @code = '53699-uniw' or @code = '60445-uniw' or @code = '54151-uniw' 
+                                                or @code = '58636-uniw' or @code = '51500-uniw' or @code = '58758-uniw' or @code = '60463-uniw' 
+                                                or @code = '54244-uniw' or @code = '54153-uniw' or @code = '54257-uniw' or @code = '54202-uniw' 
+                                                or @code = '54219-uniw' or @code = '60441-uniw' or @code = '55508-uniw' or @code = '55511-uniw' 
+                                                or @code = '57278-uniw' or @code = '55949-uniw' or @code = '54191-uniw' or @code = '54122-uniw' 
+                                                or @code = '54612-uniw' or @code = '54610-uniw' or @code = '60770-uniw' or @code = '55435-uniw' 
+                                                or @code = '55471-uniw' or @code = '55501-uniw' or @code = '54242-uniw' or @code = '57316-uniw' 
+                                                or @code = '54786-uniw' or @code = '54617-uniw' or @code = '58802-uniw' or @code = '60422-uniw' 
+                                                or @code = '55115-uniw' or @code = '60733-uniw' or @code = '54076-uniw' or @code = '54588-uniw' 
+                                                or @code = '61126-uniw' or @code = '54207-uniw' or @code = '54160-uniw' or @code = '54081-uniw' 
+                                                or @code = '57273-uniw' or @code = '55475-uniw' or @code = '57528-uniw' or @code = '60692-uniw' 
+                                                or @code = '54271-uniw' or @code = '55473-uniw' or @code = '58649-uniw' or @code = '55513-uniw' 
+                                                or @code = '57271-uniw' or @code = '57314-uniw' or @code = '54173-uniw' or @code = '60697-uniw' 
+                                                or @code = '54821-uniw' or @code = '55116-uniw' or @code = '60691-uniw' or @code = '60434-uniw' 
+                                                or @code = '54637-uniw' or @code = '55443-uniw' or @code = '54602-uniw' or @code = '60719-uniw' 
+                                                or @code = '54794-uniw' or @code = '60698-uniw' or @code = '58778-uniw' or @code = '53664-uniw' 
+                                                or @code = '54233-uniw' or @code = '58767-uniw' or @code = '54632-uniw' or @code = '54843-uniw' 
+                                                or @code = '54125-uniw' or @code = '55121-uniw' or @code = '54655-uniw' or @code = '61121-uniw' 
+                                                or @code = '54635-uniw' or @code = '54829-uniw' or @code = '55486-uniw' or @code = '54595-uniw' 
+                                                or @code = '54575-uniw' or @code = '60762-uniw' or @code = '55964-uniw' or @code = '61127-uniw' 
+                                                or @code = '55489-uniw' or @code = '54832-uniw' or @code = '54630-uniw' or @code = '60456-uniw' 
+                                                or @code = '55498-uniw' or @code = '55967-uniw' or @code = '57329-uniw' or @code = '54621-uniw' 
+                                                or @code = '54192-uniw' or @code = '54615-uniw' or @code = '55975-uniw' or @code = '57221-uniw' 
+                                                or @code = '60700-uniw' or @code = '54186-uniw' or @code = '57279-uniw' or @code = '60749-uniw' 
+                                                or @code = '54609-uniw' or @code = '53637-uniw' or @code = '54740-uniw' or @code = '60717-uniw' 
+                                                or @code = '60703-uniw' or @code = '54619-uniw' or @code = '54656-uniw' or @code = '54218-uniw' 
+                                                or @code = '58771-uniw' or @code = '58779-uniw' or @code = '54216-uniw' or @code = '54865-uniw' 
+                                                or @code = '53672-uniw' or @code = '53643-uniw' or @code = '53696-uniw' or @code = '54650-uniw' 
+                                                or @code = '58655-uniw' or @code = '54132-uniw' or @code = '54130-uniw' or @code = '60701-uniw' 
+                                                or @code = '58803-uniw' or @code = '54728-uniw' or @code = '57315-uniw' or @code = '54141-uniw' 
+                                                or @code = '54097-uniw' or @code = '51506-uniw' or @code = '61123-uniw' or @code = '54428-uniw' 
+                                                or @code = '58647-uniw' or @code = '54772-uniw' or @code = '54155-uniw' or @code = '54778-uniw' 
+                                                or @code = '54062-uniw' or @code = '54623-uniw' or @code = '54236-uniw' or @code = '60722-uniw' 
+                                                or @code = '54721-uniw' or @code = '54087-uniw' or @code = '54230-uniw' or @code = '55107-uniw' 
+                                                or @code = '55973-uniw' or @code = '54867-uniw' or @code = '54611-uniw' or @code = '54099-uniw' 
+                                                or @code = '54445-uniw' or @code = '54227-uniw' or @code = '55474-uniw' or @code = '60466-uniw' 
+                                                or @code = '58773-uniw' or @code = '54243-uniw' or @code = '57331-uniw' or @code = '60471-uniw' 
+                                                or @code = '57274-uniw' or @code = '58765-uniw' or @code = '53642-uniw' or @code = '53641-uniw' 
+                                                or @code = '58684-uniw' or @code = '58696-uniw' or @code = '55492-uniw' or @code = '54859-uniw' 
+                                                or @code = '54181-uniw' or @code = '55421-uniw' or @code = '60780-uniw' or @code = '54152-uniw' 
+                                                or @code = '60729-uniw' or @code = '54755-uniw' or @code = '54616-uniw' or @code = '60731-uniw' 
+                                                or @code = '54061-uniw' or @code = '53666-uniw' or @code = '60424-uniw' or @code = '54253-uniw' 
+                                                or @code = '58676-uniw' or @code = '58697-uniw' or @code = '55953-uniw' or @code = '54818-uniw' 
+                                                or @code = '54075-uniw' or @code = '57526-uniw' or @code = '55958-uniw' or @code = '57328-uniw' 
+                                                or @code = '57517-uniw' or @code = '55112-uniw' or @code = '53640-uniw' or @code = '53648-uniw' 
+                                                or @code = '60462-uniw' or @code = '55450-uniw' or @code = '53683-uniw' or @code = '54101-uniw' 
+                                                or @code = '60454-uniw' or @code = '60443-uniw' or @code = '60451-uniw' or @code = '60768-uniw' 
+                                                or @code = '54148-uniw' or @code = '55417-uniw' or @code = '54852-uniw' or @code = '54590-uniw' 
+                                                or @code = '61105-uniw' or @code = '54068-uniw' or @code = '60444-uniw' or @code = '55447-uniw' 
+                                                or @code = '54267-uniw' or @code = '55950-uniw' or @code = '55442-uniw' or @code = '54111-uniw' 
+                                                or @code = '60759-uniw' or @code = '55459-uniw' or @code = '54644-uniw' or @code = '57305-uniw' 
+                                                or @code = '54643-uniw' or @code = '54425-uniw' or @code = '60737-uniw' or @code = '55504-uniw' 
+                                                or @code = '61114-uniw' or @code = '54269-uniw' or @code = '54241-uniw' or @code = '54574-uniw' 
+                                                or @code = '55409-uniw' or @code = '54854-uniw' or @code = '54127-uniw' or @code = '54108-uniw' 
+                                                or @code = '55484-uniw' or @code = '54261-uniw' or @code = '54749-uniw' or @code = '55488-uniw' 
+                                                or @code = '54118-uniw' or @code = '60475-uniw' or @code = '58788-uniw' or @code = '54448-uniw' 
+                                                or @code = '54089-uniw' or @code = '55463-uniw' or @code = '55480-uniw' or @code = '54124-uniw' 
+                                                or @code = '54844-uniw' or @code = '51501-uniw' or @code = '55497-uniw' or @code = '61097-uniw' 
+                                                or @code = '55436-uniw' or @code = '60425-uniw' or @code = '53695-uniw' or @code = '54252-uniw' 
+                                                or @code = '54861-uniw' or @code = '60735-uniw' or @code = '55460-uniw' or @code = '54142-uniw' 
+                                                or @code = '54797-uniw' or @code = '55520-uniw' or @code = '54444-uniw' or @code = '56911-uniw' 
+                                                or @code = '54149-uniw' or @code = '54163-uniw' or @code = '60736-uniw' or @code = '54424-uniw' 
+                                                or @code = '54735-uniw' or @code = '57295-uniw' or @code = '53660-uniw' or @code = '54765-uniw' 
+                                                or @code = '55938-uniw' or @code = '53659-uniw' or @code = '53661-uniw' or @code = '51497-uniw') and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Narożnik</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'nadstawka')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Nadstawka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'obraz')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Obraz</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'poduszka')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'sofa')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'narożnik')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Poduszka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'półk')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafa')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'witryna')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Półka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'puf')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Pufa</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'regał')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'półka')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'witryna')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'regału')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'zestaw')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'dodatkowy')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'front')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Regał</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'witryna')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'półka')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Witryna</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'wieszak')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Wieszak</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'skrzynia') or 
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'skrzynka')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Skrzynia</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'stelaż do łóżek')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Stelaż do Łóżek</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'stolik') or 
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'ława')) and
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'ze stolikiem')) and
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'do stolika')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'front')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Stolik</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'sofa')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Sofa</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'stołek')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Stołek</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'stół')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Stół</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafka')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafka nocna')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafka na buty')) and 
+                                                not(contains(../../description/name, 'RTV')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Szafka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafka nocna')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Szafki Nocne</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafka na buty')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Szafki Na Buty</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(../../description/name, 'RTV')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'oświetlenie')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Szafka RTV</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafa')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'nadstawka')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szafa półki')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'półkami')) and 
+                                                not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'stolikiem')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Szafa</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szuflada łóżka') or
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'szuflada kanapy')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Szuflada łóżka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'toaletka')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Toaletka</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="(
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'wieszak')) and 
+                                                not(contains(translate(../../description, $upperLetters, $lowerLetters), 'elementem całego zestawu'))">
+                                        <xsl:text disable-output-escaping="yes">Wieszak</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="contains($subcategory, 'Dodatki') or 
+                                                contains(translate(../../description/name, $upperLetters, $lowerLetters), 'dodatk')">
+                                        <xsl:text disable-output-escaping="yes">Dodatki</xsl:text>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:choose>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'zestaw'))">
+                                                <xsl:text disable-output-escaping="yes">Zestaw</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'barek'))">
+                                                <xsl:text disable-output-escaping="yes">Barek</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'biurko'))">
+                                                <xsl:text disable-output-escaping="yes">Biurka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'fotel')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'fotele obrotowy')) and 
+                                                        not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'siłownik')) and 
+                                                        not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'komplet nóżek'))">
+                                                <xsl:text disable-output-escaping="yes">Fotel</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'kanapa'))">
+                                                <xsl:text disable-output-escaping="yes">Kanapa</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'komoda'))">
+                                                <xsl:text disable-output-escaping="yes">Komoda</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'bufet'))">
+                                                <xsl:text disable-output-escaping="yes">Bufet</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'konsola'))">
+                                                <xsl:text disable-output-escaping="yes">Konsola</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'krzesł'))">
+                                                <xsl:text disable-output-escaping="yes">Krzesło</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'lampa'))">
+                                                <xsl:text disable-output-escaping="yes">Lampa</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'lustro')) and
+                                                        not(contains(../../description, 'Grupa: Lustro'))">
+                                                <xsl:text disable-output-escaping="yes">Lustro</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'ława'))">
+                                                <xsl:text disable-output-escaping="yes">Ława</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'ławka'))">
+                                                <xsl:text disable-output-escaping="yes">Ławka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'łóżeczko'))">
+                                                <xsl:text disable-output-escaping="yes">Łóżeczko</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'łóżko')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'łóżka'))">
+                                                <xsl:text disable-output-escaping="yes">Łóżko</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'materac')) and 
+                                                        not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'stelaż'))">
+                                                <xsl:text disable-output-escaping="yes">Materac</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'narożnik'))">
+                                                <xsl:text disable-output-escaping="yes">Narożnik</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'nadstawka'))">
+                                                <xsl:text disable-output-escaping="yes">Nadstawka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'obraz'))">
+                                                <xsl:text disable-output-escaping="yes">Obraz</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'poduszka')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'sofa')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'narożnik'))">
+                                                <xsl:text disable-output-escaping="yes">Poduszka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'półk')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'szafa')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'witryna'))">
+                                                <xsl:text disable-output-escaping="yes">Półka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'puf'))">
+                                                <xsl:text disable-output-escaping="yes">Pufa</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'regał')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'półka')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'witryna')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'regału')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'zestaw')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'skrzynka'))">
+                                                <xsl:text disable-output-escaping="yes">Regał</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'witryna')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'półka'))">
+                                                <xsl:text disable-output-escaping="yes">Witryna</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'wieszak'))">
+                                                <xsl:text disable-output-escaping="yes">Wieszak</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'skrzynia') or 
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'skrzynka'))">
+                                                <xsl:text disable-output-escaping="yes">Skrzynia</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'stelaż do Łóżek'))">
+                                                <xsl:text disable-output-escaping="yes">Stelaż do Łóżek</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'stolik') or 
+                                                        contains(translate(../../description/name, $upperLetters, $lowerLetters), 'ława')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'ze stolikiem')) and
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'do stolika'))">
+                                                <xsl:text disable-output-escaping="yes">Stolik</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'sofa'))">
+                                                <xsl:text disable-output-escaping="yes">Sofa</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'stołek'))">
+                                                <xsl:text disable-output-escaping="yes">Stołek</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'stół'))">
+                                                <xsl:text disable-output-escaping="yes">Stół</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'szafka')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'szafka nocna')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'szafka na buty')) and 
+                                                        not(contains(../../description, 'RTV'))">
+                                                <xsl:text disable-output-escaping="yes">Szafka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'szafka nocna'))">
+                                                <xsl:text disable-output-escaping="yes">Szafki Nocne</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'szafka na buty'))">
+                                                <xsl:text disable-output-escaping="yes">Szafki Na Buty</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'szafka rtv')) and 
+                                                        not(contains(translate(../../description, $upperLetters, $lowerLetters), 'skrzynka')) and 
+                                                        not(contains(translate(../../description/name, $upperLetters, $lowerLetters), 'oświetlenie'))">
+                                                <xsl:text disable-output-escaping="yes">Szafka RTV</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'szafa'))">
+                                                <xsl:text disable-output-escaping="yes">Szafa</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'szuflada łóżka'))">
+                                                <xsl:text disable-output-escaping="yes">Szuflada łóżka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'toaletka'))">
+                                                <xsl:text disable-output-escaping="yes">Toaletka</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="(
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'wieszak'))">
+                                                <xsl:text disable-output-escaping="yes">Wieszak</xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="contains($subcategory, 'Dodatki') or 
+                                                        contains(translate(../../description, $upperLetters, $lowerLetters), 'dodatk')">
+                                                <xsl:text disable-output-escaping="yes">Dodatki</xsl:text>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:text disable-output-escaping="yes">pozostałe</xsl:text>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </g:custom_label_4>
+                        </item>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+
+    <xsl:template name="strip-tags">
+        <xsl:param name="text"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, '&lt;')">
+                <xsl:value-of select="substring-before($text, '&lt;')"/>
+                <xsl:call-template name="strip-tags">
+                    <xsl:with-param name="text" select="substring-after((normalize-space($text)), '&gt;')" tunnel="true"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="normalize-space($text)"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="tokenize">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="'.'"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter)">
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="string-subcategory">
+        <xsl:param name="text"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, '\')">
+                <xsl:value-of select="substring-before($text, '\')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="wordFormat">
+        <xsl:param name="text"/>
+        <xsl:param name="delimiter" select="' '"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, $delimiter) and not(contains(substring-before($text, $delimiter),'/'))">
+                <xsl:variable name="word">
+                    <xsl:value-of select="substring-before($text, $delimiter)"/>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="contains($corrected, $word)">
+                        <xsl:value-of select="substring($word,1,1)"/>
+                        <xsl:value-of select="translate(substring($word,2), $upperLetters, $lowerLetters)"/>
+                        <xsl:value-of select="$delimiter"/>
+                        <xsl:call-template name="wordFormat">
+                            <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$word"/>
+                        <xsl:value-of select="$delimiter"/>
+                        <xsl:call-template name="wordFormat">
+                            <xsl:with-param name="text" select="substring-after($text, $delimiter)"/>
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:when test="contains($text, '/')">
+                <xsl:variable name="word">
+                    <xsl:value-of select="substring-before($text, '/')"/>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="contains($corrected, $word)">
+                        <xsl:value-of select="substring($word,1,1)"/>
+                        <xsl:value-of select="translate(substring($word,2), $upperLetters, $lowerLetters)"/>
+                        <xsl:text><![CDATA[/]]></xsl:text>
+                        <xsl:call-template name="wordFormat">
+                            <xsl:with-param name="text" select="substring-after($text, '/')"/>
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$word"/>
+                        <xsl:text><![CDATA[/]]></xsl:text>
+                        <xsl:call-template name="wordFormat">
+                            <xsl:with-param name="text" select="substring-after($text, '/')"/>
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="word">
+                    <xsl:value-of select="$text"/>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="contains($corrected, $word)">
+                        <xsl:value-of select="substring($word,1,1)"/>
+                        <xsl:value-of select="translate(substring($word,2), $upperLetters, $lowerLetters)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$word"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <xsl:template name="string-replace-all">
+        <xsl:param name="text"/>
+        <xsl:param name="replace"/>
+        <xsl:param name="by"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, $replace)">
+                <xsl:value-of select="substring-before($text,$replace)"/>
+                <xsl:value-of select="$by"/>
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="substring-after($text,$replace)"/>
+                    <xsl:with-param name="replace" select="$replace"/>
+                    <xsl:with-param name="by" select="$by"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

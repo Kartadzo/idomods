@@ -196,53 +196,36 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:element>
-        <xsl:element name="imgs">
+      
+      <xsl:element name="imgs">
+         <xsl:variable name="vLowest">
+            <xsl:for-each select="images/large/image/@iaiext:priority">
+               <xsl:sort data-type="number" />
+               <xsl:if test="position()=1">
+                  <xsl:value-of select="." />
+               </xsl:if>
+            </xsl:for-each>
+         </xsl:variable>
+         
+         <xsl:for-each select="images/large/image[position() &lt; 5]">
             <xsl:choose>
-                <xsl:when test="images/icons/auction_icon/@url">
-                    <main>
-                        <xsl:attribute name="url">
-                            <xsl:value-of select="images/icons/auction_icon/@url" />
-                        </xsl:attribute>
-                    </main>
-                    <xsl:for-each select="images/large/image[position() &lt; 5]">
-                        <i>
-                            <xsl:attribute name="url">
-                                <xsl:value-of select="@url" />
-                            </xsl:attribute>
-                        </i>
-                    </xsl:for-each>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:variable name="vLowest">
-                        <xsl:for-each select="images/large/image/@iaiext:priority">
-                            <xsl:sort data-type="number" />
-                            <xsl:if test="position()=1">
-                                <xsl:value-of select="." />
-                            </xsl:if>
-                        </xsl:for-each>
-                    </xsl:variable>
-                    
-                    <xsl:for-each select="images/large/image[position() &lt; 5]">
-                        <xsl:choose>
-                            <xsl:when test="@iaiext:priority = number($vLowest)">
-                                <main>
-                                    <xsl:attribute name="url">
-                                        <xsl:value-of select="@url" />
-                                    </xsl:attribute>
-                                </main>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <i>
-                                    <xsl:attribute name="url">
-                                        <xsl:value-of select="@url" />
-                                    </xsl:attribute>
-                                </i>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:for-each>
-                </xsl:otherwise>
+               <xsl:when test="@iaiext:priority = number($vLowest)">
+                  <main>
+                     <xsl:attribute name="url">
+                        <xsl:value-of select="@url" />
+                     </xsl:attribute>
+                  </main>
+               </xsl:when>
+               <xsl:otherwise>
+                  <i>
+                     <xsl:attribute name="url">
+                        <xsl:value-of select="@url" />
+                     </xsl:attribute>
+                  </i>
+               </xsl:otherwise>
             </xsl:choose>
-        </xsl:element>
+         </xsl:for-each>
+      </xsl:element>
         <!-- Opis -->
         <!-- short descr -->
         <xsl:variable name="from_parameters_raw">

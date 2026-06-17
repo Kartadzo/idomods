@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XSLT Ceneo.pl ver. 1.0 final (01.05.2016) - https://shops.ceneo.pl/documents/Informacje%20na%20temat%20struktury%20pliku%20xml.pdf -->
+<xsl:stylesheet version="1.0" 
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" 
+exclude-result-prefixes="iaiext">
+	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" cdata-section-elements="cat name desc a"/>
+	<xsl:template match="/">
+
+    <!-- <![CDATA[?utm_source=buybox&amp;utm_medium=$space-name]]>
+    <![CDATA[?utm_source=buybox&utm_medium=$space-name]]>
+    <![CDATA[?utm_source=buybox&#38;utm_medium=$space-name]]>
+    <xsl:text disable-output-escaping="yes">?utm_source=buybox&amp;utm_medium=$space-name</xsl:text>
+    <xsl:text disable-output-escaping="yes">?utm_source=buybox&#38;utm_medium=$space-name</xsl:text> -->
+		<!-- Utworzenie elementu offers poprzez nazwany wezel - umozliwi dodanie xmlns:xsi (iaiext wykluczone w deklaracji xsl) -->
+		<offers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+			<xsl:attribute name="version"><![CDATA[1]]></xsl:attribute>
+			<xsl:for-each select="offer/products/*">
+            <xsl:variable name="ISBN_3chars"><xsl:value-of select="substring(iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]/@code_producer,1,3)"/></xsl:variable>
+				<xsl:if test="(description/name and description/name != '') and ((price/@gross &gt; 0) or (iaiext:pricecomparator_price/iaiext:site/@gross &gt; 0)) and $ISBN_3chars = '978'">
+					<xsl:element name="o">
+						<!-- Identyfikator towaru (wymagane) -->
+						<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+                        <!-- URL (wymagane) -->
+						<xsl:attribute name="url">
+							<xsl:value-of select="card/@url"/>
+                            <xsl:text disable-output-escaping="yes">?utm_source=buybox&amp;utm_medium=$space-name</xsl:text>
+						</xsl:attribute>					
+						<!-- Price (wymagane) -->
+						<xsl:variable name="pricecomparator" select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
+						<xsl:choose>
+							<xsl:when test="$pricecomparator != '0.00'">
+								<xsl:for-each select="iaiext:pricecomparator_price/iaiext:site">
+									<xsl:attribute name="price"><xsl:value-of select="@gross"/></xsl:attribute>
+								</xsl:for-each>	
+							</xsl:when>							
+							<xsl:otherwise>
+								<xsl:attribute name="price"><xsl:value-of select="price/@gross"/></xsl:attribute>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:if test="iaiext:promotion/iaiext:price/@normal_price &gt; iaiext:sizes/iaiext:size[1]/iaiext:price/@gross">
+							<xsl:attribute name="oldprice"> <!-- Wymagane -->
+								<xsl:value-of select="iaiext:promotion/iaiext:price/@normal_price"/>
+							</xsl:attribute>
+						</xsl:if>
+						<!-- Avail (opcjonalne)-->
+						<xsl:attribute name="avail">
+							<xsl:variable name="unit" select="iaiext:delivery_time/@unit"/>
+							<xsl:variable name="days" select="iaiext:delivery_time/@value"/>
+							<xsl:variable name="av1"><![CDATA[1]]></xsl:variable>
+							<xsl:variable name="av3"><![CDATA[3]]></xsl:variable>
+							<xsl:variable name="av7"><![CDATA[7]]></xsl:variable>
+							<xsl:variable name="av14"><![CDATA[14]]></xsl:variable>
+							<xsl:variable name="av99"><![CDATA[99]]></xsl:variable>
+							<xsl:variable name="av110"><![CDATA[110]]></xsl:variable>
+							<xsl:choose>
+								<xsl:when test="(iaiext:sizes/iaiext:size/@available = 'in_stock') or (iaiext:sizes/iaiext:size/@available = 'on_order')">
+									<xsl:choose>
+										<xsl:when test="($unit = 'day' and $days = 0) or ($unit = 'day' and $days = 1) or ($unit = 'hour' and $days &lt;= 24) or ($unit = 'minute' and $days &lt;= 1440)">
+											<xsl:value-of select="$av1"/>
+										</xsl:when>
+										<xsl:when test="($unit = 'day' and ($days &gt; 1 and $days &lt;= 3)) or ($unit = 'hour' and ($days &gt; 24 and $days &lt;= 72)) or ($unit = 'minute' and ($days &gt; 1440 and $days &lt;= 4320))">
+											<xsl:value-of select="$av3"/>
+										</xsl:when>
+										<xsl:when test="($unit = 'day' and ($days &gt; 3 and $days &lt;= 7)) or ($unit = 'hour' and ($days &gt; 72 and $days &lt;= 168)) or ($unit = 'minute' and ($days &gt; 4320 and $days &lt;= 10080))">
+											<xsl:value-of select="$av7"/>
+										</xsl:when>
+										<xsl:when test="($unit = 'day' and ($days &gt; 7 and $days &lt;= 14)) or ($unit = 'hour' and ($days &gt; 168 and $days &lt;= 336)) or ($unit = 'minute' and ($days &gt; 10080 and $days &lt;= 20160))">
+											<xsl:value-of select="$av14"/>
+										</xsl:when>
+										<xsl:when test="($unit = 'day' and $days &gt; 14) or ($unit = 'hour' and  $days &gt; 336) or ($unit = 'minute' and $days &gt;= 20160)">
+											<xsl:value-of select="$av99"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="$av99"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:when>
+								<xsl:when test="iaiext:sizes/iaiext:size/@available = 'on_preorder'">
+									<xsl:value-of select="$av110"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="$av99"/>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
+						<!-- Set (opcjonalne) -->
+						<xsl:variable name="bundle"><![CDATA[1]]></xsl:variable>
+						<xsl:variable name="product"><![CDATA[0]]></xsl:variable>					
+						<xsl:attribute name="set">
+							<xsl:choose>
+								<xsl:when test="@type = 'bundle' or @type = 'collection'">
+									<xsl:value-of select="$bundle"/>
+								</xsl:when>									
+								<xsl:otherwise>
+									<xsl:value-of select="$product"/>	
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:attribute>
+						<!-- Weight (opcjonalne / z czasem będzie wymagane) -->
+						<xsl:choose>
+							<xsl:when test="iaiext:sizes/iaiext:size[@weight and not(@weight='0')]">
+								<xsl:for-each select="iaiext:sizes/iaiext:size[@weight and not(@weight='0')][position()=1]">
+									<xsl:attribute name="weight">
+										<xsl:variable name="weight" select="@weight"/>
+										<xsl:value-of select="($weight div 1000)"/>
+									</xsl:attribute>
+								</xsl:for-each>	
+							</xsl:when>
+						</xsl:choose>
+						<!-- Instock (opcjonalne) -->
+						<xsl:if test="sum(iaiext:sizes/iaiext:size/iaiext:stock/@iaiext:available_stock_quantity) &gt; 0">
+							<xsl:for-each select="iaiext:sizes">
+								<xsl:attribute name="stock">
+									<xsl:value-of select="floor(sum(iaiext:size/iaiext:stock/@iaiext:available_stock_quantity))"/>
+								</xsl:attribute>
+							</xsl:for-each>
+						</xsl:if>
+						<!-- Cat (wymagane) -->
+						<xsl:choose>
+							<xsl:when test="contains(category/@name, '*')">	
+								<xsl:element name="cat"><xsl:value-of select="substring-after(category/@name, '*')"/></xsl:element>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:element name="cat"><xsl:value-of select="category/@name"/></xsl:element>
+							</xsl:otherwise>
+						</xsl:choose>
+						<!-- Name (wymagane) -->
+						<xsl:element name="name">
+							<xsl:choose>
+								<xsl:when test="description/name/@type = 'marketplace_site_name'">	
+									<xsl:value-of select="normalize-space(description/name/.)"/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="normalize-space(description/name/.)"/><xsl:if test="description/version"><xsl:if test="description/name[not(.='')]"><xsl:if test="description/version[not(/@name='')]"><![CDATA[ - ]]></xsl:if></xsl:if><xsl:value-of select="normalize-space(description/version/@name)"/></xsl:if>	
+								</xsl:otherwise>
+							</xsl:choose>	
+						</xsl:element>										
+						<!-- IMG (opcjonalne) -->
+						<xsl:choose>
+							<xsl:when test="images/large">
+								<xsl:element name="imgs">
+									<xsl:for-each select="images/large/image">
+										<xsl:choose>
+											<xsl:when test="position() = '1'">
+												<xsl:element name="main">
+													<xsl:attribute name="url"><xsl:value-of select="@url"/></xsl:attribute>
+												</xsl:element>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:element name="i">
+													<xsl:attribute name="url"><xsl:value-of select="@url"/></xsl:attribute>
+												</xsl:element>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:for-each>
+								</xsl:element>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:element name="imgs">
+									<xsl:element name="main">
+										<xsl:attribute name="url">
+											<xsl:variable name="link" select="card/@url"/>
+											<xsl:variable name="no_image"><![CDATA[/eng_il-default-1.png]]></xsl:variable>
+											<xsl:value-of select="substring-before($link,'/product-')"/><xsl:value-of select="$no_image"/>										
+										</xsl:attribute>								
+									</xsl:element>
+								</xsl:element>						
+							</xsl:otherwise>
+						</xsl:choose>
+						<!-- Desc (opcjonalne) -->
+						<!-- <xsl:for-each select="description">
+							<xsl:choose>
+								<xsl:when test="short_desc != ''">	
+									<xsl:element name="desc">
+										<xsl:value-of select="short_desc/."/>
+									</xsl:element>
+								</xsl:when>
+								<xsl:when test="long_desc != ''">
+									<xsl:element name="desc">							
+										<xsl:value-of select="long_desc/."/>
+									</xsl:element>									
+								</xsl:when>								
+								<xsl:otherwise />
+							</xsl:choose>
+						</xsl:for-each> -->
+						<!-- Attr (wymagane) -->
+						<xsl:element name="attrs">
+							<xsl:if test="iaiext:sizes/iaiext:size">
+								<xsl:element name="a">
+									<xsl:attribute name="name"><![CDATA[Rozmiar]]></xsl:attribute>
+									<xsl:for-each select="iaiext:sizes/iaiext:size/@size_name">
+										<xsl:value-of  select="."/>
+										<xsl:if test="position()!=last()">
+											<xsl:text>;</xsl:text>
+										</xsl:if>
+									</xsl:for-each>
+								</xsl:element>
+							</xsl:if>
+							<xsl:choose>
+								<xsl:when test="producer/@name = 'producent niezdefiniowany'"/>	
+								<xsl:otherwise>
+									<xsl:element name="a">
+										<xsl:attribute name="name"><![CDATA[Producent]]></xsl:attribute>
+										<xsl:value-of select="producer/@name"/>
+									</xsl:element>							
+								</xsl:otherwise>
+							</xsl:choose>
+                            <xsl:choose>
+    <!-- ISBN-10 / ISBN-13 -->
+    <xsl:when test="(@iaiext:producer_code_standard = 'ISBN10' or @iaiext:producer_code_standard = 'ISBN13') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+        <xsl:element name="a">
+            <xsl:attribute name="name"><![CDATA[ISBN]]></xsl:attribute>
+            <xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+                <xsl:value-of select="@code_producer"/>  
+            </xsl:for-each>										
+        </xsl:element>
+    </xsl:when>	
+    <!-- EAN-8 / EAN-13 / EAN-14 -->
+    <xsl:when test="(@iaiext:producer_code_standard = 'GTIN8' or @iaiext:producer_code_standard = 'GTIN13' or @iaiext:producer_code_standard = 'GTIN14') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+        <xsl:element name="a">
+            <xsl:attribute name="name"><![CDATA[EAN]]></xsl:attribute>
+            <xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+                <xsl:value-of select="@code_producer"/>  
+            </xsl:for-each>											
+        </xsl:element>	
+    </xsl:when>
+    <!-- UPC-A / UPC-E -->
+    <xsl:when test="(@iaiext:producer_code_standard = 'GTIN12' or @iaiext:producer_code_standard = 'UPCE') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+        <xsl:element name="a">
+            <xsl:attribute name="name"><![CDATA[ISBN]]></xsl:attribute>
+            <xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+                <xsl:value-of select="@code_producer"/>  
+            </xsl:for-each>
+        </xsl:element>													
+    </xsl:when>
+    <!-- MPN -->
+    <xsl:when test="(@iaiext:producer_code_standard = 'MPN') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+        <xsl:element name="a">
+            <xsl:attribute name="name"><![CDATA[ISBN]]></xsl:attribute>
+            <xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+                <xsl:value-of select="@code_producer"/>  
+            </xsl:for-each>
+        </xsl:element>														
+    </xsl:when>
+    <!-- INNY -->
+    <xsl:when test="(@iaiext:producer_code_standard = 'OTHER') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+        <xsl:element name="a">
+            <xsl:attribute name="name"><![CDATA[ISBN]]></xsl:attribute>
+            <xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+                <xsl:value-of select="@code_producer"/>  
+            </xsl:for-each>
+        </xsl:element>														
+    </xsl:when>							
+    <xsl:otherwise>
+        <xsl:element name="a">
+            <xsl:attribute name="name"><![CDATA[ISBN]]></xsl:attribute>
+            <xsl:variable name="code_on_card" select="@code_producer"/>
+            <xsl:choose>
+                <xsl:when test="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')]">
+                    <xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+                        <xsl:value-of select="@code_producer"/>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="iaiext:sizes/iaiext:size[@code_external and not(@code_external='')]">
+                    <xsl:for-each select="iaiext:sizes/iaiext:size[@code_external and not(@code_external='')][position()=1]">
+                        <xsl:value-of select="@code_external"/>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="$code_on_card and not($code_on_card='')">
+                    <xsl:value-of select="$code_on_card"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:for-each select="iaiext:sizes/iaiext:size[@code and not(@code='')][position()=1]">
+                        <xsl:value-of select="@code"/>
+                    </xsl:for-each>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:element>
+    </xsl:otherwise>
+</xsl:choose>	
+							<xsl:choose>
+								<!-- ISBN-10 / ISBN-13 -->
+								<xsl:when test="(@iaiext:producer_code_standard = 'ISBN10' or @iaiext:producer_code_standard = 'ISBN13') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+									<xsl:element name="a">
+										<xsl:attribute name="name"><![CDATA[Kod_producenta]]></xsl:attribute>
+										<xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+											<xsl:value-of select="@code_producer"/>  
+										</xsl:for-each>										
+									</xsl:element>
+								</xsl:when>	
+								<!-- EAN-8 / EAN-13 / EAN-14 -->
+								<xsl:when test="(@iaiext:producer_code_standard = 'GTIN8' or @iaiext:producer_code_standard = 'GTIN13' or @iaiext:producer_code_standard = 'GTIN14') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+									<xsl:element name="a">
+										<xsl:attribute name="name"><![CDATA[EAN]]></xsl:attribute>
+										<xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+											<xsl:value-of select="@code_producer"/>  
+										</xsl:for-each>											
+									</xsl:element>	
+								</xsl:when>
+								<!-- UPC-A / UPC-E -->
+								<xsl:when test="(@iaiext:producer_code_standard = 'GTIN12' or @iaiext:producer_code_standard = 'UPCE') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+									<xsl:element name="a">
+										<xsl:attribute name="name"><![CDATA[Kod_producenta]]></xsl:attribute>
+										<xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+											<xsl:value-of select="@code_producer"/>  
+										</xsl:for-each>
+									</xsl:element>													
+								</xsl:when>
+								<!-- MPN -->
+								<xsl:when test="(@iaiext:producer_code_standard = 'MPN') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+									<xsl:element name="a">
+										<xsl:attribute name="name"><![CDATA[Kod_producenta]]></xsl:attribute>
+										<xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+											<xsl:value-of select="@code_producer"/>  
+										</xsl:for-each>
+									</xsl:element>														
+								</xsl:when>
+								<!-- INNY -->
+								<xsl:when test="(@iaiext:producer_code_standard = 'OTHER') and (iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')])">										
+									<xsl:element name="a">
+										<xsl:attribute name="name"><![CDATA[Kod_producenta]]></xsl:attribute>
+										<xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+											<xsl:value-of select="@code_producer"/>  
+										</xsl:for-each>
+									</xsl:element>														
+								</xsl:when>							
+								<xsl:otherwise>
+									<xsl:element name="a">
+										<xsl:attribute name="name"><![CDATA[Kod_producenta]]></xsl:attribute>
+										<xsl:variable name="code_on_card" select="@code_producer"/>
+										<xsl:choose>
+											<xsl:when test="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')]">
+												<xsl:for-each select="iaiext:sizes/iaiext:size[@code_producer and not(@code_producer='')][position()=1]">
+													<xsl:value-of select="@code_producer"/>
+												</xsl:for-each>
+											</xsl:when>
+											<xsl:when test="iaiext:sizes/iaiext:size[@code_external and not(@code_external='')]">
+												<xsl:for-each select="iaiext:sizes/iaiext:size[@code_external and not(@code_external='')][position()=1]">
+													<xsl:value-of select="@code_external"/>
+												</xsl:for-each>
+											</xsl:when>
+											<xsl:when test="$code_on_card and not($code_on_card='')">
+												<xsl:value-of select="$code_on_card"/>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:for-each select="iaiext:sizes/iaiext:size[@code and not(@code='')][position()=1]">
+													<xsl:value-of select="@code"/>
+												</xsl:for-each>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:element>
+								</xsl:otherwise>
+							</xsl:choose>	
+							<xsl:if test="parameters/parameter/@name = 'Kolor' or parameters/parameter/@name = 'Colour' or parameters/parameter/@name = 'Farbe'">
+								<xsl:element name="a">
+									<xsl:attribute name="name">
+										<xsl:if test="parameters/parameter/@name = 'Kolor'"><![CDATA[Kolor]]></xsl:if>
+										<xsl:if test="parameters/parameter/@name = 'Colour'"><![CDATA[Colour]]></xsl:if>
+										<xsl:if test="parameters/parameter/@name = 'Farbe'"><![CDATA[Farbe]]></xsl:if>
+									</xsl:attribute>
+									<xsl:for-each select="parameters/parameter/value[1]">                
+										<xsl:if test="(../@name = 'Kolor') or (../@name = 'Colour') or (../@name = 'Farbe')">
+											<xsl:value-of select="@name"/> 												
+										</xsl:if>                   
+									</xsl:for-each>
+								</xsl:element> 										
+							</xsl:if>
+							<xsl:choose>                                
+								<xsl:when test="parameters/parameter/@name = 'Kolor'">						
+									<xsl:for-each select="parameters/parameter[not(@name = 'Kolor')]/value[1]">
+										<xsl:if test="position() &lt;= 7">
+											<xsl:element name="a">
+												<xsl:attribute name="name"><xsl:value-of select="../@name"/></xsl:attribute>
+												<xsl:value-of select="@name"/>
+											</xsl:element>
+										</xsl:if>
+									</xsl:for-each>
+								</xsl:when>
+								<xsl:when test="parameters/parameter/@name = 'Colour'">						
+									<xsl:for-each select="parameters/parameter[not(@name = 'Colour')]/value[1]">
+										<xsl:if test="position() &lt;= 7">
+											<xsl:element name="a">
+												<xsl:attribute name="name"><xsl:value-of select="../@name"/></xsl:attribute>
+												<xsl:value-of select="@name"/>
+											</xsl:element>
+										</xsl:if>
+									</xsl:for-each>
+								</xsl:when>	
+								<xsl:when test="parameters/parameter/@name = 'Farbe'">						
+									<xsl:for-each select="parameters/parameter[not(@name = 'Colour')]/value[1]">
+										<xsl:if test="position() &lt;= 7">
+											<xsl:element name="a">
+												<xsl:attribute name="name"><xsl:value-of select="../@name"/></xsl:attribute>
+												<xsl:value-of select="@name"/>
+											</xsl:element>
+										</xsl:if>
+									</xsl:for-each>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:for-each select="parameters/parameter/value[1]">
+										<xsl:if test="position() &lt;= 99">
+											<xsl:element name="a">
+												<xsl:attribute name="name">
+                                                    <xsl:choose>
+                                                        <xsl:when test="../@name = 'Autorzy'">
+                                                        <xsl:text>Autor</xsl:text>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:value-of select="../@name"/>
+                                                </xsl:otherwise>
+                                                    </xsl:choose>
+                                                </xsl:attribute>
+												<xsl:value-of select="@name"/>
+											</xsl:element>
+										</xsl:if>
+									</xsl:for-each>							
+								</xsl:otherwise>
+							</xsl:choose>																	
+						</xsl:element>						
+					</xsl:element>
+				</xsl:if>
+			</xsl:for-each>		
+		</offers>
+	</xsl:template>
+</xsl:stylesheet>

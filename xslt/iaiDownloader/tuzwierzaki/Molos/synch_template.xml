@@ -1,0 +1,63 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iof="http://www.iai-shop.com/developers/iof.phtml"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    
+    <!-- Nazwa marki i marża. 'Proszę' stosować widoczny format danych -->
+    <xsl:variable name='nazwa_marki_i_doliczana_marza'>
+        |4DOGS|50%|
+        |8in1|10%|
+        |marka3|20%|
+        |marka4|20%|
+        |marka5|20%|
+        |marka6|20%|
+        |marka7|20%|
+        |marka8|20%|
+    </xsl:variable>
+    
+    
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <xsl:for-each select="/products/product[
+                        contains($nazwa_marki_i_doliczana_marza, concat('|',producer/.,'|'))]">
+                    <xsl:variable name='doliczana_marza_procent'>
+                        <xsl:value-of select="substring-before(substring-after($nazwa_marki_i_doliczana_marza, concat('|',producer/.,'|')), '%')" />
+                    </xsl:variable>
+                    <xsl:variable name='doliczana_marza_doObliczen'>
+                        <xsl:value-of select="1 - (number($doliczana_marza_procent) div 100)" />
+                    </xsl:variable>
+                    <item>
+                        <kod_zewnetrzny>
+                            <xsl:text><![CDATA[Molos-]]></xsl:text>
+                            <xsl:value-of select="symbol/." />
+                            <xsl:text><![CDATA[-0]]></xsl:text>
+                        </kod_zewnetrzny>
+                        <cena_detaliczna>
+                            <xsl:value-of select="format-number(number(translate(price_retail_net/., ', PLN;', '.')) div $doliczana_marza_doObliczen, '#.##')" />
+                        </cena_detaliczna>
+                        <KosztWlasnySprzedazyTowarow_cenaMinimalna>
+                            <xsl:value-of select="format-number(number(translate(price_retail_net/., ', PLN;', '.')), '#.##')" />
+                        </KosztWlasnySprzedazyTowarow_cenaMinimalna>
+                        <idMagazynu><![CDATA[0]]></idMagazynu>
+                        <stanMagazynu>
+                            <xsl:choose>
+                                <xsl:when test="number(translate(store/., ',', '.')) > 1">
+                                    <xsl:value-of select="number(translate(store/., ',', '.'))" />
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="0" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </stanMagazynu>
+                        <marka>
+                            <xsl:value-of select="producer/." />
+                        </marka>
+                    </item>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+</xsl:stylesheet>

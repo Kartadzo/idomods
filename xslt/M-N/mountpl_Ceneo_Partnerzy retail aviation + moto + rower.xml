@@ -1,0 +1,177 @@
+<xsl:stylesheet version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+    xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    <xsl:template match="/">
+        <oferta>
+            <xsl:for-each select="/offer/products/product">
+                <o>
+                    <xsl:attribute name="id">
+                        <xsl:value-of select="@id"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="url">
+                        <xsl:value-of select="substring-before(card/@url, '.feed')"/>
+                        <![CDATA[.ceneo.html]]></xsl:attribute>
+                    <xsl:attribute name="price">
+                        <xsl:choose>
+                            <xsl:when test="iaiext:pricecomparator_price/iaiext:site/@gross">
+                                <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="price/@gross"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:choose>
+                        <xsl:when test="iaiext:delivery_time/@unit = 'minute' or iaiext:delivery_time/@unit = 'hour'">
+                            <xsl:attribute name="avail">1</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="iaiext:delivery_time/iaiext:time/@days = 1 and iaiext:delivery_time/@unit = 'day'">
+                            <xsl:attribute name="avail">1</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="iaiext:delivery_time/iaiext:time/@days = 7 and iaiext:delivery_time/@unit = 'day'">
+                            <xsl:attribute name="avail">7</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="iaiext:delivery_time/iaiext:time/@days = 14 and iaiext:delivery_time/@unit = 'day'">
+                            <xsl:attribute name="avail">14</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="iaiext:delivery_time/iaiext:time/@days = 2 and iaiext:delivery_time/@unit = 'day' or iaiext:delivery_time/iaiext:time/@days = 3 and iaiext:delivery_time/@unit = 'day'">
+                            <xsl:attribute name="avail">3</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="iaiext:delivery_time/iaiext:time/@days > 3 and iaiext:delivery_time/iaiext:time/@days &lt; 7 and iaiext:delivery_time/@unit = 'day'">
+                            <xsl:attribute name="avail">7</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="iaiext:delivery_time/iaiext:time/@days > 7 and iaiext:delivery_time/iaiext:time/@days &lt; 14 and iaiext:delivery_time/@unit = 'day'">
+                            <xsl:attribute name="avail">14</xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="avail">99</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:attribute name="set">
+                        <xsl:choose>
+                            <xsl:when test="bundled">1</xsl:when>
+                            <xsl:otherwise>0</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:if test="sizes/size[1]/@weight div 1000 > 0">
+                        <xsl:attribute name="weight">
+                            <xsl:value-of select="sizes/size[1]/@weight div 1000"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <xsl:attribute name="stock">
+                        <xsl:variable name="stocks">
+                            <xsl:for-each select="sizes/size/stock">
+                                <xsl:choose>
+                                    <xsl:when test="@available_stock_quantity &gt; 0">
+                                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                                        <xsl:text>/</xsl:text>
+                                    </xsl:when>
+                                    <xsl:when test="@available_stock_quantity = -1 ">
+                                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                                        <xsl:text>/</xsl:text>
+                                    </xsl:when>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </xsl:variable>
+                        <xsl:choose>
+                            <xsl:when test="contains($stocks,'-1') and string-length($stocks) &gt;0">
+                                <xsl:text>999999</xsl:text>
+                            </xsl:when>
+                            <xsl:when test="string-length($stocks) = 0">
+                                <xsl:text>0</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="sum(sizes/size/stock[@id = '1' or @id = '0' or @id = '2' or @id = '3' or @id = '4' or @id = '5' or @id = '6' or @id = '7' or @id = '8' or @id = '9' or @id = '10' or @id = '-1' or @id = '-2' or @id = '-3']/@available_stock_quantity)"></xsl:value-of>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+
+                    <cat>
+                        <xsl:value-of select="translate(category/@name, '&gt;', '\')"/>
+                    </cat>
+
+                    <name>
+                        <xsl:value-of select="description/name"/>
+                    </name>
+
+                    <imgs>
+                        <xsl:variable name="vLowest">
+                            <xsl:for-each select="images/large/image/@iaiext:priority">
+                                <xsl:sort data-type="number"/>
+                                <xsl:if test="position()=1">
+                                    <xsl:value-of select="."/>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </xsl:variable>
+                        <xsl:for-each select="images/large/image">
+                            <xsl:choose>
+                                <xsl:when test="@iaiext:priority = number($vLowest)">
+                                    <main>
+                                        <xsl:attribute name="url">
+                                            <xsl:value-of select="@url"></xsl:value-of>
+                                        </xsl:attribute>
+                                    </main>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <i>
+                                        <xsl:attribute name="url">
+                                            <xsl:value-of select="@url"></xsl:value-of>
+                                        </xsl:attribute>
+                                    </i>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:for-each>
+                        <xsl:if test="images/large/image[2]/@url != ''">
+                        </xsl:if>
+                    </imgs>
+
+                    <desc>
+                        <xsl:choose>
+                            <xsl:when test="string-length(description/short_desc) > 30">
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="description/short_desc"></xsl:value-of>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                <xsl:value-of select="description/long_desc"></xsl:value-of>
+                                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </desc>
+
+                    <attrs>
+                        <a name="Rozmiar">uniwersalny</a>
+                        <xsl:if test="producer/@name != ''">
+                            <a name="Producent">
+                                <xsl:value-of select="producer/@name"/>
+                            </a>
+                        </xsl:if>
+                        <xsl:if test="@code_on_card != ''">
+                            <a name="Kod_producenta">
+                                <xsl:value-of select="@code_on_card"/>
+                            </a>
+                        </xsl:if>
+                        <xsl:if test="sizes/size/@code_producer != ''">
+                            <a name="EAN">
+                                <xsl:value-of select="sizes/size/@code_producer"/>
+                            </a>
+                        </xsl:if>
+                        <xsl:for-each select="parameters/parameter">
+                            <xsl:if test="value[1]/@name != ''">
+                                <a>
+                                    <xsl:attribute name="name">
+                                        <xsl:value-of select="@name"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="value[1]/@name"/>
+                                </a>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </attrs>
+                </o>
+            </xsl:for-each>
+        </oferta>
+    </xsl:template>
+</xsl:stylesheet>

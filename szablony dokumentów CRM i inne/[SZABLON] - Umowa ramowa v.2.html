@@ -1,7 +1,7 @@
 <h1 style="text-align: center;"><strong>Umowa ramowa wsp&oacute;łpracy</strong></h1>
 <h2 style="text-align: center;">Nr: {{numerUmowy}}</h2>
 <p>Zawarta w Dęblinie w dniu <strong>{{createdAt}}</strong> roku pomiędzy firmą:</p>
-<p>{{umowy.name}} z siedzibą w {{addressStreet}} {{addressPostalCode}} {{addressCity}} {{addressState}} {{addressCountry}}, NIP: {{nip}}, REGON: {{regon}}, {{#if sad}}{{sad}}, KRS: {{krs}}, Kapitał zakładowy: {{kapital}}, {{/if}} </p>
+<p>{{umowy.name}} z siedzibą w ul. {{addressStreet}}, {{addressPostalCode}} {{addressCity}}{{#if addressState}} {{addressState}}{{else}}{{/if}}{{#if addressCountry}} {{addressCountry}}{{else}}{{/if}}, NIP: {{nip}}, REGON: {{regon}}{{#if sad}}, {{sad}}, KRS: {{krs}}, Kapitał zakładowy: {{kapital}}{{/if}}</p>
 <p>reprezentowaną przez:</p>
 <p>{{#each podpisujacy}}{{this.name}} - {{this.cStanowisko}}{{#unless @last}}, {{/unless}}{{/each}}</p>
 <p>zwanym dalej <strong>Zamawiającym</strong>, a</p>

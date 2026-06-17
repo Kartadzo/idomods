@@ -289,14 +289,21 @@
                     <xsl:value-of select="category_idosell/@path"></xsl:value-of>
                 </xsl:element>
             </xsl:when>
-            <xsl:when test="category/@name != '' and category/@name != '*Временна категория'">
+            <xsl:when test="category/@name != '' 
+                                    and category/@name != '*Временна категория'
+                                    and category/@id != '1214553893'
+                                    and category/@id != '1214553991'
+                                    and string-length(category/@name) - string-length(translate(category/@name, '/', '')) > 1
+                                    and string-length(category/@name) - string-length(translate(category/@name, '/', '')) &lt; 4">
                 <xsl:element name="Category">
                     <xsl:value-of select="category/@name"></xsl:value-of>
                 </xsl:element>
             </xsl:when>
-            <xsl:when test="iaiext:navigation/iaiext:site/iaiext:menu/iaiext:item/@textid != ''">
+            <xsl:when test="iaiext:priority_menu/site/menu[1]/item[string-length(@textId) - string-length(translate(@textId, '\', '')) > 1
+                                    and string-length(@textId) - string-length(translate(@textId, '\', '')) &lt; 4]/@textId != ''">
                 <xsl:element name="Category">
-                    <xsl:value-of select="iaiext:navigation/iaiext:site/iaiext:menu/iaiext:item/@textid" />
+                    <xsl:value-of select="iaiext:priority_menu/site/menu[1]/item[string-length(@textId) - string-length(translate(@textId, '\', '')) > 1
+                                    and string-length(@textId) - string-length(translate(@textId, '\', '')) &lt; 4]/@textId" />
                 </xsl:element>
             </xsl:when>
             <xsl:otherwise>

@@ -1,0 +1,147 @@
+<xsl:stylesheet
+version="1.0"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+xmlns:php="http://php.net/xsl">
+
+<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
+
+<xsl:template match="/">
+    <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+        <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+        <channel>
+
+            <xsl:for-each select="/offer/products/product[price/@gross &gt; 10]">
+        
+            <xsl:variable name="menu_">
+                <xsl:if test="iaiext:navigation/iaiext:site/iaiext:menu[@id = '1']/iaiext:item[@textid = 'Marketing\Wykluczone z feedu Facebook Ads']">
+                <xsl:text>true</xsl:text>
+            </xsl:if>
+                <xsl:for-each select="iaiext:navigation/iaiext:site/iaiext:menu">
+                <xsl:for-each select="iaiext:item">
+                    <xsl:choose>
+                        <xsl:when test="contains(@textid,'Narzędzia > Noże') or contains(@textid,'Narzędzia>Noże') or contains(@textid,'Narzędzia&gt;Noże')">
+                                <xsl:text>true</xsl:text>
+                        </xsl:when>
+                        <xsl:when test="contains(@textid,'Narzędzia') and contains(@textid,'Noże') ">
+                            <xsl:text>true</xsl:text>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:text>false</xsl:text>
+                        </xsl:otherwise>
+                    </xsl:choose>
+          
+                </xsl:for-each>
+                </xsl:for-each>
+            </xsl:variable>
+          
+
+
+                <xsl:if test="not(contains($menu_,'true'))">
+                    <item>
+                        <!-- Id towaru -->
+                        <g:id>
+
+                            <xsl:value-of select="@id"></xsl:value-of>
+                        </g:id>
+                        <!-- Nazwa towaru -->
+                        <xsl:variable name="name">
+                            <xsl:value-of select="description/name"></xsl:value-of>
+                               <xsl:for-each select="parameters/parameter">
+                                    <xsl:if test="@group_distinction = 'y' and @hide ='n'">
+                                            <xsl:for-each select="value">
+                                                <xsl:text>, </xsl:text><xsl:value-of select="../@name"></xsl:value-of>: <xsl:value-of select="@name"></xsl:value-of>
+                                            </xsl:for-each>
+                                    </xsl:if>
+                               </xsl:for-each>
+                            </xsl:variable>
+            <g:title><xsl:value-of select="$name"></xsl:value-of></g:title>
+                        <!-- Opis towaru -->
+                        <g:description>
+
+                            <xsl:choose>
+
+                                <xsl:when test="description/long_desc = ''">
+
+                                    <xsl:value-of select="description/short_desc"></xsl:value-of>
+                                </xsl:when>
+
+                                <xsl:otherwise>
+                                    <xsl:value-of select="description/long_desc"></xsl:value-of>
+
+                                
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </g:description>
+                        <!-- Link -->
+                        <g:link><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:link>
+                        <g:ios_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:ios_url>
+                        <g:iphone_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:iphone_url>
+                        <g:ipad_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:ipad_url>
+                        <g:android_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:android_url>
+                        <g:windows_phone_url><xsl:value-of select="substring-before(card/@url, '.feed')"></xsl:value-of>.facebookads.html</g:windows_phone_url>
+                        <!-- Zdjęcia -->
+                        <xsl:variable name="vLowest">
+                        <xsl:for-each select="images/large/image/@iaiext:priority">
+                            <xsl:sort data-type="number"/>
+                            <xsl:if test="position()=1"><xsl:value-of select="."/></xsl:if>
+                        </xsl:for-each>
+                        </xsl:variable>
+
+                            <xsl:for-each select="images/large/image[position() &lt; 21]">
+                            <xsl:choose>
+                                <xsl:when test="@iaiext:priority = number($vLowest)">
+                                    <g:image_link>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></g:image_link>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <g:additional_image_link>  <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="@url"></xsl:value-of>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></g:additional_image_link>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:for-each> 
+                     <!-- Brand -->
+                     <g:brand><xsl:value-of select="producer/@name"></xsl:value-of></g:brand>
+                     <g:gtin><xsl:value-of select="sizes/size/@code_producer"></xsl:value-of></g:gtin>
+                     <g:condition><![CDATA[new]]></g:condition>
+                     <!-- Dostępność -->
+                  
+                    <g:availability>
+                        <xsl:choose>
+                            <xsl:when test="sizes/size/@available = 'on_order'">
+                            <![CDATA[available for order]]>
+                        </xsl:when>
+                        <xsl:when test="sizes/size/@available= 'in_stock'">
+                        <![CDATA[in stock]]>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <![CDATA[out of stock]]>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </g:availability>
+
+                    <!-- cena -->
+                    <g:price><xsl:value-of select="price/@gross"></xsl:value-of><xsl:text><![CDATA[ ]]></xsl:text><xsl:value-of select="@currency"></xsl:value-of></g:price>
+                    <!-- waga -->
+                    <g:shipping_weight><xsl:value-of select="sizes/size/@weight"></xsl:value-of></g:shipping_weight>
+                    <!-- Product type -->
+                    <!-- Testy -->
+                    <xsl:for-each select="iaiext:navigation/iaiext:site/iaiext:menu">
+                    <xsl:for-each select="iaiext:item">
+                      <g:product_type>   <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text><xsl:value-of select="translate(@textid,'\','>')"/>   <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text></g:product_type>    
+                    </xsl:for-each>
+      </xsl:for-each>
+      <!-- Testy -->
+      <!-- grupa towarów -->
+      <g:item_group_id><xsl:value-of select="@id"></xsl:value-of></g:item_group_id>
+      <!-- rozmiar -->
+      <g:size><xsl:value-of select="sizes/size/@name"></xsl:value-of></g:size>
+                    </item>
+                </xsl:if>
+  
+
+            </xsl:for-each>
+
+        </channel>
+    </rss>
+
+</xsl:template>
+</xsl:stylesheet>

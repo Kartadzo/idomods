@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository file_format="ICF" version="1.0"><element id="1720535087">
+<meta><title>MC Ads - variables</title><description>MC Ads - variables 2024.07.09 16:24:47</description><icon encoding="base64"></icon><language name="pol"/></meta>
+<classification><type name="snippets"/></classification>
+<settings><setting type="format" value="html"/><setting type="active" value="normal_mobile" snippetActivated="yes"/><setting type="visible" value="all" target="head"/><setting type="clients_type" value="all"/><setting type="clients_with_rebate_code" value="all"/><setting type="clients_subscribed" value="all"/><setting type="clients_with_orders" value="all"/><setting type="auto_block" value="yes"/><setting type="timeout" value="1"/><setting type="display_dynamically" value="no"/><setting type="only_support" value="no"/></settings>
+<contents><content type="name">MC Ads - variables</content><content type="text_main_0"><![CDATA[<script>
+function mailVerification(str) {
+    str = str.replace(/\s/g, ''); // Usuń spacje
+    const parts = str.split('@'); // Podziel na części przed i po @
+    parts[0] = parts[0].replace(/\./g, '').replace(/\+.*/g, ''); // Usuń kropki z pierwszej części
+    return parts.join('@'); // Połącz obie części
+}
+var user_email = mailVerification('[iai:client_email]');
+var user_email_pom = '[iai:client_email]';
+
+
+function phoneVerification(str) {
+  str = str.trim();
+  if (str.length == 9) {
+    var tmp = '+48';
+    return tmp.concat('',str)
+  } else if (str.length == 11 && str.includes("48")) {
+    var tmp = '+';
+    return tmp.concat('',str)
+  }  else {
+    return str;
+  }
+}
+
+
+var user_phone = phoneVerification('[iai:client_phone]');
+var user_phone_pom = '[iai:client_phone]';
+</script>]]></content></contents>
+<enclosures> </enclosures>
+</element>
+</repository>

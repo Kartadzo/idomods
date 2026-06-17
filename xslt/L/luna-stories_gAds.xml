@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:omg="http://feeds.omgadmin.co.uk/feeds/ns/1.0/" xmlns:rss="http://feeds.omgeu.com/ns/1.0/" xmlns:g="http://base.google.com/ns/1.0">
+	<xsl:output method="xml" encoding="utf-8" indent="yes" cdata-section-elements="x"/>
+	<xsl:template match="/">
+		<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+			<title>LunaStories</title>
+			<channel>
+				<xsl:for-each select="/offer/products/product">
+					<item>
+						<g:id>
+							<xsl:value-of select="@id"/>
+						</g:id>
+						<g:title>
+							<xsl:value-of select="description/name/."/>
+						</g:title>
+						<description>
+							<xsl:choose>
+								<xsl:when test="string-length(description/long_desc/.)!=0">
+									<xsl:value-of select="description/long_desc/."/>
+								</xsl:when>
+								<xsl:when test="string-length(description/short_desc/.)!=0">
+									<xsl:value-of select="description/short_desc/."/>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="description/name/."/>
+									<xsl:text>.</xsl:text>
+								</xsl:otherwise>
+							</xsl:choose>
+						</description>
+						<link>
+							<xsl:value-of select="card/@url"/>
+						</link>
+						<xsl:choose>
+							<xsl:when test="images/large/image[1]">
+								<g:image_link>
+									<xsl:value-of select="images/large/image[1]/@url"/>
+								</g:image_link>
+								<xsl:for-each select="images/large/image">
+									<xsl:if test="position()>1">
+										<g:additional_image_link>
+											<xsl:value-of select="@url"/>
+										</g:additional_image_link>
+									</xsl:if>
+								</xsl:for-each>
+							</xsl:when>
+							<xsl:otherwise>
+								<g:image_link>
+										<xsl:value-of select="images/icons/icon/@url"/>
+									</g:image_link>
+							</xsl:otherwise>
+						</xsl:choose>
+						<g:condition><![CDATA[new]]></g:condition>
+						<!-- <g:availability><![CDATA[in stock]]></g:availability> -->
+                        <g:availability>
+                            <xsl:choose>
+                                <xsl:when test="sizes/size/stock[@id = 1]/@available_stock_quantity != 0">
+                                    <![CDATA[in stock]]>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <![CDATA[out of stock]]>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </g:availability>
+						<g:price>
+							<xsl:value-of select="price/@gross"/>
+							<xsl:text> </xsl:text>
+							<xsl:value-of select="@currency"/>
+						</g:price>
+						<g:product_type>
+							<xsl:value-of select="category/@name"/>
+						</g:product_type>
+						<g:brand>
+							<xsl:value-of select="producer/@name"/>
+						</g:brand>
+						<xsl:for-each select="sizes/size">
+							<xsl:choose>
+								<xsl:when test="position()=1">
+									<g:mpn>
+										<xsl:value-of select="@*[local-name() = 'code_external']"/>
+									</g:mpn>
+									<g:gtin>
+										<xsl:value-of select="@code_producer"/>
+									</g:gtin>
+								</xsl:when>
+							</xsl:choose>
+						</xsl:for-each>
+					</item>
+				</xsl:for-each>
+			</channel>
+		</rss>
+	</xsl:template>
+</xsl:stylesheet>
