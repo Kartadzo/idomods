@@ -1,0 +1,16 @@
+{
+  "name": "google_product_category",
+  "description": "Generate g:google_product_category from IdoSell category mapping or product path.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:google_product_category",
+  "context": "product",
+  "xpathCandidates": [
+    "category_idosell/@id",
+    "category_idosell/@path"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/google_product_category.xsl",
+  "notes": "Resolves category IDs with a custom mapping template, or falls back to the category path."
+}

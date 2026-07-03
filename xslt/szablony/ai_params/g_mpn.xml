@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:mpn
+     Purpose: Manufacturer Part Number (fallback when no GTIN)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:mpn</field>
+  <candidates>
+    <candidate>
+      <xpath>producer/@code | product/@mpn | card/mpn</xpath>
+      <priority>1</priority>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Use producer code or explicit mpn field; normalize to plain text.</step>
+  </method>
+
+  <example>MPN-1234</example>
+</parameter_template>

@@ -5,7 +5,7 @@ from lxml import etree
 from tqdm import tqdm
 
 INPUT = "source.xml"
-XSLT_FILE = "feediai_ceny_omnibus_for_xml.xslt"
+XSLT_FILE = "formater.xslt"
 CHUNK_DIR = "chunks"
 RESULT_DIR = "results"
 FINAL_OUTPUT = "output.xml"

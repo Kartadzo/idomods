@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:brand
+     Purpose: product brand
+     AI-friendly extraction spec: direct producer name unless undefined
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+    <note>Use producer/@name when not equal to placeholder 'producent niezdefiniowany'.</note>
+  </metadata>
+
+  <field>g:brand</field>
+  <candidates>
+    <candidate>
+      <xpath>producer/@name</xpath>
+      <priority>1</priority>
+      <description>Return value only if not equal to 'producent niezdefiniowany'.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Read `producer/@name` and normalize whitespace.</step>
+    <step>If empty or placeholder → omit field.</step>
+  </method>
+
+  <example>Apple</example>
+</parameter_template>

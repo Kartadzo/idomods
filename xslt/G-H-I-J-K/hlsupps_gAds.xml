@@ -67,9 +67,12 @@
                 <title>hlsupps.com</title>
                 <link>https://hlsupps.com/</link>
                 <description>Produkty ze sklepu https://hlsupps.com/</description>
-                <xsl:for-each select="/offer/products/product[
-                                      price/@gross &gt; 0 and 
-                                  description/name/. != '']">
+            <xsl:for-each select="/offer/products/product[
+                                 price/@gross &gt; 0 
+                                 and description/name/. != ''
+                                 and @type != 'packaging'
+                                 and not(iaiext:priority_menu/site/menu/item/@id = '5341')
+                                 ]">
                     <!-- Id towaru -->
                     <xsl:choose>
                         <xsl:when test="count(sizes/size) &lt; 1">

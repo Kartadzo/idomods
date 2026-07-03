@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:sale_price
+     Purpose: sale/discounted price when applicable
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:sale_price</field>
+  <method>
+    <step>Determine `cena_przedpromocyjna` and `mainPrice` per template rules.</step>
+    <step>If promotional price present and lower than main price, output sale price with currency.</step>
+  </method>
+
+  <example>149.99 PLN</example>
+</parameter_template>

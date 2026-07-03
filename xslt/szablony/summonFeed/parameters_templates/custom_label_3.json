@@ -1,0 +1,19 @@
+{
+  "name": "custom_label_3",
+  "description": "Generate Google g:custom_label_3 from the second priority menu item split by backslash delimiters.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:custom_label_3",
+  "context": "product",
+  "xpathCandidates": [
+    "iaiext:priority_menu/site[1]/menu[1]/item[contains(@textId,'\\')]/@textId"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [
+    "tokenize",
+    "throwNode",
+    "extract-node"
+  ],
+  "defaultXslt": "parameters_templates/custom_label_3.xsl",
+  "notes": "Extracts the second segment from priority menu items and tokenizes it for custom_label_3."
+}

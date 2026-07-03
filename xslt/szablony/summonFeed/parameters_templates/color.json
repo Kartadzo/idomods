@@ -1,0 +1,27 @@
+{
+  "name": "color",
+  "description": "Build g:color from CONTEXT_COLOR parameter values or a visible color parameter matched by name.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:color",
+  "context": "product",
+  "xpathCandidates": [
+    "parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]/@name",
+    "parameters/parameter[@hide = 'n' and contains('|kolor|', concat('|', translate(@name, $upperLetters, $lowerLetters), '|'))]/@name"
+  ],
+  "parameterContexts": [
+    "CONTEXT_COLOR"
+  ],
+  "configVars": [
+    {
+      "name": "kolor_nazwa_w_panelu",
+      "default": "|kolor|",
+      "delimeter": "|"
+    }
+  ],
+  "helpers": [
+    "tokenize",
+    "translate"
+  ],
+  "defaultXslt": "parameters_templates/color.xsl",
+  "notes": "Prefer CONTEXT_COLOR values. If none, use a visible parameter whose name matches kolor_nazwa_w_panelu and join its values with '/'."
+}

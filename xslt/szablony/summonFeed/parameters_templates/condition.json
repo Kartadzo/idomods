@@ -1,0 +1,18 @@
+{
+  "name": "condition",
+  "description": "Generate g:condition based on CONTEXT_STATE values from the product data.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:condition",
+  "context": "product",
+  "xpathCandidates": [
+    "parameters/parameter[@context_id = 'CONTEXT_STATE']/value/@context_id",
+    "parameters/parameter[@context_id = 'CONTEXT_STATE']/value/@name"
+  ],
+  "parameterContexts": [
+    "CONTEXT_STATE"
+  ],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/condition.xsl",
+  "notes": "Maps IAI context state values to Google condition values: new, used, or refurbished."
+}

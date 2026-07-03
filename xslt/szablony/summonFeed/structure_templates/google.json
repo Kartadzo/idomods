@@ -1,0 +1,22 @@
+{
+  "name": "Google",
+  "description": "Top-level feed structure for Google channel; keeps RSS/channel skeleton and iterates sizes.",
+  "output": "rss/channel/item",
+  "context": "feed",
+  "xpathCandidates": ["/offer/products/product"],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "insertionPoints": [
+    {
+      "template": "product",
+      "context": "product"
+    },
+    {
+      "template": "productSizeMatter",
+      "context": "size"
+    }
+  ],
+  "defaultXslt": "summonFeed/structure_templates/google.xsl",
+  "notes": "Maintains item looping and delegates detailed item content to product/productSize templates."
+}

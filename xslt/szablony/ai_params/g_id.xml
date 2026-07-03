@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:id
+     Purpose: unique item identifier for feed
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:id</field>
+  <candidates>
+    <candidate>
+      <xpath>@id | sizes/size/@code | @code</xpath>
+      <priority>1</priority>
+      <description>Use product `@id` or size `@code` when sizes emitted separately.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Prefer `@code` on size node when present.</step>
+    <step>Else use product `@id`.</step>
+    <step>Normalize as string without whitespace.</step>
+  </method>
+
+  <example>12345</example>
+</parameter_template>

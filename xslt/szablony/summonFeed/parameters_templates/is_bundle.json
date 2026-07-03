@@ -1,0 +1,16 @@
+{
+  "name": "is_bundle",
+  "description": "Generate g:is_bundle with value yes when the product contains bundled items.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:is_bundle",
+  "context": "product",
+  "xpathCandidates": [
+    "sum(bundled/product/@quantity)",
+    "bundled/product/@quantity"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/is_bundle.xsl",
+  "notes": "Outputs g:is_bundle only when bundled product quantity is greater than one."
+}

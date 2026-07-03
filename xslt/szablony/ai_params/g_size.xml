@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:size
+     Purpose: product size label (when product has sizes)
+     AI-friendly extraction spec: take `size/@name` from size node
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:size</field>
+  <candidates>
+    <candidate>
+      <xpath>size/@name</xpath>
+      <priority>1</priority>
+      <description>Under `sizes/size` nodes, use each `@name` as `g:size` for that item.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>For feeds emitting each size as separate item, use the `@name` of current `size` node.</step>
+  </method>
+
+  <example>XL</example>
+</parameter_template>

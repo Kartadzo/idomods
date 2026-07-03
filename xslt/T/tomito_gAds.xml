@@ -61,7 +61,8 @@
                                   producer/@id != '1694603064' and
                                   category/@id != '1214560390' and
                                   not(contains(description/name/.,' seks ') or
-                                  iaiext:priority_menu/site/menu[1]/item/@id = '132189')]">
+                                  iaiext:priority_menu/site/menu[1]/item/@id = '132189')
+                                  and not(@id = '226680' or @id = '148701')]">
                     <!-- Id towaru -->
                     <xsl:choose>
                         <xsl:when test="count(sizes/size) &lt; 1">

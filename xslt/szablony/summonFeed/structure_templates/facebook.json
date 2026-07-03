@@ -1,0 +1,22 @@
+{
+  "name": "Facebook",
+  "description": "Top-level feed structure for Facebook channel; wraps product and productSize templates.",
+  "output": "rss/channel/item",
+  "context": "feed",
+  "xpathCandidates": ["/offer/products/product"],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "insertionPoints": [
+    {
+      "template": "product",
+      "context": "product"
+    },
+    {
+      "template": "productSizeMatter",
+      "context": "size"
+    }
+  ],
+  "defaultXslt": "summonFeed/structure_templates/facebook.xsl",
+  "notes": "Keeps existing feed skeleton and delegates product rendering to templates in helpers and parameters_templates."
+}

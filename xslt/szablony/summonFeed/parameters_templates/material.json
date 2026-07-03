@@ -1,0 +1,24 @@
+{
+  "name": "material",
+  "description": "Generate g:material from a material parameter in the product data.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:material",
+  "context": "product",
+  "xpathCandidates": [
+    "parameters/parameter[@name = $material_nazwa_w_panelu]/value/@name",
+    "parameters/parameter[@hide = 'n']/@name"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "material_nazwa_w_panelu",
+      "default": "|materiał|",
+      "delimeter": "|"
+    }
+  ],
+  "helpers": [
+    "tokenize"
+  ],
+  "defaultXslt": "parameters_templates/material.xsl",
+  "notes": "Reads the visible material parameter and concatenates value entries into a slash-separated material string."
+}

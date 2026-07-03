@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:custom_label_1
+     Purpose: custom label slot 1 (flags: new, bestseller, promotion, distinguished)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:custom_label_1</field>
+  <method>
+    <step>Set to comma-separated flags if hotspots indicate `newproduct`, `bestseller`, `promotion`, etc.</step>
+  </method>
+
+  <example>newproduct,bestseller</example>
+</parameter_template>

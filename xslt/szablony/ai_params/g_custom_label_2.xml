@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:custom_label_2
+     Purpose: merchant-defined label 2 (e.g., internal categorization)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:custom_label_2</field>
+  <method>
+    <step>Populate using parameter-derived tokens or product attributes for reporting and grouping.</step>
+  </method>
+
+  <example>season_spring</example>
+</parameter_template>

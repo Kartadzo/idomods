@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:color
+     Purpose: product color attribute
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:color</field>
+  <candidates>
+    <candidate>
+      <xpath>parameters/parameter[@context_id='CONTEXT_COLOR']/value/@name | parameters/parameter[contains(translate('|kolor|', $upperLetters, $lowerLetters), concat('|',translate(@name,$upperLetters,$lowerLetters),'|'))]/value/@name</xpath>
+      <priority>1</priority>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Read visible color parameter and normalize token casing.</step>
+  </method>
+
+  <example>Red</example>
+</parameter_template>

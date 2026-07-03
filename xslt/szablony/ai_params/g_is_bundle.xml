@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:is_bundle
+     Purpose: indicates if product is a bundle (set)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:is_bundle</field>
+  <method>
+    <step>If `bundled/product/@quantity` &gt; 1 or grouped set detected, set `true`.</step>
+    <step>Else `false` or omit.</step>
+  </method>
+
+  <example>true</example>
+</parameter_template>

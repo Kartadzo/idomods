@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:shipping (container for shipping subfields)
+     Purpose: shipping price, country, service, handling and transit times
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>Contains nested fields: g:price, g:country, g:service, g:min_handling_time, g:max_handling_time, g:min_transit_time, g:max_transit_time</note>
+  </metadata>
+
+  <field>g:shipping</field>
+  <method>
+    <step>Compute shipping price: if product price &gt; `kwota_dla_darmowej_dostawy` then 0 else `Koszt_dostawy` or overridden by `kwota_dla_wiekszych_zamowien` logic.</step>
+    <step>Set country from `Kraj_dostawy` and service from `Serwis_dostawy_zamówienia`.</step>
+    <step>Set handling and transit times from configured variables.</step>
+  </method>
+
+  <example>
+    <g:price>0.00 PLN</g:price>
+  </example>
+</parameter_template>

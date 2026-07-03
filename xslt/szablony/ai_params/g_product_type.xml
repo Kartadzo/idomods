@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:product_type
+     Purpose: product type/category path for merchant
+     AI-friendly extraction spec: build from navigation/menu items or category path
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>Collect up to first 5 navigation items (excluding producer name) to form product_type string.</note>
+  </metadata>
+
+  <field>g:product_type</field>
+  <method>
+    <step>Traverse `iaiext:navigation/iaiext:site/iaiext:menu/iaiext:item[position() &lt; 6]`.</step>
+    <step>Concatenate `@textId` or `@text` values filtered to exclude producer name and special chars.</step>
+    <step>Normalize tokens and join with ' > ' to form hierarchical `product_type`.</step>
+  </method>
+
+  <example><![CDATA[Clothing > Men > Shirts > Casual]]></example>
+</parameter_template>

@@ -1,0 +1,28 @@
+{
+  "name": "availability_facebook",
+  "description": "Generate Facebook g:availability by summing stock availability across all sizes for the current product.",
+  "structure": ["Facebook"],
+  "output": "g:availability",
+  "context": "size",
+  "xpathCandidates": [
+    "@available",
+    "../size/stock/@available_stock_quantity",
+    "../../iaiext:sell_by/iaiext:retail/@quantity"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "sales_stocks",
+      "default": "|-3|-2|-1|0|1|2|3|4|5|6|7|8|9|10|11|12|",
+      "delimeter": "|"
+    }
+  ],
+  "createVars": [
+    "sell_by",
+    "stocksGobalCheck",
+    "avail"
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/availability_facebook.xsl",
+  "notes": "Sums availability across all sizes under the current product and determines Facebook availability."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "brand",
+  "description": "Generate Google g:brand from the producer name when defined.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:brand",
+  "context": "product",
+  "xpathCandidates": [
+    "producer/@name"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/brand.xsl",
+  "notes": "Outputs producer name unless it equals the undefined producer placeholder."
+}

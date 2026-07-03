@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:description
+     Purpose: product description used in feed
+     AI-friendly extraction spec: priority of sources and cleanup steps
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+    <note>Prefer short_desc; else clean long_desc; else build from parameters list.</note>
+  </metadata>
+
+  <field>g:description</field>
+  <candidates>
+    <candidate>
+      <xpath>description/short_desc</xpath>
+      <priority>1</priority>
+    </candidate>
+    <candidate>
+      <xpath>description/long_desc</xpath>
+      <priority>2</priority>
+      <description>Strip style/img tags and comments, replace &amp;nbsp; with spaces, then truncate to `dlugosc_opisu` and token-split to sentence end.</description>
+    </candidate>
+    <candidate>
+      <xpath>parameters/parameter[@hide='n']</xpath>
+      <priority>3</priority>
+      <description>Build short description from visible parameters when descriptions missing or too short.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>If `short_desc` non-empty → use it (trim).</step>
+    <step>Else clean `long_desc` by removing tags/comments/styles/images, replace non-breaking spaces, then cut to sentence boundary or `dlugosc_opisu`.</step>
+    <step>Else concatenate `parameters/parameter` visible values into short description (limit `dlugosc_opisu_z_parametrow`).</step>
+  </method>
+
+  <example><![CDATA[Elegancka koszula męska z bawełny, slim fit.]]></example>
+</parameter_template>

@@ -146,7 +146,7 @@
                                   @id = '2596641' or @id = '1705043' or @id = '2451009' or @id = '2454506' or @id = '2457104' or
                                   @id = '2457105' or @id = '2475856' or @id = '2479482' or @id = '2480325' or @id = '2626407' or
                                   @id = '1025231' or @id = '1034140' or @id = '2583005' or @id = '2662421' or @id = '2444621' 
-                                  or @id = '2435614' or @id = '2433372' or @id = '00000' or @id = '00000' or @id = '00000'
+                                  or @id = '2435614' or @id = '2433372' or @id = '1338637' or @id = '2673816' or @id = '00000'
                                   or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000'
                                   ) and not(
                                   contains($tekst,'alprazolam') or 

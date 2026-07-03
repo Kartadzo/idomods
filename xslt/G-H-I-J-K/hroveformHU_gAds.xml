@@ -81,7 +81,7 @@
                               <xsl:otherwise>
                                  <!-- Id rozmiaru produktu -->
                                  <xsl:element name="g:id">
-                                    <xsl:value-of select="../../@id"/>
+                                    <xsl:value-of select="@code"/>
                                  </xsl:element>
                                  <xsl:for-each select="../..">
                                     <xsl:call-template name="product"/>

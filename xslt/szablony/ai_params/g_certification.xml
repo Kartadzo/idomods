@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:certification (group)
+     Purpose: certification(s) associated with product
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>Nested fields: certification_authority, certification_name, certification_code</note>
+  </metadata>
+
+  <field>g:certification</field>
+  <method>
+    <step>For each parameter with context certification or matching name, emit a `g:certification` block with authority, name and optional code.</step>
+  </method>
+
+  <example>
+    <g:certification>
+      <g:certification_authority>CE</g:certification_authority>
+      <g:certification_name>Safety Standard</g:certification_name>
+      <g:certification_code>CE-123</g:certification_code>
+    </g:certification>
+  </example>
+</parameter_template>

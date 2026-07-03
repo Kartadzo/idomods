@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:additional_image_link
+     Purpose: additional product image URLs (comma or separate entries)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:additional_image_link</field>
+  <candidates>
+    <candidate>
+      <xpath>images/image[position()>1]/@url</xpath>
+      <priority>1</priority>
+      <description>All image URLs after the first main image.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Collect subsequent image URLs and serialize as multiple elements or comma-separated list per feed requirements.</step>
+  </method>
+
+  <example>https://example.com/images/product1_2.jpg</example>
+</parameter_template>

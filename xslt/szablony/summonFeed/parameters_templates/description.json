@@ -1,0 +1,38 @@
+{
+  "name": "description",
+  "description": "Generate g:description from product descriptions and fallback parameter values.",
+  "structure": ["Google", "Facebook", "Samba"],
+  "output": "g:description",
+  "context": "product",
+  "xpathCandidates": [
+    "description/short_desc",
+    "description/long_desc",
+    "description/name"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "dlugosc_opisu",
+      "default": "2400"
+    },
+    {
+      "name": "dlugosc_opisu_z_parametrow",
+      "default": "1200"
+    },
+    {
+      "name": "zignoruj_dlugi_opis_jesli_krotki_przekracza",
+      "default": "600"
+    },
+    {
+      "name": "minimalna_dlugosc_opisu_dla_parametrow",
+      "default": "120"
+    }
+  ],
+  "helpers": [
+    "string-replace-all",
+    "strip-tags",
+    "tokenize"
+  ],
+  "defaultXslt": "parameters_templates/description.xsl",
+  "notes": "Creates a safe description value with fallback from product name and parameters when description fields are empty or too short."
+}

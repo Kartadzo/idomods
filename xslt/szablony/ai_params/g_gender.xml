@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:gender
+     Purpose: product gender for apparel
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+    <note>Uses `gender_nazwa_w_panelu` mapping or menu ids when configured.</note>
+  </metadata>
+
+  <field>g:gender</field>
+  <method>
+    <step>Check `gender_id_w_panelu` and menu mapping for textId tokens.</step>
+    <step>Else check parameter named by `gender_nazwa_w_panelu` and map values by lists `gender_male`, `gender_female`, `gender_unisex`.</step>
+    <step>Output one of: `Male`, `Female`, `Unisex` or omit.</step>
+  </method>
+
+  <example>Male</example>
+</parameter_template>

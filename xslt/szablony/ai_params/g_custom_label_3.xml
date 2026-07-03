@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:custom_label_3
+     Purpose: merchant-defined label 3
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:custom_label_3</field>
+  <method>
+    <step>Same as other custom labels; used per merchant needs.</step>
+  </method>
+
+  <example>top_margin</example>
+</parameter_template>

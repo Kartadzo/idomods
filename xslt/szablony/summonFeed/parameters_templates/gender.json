@@ -1,0 +1,57 @@
+{
+  "name": "gender",
+  "description": "Generate g:gender from gender-related parameter values or navigation menu IDs.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:gender",
+  "context": "product",
+  "xpathCandidates": [
+    "parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name",
+    "iaiext:priority_menu/site/menu[1]/item[contains($gender_id_w_panelu, concat('|',translate(@id, $upperLetters, $lowerLetters),'|'))]/@textId"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "gender_nazwa_w_panelu",
+      "default": "",
+      "delimeter": ""
+    },
+    {
+      "name": "gender_male",
+      "default": "|",
+      "delimeter": "|"
+    },
+    {
+      "name": "gender_female",
+      "default": "|",
+      "delimeter": "|"
+    },
+    {
+      "name": "gender_unisex",
+      "default": "|",
+      "delimeter": "|"
+    },
+    {
+      "name": "gender_id_w_panelu",
+      "default": "",
+      "delimeter": ""
+    },
+    {
+      "name": "gender_male_id_menu",
+      "default": "|",
+      "delimeter": "|"
+    },
+    {
+      "name": "gender_female_id_menu",
+      "default": "|",
+      "delimeter": "|"
+    },
+    {
+      "name": "gender_unisex_id_menu",
+      "default": "|",
+      "delimeter": "|"
+    }
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/gender.xsl",
+  "notes": "Supports explicit gender parameter mapping and menu ID-based gender detection."
+}

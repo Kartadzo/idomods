@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:title
+     Purpose: product title used in feed
+     AI-friendly extraction spec: list of candidate XPaths and normalization method
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+    <note>Use first non-empty candidate. Apply title normalization (polish pairs, capitalization rules).</note>
+  </metadata>
+
+  <field>g:title</field>
+  <candidates>
+    <candidate>
+      <xpath>iaiext:pricecomparator_name[@xml:lang = ../../@language]</xpath>
+      <priority>1</priority>
+      <description>Prefer price comparator name when language matches product language.</description>
+    </candidate>
+    <candidate>
+      <xpath>description/name</xpath>
+      <priority>2</priority>
+      <description>Fallback to product name from description.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Choose first non-empty candidate XPath.</step>
+    <step>Trim to configured max length (e.g. 146).</step>
+    <step>Apply normalization: convert polish-letter pairs, adjust capitalization using lists `upperLetters`/`lowerLetters`, special tokens from `corrected`.</step>
+  </method>
+
+  <example><![CDATA[Samsung Galaxy S22]]></example>
+</parameter_template>

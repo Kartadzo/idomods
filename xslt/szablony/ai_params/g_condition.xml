@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:condition
+     Purpose: product condition (new/refurbished/used)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+    <note>Mapping logic based on `iaiext:hotspots` or `@type` flags.</note>
+  </metadata>
+
+  <field>g:condition</field>
+  <method>
+    <step>Default to `new` unless templates identify `used` or `refurbished` via specific flags.</step>
+    <step>Read `iaiext:hotspots/...` or `@condition` attributes where present.</step>
+  </method>
+
+  <example>new</example>
+</parameter_template>

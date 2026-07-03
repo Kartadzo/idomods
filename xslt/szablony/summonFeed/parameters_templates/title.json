@@ -1,0 +1,35 @@
+{
+  "name": "title",
+  "description": "Build g:title from product or price comparator name, normalizing casing and Polish diacritic pairs.",
+  "structure": ["Google", "Facebook", "Samba"],
+  "output": "g:title",
+  "context": "product",
+  "xpathCandidates": [
+    "iaiext:pricecomparator_name[@xml:lang = ../../@language]/.",
+    "description/name/.",
+    "producer/@name"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "corrected",
+      "default": "\\GRATIS\\",
+      "delimeter": "\\"
+    }
+  ],
+  "createVars": [
+    "nazwaTowaru",
+    "upperCaseCount",
+    "lowerCaseCount",
+    "wybierzZrodloNazwy"
+  ],
+  "helpers": [
+    "wordFormat",
+    "upperCaseCount",
+    "lowerCaseCount",
+    "normalize-polish-pairs",
+    "has-polish-pair"
+  ],
+  "defaultXslt": "parameters_templates/title.xsl",
+  "notes": "Chooses title source, normalizes case, truncates to 146 chars, and maps Polish pairs to ASCII equivalents."
+}

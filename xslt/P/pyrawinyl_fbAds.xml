@@ -581,6 +581,19 @@
                 <xsl:text>|Promocja|</xsl:text>
             </xsl:if>
         </g:custom_label_1>
+
+        <g:custom_label_3>
+            <xsl:variable name="label3">
+                <xsl:call-template name="throwNode">
+                    <xsl:with-param name="index" select="2"/>
+                    <xsl:with-param name="border" select="'\'"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:call-template name="tokenize">
+                <xsl:with-param name="text" select="substring(normalize-space($label3),1,100)" />
+                <xsl:with-param name="delimiter" select="';'" />
+            </xsl:call-template>
+        </g:custom_label_3>
     </xsl:template>
     
     <xsl:template name="productSizeMatter"
@@ -1077,6 +1090,98 @@
         </xsl:choose>
     </xsl:template>
     
+    <!-- 2026.02.12 MD -->
+    <xsl:template name="throwNode">
+        <xsl:param name="pos" select="1"/>
+        <xsl:param name="index" />
+        <xsl:param name="prev" select="''"/>
+        <xsl:param name="border" select="'\'"/>
+        
+        <xsl:variable name="items" select="iaiext:priority_menu/site[1]/menu[@id='5']/item[contains(@textId,$border)]"/>
+        <xsl:variable name="total" select="count($items)"/>
+        
+        <xsl:choose>
+            <xsl:when test="$pos &gt; $total">
+                <xsl:if test="string-length($prev) > 2">
+                    <xsl:value-of select="$prev"/>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="node">
+                    <xsl:call-template name="extract-node">
+                        <xsl:with-param name="text"  select="$items[$pos]/@textId"/>
+                        <xsl:with-param name="index" select="$index"/>
+                    </xsl:call-template>
+                </xsl:variable>
+                
+                <xsl:variable name="nodeNorm" select="normalize-space($node)"/>
+                
+                <xsl:variable name="result">
+                    <xsl:value-of select="$prev"/>
+                    <xsl:if test="string-length($nodeNorm) > 0 
+                                  and not(contains(concat(';', $prev, ';'),concat('; ', $nodeNorm, ';')) 
+                                  or contains(concat(';', $prev, ';'),concat(';', $nodeNorm, ';')))">
+                        <xsl:value-of select="$nodeNorm"/>
+                        <xsl:text>; </xsl:text>
+                    </xsl:if>
+                </xsl:variable>
+                <xsl:call-template name="throwNode">
+                    <xsl:with-param name="pos"      select="$pos +1"/>
+                    <xsl:with-param name="index"    select="$index"/>
+                    <xsl:with-param name="prev"     select="$result"/>	
+                    <xsl:with-param name="border"   select="$border"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <!-- 08.09.2025 MD -->
+    <xsl:template name="extract-node">
+        <xsl:param name="text"/>
+        <xsl:param name="index"/>
+        <xsl:param name="counter" select="1"/>
+        
+        <xsl:choose>
+            <xsl:when test="not(contains($text,'\'))">
+                <xsl:if test="$counter = $index">
+                    <xsl:value-of select="$text"/>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="head">
+                    <xsl:choose> 
+                        <xsl:when test="contains($text,' \ ')"> 
+                            <xsl:value-of select="substring-before($text,' \ ')"/>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:value-of select="substring-before($text,'\')"/>
+                        </xsl:otherwise> 
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="tail">
+                    <xsl:choose> 
+                        <xsl:when test="contains($text,' \ ')"> 
+                            <xsl:value-of select="substring-after($text,' \ ')"/>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:value-of select="substring-after($text,'\')"/>
+                        </xsl:otherwise> 
+                    </xsl:choose>
+                </xsl:variable>
+                
+                <xsl:if test="$counter = $index">
+                    <xsl:value-of select="$head"/>
+                </xsl:if>
+                
+                <xsl:call-template name="extract-node">
+                    <xsl:with-param name="text"     select="$tail"/>
+                    <xsl:with-param name="index"    select="$index"/>
+                    <xsl:with-param name="counter"  select="$counter + 1"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
     <!-- 03.07.2025 MD -->
     <xsl:template name="upperCaseCount"> 
         <xsl:param name="text"/> 

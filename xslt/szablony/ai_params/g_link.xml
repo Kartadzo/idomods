@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:link
+     Purpose: canonical product link for feed (desktop)
+     AI-friendly extraction spec: use card/@url or build from site base + product path
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>productSizeMatter builds `g:link`. Preserve size suffix when product has sizes.</note>
+  </metadata>
+
+  <field>g:link</field>
+  <candidates>
+    <candidate>
+      <xpath>../../card/@url | card/@url</xpath>
+      <priority>1</priority>
+      <description>Prefer card URL defined on product or parent node.</description>
+    </candidate>
+    <candidate>
+      <xpath>computed: 
+        concat(base_url, '/', product-seo, '.googleshopping', country, '.html')
+      </xpath>
+      <priority>2</priority>
+      <description>Build link using configured pattern if card URL missing.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Prefer explicit `card/@url` (parent or current).</step>
+    <step>Else build link with site base, append ".googleshopping{country}.html" and include size code if present.</step>
+  </method>
+
+  <example><![CDATA[https://example.com/product-name.googleshoppingPL.html]]></example>
+</parameter_template>

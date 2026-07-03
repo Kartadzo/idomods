@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:unit_pricing_base_measure
+     Purpose: base measure for unit pricing (e.g., per 100 ml / per 1 kg)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:unit_pricing_base_measure</field>
+  <method>
+    <step>Derive base measure from `unitsList` and `pojemnosc_nazwa_w_panelu` parameters and normalize.</step>
+  </method>
+
+  <example>100 ml</example>
+</parameter_template>

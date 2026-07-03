@@ -11,6 +11,7 @@
     <!-- długoś opisu -->
     <xsl:variable name='dlugosc_opisu'>2000</xsl:variable>
     <xsl:variable name='dlugosc_opisu_z_parametrow'>1000</xsl:variable>
+   <xsl:variable name='zignoruj_dlugi_opis_jesli_krotki_przekracza'>600</xsl:variable>
     <!-- wymagany limit długości opisu po którego przekroczeniu nie zostanie dodany opis z
     parametrów  -->
     <xsl:variable name='minimalna_dlugosc_opisu_dla_parametrow'>1000</xsl:variable>
@@ -148,143 +149,176 @@
                 </g:title>
             </xsl:otherwise>
         </xsl:choose>
-        <!-- Opis -->
-        <!-- short descr -->
-        <xsl:variable name="from_parameters_raw">
-            <xsl:for-each select="parameters/parameter[@hide = 'n' and value/@name != '']">
-                <xsl:text>&#xa;</xsl:text>
-                <xsl:value-of select="@name" />
-                <xsl:text>: </xsl:text>
-                <xsl:for-each select="value">
-                    <xsl:value-of select="@name" />
-                    <xsl:text>; </xsl:text>
-                </xsl:for-each>
+
+      <!-- Opis -->
+      <!-- 2026.05.05 MD -->
+      <xsl:variable name="from_parameters_raw">
+         <xsl:for-each select="parameters/parameter[@hide = 'n' and value/@name != '']">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:value-of select="@name" />
+            <xsl:text>: </xsl:text>
+            <xsl:for-each select="value">
+               <xsl:value-of select="@name" />
+               <xsl:text>; </xsl:text>
             </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="from_parameters">
-            <xsl:choose>
-                <xsl:when test="$from_parameters_raw != ''">
-                    <xsl:call-template name="tokenize">
-                        <xsl:with-param name="text"
-                            select="substring($from_parameters_raw, 1, $dlugosc_opisu_z_parametrow)" />
-                        <xsl:with-param name="delimiter" select="';'" />
-                    </xsl:call-template>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text></xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <g:description>
-            <xsl:choose>
-                <xsl:when test="description/short_desc = '' and description/long_desc = ''">
-                    <!-- nie jest git bo nie ma opisów  -->
-                    <xsl:if test="$from_parameters != ''">
+         </xsl:for-each>
+      </xsl:variable>
+      <xsl:variable name="from_parameters">
+         <xsl:choose>
+            <xsl:when test="$from_parameters_raw != ''">
+               <xsl:call-template name="tokenize">
+                  <xsl:with-param name="text" select="substring($from_parameters_raw, 1, $dlugosc_opisu_z_parametrow)" />
+                  <xsl:with-param name="delimiter" select="';'" />
+               </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:text></xsl:text>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+        
+      <xsl:element name="g:description">
+         <xsl:choose>
+            <xsl:when test="description/short_desc = '' and description/long_desc = ''">
+               <!-- nie jest git bo nie ma opisów  -->
+               <xsl:if test="$from_parameters != ''">
+                  <xsl:value-of select="description/name" />
+                  <xsl:value-of select="$from_parameters" />
+               </xsl:if>
+            </xsl:when>
+            <xsl:when test="description/short_desc = '' and string-length(normalize-space(description/long_desc)) > 0">
+               <xsl:variable name = "opis_bez_komentarzy">
+                  <xsl:call-template name="strip-tags">
+                     <xsl:with-param name="text" select="description/long_desc" />
+                     <xsl:with-param name="open" select="'&lt;!--'" />
+                     <xsl:with-param name="close" select="'--&gt;'" />
+                  </xsl:call-template>
+               </xsl:variable>
+               <xsl:variable name = "opis_bez_styli">
+                  <xsl:call-template name="strip-tags">
+                     <xsl:with-param name="text" select="$opis_bez_komentarzy" />
+                     <xsl:with-param name="open" select="'&lt;style'" />
+                     <xsl:with-param name="close" select="'&lt;/style&gt;'" />
+                  </xsl:call-template>
+               </xsl:variable>
+               <xsl:variable name = "opis_bez_zdjęć">
+                  <xsl:call-template name="strip-tags">
+                     <xsl:with-param name="text" select="$opis_bez_styli" />
+                     <xsl:with-param name="open" select="'&lt;img'" />
+                     <xsl:with-param name="close" select="'&quot;/&gt;'" />
+                  </xsl:call-template>
+               </xsl:variable>
+               <xsl:variable name = "opis_bez_tagow">
+                  <xsl:call-template name="strip-tags">
+                     <xsl:with-param name="text" select="$opis_bez_zdjęć" tunnel="yes"/>
+                  </xsl:call-template>
+               </xsl:variable>
+               <xsl:variable name="opis_do_kropki">
+                  <xsl:call-template name="tokenize">
+                     <xsl:with-param name="text" select="substring(normalize-space($opis_bez_tagow),1,$dlugosc_opisu)" />
+                  </xsl:call-template>
+               </xsl:variable>
+               <xsl:choose>
+                  <xsl:when test="$opis_do_kropki = ''">
+                     <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze wgl nie
+                          ma kropki lool-->
+                     <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                     <xsl:value-of select="normalize-space($opis_bez_tagow)" />
+                     <xsl:if test="string-length(normalize-space($opis_bez_tagow)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
+                        <xsl:text>&#xa;</xsl:text>
                         <xsl:value-of select="description/name" />
                         <xsl:value-of select="$from_parameters" />
-                    </xsl:if>
-                </xsl:when>
-                <xsl:when
-                    test="description/short_desc = '' and string-length(normalize-space(description/long_desc)) > 0">
-                    <xsl:variable name="opis_bez_tagow">
-                        <xsl:call-template name="strip-tags">
-                            <xsl:with-param name="text" select="description/long_desc" tunnel="yes" />
-                        </xsl:call-template>
-                    </xsl:variable>
-                    <xsl:variable name="opis_do_kropki">
-                        <xsl:call-template name="tokenize">
-                            <xsl:with-param name="text"
-                                select="substring(normalize-space($opis_bez_tagow),1,$dlugosc_opisu)" />
-                        </xsl:call-template>
-                    </xsl:variable>
-                    <xsl:choose>
-                        <xsl:when test="$opis_do_kropki = ''">
-                            <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze wgl nie
-                            ma kropki lool-->
-                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                            <xsl:value-of select="$opis_bez_tagow" />
-                            <xsl:if
-                                test="string-length(normalize-space($opis_bez_tagow)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
-                                <xsl:text>&#xa;</xsl:text>
-                                <xsl:value-of select="description/name" />
-                                <xsl:value-of select="$from_parameters" />
-                            </xsl:if>
-                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                            <xsl:value-of select="$opis_do_kropki" />
-                            <xsl:if
-                                test="string-length(normalize-space($opis_do_kropki)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
-                                <xsl:text>&#xa;</xsl:text>
-                                <xsl:value-of select="description/name" />
-                                <xsl:value-of select="$from_parameters" />
-                            </xsl:if>
-                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <!-- tutaj jeśli opis nie bedzie mial X znakow to zastapic go długim opisem mimo
+                     </xsl:if>
+                     <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                     <xsl:value-of select="normalize-space($opis_do_kropki)" />
+                     <xsl:if test="string-length(normalize-space($opis_do_kropki)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
+                        <xsl:text>&#xa;</xsl:text>
+                        <xsl:value-of select="description/name" />
+                        <xsl:value-of select="$from_parameters" />
+                     </xsl:if>
+                     <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+               <!-- tutaj jeśli opis nie bedzie mial X znakow to zastapic go długim opisem mimo
                     wszystko -->
-                    <!-- załóżmy -->
-                    <xsl:choose>
-                        <xsl:when
-                            test="string-length(description/short_desc) > 120 or description/long_desc = ''">
-                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                            <xsl:value-of select="description/short_desc" />
-                            <xsl:if
-                                test="string-length(description/short_desc) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
-                                <xsl:text>&#xa;</xsl:text>
-                                <xsl:value-of select="description/name" />
-                                <xsl:value-of select="$from_parameters" />
-                            </xsl:if>
-                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+               <!-- załóżmy -->
+               <xsl:choose>
+                  <xsl:when test="string-length(description/short_desc) > $zignoruj_dlugi_opis_jesli_krotki_przekracza or description/long_desc = ''">
+                     <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                     <xsl:value-of select="description/short_desc" />
+                     <xsl:if test="string-length(description/short_desc) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
+                        <xsl:text>&#xa;</xsl:text>
+                        <xsl:value-of select="description/name" />
+                        <xsl:value-of select="$from_parameters" />
+                     </xsl:if>
+                     <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:variable name = "opis_bez_komentarzy">
+                        <xsl:call-template name="strip-tags">
+                           <xsl:with-param name="text" select="description/long_desc" />
+                           <xsl:with-param name="open" select="'&lt;!--'" />
+                           <xsl:with-param name="close" select="'--&gt;'" />
+                        </xsl:call-template>
+                     </xsl:variable>
+                     <xsl:variable name = "opis_bez_styli">
+                        <xsl:call-template name="strip-tags">
+                           <xsl:with-param name="text" select="$opis_bez_komentarzy" />
+                           <xsl:with-param name="open" select="'&lt;style'" />
+                           <xsl:with-param name="close" select="'&lt;/style&gt;'" />
+                        </xsl:call-template>
+                     </xsl:variable>
+                     <xsl:variable name = "opis_bez_zdjęć">
+                        <xsl:call-template name="strip-tags">
+                           <xsl:with-param name="text" select="$opis_bez_styli" />
+                           <xsl:with-param name="open" select="'&lt;img'" />
+                           <xsl:with-param name="close" select="'&quot;/&gt;'" />
+                        </xsl:call-template>
+                     </xsl:variable>
+                     <xsl:variable name = "opis_bez_tagow">
+                        <xsl:call-template name="strip-tags">
+                           <xsl:with-param name="text" select="$opis_bez_zdjęć" tunnel="yes"/>
+                        </xsl:call-template>
+                     </xsl:variable>
+                     <xsl:variable name="opis_do_kropki">
+                        <xsl:call-template name="tokenize">
+                           <xsl:with-param name="text" select="substring(normalize-space($opis_bez_tagow),1,$dlugosc_opisu)" />
+                        </xsl:call-template>
+                     </xsl:variable>
+                     <xsl:choose>
+                        <xsl:when test="$opis_do_kropki = ''">
+                           <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze
+                                wgl nie ma kropki lool-->
+                           <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                           <xsl:value-of select="normalize-space($opis_bez_tagow)" />
+                           <xsl:if test="string-length(normalize-space($opis_bez_tagow)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
+                              <xsl:text>&#xa;</xsl:text>
+                              <xsl:value-of select="description/name" />
+                              <xsl:value-of select="$from_parameters" />
+                           </xsl:if>
+                           <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:variable name="opis_bez_tagow">
-                                <xsl:call-template name="strip-tags">
-                                    <xsl:with-param name="text" select="description/long_desc"
-                                        tunnel="yes" />
-                                </xsl:call-template>
-                            </xsl:variable>
-                            <xsl:variable name="opis_do_kropki">
-                                <xsl:call-template name="tokenize">
-                                    <xsl:with-param name="text"
-                                        select="substring(normalize-space($opis_bez_tagow),1,$dlugosc_opisu)" />
-                                </xsl:call-template>
-                            </xsl:variable>
-                            <xsl:choose>
-                                <xsl:when test="$opis_do_kropki = ''">
-                                    <!-- Nie ma przed kropka nic wiec podajemy co mamy bo mozliwe ze
-                                    wgl nie ma kropki lool-->
-                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                                    <xsl:value-of select="$opis_bez_tagow" />
-                                    <xsl:if
-                                        test="string-length(normalize-space($opis_bez_tagow)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
-                                        <xsl:text>&#xa;</xsl:text>
-                                        <xsl:value-of select="description/name" />
-                                        <xsl:value-of select="$from_parameters" />
-                                    </xsl:if>
-                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                                    <xsl:value-of select="$opis_do_kropki" />
-                                    <xsl:if
-                                        test="string-length(normalize-space($opis_do_kropki)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
-                                        <xsl:text>&#xa;</xsl:text>
-                                        <xsl:value-of select="description/name" />
-                                        <xsl:value-of select="$from_parameters" />
-                                    </xsl:if>
-                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                           <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                           <xsl:value-of select="normalize-space($opis_do_kropki)" />
+                           <xsl:if test="string-length(normalize-space($opis_do_kropki)) &lt; $minimalna_dlugosc_opisu_dla_parametrow and $from_parameters != ''">
+                              <xsl:text>&#xa;</xsl:text>
+                              <xsl:value-of select="description/name" />
+                              <xsl:value-of select="$from_parameters" />
+                           </xsl:if>
+                           <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
                         </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:otherwise>
-            </xsl:choose>
-        </g:description>
+                     </xsl:choose>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:element>
 
         <xsl:variable name="var_google_product_category">
             <xsl:call-template name="searchGoogleCategory">
@@ -863,32 +897,39 @@
             </g:max_transit_time>
         </g:shipping>
     </xsl:template>
-
+    
+    <!-- 2026.05.07  MD -->
     <xsl:template name="strip-tags">
         <xsl:param name="text" />
+        <xsl:param name="open" select="'&lt;'" />
+        <xsl:param name="close" select="'&gt;'" />
         <xsl:param name="depth" select="0" />
         <xsl:choose>
-            <xsl:when test="contains($text, '&lt;') and $depth &lt; 1000">
-                <xsl:value-of select="substring-before($text, '&lt;')" />
+            <xsl:when test="contains($text, $open) and not(contains(substring-after($text, $open), $close))">
+                <xsl:value-of select="normalize-space($text)" />
+            </xsl:when>
+            <xsl:when test="contains($text, $open) and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text, $open)" />
                 <xsl:text><![CDATA[ ]]></xsl:text>
                 <xsl:call-template name="strip-tags">
-                    <xsl:with-param name="text"
-                        select="substring-after((normalize-space($text)), '&gt;')" tunnel="true" />
+                    <xsl:with-param name="text" select="substring-after($text, $close)" />
+                    <xsl:with-param name="open" select="$open" />
+                    <xsl:with-param name="close" select="$close" />
                     <xsl:with-param name="depth" select="$depth + 1" />
                 </xsl:call-template>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="normalize-space($text)" tunnel="true" />
+                <xsl:value-of select="normalize-space($text)" />
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
     <xsl:template name="tokenize">
         <xsl:param name="text" />
         <xsl:param name="delimiter" select="'.'" />
         <xsl:param name="depth" select="0" />
         <xsl:choose>
-            <xsl:when test="contains($text, $delimiter)">
+            <xsl:when test="contains($text, $delimiter) and $depth &lt; 1000">
                 <xsl:value-of select="substring-before($text, $delimiter)" />
                 <xsl:value-of select="$delimiter" />
                 <xsl:call-template name="tokenize">
@@ -1027,19 +1068,6 @@
 
     <xsl:template name="searchGoogleCategory">
         <xsl:param name="cat_id" />
-        <xsl:choose>
-            <xsl:when test="$cat_id = '6675'">
-                <xsl:value-of select="'1604'" />
-            </xsl:when>
-            <xsl:when test="$cat_id = '4571'">
-                <xsl:value-of select="'2271'" />
-            </xsl:when>
-            <xsl:when test="$cat_id = '5977'">
-                <xsl:value-of select="'187'" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>0</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:text>0</xsl:text>
     </xsl:template>
 </xsl:stylesheet>

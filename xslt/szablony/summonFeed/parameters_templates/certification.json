@@ -1,0 +1,23 @@
+{
+  "name": "certification",
+  "description": "Generate Google g:certification from certification parameters using authority:name:code syntax.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:certification",
+  "context": "product",
+  "xpathCandidates": [
+    "parameters/parameter[@context_id = 'CONTEXT_CERTIFICATION']/value/@name",
+    "parameters/parameter[contains(translate($certyfikaty_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|', translate(@name, $upperLetters, $lowerLetters), '|'))]/value/@name"
+  ],
+  "parameterContexts": [
+    "CONTEXT_CERTIFICATION"
+  ],
+  "configVars": [
+    {
+      "name": "certyfikaty_nazwa_w_panelu",
+      "default": "|Certyfikat|"
+    }
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/certification.xsl",
+  "notes": "Transforms certification parameter values into nested g:certification_authority, g:certification_name and g:certification_code elements."
+}

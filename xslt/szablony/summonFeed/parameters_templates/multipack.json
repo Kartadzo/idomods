@@ -1,0 +1,17 @@
+{
+  "name": "multipack",
+  "description": "Generate g:multipack from bundled product quantity or retail quantity when product is a regular type.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:multipack",
+  "context": "product",
+  "xpathCandidates": [
+    "bundled/product/@quantity",
+    "iaiext:sell_by/iaiext:retail/@quantity",
+    "@type"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/multipack.xsl",
+  "notes": "Outputs multipack quantity for grouped products or regular products with a retail quantity greater than one."
+}

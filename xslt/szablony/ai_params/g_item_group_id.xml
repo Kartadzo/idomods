@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:item_group_id
+     Purpose: grouping id for variants (sizes/groups)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:item_group_id</field>
+  <method>
+    <step>Use `group/@id` when present to group variants.</step>
+    <step>Else, for size-based grouping, use parent product `@id`.</step>
+    <step>Wrap as string; ensure consistency across sizes.</step>
+  </method>
+
+  <example>98765</example>
+</parameter_template>

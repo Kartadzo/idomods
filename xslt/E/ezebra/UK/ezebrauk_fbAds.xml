@@ -36,8 +36,9 @@
         <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
             <channel>
                 <xsl:for-each select="/offer/products/product[
-                                      price/@gross &gt; 0 and 
-                                  description/name/. != '']">
+                                      price/@gross &gt; 0 
+                                and description/name/. != ''
+                                and producer/@name != 'Durex']">
                     <!-- Id towaru -->
                     <xsl:choose>
                         <xsl:when test="count(sizes/size) &lt; 1">

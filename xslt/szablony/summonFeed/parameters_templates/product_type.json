@@ -1,0 +1,17 @@
+{
+  "name": "product_type",
+  "description": "Generate Google g:product_type from the product navigation path, replacing backslashes with ' > '.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:product_type",
+  "context": "product",
+  "xpathCandidates": [
+    "iaiext:navigation/iaiext:site[1]/iaiext:menu[1]/iaiext:item/@textid"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [
+    "string-replace-all"
+  ],
+  "defaultXslt": "parameters_templates/product_type.xsl",
+  "notes": "Uses the first navigation site menu items and converts textid paths to Google product_type format."
+}

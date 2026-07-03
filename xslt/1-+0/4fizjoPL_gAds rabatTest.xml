@@ -1,0 +1,177 @@
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    
+    <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
+    <xsl:variable name="upperLetters" 
+                  select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'" />
+    <xsl:variable name="lowerLetters" 
+                  select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźżäöüßáčďéěíňóřšťúůýžáäčďžéíĺľňóôŕšťúýžăâîșțабвгґдеєжзиіїйклмнопрстуфхцчшщьюя'" />
+    
+    <xsl:variable name="Kraj_dostawy" select="'PL'" />
+    
+    <xsl:template match="/">
+        <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+            <channel>
+                <title>4fizjo.pl</title>
+                <link>https://4fizjo.pl/</link>
+                <description>Produkty ze sklepu https://4fizjo.pl/</description>
+                <xsl:for-each select="/offer/products/product[
+                                      price/@gross &gt; 0 and 
+                                  description/name/. != '' 
+                                  and (@id = 101
+                                  or @id = 1174
+                                  or @id = 126
+                                  or @id = 1313
+                                  or @id = 1459
+                                  or @id = 1598
+                                  or @id = 329
+                                  or @id = 617)]">
+                    <!-- Id towaru -->
+                    <xsl:choose>
+                        <xsl:when test="count(sizes/size) &lt; 1">
+                            <!-- <xsl:element name="item">
+                                 <xsl:element name="g:id">
+                                 <xsl:value-of select="@id"/>
+                                 </xsl:element>
+                                 <xsl:call-template name="product"/>
+                                 <xsl:call-template name="productSizeMatter"/>
+                                 </xsl:element> -->
+                         </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="sizes/size">
+                                <xsl:element name="item">
+                                    <xsl:choose>
+                                        <xsl:when test = "position() = 1">
+                                            <!-- Id produktu -->
+                                            <xsl:element name="g:id">
+                                                <xsl:value-of select="@code"/>
+                                            </xsl:element>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product"/>
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <!-- Id rozmiaru produktu -->
+                                            <xsl:element name="g:id">
+                                                <xsl:value-of select="@code"/>
+                                            </xsl:element>
+                                            <xsl:for-each select="../..">
+                                                <xsl:call-template name="product"/>
+                                            </xsl:for-each>
+                                            <xsl:call-template name="productSizeMatter"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:element>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </channel>
+        </rss>
+    </xsl:template>
+    
+    <xsl:template name="product" xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+    </xsl:template>
+    
+    <xsl:template name="productSizeMatter"
+                  xmlns:g="http://base.google.com/ns/1.0" 
+                  version="2.0">
+        
+        <xsl:variable name="product_currency">
+            <xsl:choose>
+                <xsl:when test="../../@currency!=''">
+                    <xsl:value-of select="../../@currency" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="@currency" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:variable name="sell_by">
+            <xsl:choose>
+                <xsl:when test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="../../iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:when test="iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>1</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <!-- 10-LATO26 -->
+        
+        <!-- 18.07.2025 MD -->
+        <!-- link do produktu -->
+        <xsl:element name="g:link">
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:choose>
+                <xsl:when test="../../card/@url">
+                    <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="substring-before(card/@url, '.feed')" />
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:text disable-output-escaping="yes">.googleshopping</xsl:text>
+            <xsl:value-of select="translate($Kraj_dostawy, $upperLetters, $lowerLetters)" />
+            <xsl:text disable-output-escaping="yes">.html?discount_code=LATO26</xsl:text>
+            <!-- <xsl:if test="count(../size) &gt; 1">
+                 <xsl:text>&amp;selected_size=</xsl:text>
+                 <xsl:value-of select="@id" />
+                 </xsl:if> -->
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </xsl:element>
+        <xsl:element name="g:display_ads_link">
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:choose>
+                <xsl:when test="../../card/@url">
+                    <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="substring-before(card/@url, '.feed')" />
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:text disable-output-escaping="yes">.googleremarketing.html?discount_code=LATO26</xsl:text>
+            <!-- <xsl:if test="count(../size) &gt; 1">
+                 <xsl:text>&amp;selected_size=</xsl:text>
+                 <xsl:value-of select="@id" />
+                 </xsl:if> -->
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </xsl:element>
+        <xsl:element name="g:mobile_link">
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:choose>
+                <xsl:when test="../../card/@url">
+                    <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="substring-before(card/@url, '.feed')" />
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:text disable-output-escaping="yes">.googleshopping</xsl:text>
+            <xsl:value-of select="translate($Kraj_dostawy, $upperLetters, $lowerLetters)" />
+            <xsl:text disable-output-escaping="yes">.html?discount_code=LATO26</xsl:text>
+            <!-- <xsl:if test="count(../size) &gt; 1">
+                 <xsl:text>&amp;selected_size=</xsl:text>
+                 <xsl:value-of select="@id" />
+                 </xsl:if> -->
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </xsl:element>
+        
+        <xsl:element name="g:sale_price">
+            <!-- <xsl:value-of select="price/@gross * $sell_by" /> -->
+            <xsl:value-of select="format-number(price/@gross*0.9, '#.##')" />
+            <xsl:text><![CDATA[ ]]></xsl:text>
+            <xsl:value-of select="$product_currency" />
+        </xsl:element>
+    </xsl:template>
+</xsl:stylesheet>

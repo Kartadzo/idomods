@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:shipping_weight
+     Purpose: product weight for shipping
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:shipping_weight</field>
+  <candidates>
+    <candidate>
+      <xpath>@weight | parameters/parameter[@name='Waga [g]']/value/@name</xpath>
+      <priority>1</priority>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>If `@weight` present and >0, format as grams or convert to kg depending on feed units.</step>
+  </method>
+
+  <example>500 g</example>
+</parameter_template>

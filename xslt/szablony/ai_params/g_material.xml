@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:material
+     Purpose: product material attribute
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:material</field>
+  <candidates>
+    <candidate>
+      <xpath>parameters/parameter[contains(translate('|materiał|', $upperLetters, $lowerLetters), concat('|',translate(@name,$upperLetters,$lowerLetters),'|'))]/value/@name</xpath>
+      <priority>1</priority>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Pick material parameter value; normalize and output.
+    </step>
+  </method>
+
+  <example>Cotton</example>
+</parameter_template>

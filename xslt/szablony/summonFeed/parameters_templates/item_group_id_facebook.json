@@ -1,0 +1,17 @@
+{
+  "name": "item_group_id_facebook",
+  "description": "Generate Facebook g:item_group_id by grouping sizes and product variants for Facebook feed items.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:item_group_id",
+  "context": "size",
+  "xpathCandidates": [
+    "group/@id",
+    "count(sizes/size)",
+    "@id"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/item_group_id_facebook.xsl",
+  "notes": "Groups Facebook feed items by group ID when available, or by the current size ID when multiple sizes exist."
+}

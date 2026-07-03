@@ -859,148 +859,6 @@
     <xsl:template name="productSizeMatter"
                   xmlns:g="http://base.google.com/ns/1.0" 
                   version="2.0">
-        <!-- 18.07.2025 MD -->
-        <!-- link do produktu -->
-        <xsl:element name="g:link">
-            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-            <xsl:choose>
-                <xsl:when test="../../card/@url">
-                    <xsl:value-of select="../../card/@url" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="card/@url" />
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:if test="count(sizes/size) &gt; 0">
-                <xsl:text>?selected_size=</xsl:text>
-                <xsl:value-of select="@id" />
-            </xsl:if>
-            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-        </xsl:element>
-        <xsl:element name="g:display_ads_link">
-            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-            <xsl:choose>
-                <xsl:when test="../../card/@url">
-                    <xsl:value-of select="../../card/@url" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="card/@url" />
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:if test="count(sizes/size) &gt; 0">
-                <xsl:text>?selected_size=</xsl:text>
-                <xsl:value-of select="@id" />
-            </xsl:if>
-            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-        </xsl:element>
-        <xsl:element name="g:mobile_link">
-            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-            <xsl:choose>
-                <xsl:when test="../../card/@url">
-                    <xsl:value-of select="../../card/@url" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="card/@url" />
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:if test="count(sizes/size) &gt; 0">
-                <xsl:text>?selected_size=</xsl:text>
-                <xsl:value-of select="@id" />
-            </xsl:if>
-            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-        </xsl:element>
-        <xsl:variable name="sell_by">
-            <xsl:choose>
-                <xsl:when test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail/@quantity > 0">
-                    <xsl:value-of select="../../iaiext:sell_by/iaiext:retail/@quantity" />
-                </xsl:when>
-                <xsl:when test="iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 0">
-                    <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>1</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        
-        <!-- 2026.01.13 - MD -->
-        <!-- Dostępność -->
-        <xsl:variable name="stocksGobalCheck">
-            <xsl:for-each select="stock[contains($sales_stocks, concat('|',@id,'|'))]">
-                <xsl:choose>
-                    <xsl:when test="@available_stock_quantity &gt; 0">
-                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
-                        <xsl:text>/</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="@available_stock_quantity = -1 ">
-                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
-                        <xsl:text>/</xsl:text>
-                    </xsl:when>
-                </xsl:choose>
-            </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="avail">
-            <xsl:choose>
-                <xsl:when test="contains($stocksGobalCheck,'-1')">
-                    <xsl:text>999999</xsl:text>
-                </xsl:when>
-                <xsl:when test="string-length($stocksGobalCheck) = 0">
-                    <xsl:text>0</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="sum(stock[contains($sales_stocks, concat('|',@id,'|'))]/@available_stock_quantity)"></xsl:value-of>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:element name="g:availability">
-            <xsl:choose>
-                <xsl:when test="@available = 'on_order' and $avail >= $sell_by">
-                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
-                </xsl:when>
-                <xsl:when test="@available = 'in_stock' and $avail >= $sell_by">
-                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[out of stock]]&gt;</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:element>
-        <!-- 2025.01.13 - MD -->
-        <!-- Gtin / MPN -->
-        <xsl:choose>
-            <xsl:when test="(../../@producer_code_standard = 'ISBN10' or ../../@producer_code_standard = 'ISBN13' or 
-                            ../../@producer_code_standard = 'GTIN8' or ../../@producer_code_standard = 'GTIN13' or 
-                            ../../@producer_code_standard = 'GTIN14' or ../../@producer_code_standard = 'GTIN12' or 
-                            ../../@producer_code_standard = 'UPCE') and @code_producer!='' and
-                            not(starts-with(@code_producer, '2') or starts-with(@code_producer, '02') or starts-with(@code_producer, '04'))">
-                <xsl:element name="g:gtin">
-                    <xsl:value-of select="@code_producer" />
-                </xsl:element>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:element name="g:mpn">
-                    <xsl:choose>
-                        <xsl:when test="@code_producer!=''">
-                            <xsl:value-of select="@code_producer" />
-                        </xsl:when>
-                        <xsl:when test="@iaiext:code_external!=''">
-                            <xsl:value-of select="@iaiext:code_external" />
-                        </xsl:when>
-                        <xsl:when test="../../@code_on_card!=''">
-                            <xsl:value-of select="../../@code_on_card" />
-                        </xsl:when>
-                        <xsl:when test="@code_on_card!=''">
-                            <xsl:value-of select="substring(@code_on_card,1,70)" />
-                        </xsl:when>
-                    </xsl:choose>
-                </xsl:element>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:element name="g:size">
-            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-            <xsl:value-of select="@name" />
-            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-        </xsl:element>
         <xsl:variable name="size_id">
             <xsl:choose>
                 <xsl:when test="@name!=''">
@@ -1111,35 +969,203 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        
+        <xsl:variable name="sell_by">
+            <xsl:choose>
+                <xsl:when test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="../../iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:when test="iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 0">
+                    <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>1</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:choose>
+            <xsl:when test="../../@id = 101
+                            or ../../@id = 1174
+                            or ../../@id = 126
+                            or ../../@id = 1313
+                            or ../../@id = 1459
+                            or ../../@id = 1598
+                            or ../../@id = 329
+                            or ../../@id = 617">
+                
+                <!-- 10-LATO26 -->
+                
+                <!-- 18.07.2025 MD -->
+                <!-- link do produktu -->
+                <xsl:element name="g:link">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="../../card/@url">
+                            <xsl:value-of select="../../card/@url" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="card/@url" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:if test="count(sizes/size) &gt; 0">
+                        <xsl:text>?discount_code=LATO26&amp;selected_size=</xsl:text>
+                        <xsl:value-of select="@id" />
+                    </xsl:if>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </xsl:element>
+                <xsl:element name="g:display_ads_link">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="../../card/@url">
+                            <xsl:value-of select="../../card/@url" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="card/@url" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:if test="count(sizes/size) &gt; 0">
+                        <xsl:text>?discount_code=LATO26&amp;selected_size=</xsl:text>
+                        <xsl:value-of select="@id" />
+                    </xsl:if>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </xsl:element>
+                <xsl:element name="g:mobile_link">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="../../card/@url">
+                            <xsl:value-of select="../../card/@url" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="card/@url" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:if test="count(sizes/size) &gt; 0">
+                        <xsl:text>?discount_code=LATO26&amp;selected_size=</xsl:text>
+                        <xsl:value-of select="@id" />
+                    </xsl:if>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </xsl:element>
+                
+                <xsl:element name="g:sale_price">
+                    <!-- <xsl:value-of select="price/@gross * $sell_by" /> -->
+                    <xsl:value-of select="format-number($mainPrice*0.9, '#.##')" />
+                    <xsl:text><![CDATA[ ]]></xsl:text>
+                    <xsl:value-of select="$product_currency" />
+                </xsl:element>
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- produkcja -->
+                <!-- pierwszeństwo dla ceny serwis; jesli bedzie promocja lub przekreślona cena to od razu promocyjna cene większa od
+                     normalnej-->
+                <xsl:choose>
+                    <!-- <xsl:when test="($cena_serwis * $sell_by) > 0 and $mainPrice > ($cena_serwis * $sell_by)"> -->
+                    <xsl:when test="$cena_serwis > 0 and $mainPrice > $cena_serwis">
+                        <xsl:element name="g:sale_price">
+                            <!-- <xsl:value-of select="$cena_serwis * $sell_by" /> -->
+                            <xsl:value-of select="$cena_serwis" />
+                            <xsl:text><![CDATA[ ]]></xsl:text>
+                            <xsl:value-of select="$product_currency" />
+                        </xsl:element>
+                    </xsl:when>
+                    <!-- <xsl:when test="$mainPrice > (price/@gross * $sell_by) and 0 = ($cena_serwis * $sell_by)"> -->
+                    <xsl:when test="$mainPrice > price/@gross and 0 = $cena_serwis">
+                        <xsl:element name="g:sale_price">
+                            <!-- <xsl:value-of select="price/@gross * $sell_by" /> -->
+                            <xsl:value-of select="price/@gross" />
+                            <xsl:text><![CDATA[ ]]></xsl:text>
+                            <xsl:value-of select="$product_currency" />
+                        </xsl:element>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+        
         <xsl:element name="g:price">
             <!-- <xsl:value-of select="$mainPrice * $sell_by" /> -->
             <xsl:value-of select="$mainPrice" />
             <xsl:text><![CDATA[ ]]></xsl:text>
             <xsl:value-of select="$product_currency" />
         </xsl:element>
-        <!-- produkcja -->
-        <!-- pierwszeństwo dla ceny serwis; jesli bedzie promocja lub przekreślona cena to od razu promocyjna cene większa od
-             normalnej-->
+
+        <!-- 2026.01.13 - MD -->
+        <!-- Dostępność -->
+        <xsl:variable name="stocksGobalCheck">
+            <xsl:for-each select="stock[contains($sales_stocks, concat('|',@id,'|'))]">
+                <xsl:choose>
+                    <xsl:when test="@available_stock_quantity &gt; 0">
+                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                        <xsl:text>/</xsl:text>
+                    </xsl:when>
+                    <xsl:when test="@available_stock_quantity = -1 ">
+                        <xsl:value-of select="@available_stock_quantity"></xsl:value-of>
+                        <xsl:text>/</xsl:text>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="avail">
+            <xsl:choose>
+                <xsl:when test="contains($stocksGobalCheck,'-1')">
+                    <xsl:text>999999</xsl:text>
+                </xsl:when>
+                <xsl:when test="string-length($stocksGobalCheck) = 0">
+                    <xsl:text>0</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="sum(stock[contains($sales_stocks, concat('|',@id,'|'))]/@available_stock_quantity)"></xsl:value-of>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:element name="g:availability">
+            <xsl:choose>
+                <xsl:when test="@available = 'on_order' and $avail >= $sell_by">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                </xsl:when>
+                <xsl:when test="@available = 'in_stock' and $avail >= $sell_by">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[out of stock]]&gt;</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:element>
+        <!-- 2025.01.13 - MD -->
+        <!-- Gtin / MPN -->
         <xsl:choose>
-            <!-- <xsl:when test="($cena_serwis * $sell_by) > 0 and $mainPrice > ($cena_serwis * $sell_by)"> -->
-            <xsl:when test="$cena_serwis > 0 and $mainPrice > $cena_serwis">
-                <xsl:element name="g:sale_price">
-                    <!-- <xsl:value-of select="$cena_serwis * $sell_by" /> -->
-                    <xsl:value-of select="$cena_serwis" />
-                    <xsl:text><![CDATA[ ]]></xsl:text>
-                    <xsl:value-of select="$product_currency" />
+            <xsl:when test="(../../@producer_code_standard = 'ISBN10' or ../../@producer_code_standard = 'ISBN13' or 
+                            ../../@producer_code_standard = 'GTIN8' or ../../@producer_code_standard = 'GTIN13' or 
+                            ../../@producer_code_standard = 'GTIN14' or ../../@producer_code_standard = 'GTIN12' or 
+                            ../../@producer_code_standard = 'UPCE') and @code_producer!='' and
+                            not(starts-with(@code_producer, '2') or starts-with(@code_producer, '02') or starts-with(@code_producer, '04'))">
+                <xsl:element name="g:gtin">
+                    <xsl:value-of select="@code_producer" />
                 </xsl:element>
             </xsl:when>
-            <!-- <xsl:when test="$mainPrice > (price/@gross * $sell_by) and 0 = ($cena_serwis * $sell_by)"> -->
-            <xsl:when test="$mainPrice > price/@gross and 0 = $cena_serwis">
-                <xsl:element name="g:sale_price">
-                    <!-- <xsl:value-of select="price/@gross * $sell_by" /> -->
-                    <xsl:value-of select="price/@gross" />
-                    <xsl:text><![CDATA[ ]]></xsl:text>
-                    <xsl:value-of select="$product_currency" />
+            <xsl:otherwise>
+                <xsl:element name="g:mpn">
+                    <xsl:choose>
+                        <xsl:when test="@code_producer!=''">
+                            <xsl:value-of select="@code_producer" />
+                        </xsl:when>
+                        <xsl:when test="@iaiext:code_external!=''">
+                            <xsl:value-of select="@iaiext:code_external" />
+                        </xsl:when>
+                        <xsl:when test="../../@code_on_card!=''">
+                            <xsl:value-of select="../../@code_on_card" />
+                        </xsl:when>
+                        <xsl:when test="@code_on_card!=''">
+                            <xsl:value-of select="substring(@code_on_card,1,70)" />
+                        </xsl:when>
+                    </xsl:choose>
                 </xsl:element>
-            </xsl:when>
+            </xsl:otherwise>
         </xsl:choose>
+        <xsl:element name="g:size">
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:value-of select="@name" />
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </xsl:element>
         
         <!-- <xsl:element name="g:shipping">
              <xsl:element name="g:price">

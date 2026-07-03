@@ -19,17 +19,17 @@
                                 <xsl:element name="item">
                                     <xsl:choose>
                                         <xsl:when test = "position() = 1">
-                                                <xsl:value-of select="@code"/>
-                                                <xsl:text>;</xsl:text>
+                                            <xsl:value-of select="@code"/>
+                                            <xsl:text>;</xsl:text>
                                             <xsl:call-template name="productSizeMatter"/>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <xsl:element name="g:id">
-                                                 <xsl:value-of select="@code"/>
+                                                <xsl:value-of select="@code"/>
                                                 <xsl:text>;</xsl:text>
-                                                 </xsl:element>
-                                                 <xsl:call-template name="productSizeMatter"/>
-                                         </xsl:otherwise>
+                                            </xsl:element>
+                                            <xsl:call-template name="productSizeMatter"/>
+                                        </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:element>
                             </xsl:for-each>
@@ -152,18 +152,18 @@
         <xsl:variable name="price">
             <xsl:value-of select="$mainPrice" />
         </xsl:variable>
-                <xsl:variable name="sale_price">
-        <xsl:choose>
-            <xsl:when test="$cena_serwis > 0 and $mainPrice > $cena_serwis">
+        <xsl:variable name="sale_price">
+            <xsl:choose>
+                <xsl:when test="$cena_serwis > 0 and $mainPrice > $cena_serwis">
                     <xsl:value-of select="$cena_serwis" />
-            </xsl:when>
-            <xsl:when test="$mainPrice > price/@gross and 0 = $cena_serwis">
+                </xsl:when>
+                <xsl:when test="$mainPrice > price/@gross and 0 = $cena_serwis">
                     <xsl:value-of select="price/@gross" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="0" />
-            </xsl:otherwise>                
-        </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="0" />
+                </xsl:otherwise>                
+            </xsl:choose>
         </xsl:variable>
         <xsl:choose>
             <xsl:when test="number($sale_price) &lt; number($price) and number($sale_price) != 0">
@@ -173,7 +173,7 @@
                 <xsl:value-of select="$price"/>
             </xsl:otherwise>
         </xsl:choose>
-
+        
         <xsl:text>;</xsl:text>
         <xsl:choose>
             <xsl:when test="$sale_price != '' and $sale_price > 0">

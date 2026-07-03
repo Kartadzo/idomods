@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:google_product_category
+     Purpose: Google product taxonomy id
+     AI-friendly extraction spec: primary lookup then fallbacks
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>Call `searchGoogleCategory` with product category id; fallback to category_idosell/@path parsing.</note>
+  </metadata>
+
+  <field>g:google_product_category</field>
+  <method>
+    <step>Call XSL template `searchGoogleCategory` with category id or menu text id.</step>
+    <step>If result != '0' use it.</step>
+    <step>Else, parse `category_idosell/@path` and map to taxonomy via a lookup table (maintainable file).</step>
+  </method>
+
+  <example>537</example>
+</parameter_template>

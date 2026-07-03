@@ -1,0 +1,17 @@
+{
+  "name": "price",
+  "description": "Generate g:price and g:sale_price using service price, normal price, and promotion pricing rules.",
+  "structure": ["Google", "Facebook", "Samba"],
+  "output": "g:price",
+  "context": "size",
+  "xpathCandidates": [
+    "price/@gross",
+    "../../iaiext:pricecomparator_price/iaiext:site/@gross",
+    "promotion/price/normal_retail_price/@gross"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/price.xsl",
+  "notes": "Determines main price from service, strikethrough, or promotional values and emits sale_price when applicable."
+}

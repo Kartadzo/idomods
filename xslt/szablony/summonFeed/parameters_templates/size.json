@@ -1,0 +1,15 @@
+{
+  "name": "size",
+  "description": "Emit Google g:size from the current size node name.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:size",
+  "context": "size",
+  "xpathCandidates": [
+    "@name"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/size.xsl",
+  "notes": "Returns the current size @name wrapped into g:size."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "custom_label_0",
+  "description": "Generate Google g:custom_label_0 based on price range bands.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:custom_label_0",
+  "context": "product",
+  "xpathCandidates": [
+    "price/@gross",
+    "@currency"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/custom_label_0.xsl",
+  "notes": "Classifies prices into predefined currency ranges for custom_label_0."
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:multipack
+     Purpose: number of items sold together (multipack)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:multipack</field>
+  <method>
+    <step>If product is a bundle and `bundled/product/@quantity` > 1, set multipack to that quantity.</step>
+  </method>
+
+  <example>3</example>
+</parameter_template>

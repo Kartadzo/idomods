@@ -1,0 +1,24 @@
+{
+  "name": "shipping_weight",
+  "description": "Generate Google g:shipping_weight from the product weight in grams, converted to kilograms.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:shipping_weight",
+  "context": "size",
+  "xpathCandidates": [
+    "@weight"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "unit_of_measure",
+      "default": "kg"
+    },
+    {
+      "name": "rounding_format",
+      "default": "#.##"
+    }
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/shipping_weight.xsl",
+  "notes": "Outputs weight in kilograms if @weight is present and non-zero."
+}

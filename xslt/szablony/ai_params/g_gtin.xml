@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:gtin / g:mpn
+     Purpose: GTIN (EAN/ISBN) or MPN identifiers
+     AI-friendly extraction spec: prefer standardized producer codes, fallbacks
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>Check product and producer codes: ISBN10/ISBN13/other standards.
+          If GTIN not present, emit MPN where appropriate.</note>
+  </metadata>
+
+  <field>g:gtin</field>
+  <candidates>
+    <candidate>
+      <xpath>../../@producer_code_standard</xpath>
+      <priority>1</priority>
+      <description>When standard indicates ISBN/EAN etc., read corresponding code value node.</description>
+    </candidate>
+    <candidate>
+      <xpath>card/g:gtin | productcode</xpath>
+      <priority>2</priority>
+      <description>Alternative nodes where GTIN/MPN may be stored.</description>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>If `producer_code_standard` is ISBN10/ISBN13/EAN etc., map to GTIN and output numeric code.</step>
+    <step>Else omit or provide `g:mpn` from `producer/@code` if available.</step>
+  </method>
+
+  <example>5901234123457</example>
+</parameter_template>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:age_group
+     Purpose: target age group for product
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:age_group</field>
+  <method>
+    <step>Check `age_group_id_w_menu` mapping or parameter named by `age_group_nazwa_w_panelu` for values.</step>
+    <step>Map to allowed feed values (newborn, infant, toddler, kids, adult).</step>
+  </method>
+
+  <example>kids</example>
+</parameter_template>

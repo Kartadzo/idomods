@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:custom_label_0
+     Purpose: custom label slot 0 for merchant-defined tags
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>This slot is filled based on price ranges, categories or other business rules.</note>
+  </metadata>
+
+  <field>g:custom_label_0</field>
+  <method>
+    <step>Compute label value using business rules: e.g., price buckets or promos.</step>
+  </method>
+
+  <example>promo_high_margin</example>
+</parameter_template>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:unit_pricing_measure
+     Purpose: unit quantity measure (e.g., 100 ml)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+  </metadata>
+
+  <field>g:unit_pricing_measure</field>
+  <method>
+    <step>Extract numerical unit from product attributes or parameter names (e.g., `Pojemność [ml]` or parse sizes).</step>
+    <step>Normalize to feed format (value + unit).</step>
+  </method>
+
+  <example>100 ml</example>
+</parameter_template>

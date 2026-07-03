@@ -597,7 +597,18 @@
                      
                      <!-- link do produktu -->
                      <xsl:choose>
-                        <xsl:when test="../../@id = 86883">
+                        <xsl:when test="../../@id = 86883
+                                or ../../@id = 58183
+                                or ../../@id = 89565
+                                or ../../@id = 25409
+                                or ../../@id = 70780
+                                or ../../@id = 94606
+                                or ../../@id = 94605
+                                or ../../@id = 7767
+                                or ../../@id = 37776
+                                or ../../@id = 75966
+                                or ../../@id = 76796
+                                or ../../@id = 84130">
                            <g:link>
                               <xsl:value-of select="../../card/@url"/>
                               <xsl:text disable-output-escaping="yes">?discount_code=PROMO5</xsl:text>

@@ -118,10 +118,8 @@
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name = "nazwa_bez_spamu">
-            <xsl:call-template name="strip-tags">
-                <xsl:with-param name="text" select="$nazwaTowaru" />
-                <xsl:with-param name="open" select="'!'" />
-                <xsl:with-param name="close" select="'!'" />
+            <xsl:call-template name="normalize-punctuation"> 
+                <xsl:with-param name="text" select="$nazwaTowaru"/> 
             </xsl:call-template>
         </xsl:variable>
         <xsl:variable name="upperCaseCount">
@@ -1454,6 +1452,34 @@
                     <xsl:with-param name="prev" select="$cleanedToken"/> 
                 </xsl:call-template> 
             </xsl:when>
+        </xsl:choose> 
+    </xsl:template>
+    
+    <xsl:template name="normalize-punctuation"> 
+        <xsl:param name="text"/> 
+        <xsl:param name="prev" select="''"/> 
+        <xsl:choose> <!-- Koniec tekstu --> 
+            <xsl:when test="string-length($text) = 0">
+            </xsl:when> 
+            <xsl:otherwise> <!-- bieżący znak --> 
+                <xsl:variable name="char" select="substring($text, 1, 1)"/> <!-- reszta tekstu --> 
+                <xsl:variable name="rest" select="substring($text, 2)"/> 
+                <xsl:choose> <!-- jeśli bieżący znak to ? lub ! i jest taki sam jak poprzedni – pomijamy --> 
+                    <xsl:when test="($char = '?' or $char = '!') and $char = $prev"> 
+                        <xsl:call-template name="normalize-punctuation"> 
+                            <xsl:with-param name="text" select="$rest"/> 
+                            <xsl:with-param name="prev" select="$prev"/> 
+                        </xsl:call-template> 
+                    </xsl:when>
+                    <xsl:otherwise> 
+                        <xsl:value-of select="$char"/> 
+                        <xsl:call-template name="normalize-punctuation"> 
+                            <xsl:with-param name="text" select="$rest"/> 
+                            <xsl:with-param name="prev" select="$char"/> 
+                        </xsl:call-template> 
+                    </xsl:otherwise> 
+                </xsl:choose> 
+            </xsl:otherwise> 
         </xsl:choose> 
     </xsl:template>
     

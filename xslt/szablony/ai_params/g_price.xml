@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:price
+     Purpose: price presented in feed (value + currency)
+     AI-friendly extraction spec: determine main price (promotional/service) and currency
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml</source>
+    <created>2026-06-24</created>
+    <note>Follow `mainPrice` selection rules: service price > promotional price > price/@gross</note>
+  </metadata>
+
+  <field>g:price</field>
+  <method>
+    <step>Compute candidate prices in order: `cena_serwis`, `cena_przekreslona` (sale), `price/@gross`.</step>
+    <step>Select highest-priority non-zero price as `mainPrice`.</step>
+    <step>Attach currency: `product_currency` (e.g. price/@currency or default).</step>
+    <step>Format as "{amount} {CURRENCY}" per feed convention.</step>
+  </method>
+
+  <example>199.99 PLN</example>
+</parameter_template>

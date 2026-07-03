@@ -1,0 +1,15 @@
+{
+  "name": "item_group_id",
+  "description": "Generate Google g:item_group_id by grouping only sizes for the current product variant.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:item_group_id",
+  "context": "size",
+  "xpathCandidates": [
+    "@id"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/item_group_id.xsl",
+  "notes": "Produces Google-only item_group_id based on the current size ID."
+}

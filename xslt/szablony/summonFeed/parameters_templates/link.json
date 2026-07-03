@@ -1,0 +1,22 @@
+{
+  "name": "link",
+  "description": "Generate Google feed links for product URLs, including size selection when applicable.",
+  "structure": ["Google"],
+  "output": "g:link",
+  "context": "size",
+  "xpathCandidates": [
+    "../../card/@url",
+    "card/@url",
+    "@id"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "Kraj_dostawy",
+      "default": "PL"
+    }
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/link.xsl",
+  "notes": "Produces Google product URLs from card/@url or ../../card/@url and appends size selection for multiple sizes."
+}

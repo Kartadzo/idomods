@@ -1,0 +1,18 @@
+{
+  "name": "code",
+  "description": "Generate Google g:gtin or g:mpn from producer code and external identifiers.",
+  "structure": ["Google", "Facebook", "Samba"],
+  "output": "g:mpn",
+  "context": "size",
+  "xpathCandidates": [
+    "@code_producer",
+    "@iaiext:code_external",
+    "../../@code_on_card",
+    "@code_on_card"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/code.xsl",
+  "notes": "Selects GTIN when producer code standard is GTIN/ISBN and code is valid; otherwise generates MPN from available identifiers."
+}

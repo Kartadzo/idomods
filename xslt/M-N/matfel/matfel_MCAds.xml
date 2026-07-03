@@ -480,9 +480,19 @@
             </xsl:choose>
         </xsl:element>
         
+        <xsl:variable name="var_google_product_category">
+            <xsl:call-template name="searchGoogleCategory">
+                <xsl:with-param name="cat_id" select="category_idosell/@id" tunnel="yes" />
+            </xsl:call-template>
+        </xsl:variable>
         <xsl:choose>
+            <xsl:when test="$var_google_product_category != '0'">
+                <xsl:element name="product_category">
+                    <xsl:value-of select="$var_google_product_category" />
+                </xsl:element>
+            </xsl:when>
             <xsl:when test="category_idosell/@path != ''">
-                <xsl:element name="google_product_category">
+                <xsl:element name="product_category">
                     <xsl:value-of select="category_idosell/@path"></xsl:value-of>
                 </xsl:element>
             </xsl:when>
@@ -594,48 +604,30 @@
             <xsl:value-of select="@id" />
             <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
         </g:item_group_id>
-        <!-- Na życzenie klienta/serwisu -->
-        <!-- Grupuj rozmiary i warianty -->
-        <!-- <xsl:choose>
-             <xsl:when test="group/@id">
-             <g:item_group_id>
-             <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-             <xsl:value-of select="group/@id"/>
-             <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-             </g:item_group_id>
-             </xsl:when> -->
-        <!-- <xsl:when test="not(group/@id) and count(sizes/size) &gt; 1">
-             <g:item_group_id>
-             <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-             <xsl:value-of select="@id"/>
-             <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-             </g:item_group_id>
-             </xsl:when> -->
-        <!-- <xsl:otherwise>
-             <g:item_group_id>
-             <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-             <xsl:value-of select="@id"/>
-             <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-             </g:item_group_id>
-             </xsl:otherwise>
-             </xsl:choose> -->
-        
+
         <!-- jeśli na sklepie są jakieś zestawy -->
-        <xsl:element name="is_bundle">
-            <xsl:choose>
-                <xsl:when test="sum(bundled/product/@quantity) > 1">
-                    <xsl:text>yes</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>no</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:element>
-        
         <xsl:choose>
             <xsl:when test="sum(bundled/product/@quantity) > 1">
+                <xsl:element name="is_bundle">
+                    <xsl:text>yes</xsl:text>
+                </xsl:element>
+            </xsl:when>
+         </xsl:choose>
+        
+        <!-- 2026-05-07 - MD -->
+        <xsl:choose>
+            <xsl:when test="bundled/product/@quantity > 1 and count(bundled/product) = 1">
                 <xsl:element name="multipack">
-                    <xsl:value-of select="sum(bundled/product/@quantity)"/>
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:value-of select="bundled/product/@quantity"/>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </xsl:element>
+            </xsl:when>
+            <xsl:when test="@type='regular' and iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 1">
+                <xsl:element name="multipack">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity"/>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
                 </xsl:element>
             </xsl:when>
         </xsl:choose>
@@ -666,15 +658,6 @@
                                                        ]/@name" />
                 <xsl:variable name="value">
                     <xsl:for-each select="parameters/parameter[@name= $kolor_get]/value">
-                        <!-- <xsl:choose>
-                             <xsl:when test=" position()= 1">
-                             <xsl:value-of select="@name" />
-                             </xsl:when>
-                             <xsl:otherwise>
-                             <xsl:text>/</xsl:text>
-                             <xsl:value-of select="@name" />
-                             </xsl:otherwise>
-                             </xsl:choose> -->
                         <xsl:value-of select="@name" />
                         <xsl:text>/</xsl:text>
                     </xsl:for-each>
@@ -764,27 +747,6 @@
                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
             </xsl:element>
         </xsl:if>
-        
-        <xsl:choose>
-            <xsl:when test="parameters/parameter/@context_id = 'CONTEXT_ENERGY_EFFICIENCY_CLASS'">
-                <xsl:for-each select="parameters/parameter[@context_id = 'CONTEXT_ENERGY_EFFICIENCY_CLASS']">
-                    <xsl:for-each select="value">
-                        <xsl:element name="energy_efficiency_class">
-                            <xsl:value-of select="@name" />
-                        </xsl:element>
-                    </xsl:for-each>
-                </xsl:for-each>
-            </xsl:when>
-            <xsl:when test="parameters/parameter[contains($klasa_energetyczna_nazwa_w_panelu, translate(@name,$upperLetters,$lowerLetters))]">
-                <xsl:for-each select="parameters/parameter[contains($klasa_energetyczna_nazwa_w_panelu, translate(@name,$upperLetters,$lowerLetters))]">
-                    <xsl:for-each select="value">
-                        <xsl:element name="energy_efficiency_class">
-                            <xsl:value-of select="@name" />
-                        </xsl:element>
-                    </xsl:for-each>
-                </xsl:for-each>
-            </xsl:when>
-        </xsl:choose>
         
         <!-- materiał -->
         <xsl:if test="$material_nazwa_w_panelu != '' and parameters/parameter[
@@ -1698,5 +1660,411 @@
                 </xsl:choose> 
             </xsl:otherwise> 
         </xsl:choose> 
+    </xsl:template>
+    
+    
+    <xsl:template name="searchGoogleCategory">
+        <xsl:param name="cat_id" />
+        <xsl:choose>
+            <xsl:when test="$cat_id = '4404'">
+                <xsl:value-of select="'100'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '3159'">
+                <xsl:value-of select="'1001'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '301'">
+                <xsl:value-of select="'111'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '376'">
+                <xsl:value-of select="'114'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2016'">
+                <xsl:value-of select="'1239'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2025'">
+                <xsl:value-of select="'1246'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2024'">
+                <xsl:value-of select="'1247'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2162'">
+                <xsl:value-of select="'1249'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2035' or $cat_id = '6589' or $cat_id = '6590' or $cat_id = '6591' or $cat_id = '6651'">
+                <xsl:value-of select="'1253'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2090'">
+                <xsl:value-of select="'1254'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2053'">
+                <xsl:value-of select="'1255'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2103'">
+                <xsl:value-of select="'1262'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2136'">
+                <xsl:value-of select="'1266'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2942'">
+                <xsl:value-of select="'1300'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '474'">
+                <xsl:value-of select="'135'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4365'">
+                <xsl:value-of select="'1371'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4419'">
+                <xsl:value-of select="'175'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4479' or $cat_id = '6059' or $cat_id = '7165'">
+                <xsl:value-of select="'188'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2967'">
+                <xsl:value-of select="'2021'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1619'">
+                <xsl:value-of select="'2082'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4530'">
+                <xsl:value-of select="'209'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4058'">
+                <xsl:value-of select="'216'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1148'">
+                <xsl:value-of select="'2169'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '714'">
+                <xsl:value-of select="'2301'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2066'">
+                <xsl:value-of select="'2505'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4235'">
+                <xsl:value-of select="'2532'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2152'">
+                <xsl:value-of select="'2546'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4338'">
+                <xsl:value-of select="'2587'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '69'">
+                <xsl:value-of select="'2600'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2183'">
+                <xsl:value-of select="'2618'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '6295'">
+                <xsl:value-of select="'2626'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4277'">
+                <xsl:value-of select="'2671'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1285'">
+                <xsl:value-of select="'2839'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1591'">
+                <xsl:value-of select="'2847'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '106' or $cat_id = '6512'">
+                <xsl:value-of select="'2986'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4270'">
+                <xsl:value-of select="'3083'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2082'">
+                <xsl:value-of select="'3129'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2130'">
+                <xsl:value-of select="'3212'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2076' or $cat_id = '5951'">
+                <xsl:value-of select="'3229'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2117'">
+                <xsl:value-of select="'3252'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2067'">
+                <xsl:value-of select="'3296'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '218'">
+                <xsl:value-of select="'333'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2072'">
+                <xsl:value-of select="'3444'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1270'">
+                <xsl:value-of select="'3473'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2109' or $cat_id = '5919' or $cat_id = '5925'">
+                <xsl:value-of select="'3500'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2071'">
+                <xsl:value-of select="'3551'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2070'">
+                <xsl:value-of select="'3590'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4196'">
+                <xsl:value-of select="'36'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2091'">
+                <xsl:value-of select="'3617'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2161'">
+                <xsl:value-of select="'3625'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2051'">
+                <xsl:value-of select="'3627'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4191'">
+                <xsl:value-of select="'3692'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2085'">
+                <xsl:value-of select="'3731'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2017'">
+                <xsl:value-of select="'3793'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2181'">
+                <xsl:value-of select="'3867'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '154'">
+                <xsl:value-of select="'3871'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2102'">
+                <xsl:value-of select="'3911'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2113'">
+                <xsl:value-of select="'3966'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '692'">
+                <xsl:value-of select="'40'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2083'">
+                <xsl:value-of select="'4004'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '779'">
+                <xsl:value-of select="'4203'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '201'">
+                <xsl:value-of select="'4303'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2123'">
+                <xsl:value-of select="'4352'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1335'">
+                <xsl:value-of select="'4358'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4631'">
+                <xsl:value-of select="'469'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '120'">
+                <xsl:value-of select="'4752'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2146'">
+                <xsl:value-of select="'499965'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1220'">
+                <xsl:value-of select="'500044'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4366'">
+                <xsl:value-of select="'502972'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4195'">
+                <xsl:value-of select="'503745'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4323'">
+                <xsl:value-of select="'503758'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4296'">
+                <xsl:value-of select="'504641'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4167'">
+                <xsl:value-of select="'504643'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4321'">
+                <xsl:value-of select="'505370'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4217'">
+                <xsl:value-of select="'505379'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4241'">
+                <xsl:value-of select="'505384'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4218'">
+                <xsl:value-of select="'505410'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4187'">
+                <xsl:value-of select="'505416'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4183'">
+                <xsl:value-of select="'505417'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2086'">
+                <xsl:value-of select="'505818'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2069'">
+                <xsl:value-of select="'5152'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1531' or $cat_id = '6604'">
+                <xsl:value-of select="'537'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2033'">
+                <xsl:value-of select="'5403'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '169'">
+                <xsl:value-of select="'543619'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '297'">
+                <xsl:value-of select="'5455'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4386'">
+                <xsl:value-of select="'5838'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '446'">
+                <xsl:value-of select="'5863'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '7005'">
+                <xsl:value-of select="'594'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '6189' or $cat_id = '6207'">
+                <xsl:value-of select="'596'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2038'">
+                <xsl:value-of select="'5970'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4160'">
+                <xsl:value-of select="'5999'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2027'">
+                <xsl:value-of select="'6054'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '122'">
+                <xsl:value-of select="'6068'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '135'">
+                <xsl:value-of select="'6176'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '594'">
+                <xsl:value-of select="'630'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '6300'">
+                <xsl:value-of select="'638'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '180'">
+                <xsl:value-of select="'6467'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4508'">
+                <xsl:value-of select="'6551'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2018'">
+                <xsl:value-of select="'6853'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '212'">
+                <xsl:value-of select="'6884'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '6188' or $cat_id = '7097' or $cat_id = '6587'">
+                <xsl:value-of select="'696'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2182'">
+                <xsl:value-of select="'7081'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '384'">
+                <xsl:value-of select="'7240'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '5663'">
+                <xsl:value-of select="'783'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '5706' or $cat_id = '5809' or $cat_id = '5698' or $cat_id = '5509' or $cat_id = '5699' or $cat_id = '5701' or $cat_id = '5702' or $cat_id = '5703' or $cat_id = '5704' or $cat_id = '5708' or $cat_id = '5709' or $cat_id = '5710' or $cat_id = '5711' or $cat_id = '5713' or $cat_id = '5714' or $cat_id = '5715' or $cat_id = '5716' or $cat_id = '5717' or $cat_id = '5718' or $cat_id = '5719' or $cat_id = '5720' or $cat_id = '5721' or $cat_id = '5722' or $cat_id = '5723' or $cat_id = '5724' or $cat_id = '5725' or $cat_id = '5726' or $cat_id = '5727' or $cat_id = '5728' or $cat_id = '5729' or $cat_id = '5730' or $cat_id = '5731' or $cat_id = '5732' or $cat_id = '5733' or $cat_id = '5734' or $cat_id = '5735' or $cat_id = '5736' or $cat_id = '5737' or $cat_id = '5738' or $cat_id = '5739' or $cat_id = '5740' or $cat_id = '5741' or $cat_id = '5742' or $cat_id = '5743' or $cat_id = '5744' or $cat_id = '5745' or $cat_id = '5746' or $cat_id = '5747' or $cat_id = '5748' or $cat_id = '5749' or $cat_id = '5750' or $cat_id = '5751' or $cat_id = '5752' or $cat_id = '5753' or $cat_id = '5754' or $cat_id = '5755' or $cat_id = '5756' or $cat_id = '5757' or $cat_id = '5758' or $cat_id = '5759' or $cat_id = '5761' or $cat_id = '5762' or $cat_id = '5763' or $cat_id = '5764' or $cat_id = '5765' or $cat_id = '5766' or $cat_id = '5767' or $cat_id = '5768' or $cat_id = '5769' or $cat_id = '5770' or $cat_id = '5771' or $cat_id = '5772' or $cat_id = '5773' or $cat_id = '5774' or $cat_id = '5775' or $cat_id = '5776' or $cat_id = '5777' or $cat_id = '5778' or $cat_id = '5779' or $cat_id = '5780' or $cat_id = '5781' or $cat_id = '5782' or $cat_id = '5785' or $cat_id = '5786' or $cat_id = '5787' or $cat_id = '5788' or $cat_id = '5789' or $cat_id = '5790' or $cat_id = '5791' or $cat_id = '5792' or $cat_id = '5793' or $cat_id = '5794' or $cat_id = '5795' or $cat_id = '5796' or $cat_id = '5797' or $cat_id = '5798' or $cat_id = '5799' or $cat_id = '5800' or $cat_id = '5801' or $cat_id = '5802' or $cat_id = '5804' or $cat_id = '5805' or $cat_id = '5806' or $cat_id = '5808' or $cat_id = '5810' or $cat_id = '5811' or $cat_id = '5812' or $cat_id = '5813' or $cat_id = '5814' or $cat_id = '5815' or $cat_id = '5816' or $cat_id = '5817' or $cat_id = '5818' or $cat_id = '5819' or $cat_id = '5820' or $cat_id = '5821' or $cat_id = '5822' or $cat_id = '5823' or $cat_id = '5824' or $cat_id = '5825' or $cat_id = '5826' or $cat_id = '5827' or $cat_id = '5828' or $cat_id = '5829' or $cat_id = '5830' or $cat_id = '5831' or $cat_id = '5833' or $cat_id = '5834' or $cat_id = '5835' or $cat_id = '5837' or $cat_id = '5838' or $cat_id = '5839' or $cat_id = '5840' or $cat_id = '5841' or $cat_id = '5846' or $cat_id = '5847' or $cat_id = '5848' or $cat_id = '5849' or $cat_id = '5850' or $cat_id = '5851' or $cat_id = '5853' or $cat_id = '5854' or $cat_id = '5855'">
+                <xsl:value-of select="'784'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '186'">
+                <xsl:value-of select="'8078'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '1251'">
+                <xsl:value-of select="'6532'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4350'">
+                <xsl:value-of select="'8216'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2081'">
+                <xsl:value-of select="'8295'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '5481' or $cat_id = '5506' or $cat_id = '5508' or $cat_id = '5510' or $cat_id = '5512' or $cat_id = '5513' or $cat_id = '5514' or $cat_id = '5515' or $cat_id = '5516' or $cat_id = '5518' or $cat_id = '5519' or $cat_id = '5520' or $cat_id = '5522' or $cat_id = '5523' or $cat_id = '5524' or $cat_id = '5527' or $cat_id = '5552'">
+                <xsl:value-of select="'839'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '5555' or $cat_id = '5567' or $cat_id = '5556' or $cat_id = '5557' or $cat_id = '5561' or $cat_id = '5563' or $cat_id = '5565' or $cat_id = '5566' or $cat_id = '5568' or $cat_id = '5569' or $cat_id = '5570' or $cat_id = '5571' or $cat_id = '5572' or $cat_id = '5575' or $cat_id = '5576' or $cat_id = '5577' or $cat_id = '5579' or $cat_id = '5582' or $cat_id = '5592'">
+                <xsl:value-of select="'855'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '2309' or $cat_id = '5672' or $cat_id = '5678' or $cat_id = '5679' or $cat_id = '5681' or $cat_id = '5693' or $cat_id = '5694' or $cat_id = '5696'">
+                <xsl:value-of select="'886'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '190'">
+                <xsl:value-of select="'927'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '137'">
+                <xsl:value-of select="'93'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '209'">
+                <xsl:value-of select="'930'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '142'">
+                <xsl:value-of select="'932'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '173'">
+                <xsl:value-of select="'934'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '166'">
+                <xsl:value-of select="'938'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '131'">
+                <xsl:value-of select="'943'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '132'">
+                <xsl:value-of select="'947'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4379'">
+                <xsl:value-of select="'95'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '143'">
+                <xsl:value-of select="'956'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '149'">
+                <xsl:value-of select="'958'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '4337'">
+                <xsl:value-of select="'96'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '144'">
+                <xsl:value-of select="'961'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '151'">
+                <xsl:value-of select="'962'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '239'">
+                <xsl:value-of select="'965'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '291'">
+                <xsl:value-of select="'97'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '117'">
+                <xsl:value-of select="'978'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '118'">
+                <xsl:value-of select="'979'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '119'">
+                <xsl:value-of select="'980'" />
+            </xsl:when>
+            <xsl:when test="$cat_id = '125'">
+                <xsl:value-of select="'982'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>0</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 </xsl:stylesheet>

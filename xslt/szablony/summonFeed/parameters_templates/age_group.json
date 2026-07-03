@@ -1,0 +1,65 @@
+{
+  "name": "age_group",
+  "description": "Generate Google g:age_group from product age-group parameters or navigation menu ids.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:age_group",
+  "context": "product",
+  "xpathCandidates": [
+    "parameters/parameter[@name = $age_group_nazwa_w_panelu]/value/@name",
+    "iaiext:priority_menu/site/menu[1]/item/@id"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "age_group_nazwa_w_panelu",
+      "default": ""
+    },
+    {
+      "name": "age_group_newborn",
+      "default": "|"
+    },
+    {
+      "name": "age_group_infant",
+      "default": "|"
+    },
+    {
+      "name": "age_group_toddler",
+      "default": "|"
+    },
+    {
+      "name": "age_group_kids",
+      "default": "|"
+    },
+    {
+      "name": "age_group_adult",
+      "default": "|"
+    },
+    {
+      "name": "age_group_id_w_menu",
+      "default": ""
+    },
+    {
+      "name": "age_group_newborn_id_menu",
+      "default": "|"
+    },
+    {
+      "name": "age_group_infant_id_menu",
+      "default": "|"
+    },
+    {
+      "name": "age_group_toddler_id_menu",
+      "default": "|"
+    },
+    {
+      "name": "age_group_kids_id_menu",
+      "default": "|"
+    },
+    {
+      "name": "age_group_adult_id_menu",
+      "default": "|"
+    }
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/age_group.xsl",
+  "notes": "Maps age group names or menu ids into Google age group values: newborn, infant, toddler, kids, adult."
+}

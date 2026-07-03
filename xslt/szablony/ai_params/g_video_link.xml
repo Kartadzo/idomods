@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:video_link
+     Purpose: product video URL(s)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+    <note>Videos can be in attachments/file[@attachment_file_type='video']/@url</note>
+  </metadata>
+
+  <field>g:video_link</field>
+  <candidates>
+    <candidate>
+      <xpath>attachments/file[@attachment_file_type='video']/@url</xpath>
+      <priority>1</priority>
+    </candidate>
+  </candidates>
+
+  <method>
+    <step>Return first video URL or list of URLs as supported by feed.</step>
+  </method>
+
+  <example>https://cdn.example.com/videos/product1.mp4</example>
+</parameter_template>

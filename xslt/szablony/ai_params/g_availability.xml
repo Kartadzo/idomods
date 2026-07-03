@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Field: g:availability
+     Purpose: availability status for product (in stock / out of stock / preorder)
+-->
+<parameter_template>
+  <metadata>
+    <source>google.xml / facebook.xml</source>
+    <created>2026-06-24</created>
+    <note>Reads stocks nodes filtered by `sales_stocks` list and sell_by/stock quantities.</note>
+  </metadata>
+
+  <field>g:availability</field>
+  <method>
+    <step>Aggregate stocks: if any stock available → `in stock`.</step>
+    <step>If backorder/preorder flags present → `preorder`.</step>
+    <step>Else `out of stock`.</step>
+  </method>
+
+  <example>in stock</example>
+</parameter_template>

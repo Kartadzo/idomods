@@ -1,0 +1,38 @@
+{
+  "name": "shipping",
+  "description": "Generate g:shipping details including price, country, handling time, transit time, and service.",
+  "structure": ["Google", "Facebook"],
+  "output": "g:shipping",
+  "context": "size",
+  "xpathCandidates": [
+    "price/@gross",
+    "@Czas_obsługi_zamówienia_na_magazynie",
+    "@Czas_dostawy_zamówienia"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "kwota_dla_darmowej_dostawy",
+      "default": "399.00"
+    },
+    {
+      "name": "kwota_dla_wiekszych_zamowien",
+      "default": ""
+    },
+    {
+      "name": "Koszt_dostawy",
+      "default": "20.00"
+    },
+    {
+      "name": "Koszt_dostawy_wiekszych_zamowien",
+      "default": "0.00"
+    },
+    {
+      "name": "Kraj_dostawy",
+      "default": "PL"
+    }
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/shipping.xsl",
+  "notes": "Creates shipping cost and timing feed fields based on price thresholds and delivery settings."
+}

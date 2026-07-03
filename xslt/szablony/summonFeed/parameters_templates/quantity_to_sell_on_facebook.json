@@ -1,0 +1,27 @@
+{
+  "name": "quantity_to_sell_on_facebook",
+  "description": "Compute quantity_to_sell_on_facebook by summing available_stock_quantity across product sizes.",
+  "structure": ["Facebook"],
+  "output": "quantity_to_sell_on_facebook",
+  "context": "size",
+  "xpathCandidates": [
+    "../size/stock[contains($sales_stocks, concat('|',@id,'|'))]/@available_stock_quantity",
+    "../size/stock/@id"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "sales_stocks",
+      "default": "|-3|-2|-1|0|1|2|3|4|5|6|7|8|9|10|11|12|",
+      "delimeter": "|"
+    }
+  ],
+  "createVars": [
+    "sell_by",
+    "stocksGobalCheck",
+    "avail"
+  ],
+  "helpers": [],
+  "defaultXslt": "parameters_templates/quantity_to_sell_on_facebook.xsl",
+  "notes": "Needs current node inside a size context. Sums availabilities for matching stock ids and emits quantity_to_sell_on_facebook."
+}
