@@ -38,7 +38,8 @@
                 <xsl:for-each select="/offer/products/product[
                                       price/@gross &gt; 0 and 
                                   description/name/. != '' and not(
-                                  category/@id = '1214553885'
+                                  category/@id = '1214553885' or
+                                  category/@id = '1214553884'
                                   )]">
                                   <!--category/@id = '1214553882' or
                                   category/@id = '1214553855' or

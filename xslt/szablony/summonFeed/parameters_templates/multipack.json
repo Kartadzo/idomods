@@ -12,6 +12,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/multipack.xsl",
   "notes": "Outputs multipack quantity for grouped products or regular products with a retail quantity greater than one."
 }

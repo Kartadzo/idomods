@@ -19,9 +19,8 @@
     }
   ],
   "helpers": [
-    "tokenize",
-    "translate"
+    "tokenize"
   ],
-  "defaultXslt": "parameters_templates/color.xsl",
+  "globals": ["upperLetters", "lowerLetters"],
   "notes": "Prefer CONTEXT_COLOR values. If none, use a visible parameter whose name matches kolor_nazwa_w_panelu and join its values with '/'."
 }

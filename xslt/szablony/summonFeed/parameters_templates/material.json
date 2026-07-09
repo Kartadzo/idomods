@@ -19,6 +19,6 @@
   "helpers": [
     "tokenize"
   ],
-  "defaultXslt": "parameters_templates/material.xsl",
+  "globals": ["upperLetters", "lowerLetters"],
   "notes": "Reads the visible material parameter and concatenates value entries into a slash-separated material string."
 }

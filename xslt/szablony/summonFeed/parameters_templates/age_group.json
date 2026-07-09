@@ -60,6 +60,5 @@
     }
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/age_group.xsl",
   "notes": "Maps age group names or menu ids into Google age group values: newborn, infant, toddler, kids, adult."
 }

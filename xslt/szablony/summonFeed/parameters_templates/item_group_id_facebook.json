@@ -12,6 +12,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/item_group_id_facebook.xsl",
   "notes": "Groups Facebook feed items by group ID when available, or by the current size ID when multiple sizes exist."
 }

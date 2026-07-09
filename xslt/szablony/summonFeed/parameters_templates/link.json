@@ -17,6 +17,5 @@
     }
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/link.xsl",
   "notes": "Produces Google product URLs from card/@url or ../../card/@url and appends size selection for multiple sizes."
 }

@@ -1,7 +1,4 @@
 
-<!-- słowa formatowane do pisanych z tylko jednej dużej litery w tytule -->
-<xsl:variable name="corrected" select="'\\GRATIS\\'" />
-
 <!-- 2026.04.30 MD -->
 <xsl:variable name="nazwaTowaru">
    <xsl:choose>

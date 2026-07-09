@@ -19,10 +19,9 @@
   ],
   "createVars": [
     "sell_by",
-    "stocksGobalCheck",
-    "avail"
+    "stocksGobalCheck_perProduct",
+    "avail_perProduct"
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/availability_facebook.xsl",
   "notes": "Sums availability across all sizes under the current product and determines Facebook availability."
 }

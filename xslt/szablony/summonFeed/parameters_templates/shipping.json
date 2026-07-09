@@ -26,13 +26,10 @@
     {
       "name": "Koszt_dostawy_wiekszych_zamowien",
       "default": "0.00"
-    },
-    {
-      "name": "Kraj_dostawy",
-      "default": "PL"
     }
   ],
+  "createVars": ["product_currency"],
+  "globals": ["Kraj_dostawy", "Czas_obsługi_zamówienia_na_magazynie", "Czas_dostawy_zamówienia", "Serwis_dostawy_zamówienia"],
   "helpers": [],
-  "defaultXslt": "parameters_templates/shipping.xsl",
-  "notes": "Creates shipping cost and timing feed fields based on price thresholds and delivery settings."
+  "notes": "Creates shipping cost and timing feed fields based on price thresholds and delivery settings. Zależność: g:price z parametru price (product_currency współdzielony). Kraj_dostawy i czasy dostawy to zmienne globalne (feed)."
 }

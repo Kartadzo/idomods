@@ -11,6 +11,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/image_link.xsl",
   "notes": "Uses auction icon image if present, otherwise selects the highest-priority product image as the main image."
 }

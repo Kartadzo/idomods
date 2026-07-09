@@ -13,6 +13,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/custom_label_1.xsl",
   "notes": "Builds a pipe-delimited custom label from hotspot flags visible on the product."
 }

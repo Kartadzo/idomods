@@ -19,6 +19,5 @@
     }
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/shipping_weight.xsl",
   "notes": "Outputs weight in kilograms if @weight is present and non-zero."
 }

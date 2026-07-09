@@ -21,13 +21,17 @@ class SummonFeedGenerator:
         self.base_path = Path(__file__).parent
         self.structures_path = self.base_path / "structure_templates"
         self.parameters_path = self.base_path / "parameters_templates"
+        self.variables_path = self.base_path / "variables"
+        self.helpers_path = self.base_path / "helpers"
         self.output_path = self.base_path
-        
+
         self.structures: Dict = {}
         self.parameters: Dict = {}
+        self.variables_registry: Dict = {}
+        self.helpers_registry: Dict = {}
         self.selected_structure: Optional[Dict] = None
         self.selected_params: Dict[str, List[Dict]] = {}
-        
+
         self._load_data()
     
     def _load_data(self) -> None:
@@ -56,6 +60,24 @@ class SummonFeedGenerator:
                     }
                 except json.JSONDecodeError:
                     print(f"⚠️  Błąd w pliku {json_file.name}, pomijam...")
+
+        # Wczytaj rejestr zmiennych (variables/_registry.json), jeśli istnieje
+        registry_file = self.variables_path / "_registry.json"
+        if registry_file.exists():
+            with open(registry_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self.variables_registry = {
+                    k: v for k, v in data.items() if not k.startswith('_')
+                }
+
+        # Wczytaj rejestr helperów (helpers/_registry.json), jeśli istnieje
+        helpers_registry_file = self.helpers_path / "_registry.json"
+        if helpers_registry_file.exists():
+            with open(helpers_registry_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self.helpers_registry = {
+                    k: v for k, v in data.items() if not k.startswith('_')
+                }
     
     def _clear_screen(self) -> None:
         """Wyczyść ekran terminala."""
@@ -222,7 +244,8 @@ class SummonFeedGenerator:
         for name, value in config_values.items():
             pattern = fr"<xsl:variable name=['\"]{name}['\"]>.*?</xsl:variable>"
             replacement = f"<xsl:variable name='{name}'>{value}</xsl:variable>"
-            xslt = re.sub(pattern, replacement, xslt, flags=re.DOTALL)
+            # callable replacement — nie interpretuje backslashy w treści (np. \GRATIS\)
+            xslt = re.sub(pattern, lambda m, r=replacement: r, xslt, flags=re.DOTALL)
         return xslt
 
     # ---------------------------------------------------------
@@ -243,34 +266,192 @@ class SummonFeedGenerator:
 
         return content
     
+    def _is_migrated(self, param_name: str) -> bool:
+        """Parametr jest 'zmigrowany', jeśli wszystkie jego createVars są w rejestrze
+        variables/. Wtedy zmienne (i configVars) wstrzykujemy centralnie z preambułu,
+        a jego .xsl to sama emisja. W przeciwnym razie działa stara ścieżka (inline)."""
+        create_vars = self.parameters[param_name]['data'].get('createVars', [])
+        if not create_vars:
+            return False
+        return all(name in self.variables_registry for name in create_vars)
+
+    def _ask_single_config_var(self, var: Dict) -> str:
+        """Zapytaj o wartość pojedynczej configVar i sformatuj wg separatora."""
+        name = var['name']
+        default = var.get('default', '')
+        delimeter = var.get('delimeter', '')
+        user_input = input(f"Podaj wartość dla {name} (domyślnie '{default}'): ").strip()
+        raw_value = user_input if user_input else default
+        return self._format_config_value(raw_value, delimeter)
+
+    def _build_variable_preamble(self, migrated_params: List[str]) -> str:
+        """Zbuduj preambuł zmiennych dla parametrów zmigrowanych w danym kontekście:
+        1) zdeduplikowane configVars (deklaracje generowane z metadanych),
+        2) createVars: domknięcie zależności → sort po 'order' → dedup,
+        w tej kolejności (configVars przed createVars, bo createVars ich używają)."""
+        if not migrated_params:
+            return ""
+
+        lines: List[str] = []
+
+        # 1) configVars — dedup po nazwie, wartość pytana raz
+        seen_cfg: Dict[str, str] = {}
+        for param_name in migrated_params:
+            for var in self.parameters[param_name]['data'].get('configVars', []):
+                if var['name'] in seen_cfg:
+                    continue
+                seen_cfg[var['name']] = self._ask_single_config_var(var)
+        for name, value in seen_cfg.items():
+            lines.append(f"      <xsl:variable name='{name}'>{value}</xsl:variable>")
+
+        # 2) createVars — domknięcie + sort po order + dedup
+        needed: List[str] = []
+        seen: set = set()
+
+        def add_closure(nm: str) -> None:
+            if nm in seen or nm not in self.variables_registry:
+                return
+            for dep in self.variables_registry[nm].get('uses', []):
+                add_closure(dep)
+            if nm not in seen:
+                seen.add(nm)
+                needed.append(nm)
+
+        for param_name in migrated_params:
+            for nm in self.parameters[param_name]['data'].get('createVars', []):
+                add_closure(nm)
+
+        # stabilny sort utrzyma kolejność domknięcia przy remisach 'order'
+        needed.sort(key=lambda n: self.variables_registry[n].get('order', 0))
+
+        for nm in needed:
+            frag = self._read_xslt_file(self.variables_path / f"{nm}.xsl").strip()
+            lines.append(f"      {frag}")
+
+        return "\n".join(lines) + "\n" if lines else ""
+
     def _build_xslt_structure(self) -> str:
         """Zbuduj ostateczny plik XSLT."""
         structure_data = self.selected_structure['data']
         base_xsl = self._read_xslt_file(self.selected_structure['xsl_path'])
-        
+
         # Znajdź i wypełnij każdy insertion point
         for insertion_point in structure_data.get('insertionPoints', []):
             template_name = insertion_point['template']
             context = insertion_point['context']
-            
+
+            params = self.selected_params.get(context, [])
+            migrated = [p for p in params if self._is_migrated(p)]
+
             # Zbierz kod dla tego kontekstu
             template_body = ""
-            if context in self.selected_params:
-                for param_name in self.selected_params[context]:
+
+            # preambuł zmiennych (tylko dla parametrów zmigrowanych)
+            template_body += self._build_variable_preamble(migrated)
+
+            # fragmenty emisji
+            for param_name in params:
+                if param_name in migrated:
+                    # .xsl zmigrowanego parametru to sama emisja (bez deklaracji zmiennych)
+                    param_content = self._read_xslt_file(
+                        self.parameters[param_name]['xsl_path']).strip()
+                else:
+                    # stara ścieżka: inline configVars w .xsl
                     param_content = self._get_template_content(param_name)
-                    template_body += f"      <!-- {param_name} -->\n"
-                    template_body += f"      {param_content}\n"
-            
-            # Wymień pusty template na wypełniony
-            pattern = f'<xsl:template name="{template_name}"[^>]*>\\s*</xsl:template>'
-            replacement = f'''<xsl:template name="{template_name}" \\
-                 xmlns:g="http://base.google.com/ns/1.0">
-{template_body}   </xsl:template>'''
-            
-            base_xsl = re.sub(pattern, replacement, base_xsl)
-        
+                template_body += f"      <!-- {param_name} -->\n"
+                template_body += f"      {param_content}\n"
+
+            # Wymień pusty template na wypełniony (callable — treść może mieć backslashe)
+            pattern = (
+               rf'(<xsl:template[^>]*name="{template_name}"[^>]*>)'
+               r'\s*</xsl:template>'
+            )
+            body = template_body
+            base_xsl = re.sub(
+                pattern,
+                lambda m, b=body: m.group(1) + "\n" + b + "   </xsl:template>",
+                base_xsl)
+
+        # --- helpers (z folderu helpers/ + domknięcie 'uses') ---
+        required_helpers = self._collect_required_helpers()
+        helpers_block = self._read_helpers_block(required_helpers)
+        base_xsl = self._inject_helpers_into_xslt(base_xsl, helpers_block)
+
+        # --- zmienne globalne (feed-scope): auto-wstrzyk referowanych, a niezadeklarowanych ---
+        base_xsl = self._inject_globals(base_xsl)
+
         return base_xsl
+
     
+    def _collect_required_helpers(self) -> List[str]:
+        """Zbierz nazwy helperów z wybranych parametrów + domknięcie 'uses' z rejestru."""
+        required: set = set()
+
+        def add(h: str) -> None:
+            if h in required:
+                return
+            required.add(h)
+            for dep in self.helpers_registry.get(h, {}).get("uses", []):
+                add(dep)
+
+        for context, params in self.selected_params.items():
+            for param_name in params:
+                for h in self.parameters[param_name]['data'].get("helpers", []):
+                    add(h)
+
+        return sorted(required)
+
+    def _read_helpers_block(self, required: List[str]) -> str:
+        """Wczytaj potrzebne helpery jako gotowe pliki z folderu helpers/."""
+        blocks = []
+        for name in required:
+            helper_file = self.helpers_path / f"{name}.xsl"
+            if helper_file.exists():
+                blocks.append(self._read_xslt_file(helper_file).strip())
+            else:
+                print(f"⚠️  Brak pliku helpera: {name}.xsl")
+        return "\n\n".join(blocks)
+
+    def _inject_globals(self, base_xsl: str) -> str:
+        """Wstaw po <xsl:output> te zmienne globalne (scope=global z rejestru),
+        które są referowane ($nazwa) w arkuszu, a nie są jeszcze zadeklarowane."""
+        decls = []
+        for name, meta in self.variables_registry.items():
+            if meta.get("scope") != "global":
+                continue
+            referenced = re.search(r'\$' + re.escape(name) + r'\b', base_xsl)
+            declared = re.search(
+                r'<xsl:variable\s+name=["\']' + re.escape(name) + r'["\']', base_xsl)
+            if referenced and not declared:
+                global_file = self.variables_path / f"{name}.xsl"
+                if global_file.exists():
+                    decls.append("   " + self._read_xslt_file(global_file).strip())
+                else:
+                    print(f"⚠️  Brak pliku zmiennej globalnej: {name}.xsl")
+
+        if not decls:
+            return base_xsl
+
+        block = "\n" + "\n".join(decls) + "\n"
+        # callable — treść globali może mieć backslashe (np. corrected='\GRATIS\')
+        return re.sub(r'(<xsl:output[^>]*/>)',
+                      lambda m, b=block: m.group(1) + b, base_xsl, count=1)
+
+    def _inject_helpers_into_xslt(self, xslt: str, helpers_block: str) -> str:
+        """Wstaw helpers przed </xsl:stylesheet>."""
+        if not helpers_block.strip():
+            return xslt
+
+        # callable — helpery (wordFormat, throwNode…) zawierają backslashe
+        return re.sub(
+            r'</xsl:stylesheet>',
+            lambda m, b=helpers_block: b + "\n</xsl:stylesheet>",
+            xslt,
+            flags=re.DOTALL
+        )
+
+
+
     def _save_output(self, xslt_content: str) -> bool:
         """Zapisz wygenerowany XSLT do pliku."""
         structure_name = self.selected_structure['data']['name']

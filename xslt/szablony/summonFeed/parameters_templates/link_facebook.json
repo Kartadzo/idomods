@@ -12,6 +12,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/link_facebook.xsl",
   "notes": "Produces Facebook product URLs for g:link and device-specific URLs from card/@url or ../../card/@url, appending size selection for multiple sizes."
 }

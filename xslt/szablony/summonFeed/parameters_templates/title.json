@@ -10,13 +10,8 @@
     "producer/@name"
   ],
   "parameterContexts": [],
-  "configVars": [
-    {
-      "name": "corrected",
-      "default": "\\GRATIS\\",
-      "delimeter": "\\"
-    }
-  ],
+  "configVars": [],
+  "globals": ["corrected", "upperLetters", "lowerLetters"],
   "createVars": [
     "nazwaTowaru",
     "upperCaseCount",
@@ -30,6 +25,5 @@
     "normalize-polish-pairs",
     "has-polish-pair"
   ],
-  "defaultXslt": "parameters_templates/title.xsl",
   "notes": "Chooses title source, normalizes case, truncates to 146 chars, and maps Polish pairs to ASCII equivalents."
 }

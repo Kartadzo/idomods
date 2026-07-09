@@ -10,6 +10,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/brand.xsl",
   "notes": "Outputs producer name unless it equals the undefined producer placeholder."
 }

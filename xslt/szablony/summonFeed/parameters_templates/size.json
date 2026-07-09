@@ -10,6 +10,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/size.xsl",
   "notes": "Returns the current size @name wrapped into g:size."
 }

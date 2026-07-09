@@ -19,10 +19,9 @@
   ],
   "createVars": [
     "sell_by",
-    "stocksGobalCheck",
-    "avail"
+    "stocksGobalCheck_perSize",
+    "avail_perSize"
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/availability.xsl",
   "notes": "Uses the current size's stock entries and available stock quantities to determine Google availability."
 }

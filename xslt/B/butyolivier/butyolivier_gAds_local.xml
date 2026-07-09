@@ -70,7 +70,7 @@
                                 </xsl:choose>
                             </xsl:variable>
                             <xsl:choose>
-                                <xsl:when test="@available = 'on_order' and stock[@id = 0]/@available_stock_quantity >= $sell_by">
+                                <xsl:when test="@available = 'on_order' and stock[@id = 0]/@available_stock_quantity >= $sell_by and $avail >=3">
                                     <g:availability>
                                         <xsl:text disable-output-escaping="yes">&lt;![CDATA[on_display_to_order]]&gt;</xsl:text>
                                     </g:availability>
@@ -78,7 +78,7 @@
                                         <xsl:value-of select="stock[@id = 0]/@available_stock_quantity"/>
                                     </g:quantity>
                                 </xsl:when>
-                                <xsl:when test="@available = 'in_stock' and stock[@id = 1]/@available_stock_quantity >= $sell_by">
+                                <xsl:when test="@available = 'in_stock' and stock[@id = 1]/@available_stock_quantity >= $sell_by and $avail >=3">
                                     <g:availability>
                                         <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
                                     </g:availability>
@@ -87,9 +87,11 @@
                                     </g:quantity>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[out of stock]]&gt;</xsl:text>
+                                    <g:availability>
+                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[out of stock]]&gt;</xsl:text>
+                                    </g:availability>
                                     <g:quantity>
-                                        <xsl:value-of select="$avail"/>
+                                        <xsl:value-of select="'0'"/>
                                     </g:quantity>
                                 </xsl:otherwise>
                             </xsl:choose>
@@ -224,8 +226,7 @@
                                                 </xsl:choose>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <!-- <xsl:value-of select="price/@gross * $sell_by"
-                                                     /> -->
+                                                <!-- <xsl:value-of select="price/@gross * $sell_by" /> -->
                                                 <xsl:value-of select="price/@gross" />
                                             </xsl:otherwise>
                                         </xsl:choose>

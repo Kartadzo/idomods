@@ -13,6 +13,5 @@
   ],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/condition.xsl",
   "notes": "Maps IAI context state values to Google condition values: new, used, or refurbished."
 }

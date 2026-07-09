@@ -17,11 +17,9 @@
     }
   ],
   "createVars": [
-    "sell_by",
-    "stocksGobalCheck",
-    "avail"
+    "stocksGobalCheck_perProduct",
+    "avail_perProduct"
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/quantity_to_sell_on_facebook.xsl",
   "notes": "Needs current node inside a size context. Sums availabilities for matching stock ids and emits quantity_to_sell_on_facebook."
 }

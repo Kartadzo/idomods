@@ -11,6 +11,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/is_bundle.xsl",
   "notes": "Outputs g:is_bundle only when bundled product quantity is greater than one."
 }

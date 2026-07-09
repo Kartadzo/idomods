@@ -18,6 +18,5 @@
     }
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/certification.xsl",
   "notes": "Transforms certification parameter values into nested g:certification_authority, g:certification_name and g:certification_code elements."
 }

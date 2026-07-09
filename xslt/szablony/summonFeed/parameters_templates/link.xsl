@@ -1,6 +1,4 @@
 
-   <xsl:variable name="Kraj_dostawy" select="'PL'" />
-
 <!-- dla google -->
       <!-- 18.07.2025 MD -->
       <!-- link do produktu -->

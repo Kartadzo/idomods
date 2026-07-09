@@ -33,6 +33,5 @@
     "strip-tags",
     "tokenize"
   ],
-  "defaultXslt": "parameters_templates/description.xsl",
   "notes": "Creates a safe description value with fallback from product name and parameters when description fields are empty or too short."
 }

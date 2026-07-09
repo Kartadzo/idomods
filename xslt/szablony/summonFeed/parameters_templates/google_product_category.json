@@ -10,7 +10,6 @@
   ],
   "parameterContexts": [],
   "configVars": [],
-  "helpers": [],
-  "defaultXslt": "parameters_templates/google_product_category.xsl",
+  "helpers": ["searchGoogleCategory"],
   "notes": "Resolves category IDs with a custom mapping template, or falls back to the category path."
 }

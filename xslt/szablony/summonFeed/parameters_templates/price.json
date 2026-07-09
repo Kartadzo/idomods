@@ -11,7 +11,14 @@
   ],
   "parameterContexts": [],
   "configVars": [],
+  "createVars": [
+    "size_id",
+    "product_currency",
+    "cena_serwis",
+    "cena_przekreslona",
+    "cena_przedpromocyjna",
+    "mainPrice"
+  ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/price.xsl",
   "notes": "Determines main price from service, strikethrough, or promotional values and emits sale_price when applicable."
 }

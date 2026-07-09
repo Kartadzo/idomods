@@ -13,6 +13,5 @@
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],
-  "defaultXslt": "parameters_templates/code.xsl",
   "notes": "Selects GTIN when producer code standard is GTIN/ISBN and code is valid; otherwise generates MPN from available identifiers."
 }

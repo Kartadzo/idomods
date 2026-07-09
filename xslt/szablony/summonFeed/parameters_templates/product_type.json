@@ -12,6 +12,5 @@
   "helpers": [
     "string-replace-all"
   ],
-  "defaultXslt": "parameters_templates/product_type.xsl",
   "notes": "Uses the first navigation site menu items and converts textid paths to Google product_type format."
 }

@@ -1,0 +1,25 @@
+{
+  "_comment": "Rejestr zmiennych. Lokalne (createVars): 'order' = kolejność deklaracji w preambule kontekstu (mniejsze pierwsze; zależność musi mieć order <= dependenta); 'uses' = inne zmienne, których ta zmienna używa (domknięcie). Sufiks wariantu: _perSize (bieżący rozmiar), _perProduct (agregat po wszystkich rozmiarach); w przyszłości kolejne _perX. Globalne ('scope':'global') = stałe feed-scope wstrzykiwane po <xsl:output>, auto-wykrywane po referencji $nazwa w arkuszu.",
+  "sell_by":                     { "order": 10, "uses": [] },
+  "stocksGobalCheck_perSize":    { "order": 10, "uses": [] },
+  "avail_perSize":               { "order": 20, "uses": ["stocksGobalCheck_perSize"] },
+  "stocksGobalCheck_perProduct": { "order": 10, "uses": [] },
+  "avail_perProduct":            { "order": 20, "uses": ["stocksGobalCheck_perProduct"] },
+
+  "size_id":                     { "order": 10, "uses": [] },
+  "product_currency":            { "order": 10, "uses": [] },
+  "cena_serwis":                 { "order": 10, "uses": [] },
+  "cena_przekreslona":           { "order": 10, "uses": [] },
+  "cena_przedpromocyjna":        { "order": 20, "uses": ["size_id"] },
+  "mainPrice":                   { "order": 30, "uses": ["cena_serwis", "cena_przedpromocyjna", "cena_przekreslona"] },
+
+  "upperLetters":                { "scope": "global" },
+  "lowerLetters":                { "scope": "global" },
+  "unitsList":                   { "scope": "global" },
+  "corrected":                   { "scope": "global" },
+
+  "Czas_obsługi_zamówienia_na_magazynie": { "scope": "global" },
+  "Czas_dostawy_zamówienia":              { "scope": "global" },
+  "Serwis_dostawy_zamówienia":            { "scope": "global" },
+  "Kraj_dostawy":                         { "scope": "global" }
+}

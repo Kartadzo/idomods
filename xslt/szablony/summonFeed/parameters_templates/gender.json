@@ -52,6 +52,5 @@
     }
   ],
   "helpers": [],
-  "defaultXslt": "parameters_templates/gender.xsl",
   "notes": "Supports explicit gender parameter mapping and menu ID-based gender detection."
 }
