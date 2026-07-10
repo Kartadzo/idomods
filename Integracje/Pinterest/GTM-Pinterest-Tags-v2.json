@@ -1,12 +1,12 @@
 {
     "exportFormatVersion": 2,
-    "exportTime": "2026-07-10 09:09:44",
+    "exportTime": "2026-07-10 14:13:41",
     "containerVersion": {
-        "path": "accounts/6355298149/containers/252426501/versions/9",
+        "path": "accounts/6355298149/containers/252426501/versions/10",
         "accountId": "6355298149",
         "containerId": "252426501",
-        "containerVersionId": "9",
-        "name": "Pinterest v1.0.3",
+        "containerVersionId": "10",
+        "name": "Pinterest v1.0.4",
         "container": {
             "path": "accounts/6355298149/containers/252426501",
             "accountId": "6355298149",
@@ -86,7 +86,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "html",
-                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'checkout', {\n   order_id: {{dlv - eventModel.transaction_id}},\n   value: {{dlv - eventModel.value}},\n   currency: {{dlv - eventModel.currency}},\n   line_items: array_ready_objects\n });\n</script>"
+                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n    var count_objects = 0\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        count_objects += array_value_objects[i].quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'checkout', {\n   order_id: {{dlv - eventModel.transaction_id}},\n   value: {{dlv - eventModel.value}},\n   currency: {{dlv - eventModel.currency}},\n   line_items: array_ready_objects,\n   order_quantity: count_objects\n });\n</script>"
                     },
                     {
                         "type": "BOOLEAN",
@@ -94,7 +94,7 @@
                         "value": "false"
                     }
                 ],
-                "fingerprint": "1783614502687",
+                "fingerprint": "1783675332170",
                 "parentFolderId": "76",
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -275,7 +275,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "html",
-                        "value": "\n <!-- Pinterest Pixel Base Code -->\n <script type=\"text/javascript\">\n   !function(e){\n     if(!window.pintrk){\n       window.pintrk=function(){\n         window.pintrk.queue.push(\n         Array.prototype.slice.call(arguments))};var\n         n=window.pintrk;n.queue=[],n.version=\"3.0\";var\n         t=document.createElement(\"script\");t.async=!0,t.src=e;var\n         r=document.getElementsByTagName(\"script\")[0];r.parentNode.insertBefore(t,r)\n       }\n     }(\"https://s.pinimg.com/ct/core.js\");\n   pintrk('load', {{ID - Pinterest}}, {\n     em: {{user_data.sha256_email_address}},\n   });\n   pintrk('page');\n   pintrk('track', 'PageVisit');\n</script>\n <!-- End Pinterest Pixel Base Code -->"
+                        "value": "\n <!-- Pinterest Pixel Base Code -->\n <script type=\"text/javascript\">\n   !function(e){\n     if(!window.pintrk){\n       window.pintrk=function(){\n         window.pintrk.queue.push(\n         Array.prototype.slice.call(arguments))};var\n         n=window.pintrk;n.queue=[],n.version=\"3.0\";var\n         t=document.createElement(\"script\");t.async=!0,t.src=e;var\n         r=document.getElementsByTagName(\"script\")[0];r.parentNode.insertBefore(t,r)\n       }\n     }(\"https://s.pinimg.com/ct/core.js\");\n   pintrk('load', {{ID - Pinterest}}, {\n     em: {{user_data.sha256_email_address}},\n     'external_id': {{user_data.sha256_email_address}},\n   });\n   pintrk('page');\n   pintrk('track', 'PageVisit');\n</script>\n <!-- End Pinterest Pixel Base Code -->"
                     },
                     {
                         "type": "BOOLEAN",
@@ -283,7 +283,7 @@
                         "value": "false"
                     }
                 ],
-                "fingerprint": "1783504525120",
+                "fingerprint": "1783675602567",
                 "firingTriggerId": [
                     "2147479553"
                 ],
@@ -315,7 +315,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "html",
-                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'InitiateCheckout', {\n   order_id: {{dlv - eventModel.transaction_id}},\n   value: {{dlv - eventModel.value}},\n   currency: {{dlv - eventModel.currency}},\n   line_items: array_ready_objects\n });\n</script>"
+                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'InitiateCheckout', {\n   value: {{dlv - eventModel.value}},\n   currency: {{dlv - eventModel.currency}},\n   line_items: array_ready_objects\n });\n</script>"
                     },
                     {
                         "type": "BOOLEAN",
@@ -323,7 +323,7 @@
                         "value": "false"
                     }
                 ],
-                "fingerprint": "1783614494101",
+                "fingerprint": "1783675048464",
                 "parentFolderId": "76",
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -389,7 +389,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "html",
-                        "value": "<script>\npintrk('track', 'AddPaymentInfo');\n</script> "
+                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'AddPaymentInfo', {\n   value: {{dlv - eventModel.value}},\n   currency: {{dlv - eventModel.currency}},\n   line_items: array_ready_objects\n });\n</script>"
                     },
                     {
                         "type": "BOOLEAN",
@@ -397,7 +397,7 @@
                         "value": "false"
                     }
                 ],
-                "fingerprint": "1783438082904",
+                "fingerprint": "1783675038172",
                 "parentFolderId": "76",
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -426,7 +426,7 @@
                 "fingerprint": "1783088385976"
             }
         ],
-        "fingerprint": "1783614541573",
-        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6355298149/containers/252426501/versions/9?apiLink=version"
+        "fingerprint": "1783675651649",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6355298149/containers/252426501/versions/10?apiLink=version"
     }
 }

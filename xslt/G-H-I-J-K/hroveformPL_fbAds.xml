@@ -25,6 +25,19 @@
    <!-- magazyny sprzedaży, identyfikator otoczony '|' -->
    <xsl:variable name="sales_stocks" select="'|-3|-2|-1|0|1|2|3|4|5|6|7|8|9|10|11|12|'"/>
    
+   
+   <!-- Konfiguracja zaawansowanego cennika -->
+   <!-- domyślnie cena, alternatywnie 'weight' -->
+   <xsl:variable name="Konfiguracja_profilu_dostaw" select="'weight'" />
+   <!-- Kursy względem waluty feedu (dla PLN np. format: 'EUR-4.5,USD-4.4,GBP-4.95') -->
+   <xsl:variable name="kurs_waluty_głownej" select="'PLN-1.0,EUR-4.2,GBP-4.75,USD-3.60'"/>
+   <!-- Główna konfiguracja cenników (kraje rozdzielone przecinkami) -->
+   <!-- Format kraju: kod|waluta|cost-band|cost-band|...|default_cost -->
+   <!-- cost-band: koszt-limit (np. 12-100) PL|PLN|0-30001|13-10001|11-5001|10.5,-->
+   <xsl:variable name="kraje_wysyłki-cennik"
+                 select="'
+                         PL|PLN|420-80000|320-75001|300-70001|280-65001|260-60001|240-55001|220-50001|200-450001|170-36000|150-26001|120-22201|80-15001|90-13300|60-8901|40-6400|30-4301|20,'"/>
+   
    <xsl:template match="/">
       <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
          <channel>
@@ -895,6 +908,14 @@
             </xsl:element>
          </xsl:when>
       </xsl:choose>
+      
+      <xsl:call-template name="emitAllCountries">
+         <xsl:with-param name="list"                 select="$kraje_wysyłki-cennik"/>
+         <xsl:with-param name="mainPrice"            select="$mainPrice"/>
+         <xsl:with-param name="mainWeight"           select="@weight"/>
+         <xsl:with-param name="WeightORPrice"        select="$Konfiguracja_profilu_dostaw"/>
+         <xsl:with-param name="product_currency"     select="$product_currency"/>
+      </xsl:call-template>
             
       <xsl:if test="@weight and @weight != 0">
          <xsl:element name="g:shipping_weight">
@@ -1126,6 +1147,194 @@
       <xsl:value-of select="$step9"/>
    </xsl:template>
    
+   <!-- 04.07.2025 MD -->
+   <!-- Znajdź kurs dla danej waluty względem PLN ; zmienna currency_rate -> 'select="'EUR-4.5,USD-4.4' -> 4.5"-->
+   <xsl:template name="find_rate">
+      <xsl:param name="courier_currency"/>
+      <xsl:param name="currency_rate" select="$kurs_waluty_głownej"/>
+      
+      <xsl:variable name="tested"  select="normalize-space(substring-before(concat($currency_rate,','),','))"/>
+      <xsl:variable name="remaining" select="substring-after($currency_rate,',')"/>
+      <xsl:variable name="tested_currency" select="substring-before($tested,'-')"/>
+      <xsl:variable name="tested_rate" select="number(substring-after($tested,'-'))"/>
+      
+      <xsl:choose>
+         <xsl:when test="$tested_currency = $courier_currency">
+            <xsl:value-of select="$tested_rate"/>
+         </xsl:when>
+         <xsl:when test="$remaining = ''">
+            <xsl:value-of select="1"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:call-template name="find_rate">
+               <xsl:with-param name="courier_currency" select="$courier_currency"/>
+               <xsl:with-param name="currency_rate" select="$remaining"/>
+            </xsl:call-template>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   <xsl:template name="convert_currency_local_to_global">
+      <xsl:param name="courier_currency"/>
+      <xsl:param name="product_currency"/>
+      
+      <xsl:variable name="rate_output_currency">
+         <xsl:call-template name="find_rate">
+            <xsl:with-param name="courier_currency"   select="$courier_currency"/>
+            <xsl:with-param name="currency_rate" select="$kurs_waluty_głownej"/>
+         </xsl:call-template>
+      </xsl:variable>
+      
+      <xsl:variable name="rate_output_product_currency">
+         <xsl:call-template name="find_rate">
+            <xsl:with-param name="courier_currency"   select="$product_currency"/>
+            <xsl:with-param name="currency_rate" select="$kurs_waluty_głownej"/>
+         </xsl:call-template>
+      </xsl:variable>
+      
+      <xsl:choose>
+         <xsl:when test="$rate_output_currency != '' and number($rate_output_currency) > 0">
+            <xsl:value-of select="($rate_output_product_currency div number($rate_output_currency))"/>
+         </xsl:when>
+      </xsl:choose>
+   </xsl:template>
+   
+   <!-- generuj g:shipping dla pojedynczego kraju -->
+   <xsl:template name="emitCountry" xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+      <xsl:param name="entry"/>          <!-- np. 'PL|PLN|150|12-100|19' -->
+      <xsl:param name="unit"/>
+      <xsl:param name="product_currency"/>
+      
+      <!-- Rozbicie na: code | curr | reszta -->
+      <xsl:variable name="code" select="substring-before($entry,'|')"/>
+      <xsl:variable name="afterCode" select="substring-after($entry,'|')"/>
+      <xsl:variable name="curr" select="substring-before($afterCode,'|')"/>
+      <xsl:variable name="rest" select="substring-after($afterCode,'|')"/>
+      
+      <!-- Ustal przelicznik -->
+      <xsl:variable name="conv">
+         <xsl:call-template name="convert_currency_local_to_global">
+            <xsl:with-param name="product_currency"   select="$product_currency"/>
+            <xsl:with-param name="courier_currency"   select="$curr"/>
+         </xsl:call-template>
+      </xsl:variable>
+      
+      
+      <xsl:variable name="finalCost">
+         <xsl:call-template name="pickCostFromBands">
+            <xsl:with-param name="bands" select="$rest"/>
+            <xsl:with-param name="unit"  select="number($unit)"/>
+            <xsl:with-param name="conv"  select="number($conv)"/>
+         </xsl:call-template>
+      </xsl:variable>
+      
+      <g:shipping>
+         <g:price>
+            <xsl:value-of select="format-number(number($finalCost) div number($conv), '#.##')"/>
+            <xsl:text><![CDATA[ ]]></xsl:text>
+            <xsl:value-of select="$product_currency"/>
+         </g:price>
+         <g:country><xsl:value-of select="$code"/></g:country>
+      </g:shipping>
+   </xsl:template>  
+   
+   <!-- Rekurencyjnie wybierz koszt na podstawie 'koszt-limit' wg mainPrice -->
+   <xsl:template name="pickCostFromBands">
+      <xsl:param name="bands"/>      <!-- np. '12-100|19' -->
+      <xsl:param name="unit"/>
+      <xsl:param name="conv"/>
+      
+      <xsl:choose>
+         <xsl:when test="string-length(normalize-space($bands)) = 0">
+            <xsl:value-of select="0"/> <!-- brak widełek → 0 lub domyślny -->
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:variable name="one">
+               <xsl:choose>
+                  <xsl:when test="contains($bands,'|')">
+                     <xsl:value-of select="substring-before($bands,'|')"/>
+                  </xsl:when>
+                  <xsl:when test="contains($bands,'-')">
+                     <xsl:value-of select="$bands"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:value-of select="concat($bands,'-0')"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
+            <xsl:variable name="rest" select="substring-after($bands,'|')"/>
+            
+            <xsl:variable name="rate">
+               <xsl:choose>
+                  <xsl:when test="$Konfiguracja_profilu_dostaw = 'weight'">
+                     <xsl:value-of select="'1'"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:value-of select="$conv"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
+            <xsl:variable name="cost"  select="number(substring-before($one,'-'))"/>
+            <xsl:variable name="limit" select="number(substring-after($one,'-'))"/>
+            
+            <xsl:choose>
+               <xsl:when test="number($unit * $rate) &gt;= $limit">
+                  <xsl:value-of select="$cost"/>
+               </xsl:when>
+               <!-- Inaczej idź do następnego pasma -->
+               <xsl:otherwise>
+                  <xsl:call-template name="pickCostFromBands">
+                     <xsl:with-param name="bands"   select="$rest"/>
+                     <xsl:with-param name="unit"    select="$unit"/>
+                     <xsl:with-param name="conv"  select="number($conv)"/>
+                  </xsl:call-template>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   <!-- Przejdź przez listę krajów rozdzielonych przecinkami -->
+   <xsl:template name="emitAllCountries">
+      <xsl:param name="list" select="$kraje_wysyłki-cennik"/>
+      <xsl:param name="mainPrice"/>
+      <xsl:param name="mainWeight"/>
+      <xsl:param name="WeightORPrice" select="'price'"/>
+      <xsl:param name="product_currency"/>
+      
+      <xsl:variable name="unit">
+         <xsl:choose>
+            <xsl:when test="$WeightORPrice = 'weight'">
+               <xsl:value-of select="$mainWeight"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="$mainPrice"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      
+      <xsl:choose>
+         <xsl:when test="string-length(normalize-space($list)) = 0"/>
+         <xsl:otherwise>
+            <xsl:variable name="one"  select="normalize-space(substring-before(concat($list,','),','))"/>
+            <xsl:variable name="rest" select="substring-after($list,',')"/>
+            
+            <xsl:call-template name="emitCountry">
+               <xsl:with-param name="entry"            select="$one"/>
+               <xsl:with-param name="unit"             select="$unit"/>
+               <xsl:with-param name="product_currency" select="$product_currency"/>
+            </xsl:call-template>
+            
+            <xsl:call-template name="emitAllCountries">
+               <xsl:with-param name="list"             select="$rest"/>
+               <xsl:with-param name="mainPrice"  select="$mainPrice"/>
+               <xsl:with-param name="mainWeight" select="$mainWeight"/>
+               <xsl:with-param name="WeightORPrice" select="$WeightORPrice"/>
+               <xsl:with-param name="product_currency" select="$product_currency"/>
+            </xsl:call-template>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+
    <xsl:template name="searchGoogleCategory">
       <xsl:param name="cat_id" />
       <xsl:choose>
