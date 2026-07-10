@@ -1,6 +1,7 @@
 {
   "name": "title",
   "description": "Build g:title from product or price comparator name, normalizing casing and Polish diacritic pairs.",
+  "description_pl": "Buduje g:title z nazwy produktu lub porównywarki cen, normalizując wielkość liter i polskie pary znaków diakrytycznych.",
   "structure": ["Google", "Facebook", "Samba"],
   "output": "g:title",
   "context": "product",

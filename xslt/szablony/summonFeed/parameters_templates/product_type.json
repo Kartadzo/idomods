@@ -1,6 +1,7 @@
 {
   "name": "product_type",
   "description": "Generate Google g:product_type from the product navigation path, replacing backslashes with ' > '.",
+  "description_pl": "Generuje Google g:product_type ze ścieżki nawigacyjnej produktu, zamieniając ukośniki wsteczne na ' > '.",
   "structure": ["Google", "Facebook"],
   "output": "g:product_type",
   "context": "product",

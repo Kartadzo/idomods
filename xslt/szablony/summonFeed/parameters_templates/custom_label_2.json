@@ -1,6 +1,7 @@
 {
   "name": "custom_label_2",
   "description": "Generate Google g:custom_label_2 from the first priority menu item split by backslash delimiters.",
+  "description_pl": "Generuje Google g:custom_label_2 z pierwszej pozycji menu priorytetowego, dzielonej po ukośnikach wstecznych.",
   "structure": ["Google", "Facebook"],
   "output": "g:custom_label_2",
   "context": "product",

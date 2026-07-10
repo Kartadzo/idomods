@@ -1,6 +1,7 @@
 {
   "name": "shipping_weight",
   "description": "Generate Google g:shipping_weight from the product weight in grams, converted to kilograms.",
+  "description_pl": "Generuje Google g:shipping_weight z wagi produktu w gramach, przeliczonej na kilogramy.",
   "structure": ["Google", "Facebook"],
   "output": "g:shipping_weight",
   "context": "size",

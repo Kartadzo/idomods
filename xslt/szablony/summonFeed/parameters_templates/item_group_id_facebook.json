@@ -1,6 +1,7 @@
 {
   "name": "item_group_id_facebook",
   "description": "Generate Facebook g:item_group_id by grouping sizes and product variants for Facebook feed items.",
+  "description_pl": "Generuje Facebook g:item_group_id grupując rozmiary i warianty produktu dla pozycji feedu Facebooka.",
   "structure": ["Google", "Facebook"],
   "output": "g:item_group_id",
   "context": "size",

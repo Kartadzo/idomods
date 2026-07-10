@@ -1,6 +1,7 @@
 {
   "name": "availability_facebook",
   "description": "Generate Facebook g:availability by summing stock availability across all sizes for the current product.",
+  "description_pl": "Generuje Facebook g:availability sumując dostępność magazynową ze wszystkich rozmiarów produktu.",
   "structure": ["Facebook"],
   "output": "g:availability",
   "context": "size",

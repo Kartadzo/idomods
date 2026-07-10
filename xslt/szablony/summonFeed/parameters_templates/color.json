@@ -1,6 +1,7 @@
 {
   "name": "color",
   "description": "Build g:color from CONTEXT_COLOR parameter values or a visible color parameter matched by name.",
+  "description_pl": "Buduje g:color z wartości parametru CONTEXT_COLOR lub widocznego parametru koloru dopasowanego po nazwie.",
   "structure": ["Google", "Facebook"],
   "output": "g:color",
   "context": "product",

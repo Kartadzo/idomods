@@ -1,6 +1,7 @@
 {
   "name": "condition",
   "description": "Generate g:condition based on CONTEXT_STATE values from the product data.",
+  "description_pl": "Generuje g:condition na podstawie wartości CONTEXT_STATE z danych produktu.",
   "structure": ["Google", "Facebook"],
   "output": "g:condition",
   "context": "product",

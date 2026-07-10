@@ -1,6 +1,7 @@
 {
   "name": "code",
   "description": "Generate Google g:gtin or g:mpn from producer code and external identifiers.",
+  "description_pl": "Generuje Google g:gtin lub g:mpn z kodu producenta i identyfikatorów zewnętrznych.",
   "structure": ["Google", "Facebook", "Samba"],
   "output": "g:mpn",
   "context": "size",

@@ -1,6 +1,7 @@
 {
   "name": "shipping",
   "description": "Generate g:shipping details including price, country, handling time, transit time, and service.",
+  "description_pl": "Generuje szczegóły g:shipping: cenę, kraj, czas obsługi, czas transportu i serwis.",
   "structure": ["Google", "Facebook"],
   "output": "g:shipping",
   "context": "size",

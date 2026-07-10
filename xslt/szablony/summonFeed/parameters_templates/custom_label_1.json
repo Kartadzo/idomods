@@ -1,6 +1,7 @@
 {
   "name": "custom_label_1",
   "description": "Generate Google g:custom_label_1 with promotional flags such as new product, bestseller, promotion, or distinguished.",
+  "description_pl": "Generuje Google g:custom_label_1 z flagami promocyjnymi: nowość, bestseller, promocja lub wyróżniony.",
   "structure": ["Google", "Facebook"],
   "output": "g:custom_label_1",
   "context": "product",

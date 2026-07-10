@@ -1,6 +1,7 @@
 {
   "name": "material",
   "description": "Generate g:material from a material parameter in the product data.",
+  "description_pl": "Generuje g:material z parametru materiału w danych produktu.",
   "structure": ["Google", "Facebook"],
   "output": "g:material",
   "context": "product",

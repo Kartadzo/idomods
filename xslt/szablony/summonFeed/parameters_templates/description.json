@@ -1,6 +1,7 @@
 {
   "name": "description",
   "description": "Generate g:description from product descriptions and fallback parameter values.",
+  "description_pl": "Generuje g:description z opisów produktu oraz zapasowych wartości parametrów.",
   "structure": ["Google", "Facebook", "Samba"],
   "output": "g:description",
   "context": "product",
@@ -29,9 +30,10 @@
     }
   ],
   "helpers": [
+    "string-normalize-all",
     "string-replace-all",
     "strip-tags",
     "tokenize"
   ],
-  "notes": "Creates a safe description value with fallback from product name and parameters when description fields are empty or too short."
+  "notes": "Creates a safe description value with fallback from product name and parameters when description fields are empty or too short. Źródło: xslt/szablony/Facebook.xml (2026.07.08) — normalizuje encje HTML (nbsp, eacute, oacute…) przez string-normalize-all."
 }

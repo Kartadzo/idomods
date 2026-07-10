@@ -1,6 +1,7 @@
 {
   "name": "availability",
   "description": "Generate Google g:availability based on stock availability for a single size.",
+  "description_pl": "Generuje Google g:availability na podstawie dostępności magazynowej dla pojedynczego rozmiaru.",
   "structure": ["Google"],
   "output": "g:availability",
   "context": "size",

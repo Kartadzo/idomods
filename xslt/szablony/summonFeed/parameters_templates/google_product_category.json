@@ -1,6 +1,7 @@
 {
   "name": "google_product_category",
   "description": "Generate g:google_product_category from IdoSell category mapping or product path.",
+  "description_pl": "Generuje g:google_product_category z mapowania kategorii IdoSell lub ścieżki produktu.",
   "structure": ["Google", "Facebook"],
   "output": "g:google_product_category",
   "context": "product",

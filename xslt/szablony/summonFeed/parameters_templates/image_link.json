@@ -1,6 +1,7 @@
 {
   "name": "image_link",
   "description": "Generate g:image_link and g:additional_image_link values from the primary product image and additional gallery images.",
+  "description_pl": "Generuje g:image_link i g:additional_image_link z głównego zdjęcia produktu oraz dodatkowych zdjęć z galerii.",
   "structure": ["Google", "Facebook", "Samba"],
   "output": "g:image_link",
   "context": "product",

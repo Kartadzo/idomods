@@ -1,6 +1,7 @@
 {
   "name": "multipack",
   "description": "Generate g:multipack from bundled product quantity or retail quantity when product is a regular type.",
+  "description_pl": "Generuje g:multipack z ilości w zestawie lub ilości detalicznej, gdy produkt jest typu zwykłego.",
   "structure": ["Google", "Facebook"],
   "output": "g:multipack",
   "context": "product",

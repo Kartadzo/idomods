@@ -1,6 +1,7 @@
 {
   "name": "custom_label_0",
   "description": "Generate Google g:custom_label_0 based on price range bands.",
+  "description_pl": "Generuje Google g:custom_label_0 na podstawie przedziałów cenowych.",
   "structure": ["Google", "Facebook"],
   "output": "g:custom_label_0",
   "context": "product",

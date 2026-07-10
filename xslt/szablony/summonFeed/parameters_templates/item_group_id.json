@@ -1,6 +1,7 @@
 {
   "name": "item_group_id",
   "description": "Generate Google g:item_group_id by grouping only sizes for the current product variant.",
+  "description_pl": "Generuje Google g:item_group_id grupując tylko rozmiary bieżącego wariantu produktu.",
   "structure": ["Google", "Facebook"],
   "output": "g:item_group_id",
   "context": "size",

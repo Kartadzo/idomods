@@ -1,0 +1,23 @@
+{
+  "name": "nazwa_parametru",
+  "description": "What this parameter emits and from which source fields (EN).",
+  "description_pl": "Co ten parametr generuje i z jakich pól źródłowych (PL).",
+
+  "structure": ["Google", "Facebook", "Samba"],
+  "context": "product",
+  "output": "g:nazwa_elementu",
+
+  "configVars": [
+    { "name": "nazwa_zmiennej", "default": "wartosc", "delimeter": "" }
+  ],
+  "createVars": [],
+  "helpers": [],
+  "globals": [],
+
+  "xpathCandidates": [
+    "sciezka/do/pola",
+    "@atrybut"
+  ],
+  "parameterContexts": [],
+  "notes": "SZABLON — pliki zaczynające się od '_' są pomijane przez generator. Skopiuj do nazwa_parametru.json + nazwa_parametru.xsl i usuń to pole lub opisz w nim niuanse. POLA CZYTANE PRZEZ GENERATOR: name, description, description_pl, structure, context, output, configVars, createVars, helpers. POLA DOKUMENTACYJNE: globals, xpathCandidates, parameterContexts, notes. context: product | size | feed. output: nazwa elementu emitowanego przez .xsl (używana przy zmianie nazwy/prefiksu). configVars: gdy 'delimeter' niepuste, generator pyta o wartości frazami (obsługa nazw wielowyrazowych); domyślna wartość w JSON musi być już otoczona separatorem, np. '|kolor|'. createVars: nazwy z variables/_registry.json — jeśli wszystkie są w rejestrze, parametr jest 'zmigrowany' (jego .xsl to sama emisja, a zmienne i configVary wstrzykiwane są w preambule). helpers: nazwy z helpers/ — zależności (uses) domykane automatycznie. globals: tylko dokumentacja; zmienne globalne wykrywane są po referencji $nazwa."
+}

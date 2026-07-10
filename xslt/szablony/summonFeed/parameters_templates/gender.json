@@ -1,6 +1,7 @@
 {
   "name": "gender",
   "description": "Generate g:gender from gender-related parameter values or navigation menu IDs.",
+  "description_pl": "Generuje g:gender z wartości parametrów płci lub identyfikatorów menu nawigacyjnego.",
   "structure": ["Google", "Facebook"],
   "output": "g:gender",
   "context": "product",

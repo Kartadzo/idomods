@@ -1,6 +1,7 @@
 {
   "name": "is_bundle",
   "description": "Generate g:is_bundle with value yes when the product contains bundled items.",
+  "description_pl": "Generuje g:is_bundle z wartością yes, gdy produkt zawiera elementy zestawu.",
   "structure": ["Google", "Facebook"],
   "output": "g:is_bundle",
   "context": "product",

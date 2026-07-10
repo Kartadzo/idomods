@@ -1,6 +1,7 @@
 {
   "name": "age_group",
   "description": "Generate Google g:age_group from product age-group parameters or navigation menu ids.",
+  "description_pl": "Generuje Google g:age_group z parametrów grupy wiekowej produktu lub identyfikatorów menu nawigacyjnego.",
   "structure": ["Google", "Facebook"],
   "output": "g:age_group",
   "context": "product",

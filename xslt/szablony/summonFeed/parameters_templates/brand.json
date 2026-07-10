@@ -1,6 +1,7 @@
 {
   "name": "brand",
   "description": "Generate Google g:brand from the producer name when defined.",
+  "description_pl": "Generuje Google g:brand z nazwy producenta, gdy jest zdefiniowana.",
   "structure": ["Google", "Facebook"],
   "output": "g:brand",
   "context": "product",

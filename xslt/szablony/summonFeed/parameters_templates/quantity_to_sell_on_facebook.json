@@ -1,6 +1,7 @@
 {
   "name": "quantity_to_sell_on_facebook",
   "description": "Compute quantity_to_sell_on_facebook by summing available_stock_quantity across product sizes.",
+  "description_pl": "Oblicza quantity_to_sell_on_facebook sumując available_stock_quantity po rozmiarach produktu.",
   "structure": ["Facebook"],
   "output": "quantity_to_sell_on_facebook",
   "context": "size",

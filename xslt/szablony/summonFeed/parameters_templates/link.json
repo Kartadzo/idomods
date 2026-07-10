@@ -1,6 +1,7 @@
 {
   "name": "link",
   "description": "Generate Google feed links for product URLs, including size selection when applicable.",
+  "description_pl": "Generuje linki feedu Google do adresów produktów, z wyborem rozmiaru gdy dotyczy.",
   "structure": ["Google"],
   "output": "g:link",
   "context": "size",

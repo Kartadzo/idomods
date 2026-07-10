@@ -1,6 +1,7 @@
 {
   "name": "certification",
   "description": "Generate Google g:certification from certification parameters using authority:name:code syntax.",
+  "description_pl": "Generuje Google g:certification z parametrów certyfikatów w składni authority:name:code.",
   "structure": ["Google", "Facebook"],
   "output": "g:certification",
   "context": "product",

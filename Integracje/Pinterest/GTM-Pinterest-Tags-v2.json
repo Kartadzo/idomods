@@ -1,0 +1,432 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2026-07-10 09:09:44",
+    "containerVersion": {
+        "path": "accounts/6355298149/containers/252426501/versions/9",
+        "accountId": "6355298149",
+        "containerId": "252426501",
+        "containerVersionId": "9",
+        "name": "Pinterest v1.0.3",
+        "container": {
+            "path": "accounts/6355298149/containers/252426501",
+            "accountId": "6355298149",
+            "containerId": "252426501",
+            "name": "mlecollection.com",
+            "publicId": "GTM-PNS6HJS6",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1778763747542",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6355298149/containers/252426501/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-PNS6HJS6"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "77",
+                "name": "cHTML - Printerest - Event - Add To Cart",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n var group_id = {{dlv - eventModel.items.0.item_id}};\n  pintrk('track', 'AddToCart', {\n    currency: {{dlv - eventModel.currency}},\n    line_items:  [{\n       product_category: {{dlv - eventModel.items.0.item_category}},\n       product_id: {{dlv - eventModel.items.0.item_id}},\n       product_variant_id: group_id.split('-')[0],\n       product_price: {{dlv - eventModel.value}},\n       product_quantity: {{dlv - eventModel.items.0.quantity}}\n     }\n   ]\n });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783503883117",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "78",
+                "name": "cHTML - Printerest - Event - Purchase",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'checkout', {\n   order_id: {{dlv - eventModel.transaction_id}},\n   value: {{dlv - eventModel.value}},\n   currency: {{dlv - eventModel.currency}},\n   line_items: array_ready_objects\n });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783614502687",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "79",
+                "name": "cHTML - Printerest - Event - Sign up",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\npintrk('track', 'signup');\n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783092020555",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "80",
+                "name": "cHTML - Printerest - Event - Category",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\npintrk('track', 'viewcategory', {\n   search_query: {{dlv - eventModel.item_list_name}},\n   line_items: array_ready_objects\n })\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783614468289",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "81",
+                "name": "cHTML - Printerest - Event - ViewContent",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n var group_id = {{dlv - eventModel.items.0.item_id}};\n pintrk('track', 'ViewContent', {\n    currency: {{dlv - eventModel.currency}},\n    line_items:  [{\n       product_category: {{dlv - eventModel.items.0.item_category}},\n       product_id: {{dlv - eventModel.items.0.item_id}},\n       product_variant_id: group_id.split('-')[0],\n       product_price: {{dlv - eventModel.value}}\n     }\n   ]\n });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783503859627",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "82",
+                "name": "cHTML - Printerest - Event - Search Page",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'search', {\n   search_query: {{url - text}},\n   line_items: array_ready_objects\n });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783614511257",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "83",
+                "name": "cHTML - Printerest - Event - Main Code",
+                "type": "html",
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "1000"
+                },
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "\n <!-- Pinterest Pixel Base Code -->\n <script type=\"text/javascript\">\n   !function(e){\n     if(!window.pintrk){\n       window.pintrk=function(){\n         window.pintrk.queue.push(\n         Array.prototype.slice.call(arguments))};var\n         n=window.pintrk;n.queue=[],n.version=\"3.0\";var\n         t=document.createElement(\"script\");t.async=!0,t.src=e;var\n         r=document.getElementsByTagName(\"script\")[0];r.parentNode.insertBefore(t,r)\n       }\n     }(\"https://s.pinimg.com/ct/core.js\");\n   pintrk('load', {{ID - Pinterest}}, {\n     em: {{user_data.sha256_email_address}},\n   });\n   pintrk('page');\n   pintrk('track', 'PageVisit');\n</script>\n <!-- End Pinterest Pixel Base Code -->"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783504525120",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_LOAD",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "85",
+                "name": "cHTML - Printerest - Event - InitiateCheckout",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n    var array_value_objects = {{dlv - eventModel.items[]}}\n    var array_ready_objects = []\n\n    for (var i = 0; i < array_value_objects.length; i++) {\n        var contents_format = {}\n        var group_id = array_value_objects[i].item_id\n        contents_format.product_category = array_value_objects[i].item_category  //category\n        contents_format.product_id = array_value_objects[i].item_id              //id\n        contents_format.product_variant_id = group_id.split('-')[0]\n        contents_format.product_price = array_value_objects[i].price             //price\n        contents_format.product_quantity = array_value_objects[i].quantity  //quantity\n        array_ready_objects.push(contents_format)\n    };\n</script>\n<script>\n pintrk('track', 'InitiateCheckout', {\n   order_id: {{dlv - eventModel.transaction_id}},\n   value: {{dlv - eventModel.value}},\n   currency: {{dlv - eventModel.currency}},\n   line_items: array_ready_objects\n });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783614494101",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "86",
+                "name": "cHTML - Printerest - Event - Add To Wishlist",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n var group_id = {{dlv - eventModel.items.0.item_id}};\n  pintrk('track', 'AddToWishList', {\n    currency: {{dlv - eventModel.currency}},\n    line_items:  [{\n       product_category: {{dlv - eventModel.items.0.item_category}},\n       product_id: {{dlv - eventModel.items.0.item_id}},\n       product_variant_id: group_id.split('-')[0],\n       product_price: {{dlv - eventModel.value}}\n     }\n   ]\n });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783503894488",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "tagId": "87",
+                "name": "cHTML - Printerest - Event - AddPaymentInfo",
+                "type": "html",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\npintrk('track', 'AddPaymentInfo');\n</script> "
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1783438082904",
+                "parentFolderId": "76",
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NEEDED",
+                    "consentType": {
+                        "type": "LIST",
+                        "list": [
+                            {
+                                "type": "TEMPLATE",
+                                "value": "ad_storage"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "folder": [
+            {
+                "accountId": "6355298149",
+                "containerId": "252426501",
+                "folderId": "76",
+                "name": "Pinterest",
+                "fingerprint": "1783088385976"
+            }
+        ],
+        "fingerprint": "1783614541573",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6355298149/containers/252426501/versions/9?apiLink=version"
+    }
+}

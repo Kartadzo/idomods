@@ -1,6 +1,7 @@
 {
   "name": "size",
   "description": "Emit Google g:size from the current size node name.",
+  "description_pl": "Emituje Google g:size z nazwy bieżącego węzła rozmiaru.",
   "structure": ["Google", "Facebook"],
   "output": "g:size",
   "context": "size",

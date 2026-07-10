@@ -1,6 +1,7 @@
 {
   "name": "link_facebook",
   "description": "Generate Facebook feed links for product URLs, including mobile and device-specific URLs when applicable.",
+  "description_pl": "Generuje linki feedu Facebooka do adresów produktów, w tym adresy mobilne i specyficzne dla urządzeń gdy dotyczy.",
   "structure": ["Facebook"],
   "output": "g:link",
   "context": "size",

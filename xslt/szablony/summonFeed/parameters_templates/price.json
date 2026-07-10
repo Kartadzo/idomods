@@ -1,6 +1,7 @@
 {
   "name": "price",
   "description": "Generate g:price and g:sale_price using service price, normal price, and promotion pricing rules.",
+  "description_pl": "Generuje g:price i g:sale_price wg reguł ceny serwisowej, normalnej i promocyjnej.",
   "structure": ["Google", "Facebook", "Samba"],
   "output": "g:price",
   "context": "size",

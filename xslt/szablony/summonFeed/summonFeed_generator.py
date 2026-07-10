@@ -23,21 +23,41 @@ class SummonFeedGenerator:
         self.parameters_path = self.base_path / "parameters_templates"
         self.variables_path = self.base_path / "variables"
         self.helpers_path = self.base_path / "helpers"
+        self.lang_path = self.base_path / "lang"
         self.output_path = self.base_path
 
         self.structures: Dict = {}
         self.parameters: Dict = {}
         self.variables_registry: Dict = {}
         self.helpers_registry: Dict = {}
+        self.languages: Dict[str, Dict] = {}
         self.selected_structure: Optional[Dict] = None
         self.selected_params: Dict[str, List[Dict]] = {}
+        self.lang: str = 'pl'
+        self.output_overrides: Dict[str, str] = {}
+        self.prefix_override: Optional[str] = None
 
         self._load_data()
+
+    def t(self, key: str, **kwargs) -> str:
+        """Zwróć tekst UI w wybranym języku (z opcjonalnym format())."""
+        strings = self.languages.get(self.lang) or next(iter(self.languages.values()), {})
+        text = strings.get(key, key)
+        return text.format(**kwargs) if kwargs else text
+
+    def _desc(self, data: Dict) -> str:
+        """Opis parametru/struktury w wybranym języku (fallback na angielski)."""
+        if self.lang == 'pl':
+            return data.get('description_pl') or data.get('description', '')
+        return data.get('description', '') or data.get('description_pl', '')
     
     def _load_data(self) -> None:
-        """Wczytaj wszystkie struktury i parametry JSON."""
+        """Wczytaj wszystkie struktury i parametry JSON.
+        Pliki zaczynające się od '_' są pomijane (szablony, rejestry, notatki)."""
         # Wczytaj struktury
         for json_file in self.structures_path.glob("*.json"):
+            if json_file.name.startswith('_'):
+                continue
             with open(json_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 structure_name = data['name']
@@ -46,9 +66,11 @@ class SummonFeedGenerator:
                     'json_path': json_file,
                     'xsl_path': json_file.with_suffix('.xsl')
                 }
-        
+
         # Wczytaj parametry
         for json_file in self.parameters_path.glob("*.json"):
+            if json_file.name.startswith('_'):
+                continue
             with open(json_file, 'r', encoding='utf-8') as f:
                 try:
                     data = json.load(f)
@@ -78,6 +100,14 @@ class SummonFeedGenerator:
                 self.helpers_registry = {
                     k: v for k, v in data.items() if not k.startswith('_')
                 }
+
+        # Wczytaj pliki językowe (lang/*.json) — kod języka = nazwa pliku
+        if self.lang_path.exists():
+            for lang_file in sorted(self.lang_path.glob("*.json")):
+                with open(lang_file, 'r', encoding='utf-8') as f:
+                    self.languages[lang_file.stem] = json.load(f)
+        if self.lang not in self.languages and self.languages:
+            self.lang = next(iter(self.languages))
     
     def _clear_screen(self) -> None:
         """Wyczyść ekran terminala."""
@@ -91,35 +121,60 @@ class SummonFeedGenerator:
         print("=" * 70)
         print()
     
+    def _choose_language(self) -> bool:
+        """Krok 0: wybór języka interfejsu (dynamicznie z folderu lang/). False = wyjście."""
+        codes = list(self.languages.keys())
+        if not codes:
+            return True  # brak plików językowych — działaj na domyślnym
+        header = self.languages[codes[0]].get('header_lang', 'JĘZYK / LANGUAGE')
+        self._print_header(header)
+        for i, code in enumerate(codes, 1):
+            name = self.languages[code].get('_name', code)
+            print(f"{i}. {name}")
+        print()
+        print("0. Wyjście / Exit")
+        print()
+        while True:
+            choice = input("Wybierz / Choose [1]: ").strip()
+            if choice == '0':
+                return False
+            if choice == '':
+                self.lang = codes[0]
+                return True
+            if choice.isdigit() and 1 <= int(choice) <= len(codes):
+                self.lang = codes[int(choice) - 1]
+                return True
+            print("❌ " + " / ".join(str(i) for i in range(1, len(codes) + 1)) + " / 0")
+
     def _show_structure_menu(self) -> Optional[str]:
         """Pokaż menu wyboru struktury."""
-        self._print_header("WYBÓR STRUKTURY FEEDU")
-        
+        self._print_header(self.t('header_structure'))
+
         structures_list = list(self.structures.keys())
-        
+
         if not structures_list:
-            print("❌ Nie znaleziono struktur!")
+            print(self.t('no_structures'))
             return None
-        
+
         for i, name in enumerate(structures_list, 1):
-            desc = self.structures[name]['data'].get('description', '')
+            desc = self._desc(self.structures[name]['data'])
             print(f"{i}. {name}")
             print(f"   └─ {desc}")
             print()
-        
-        print("0. Wyjście")
+
+        print(f"0. {self.t('exit')}")
         print()
-        
+
         while True:
             try:
-                choice = int(input("Wybierz numer: ").strip())
+                choice = int(input(self.t('choose_number')).strip())
                 if choice == 0:
                     return None
                 if 1 <= choice <= len(structures_list):
                     return structures_list[choice - 1]
-                print("❌ Nieprawidłowy wybór!")
+                print(self.t('invalid_choice'))
             except ValueError:
-                print("❌ Wpisz prawidłowy numer!")
+                print(self.t('invalid_number'))
     
     def _filter_parameters_for_structure(self, structure_name: str) -> Dict[str, List[str]]:
         """Filtruj parametry pasujące do wybranej struktury."""
@@ -143,42 +198,86 @@ class SummonFeedGenerator:
     
     def _show_parameters_menu(self, available_params: Dict[str, List[str]]) -> Dict[str, List[str]]:
         """Pokaż menu wyboru parametrów."""
-        self._print_header("WYBÓR PARAMETRÓW")
-        
+        self._print_header(self.t('header_params'))
+
         selected = {}
-        
+
         for context, param_names in sorted(available_params.items()):
-            print(f"\n📦 Kontekst: {context}")
+            print("\n" + self.t('context', context=context))
             print("-" * 70)
-            
+
             # Wyświetl dostępne parametry
             for i, param_name in enumerate(param_names, 1):
                 param_data = self.parameters[param_name]['data']
-                desc = param_data.get('description', '')
-                print(f"{i}. {param_name}: {desc}")
-            
+                print(f"{i}. {param_name}: {self._desc(param_data)}")
+
             print()
-            print("Wpisz numery oddzielone spacjami (np: 1 2 3) lub Enter aby pominąć")
-            
+            print(self.t('params_hint'))
+
             while True:
                 try:
-                    user_input = input(f"Wybór dla '{context}': ").strip()
-                    
+                    user_input = input(self.t('choice_for', context=context)).strip()
+
                     if not user_input:  # Pomiń ten kontekst
                         break
-                    
+
                     choices = [int(x.strip()) for x in user_input.split()]
-                    
+
                     # Waliduj wybory
                     if all(1 <= c <= len(param_names) for c in choices):
                         selected[context] = [param_names[c - 1] for c in choices]
                         break
                     else:
-                        print("❌ Jeden z numerów jest poza zakresem!")
+                        print(self.t('out_of_range'))
                 except ValueError:
-                    print("❌ Wpisz prawidłowe numery!")
-        
+                    print(self.t('invalid_numbers'))
+
         return selected
+
+    def _ask_output_names(self, selected: Dict[str, List[str]]) -> None:
+        """Pozwól nadpisać prefiks 'g:' oraz nazwę elementu wyjściowego każdego parametru
+        (Enter = domyślne)."""
+        self.output_overrides = {}
+        self.prefix_override = None
+        params = [p for plist in selected.values() for p in plist]
+        if not params:
+            return
+        self._print_header(self.t('header_output'))
+
+        # Globalny prefiks elementów (namespace g:).
+        #   Enter → zostaw 'g'; '-' → brak prefiksu; inne → nowy prefiks
+        raw_prefix = input(self.t('ask_prefix', current='g')).strip()
+        if raw_prefix == '-':
+            self.prefix_override = ''            # brak jakiegokolwiek prefiksu
+        else:
+            new_prefix = raw_prefix.rstrip(':')
+            if new_prefix and new_prefix != 'g':
+                self.prefix_override = new_prefix
+
+        print()
+        print(self.t('output_hint'))
+        print()
+        for param_name in params:
+            default_out = self.parameters[param_name]['data'].get('output', '')
+            custom = input(self.t('ask_output_name', param=param_name, default=default_out)).strip()
+            if custom and custom != default_out:
+                self.output_overrides[param_name] = custom
+
+    def _apply_prefix_override(self, xsl: str) -> str:
+        """Zmień prefiks przestrzeni nazw 'g' zgodnie z wyborem użytkownika.
+        None / 'g' → bez zmian; '' → brak prefiksu (usuwa xmlns:g i g:);
+        inny → nowy prefiks (spójnie: deklaracja xmlns:g oraz użycia g:)."""
+        new = self.prefix_override
+        if new is None or new == 'g':
+            return xsl
+        if new == '':
+            # brak prefiksu: usuń deklaracje xmlns:g i prefiks g: z nazw elementów
+            xsl = re.sub(r'\s+xmlns:g="[^"]*"', '', xsl)
+            xsl = xsl.replace('g:', '')
+            return xsl
+        xsl = xsl.replace('xmlns:g=', f'xmlns:{new}=')
+        xsl = xsl.replace('g:', f'{new}:')
+        return xsl
     
     def _read_xslt_file(self, xsl_path: Path) -> str:
         """Wczytaj zawartość pliku XSLT."""
@@ -188,6 +287,21 @@ class SummonFeedGenerator:
         except FileNotFoundError:
             print(f"⚠️  Nie znaleziono pliku: {xsl_path}")
             return ""
+
+    def _apply_output_override(self, param_name: str, content: str) -> str:
+        """Zamień domyślną nazwę elementu wyjściowego na nazwę podaną przez użytkownika.
+        Obsługuje formy: <xsl:element name="X">, <X> oraz </X>."""
+        custom = self.output_overrides.get(param_name)
+        if not custom:
+            return content
+        default = self.parameters[param_name]['data'].get('output', '')
+        if not default or custom == default:
+            return content
+        content = content.replace(f'name="{default}"', f'name="{custom}"')
+        content = content.replace(f"name='{default}'", f"name='{custom}'")
+        content = content.replace(f'<{default}>', f'<{custom}>')
+        content = content.replace(f'</{default}>', f'</{custom}>')
+        return content
     
     # ---------------------------------------------------------
     #  OBSŁUGA CONFIGVARS
@@ -196,46 +310,15 @@ class SummonFeedGenerator:
     def _get_config_vars(self, param_name: str) -> List[Dict]:
         return self.parameters[param_name]['data'].get('configVars', [])
 
-    def _format_config_value(self, raw_value: str, delimeter: str) -> str:
-        """Formatuje wartość configVar zgodnie z separatorem."""
-        raw_value = raw_value.strip()
-      
-        # brak separatora → zwróć jak jest
-        if not delimeter:
-            return raw_value
-      
-        # rozbij po spacjach
-        parts = [p.strip() for p in raw_value.split() if p.strip()]
-      
-        # jeśli tylko jeden element → otocz separatorem
-        if len(parts) == 1:
-            return f"{delimeter}{parts[0]}{delimeter}"
-      
-        # wiele elementów → separator między nimi
-        return delimeter + delimeter.join(parts) + delimeter
-
     def _ask_for_config_vars(self, config_vars: List[Dict]) -> Dict[str, str]:
         values = {}
         if not config_vars:
             return values
 
-        print("\n🔧 Parametr wymaga dodatkowych ustawień (configVars):\n")
+        print("\n" + self.t('configvars_header') + "\n")
 
         for var in config_vars:
-            name = var['name']
-            default = var.get('default', '')
-            delimeter = var.get('delimeter', '')
-
-            prompt = f"Podaj wartość dla {name} (domyślnie '{default}'): "
-            user_input = input(prompt).strip()
-
-            # jeśli użytkownik nic nie podał → użyj domyślnej
-            raw_value = user_input if user_input else default
-
-            # sformatuj zgodnie z separatorem
-            formatted = self._format_config_value(raw_value, delimeter)
-
-            values[name] = formatted
+            values[var['name']] = self._ask_single_config_var(var)
 
         return values
 
@@ -280,9 +363,25 @@ class SummonFeedGenerator:
         name = var['name']
         default = var.get('default', '')
         delimeter = var.get('delimeter', '')
-        user_input = input(f"Podaj wartość dla {name} (domyślnie '{default}'): ").strip()
-        raw_value = user_input if user_input else default
-        return self._format_config_value(raw_value, delimeter)
+
+        # Bez separatora → pojedyncza wartość (Enter = domyślna)
+        if not delimeter:
+            user_input = input(self.t('ask_configvar', name=name, default=default)).strip()
+            return user_input if user_input else default
+
+        # Z separatorem → tryb fraza-po-frazie (obsługuje nazwy wielowyrazowe)
+        print(self.t('configvar_list_intro', name=name, default=default))
+        phrases: List[str] = []
+        while True:
+            phrase = input(self.t('configvar_phrase', n=len(phrases) + 1)).strip()
+            if not phrase:
+                break
+            phrases.append(phrase)
+
+        # Brak wpisów → wartość domyślna (w JSON już otoczona separatorem)
+        if not phrases:
+            return default
+        return delimeter + delimeter.join(phrases) + delimeter
 
     def _build_variable_preamble(self, migrated_params: List[str]) -> str:
         """Zbuduj preambuł zmiennych dla parametrów zmigrowanych w danym kontekście:
@@ -358,6 +457,8 @@ class SummonFeedGenerator:
                 else:
                     # stara ścieżka: inline configVars w .xsl
                     param_content = self._get_template_content(param_name)
+                # opcjonalne nadpisanie nazwy elementu wyjściowego
+                param_content = self._apply_output_override(param_name, param_content)
                 template_body += f"      <!-- {param_name} -->\n"
                 template_body += f"      {param_content}\n"
 
@@ -379,6 +480,9 @@ class SummonFeedGenerator:
 
         # --- zmienne globalne (feed-scope): auto-wstrzyk referowanych, a niezadeklarowanych ---
         base_xsl = self._inject_globals(base_xsl)
+
+        # --- opcjonalna zmiana prefiksu przestrzeni nazw (g: → …) ---
+        base_xsl = self._apply_prefix_override(base_xsl)
 
         return base_xsl
 
@@ -463,67 +567,78 @@ class SummonFeedGenerator:
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(xslt_content)
             
-            print(f"\n✅ Plik zapisany: {output_file.name}")
+            print("\n" + self.t('saved', name=output_file.name))
             return True
         except IOError as e:
-            print(f"\n❌ Błąd przy zapisie pliku: {e}")
+            print("\n" + self.t('save_error', e=e))
             return False
     
     def _show_summary(self) -> None:
         """Pokaż podsumowanie wyborów."""
-        self._print_header("PODSUMOWANIE")
-        
-        print(f"📦 Struktura: {self.selected_structure['data']['name']}")
-        print(f"   └─ {self.selected_structure['data'].get('description', '')}\n")
-        
-        print("📝 Wybrane parametry:")
+        self._print_header(self.t('header_summary'))
+
+        print(self.t('structure_label', name=self.selected_structure['data']['name']))
+        print(f"   └─ {self._desc(self.selected_structure['data'])}\n")
+
+        print(self.t('selected_params'))
         if self.selected_params:
             for context, params in sorted(self.selected_params.items()):
                 print(f"\n   {context}:")
                 for param in params:
-                    param_data = self.parameters[param]['data']
-                    print(f"     • {param} - {param_data.get('output', '')}")
+                    default_out = self.parameters[param]['data'].get('output', '')
+                    custom = self.output_overrides.get(param)
+                    shown = f"{default_out} → {custom}" if custom else default_out
+                    print(f"     • {param} - {shown}")
         else:
-            print("   (brak wyboru)")
-        
+            print(self.t('no_selection'))
+
         print("\n" + "=" * 70)
-        print("\nGenerowanie XSLT...")
-        
+        print("\n" + self.t('generating'))
+
         xslt_content = self._build_xslt_structure()
         success = self._save_output(xslt_content)
-        
+
         if success:
-            input("\nNaciśnij Enter aby kontynuować...")
+            input("\n" + self.t('press_enter'))
     
     def run(self) -> None:
         """Główna pętla aplikacji."""
+        # Krok 0: Wybór języka interfejsu
+        if not self._choose_language():
+            print("\n" + self.t('goodbye'))
+            return
+
         while True:
             # Krok 1: Wybór struktury
             structure_name = self._show_structure_menu()
             if not structure_name:
-                print("\n👋 Do widzenia!")
+                print("\n" + self.t('goodbye'))
                 break
-            
+
             self.selected_structure = self.structures[structure_name]
-            
+
             # Krok 2: Filtrowanie parametrów
             available_params = self._filter_parameters_for_structure(structure_name)
-            
+
             if not available_params:
-                self._print_header("BRAK PARAMETRÓW")
-                print(f"Dla struktury '{structure_name}' brak dostępnych parametrów.")
-                input("\nNaciśnij Enter aby wrócić...")
+                self._print_header(self.t('header_no_params'))
+                print(self.t('no_params_for', name=structure_name))
+                input("\n" + self.t('press_enter_back'))
                 continue
-            
+
             # Krok 3: Wybór parametrów
             self.selected_params = self._show_parameters_menu(available_params)
-            
-            # Krok 4: Podsumowanie i generowanie
+
+            # Krok 4: Opcjonalna zmiana nazw elementów wyjściowych
+            self._ask_output_names(self.selected_params)
+
+            # Krok 5: Podsumowanie i generowanie
             self._show_summary()
-            
+
             # Reset dla następnego cyklu
             self.selected_structure = None
             self.selected_params = {}
+            self.output_overrides = {}
 
 
 def main():

@@ -4,6 +4,7 @@
   "tokenize":              { "uses": [],                 "globals": [] },
   "wordFormat":            { "uses": [],                 "globals": ["corrected", "upperLetters", "lowerLetters"] },
   "string-replace-all":    { "uses": [],                 "globals": [] },
+  "string-normalize-all":  { "uses": ["string-replace-all"], "globals": [] },
   "throwLastNode":         { "uses": [],                 "globals": [] },
   "throwNode":             { "uses": ["extract-node"],   "globals": [] },
   "extract-node":          { "uses": [],                 "globals": [] },

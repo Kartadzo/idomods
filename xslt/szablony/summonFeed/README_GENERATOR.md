@@ -28,23 +28,27 @@ python c:\Users\Admin\Desktop\Domino\xslt\szablony\summonFeed\summonFeed_generat
 
 ### Przepływ aplikacji
 
+0. **Wybór języka** - Na starcie generator pyta o język interfejsu (lista z folderu `lang/`)
 1. **Wybór struktury** - Wybierz jeden z dostępnych feedów (Google, Facebook, Samba)
 2. **Filtrowanie parametrów** - Aplikacja automatycznie pokaże tylko parametry obsługiwane dla wybranej struktury
 3. **Wybór parametrów** - Dla każdego kontekstu (product, size, feed) wybierz jakie parametry wstawić
-4. **Uzupełnienie configVars** - Jeśli parametr wymaga zmiennych konfiguracyjnych, generator zapyta o nie raz
-5. **Generowanie** - Aplikacja wygeneruje plik XSLT z wybranymi parametrami
-6. **Zapisanie** - Wynik zostanie zapisany w głównym folderze `summonFeed/` z datą i czasem
+4. **Nazwy elementów wyjściowych** - Opcjonalnie zmień prefiks `g:` oraz nazwę elementu każdego parametru (Enter = domyślne)
+5. **Uzupełnienie configVars** - Jeśli parametr wymaga zmiennych konfiguracyjnych, generator zapyta o nie raz
+6. **Generowanie** - Aplikacja wygeneruje plik XSLT z wybranymi parametrami
+7. **Zapisanie** - Wynik zostanie zapisany w głównym folderze `summonFeed/` z datą i czasem
 
 ## Struktura projektu
 
 ```
 summonFeed/
 ├── summonFeed_generator.py          # Główna aplikacja
+├── validate_params.py               # Walidator spójności bazy parametrów
 ├── structure_templates/             # Szablony struktur feedów (szkielety)
 │   ├── google.json / google.xsl
 │   ├── facebook.json / facebook.xsl
 │   └── samba.json / samba.xsl
 ├── parameters_templates/            # Szablony parametrów produktu (sama emisja)
+│   ├── _TEMPLATE.json / _TEMPLATE.xsl   # szkielet nowego parametru ('_' = pomijane)
 │   ├── title.json / title.xsl
 │   ├── price.json / price.xsl
 │   ├── size.json / size.xsl
@@ -54,10 +58,13 @@ summonFeed/
 │   ├── avail_perProduct.xsl
 │   ├── upperLetters.xsl             #   (scope: global)
 │   └── ...
-└── helpers/                         # Biblioteka helperów (1 plik = 1 named template)
-    ├── _registry.json               #   rejestr: uses (domknięcie), globals
-    ├── wordFormat.xsl
-    └── ...
+├── helpers/                         # Biblioteka helperów (1 plik = 1 named template)
+│   ├── _registry.json               #   rejestr: uses (domknięcie), globals
+│   ├── wordFormat.xsl
+│   └── ...
+└── lang/                            # Pliki językowe interfejsu (1 plik = 1 język)
+    ├── pl.json                      #   kod języka = nazwa pliku; klucz "_name" = etykieta w menu
+    └── en.json
 ```
 
 **Zasada „1 byt = 1 plik, bez analizy kodu":** parametr (`.xsl`) zawiera tylko emisję docelowego elementu; zmienne obliczeniowe mieszkają w `variables/`, helpery w `helpers/`. Generator składa je po nazwach (z rejestrów), nie parsując kodu XSLT.
@@ -96,7 +103,8 @@ Przykład `color.json`:
 ```json
 {
   "name": "color",                                 // Nazwa parametru (musi być unikalna)
-  "description": "Buduje g:color z wartości ...",  // Opis widoczny w menu wyboru
+  "description": "Build g:color from ...",         // Opis EN (menu przy języku 'en')
+  "description_pl": "Buduje g:color z ...",        // Opis PL (menu przy języku 'pl')
   "structure": ["Google", "Facebook"],             // W których strukturach parametr jest dostępny
   "context": "product",                            // Kontekst wstawienia: product / size / feed
   "output": "g:color",                             // Nazwa elementu XML na wyjściu (podsumowanie)
@@ -120,11 +128,12 @@ Zmienne **branch-local** (deklarowane wewnątrz `<xsl:when>`/`<xsl:if>`, zależn
 
 ### configVars — zmienne konfiguracyjne
 
-Jeśli parametr ma tablicę `configVars`, generator zapyta o każdą wartość raz (krok 4 przepływu). Każdy wpis: `name`, `default`, opcjonalny `delimeter`. Formatowanie wpisanej wartości zależy od `delimeter`:
+Jeśli parametr ma tablicę `configVars`, generator zapyta o każdą wartość. Każdy wpis: `name`, `default`, opcjonalny `delimeter`. Sposób pytania zależy od `delimeter`:
 
-- brak `delimeter` → wartość wstawiana bez zmian (np. `399.00`),
-- jeden wyraz → otoczony separatorem (`kolor` + `|` → `|kolor|`),
-- wiele wyrazów (spacja) → separator między i na końcach (`kolor rozmiar` + `|` → `|kolor|rozmiar|`).
+- **brak `delimeter`** → jedno pytanie, wartość wstawiana bez zmian (Enter = `default`), np. `399.00`.
+- **z `delimeter`** → tryb **fraza po frazie**: generator prosi o kolejne wartości (pusty Enter kończy), po czym otacza je separatorem. Dzięki temu **wartości wielowyrazowe** działają poprawnie:
+  - wpisy `materiał dominujący`, `rodzaj skóry` → `|materiał dominujący|rodzaj skóry|`,
+  - brak wpisów (od razu Enter) → wartość `default` (w JSON już otoczona separatorem, np. `|materiał|`).
 
 W parametrze *zmigrowanym* configVar staje się deklaracją `<xsl:variable>` na górze preambułu (przed createVars, bo te często jej używają); w *legacy* podmienia istniejącą deklarację w `.xsl`.
 
@@ -161,6 +170,22 @@ Generator **wstrzykuje je automatycznie**: po złożeniu arkusza skanuje go i dl
 - `globals` — zmienne globalne, których helper wymaga (dokumentacja; realnie wykrywane po referencji).
 
 Parametr deklaruje `helpers: [...]`; generator zbiera je, **domyka wg `uses`**, deduplikuje i wstawia raz przed `</xsl:stylesheet>`. Kolejność helperów jest nieistotna (named templates).
+
+### lang/ — języki interfejsu
+
+Folder `lang/` zawiera po jednym pliku JSON na język (`pl.json`, `en.json`, …). Kod języka = nazwa pliku; klucz `"_name"` to etykieta w menu wyboru. Pozostałe klucze to teksty UI z miejscami `{...}` na `format()`.
+
+Generator wczytuje wszystkie pliki z `lang/` i w kroku 0 pozwala wybrać język. Opisy parametrów pobierane są wg języka: `description_pl` dla `pl`, `description` (EN) dla `en`, z fallbackiem na drugi. **Dodanie języka = dodanie pliku** `lang/kod.json` (i opcjonalnie `description_<kod>` w parametrach) — bez zmian w kodzie.
+
+### Nazwy elementów wyjściowych i prefiks
+
+W kroku 4 generator pozwala:
+
+- **zmienić prefiks** przestrzeni nazw `g:`:
+  - Enter → zostaw `g:` (np. `<g:color>`),
+  - inny prefiks, np. `c` → zmiana spójna w deklaracji `xmlns` i wszystkich elementach (`<c:color>`, `xmlns:c="…"`),
+  - `-` → **brak prefiksu**: elementy bez `g:` (`<color>`), a nieużywana deklaracja `xmlns:g` jest usuwana; elementy trafiają do przestrzeni „bez namespace". Parametry już bez prefiksu (np. `quantity_to_sell_on_facebook`) pozostają bez zmian.
+- **zmienić nazwę elementu** każdego parametru na własną (Enter = domyślna z pola `output`). Podmiana obsługuje formy `<xsl:element name="…">`, `<…>` i `</…>`; dla parametru emitującego kilka elementów zmienia element główny (`output`).
 
 ## Wyjście aplikacji
 
@@ -206,16 +231,39 @@ Nazwa struktury pochodzi z pola `name` w JSON struktury (np. `Google`, `Facebook
 
 ## Rozszerzanie aplikacji
 
-Aby dodać nowy parametr:
+> Pliki zaczynające się od `_` (np. `_TEMPLATE.json`, `_registry.json`) są **pomijane** przez generator.
 
-1. Utwórz `parameters_templates/nazwa.json` (opis) i `nazwa.xsl` (sama emisja).
-2. Zmienne obliczeniowe wynieś do `variables/nazwa_zmiennej.xsl` i dodaj wpis do `variables/_registry.json` (`order`, `uses`); wymień je w `createVars` parametru.
-3. Jeśli parametr używa helpera → dodaj go do `helpers: [...]`; nowy helper to plik w `helpers/` + wpis w `helpers/_registry.json`.
-4. Stałe globalne → plik w `variables/` z `"scope": "global"` w rejestrze.
-5. Aplikacja wykryje wszystko automatycznie (po nazwach i rejestrach).
+### Szablon i walidator
 
-Aby dodać nową strukturę:
+- **`parameters_templates/_TEMPLATE.json` + `_TEMPLATE.xsl`** — gotowy szkielet nowego parametru z opisem wszystkich pól i zasad (co wolno trzymać w `.xsl`, a co wynieść).
+- **`validate_params.py`** — sprawdza spójność bazy: `python validate_params.py` (exit 0 = OK).
+  Wykrywa m.in.: helper zadeklarowany bez pliku, helper wołany w `.xsl` a niezadeklarowany, `createVar` spoza rejestru i bez deklaracji inline, brak pliku zmiennej, `output` nieobecny w `.xsl`, złą kolejność `order` względem `uses`, martwe `createVars`/`configVars`, referencje `$zmienna` bez deklaracji.
+
+### Dodanie nowego parametru — krok po kroku
+
+1. Skopiuj `_TEMPLATE.json` → `nazwa.json` i `_TEMPLATE.xsl` → `nazwa.xsl` (ta sama nazwa bazowa; `name` w JSON = nazwa pliku).
+2. Uzupełnij `description` (EN) i `description_pl` (PL), `structure`, `context`, `output`.
+3. W `.xsl` zostaw **wyłącznie emisję** elementu. Zmienne:
+   - **poziom szablonu** → `variables/nazwa_zmiennej.xsl` + wpis w `variables/_registry.json` (`order`, `uses`), a nazwy wypisz w `createVars`,
+   - **branch-local** (wewnątrz `<xsl:when>`/`<xsl:if>`) → zostają w `.xsl`,
+   - **globalne** (np. `$upperLetters`) → nie deklaruj, są auto-wstrzykiwane.
+4. Helpery: wypisz w `helpers: [...]`. Nowy helper = plik w `helpers/` + wpis w `helpers/_registry.json` (`uses`, `globals`).
+5. `configVars`: przy wartościach listowych ustaw `delimeter` (generator zapyta frazami), a `default` zapisz już otoczony separatorem (`|kolor|`).
+6. Uruchom **`python validate_params.py`**, a następnie wygeneruj feed i sprawdź wynik na próbce (`products_export.xml`).
+
+### Aktualizacja istniejącego parametru z arkusza klienta
+
+1. Wyodrębnij blok `<xsl:element name="g:…">` ze źródłowego arkusza (np. `xslt/szablony/Facebook.xml`).
+2. Sprawdź, jakich **helperów** i **zmiennych globalnych** używa; brakujące dodaj do `helpers/` i `variables/` wraz z wpisami w rejestrach.
+3. Jeśli wariant różni się od istniejącego (inne pola/logika), **utwórz osobny parametr** z sufiksem kanału (jak `availability_facebook`, `shipping_facebook`) zamiast nadpisywać wspólny.
+4. `validate_params.py` → generacja → porównanie wyniku.
+
+### Dodanie nowej struktury
 
 1. Utwórz plik JSON w `structure_templates/` z definicją (`insertionPoints`).
 2. Utwórz plik XSLT w `structure_templates/` z pustymi szablonami.
 3. Aplikacja automatycznie je wykryje.
+
+### Dodanie nowego języka
+
+Dodaj `lang/kod.json` (klucz `_name` = etykieta w menu) — bez zmian w kodzie. Opcjonalnie `description_<kod>` w parametrach.
