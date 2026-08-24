@@ -1,5 +1,5 @@
-<xsl:variable name="unit_of_measure" select="'kg'" />
-<xsl:variable name="rounding_format" select="'#.##'" />
+<xsl:variable name="unit_of_measure">kg</xsl:variable>
+<xsl:variable name="rounding_format">#.##</xsl:variable>
 
 <xsl:if test="@weight and @weight != 0">
          <xsl:variable name="value_in_unit">

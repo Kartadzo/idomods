@@ -17,23 +17,28 @@
     },
     {
       "name": "age_group_newborn",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_infant",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_toddler",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_kids",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_adult",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_id_w_menu",
@@ -41,23 +46,28 @@
     },
     {
       "name": "age_group_newborn_id_menu",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_infant_id_menu",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_toddler_id_menu",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_kids_id_menu",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     },
     {
       "name": "age_group_adult_id_menu",
-      "default": "|"
+      "default": "|",
+      "delimeter": "|"
     }
   ],
   "helpers": [],

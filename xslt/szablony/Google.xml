@@ -72,6 +72,7 @@
    <xsl:variable name='waga_nazwa_w_panelu'>Waga [g]</xsl:variable>
    <!-- dane potrzebne aby przekazywać informacje o pojemności -->
    <xsl:variable name='pojemnosc_nazwa_w_panelu'>Pojemność [ml]</xsl:variable>
+
    <!-- Ogranicz analizę nazw do id kategorii produktu -->
    <!-- Jeśli puste - sprawdź każde -->
    <xsl:variable name='jednostki_-_analiza_nazwy_z_kategorii'>|</xsl:variable>
@@ -152,6 +153,7 @@
                             and ../@language = iaiext:pricecomparator_name/@xml:lang">
                <xsl:call-template name="wordFormat">
                   <xsl:with-param name="text" select="substring(iaiext:pricecomparator_name[@xml:lang = ../../@language]/., 1, 146)" tunnel="yes" />
+                  <xsl:with-param name="cerrected" select="$corrected"  tunnel="yes"/>
                </xsl:call-template>
                <xsl:if test="string-length(iaiext:pricecomparator_name[@xml:lang = ../../@language]/.) >= 146">
                   <xsl:text disable-output-escaping="yes">...</xsl:text>
@@ -160,6 +162,7 @@
             <xsl:otherwise>
                <xsl:call-template name="wordFormat">
                   <xsl:with-param name="text" select="substring(description/name/., 1, 146)" tunnel="yes" />
+                  <xsl:with-param name="cerrected" select="$corrected" tunnel="yes" />
                </xsl:call-template>
                <xsl:if test="string-length(description/name/.) >= 146 and description/name/. != ''">
                   <xsl:text disable-output-escaping="yes">...</xsl:text>
@@ -414,6 +417,11 @@
                <xsl:value-of select="$var_google_product_category" />
             </xsl:element>
          </xsl:when>
+         <xsl:when test="iaiext:price_compare_categories/iaiext:price_comparison">
+				<xsl:element name="g:google_product_category">
+					<xsl:value-of select="iaiext:price_compare_categories/iaiext:price_comparison/@category_id"/>
+				</xsl:element>
+         </xsl:when>
          <xsl:when test="category_idosell/@path != ''">
             <xsl:element name="g:google_product_category">
                <xsl:value-of select="category_idosell/@path"></xsl:value-of>
@@ -421,20 +429,42 @@
          </xsl:when>
       </xsl:choose>
       
-      <!-- g product type -->
-      <xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]">
-         <xsl:for-each select="iaiext:item[position() &lt; 6 and not(contains(@textid, ../../../../producer/@name))]">
+      <!-- 2026-07-15 - MD -->
+      <xsl:choose>
+         <xsl:when test="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]/iaiext:item[1]/@id != ''">
+            <xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]">
+               <xsl:for-each select="iaiext:item[position() &lt; 6]">
+                  <xsl:element name="g:product_type">
+                     <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                     <xsl:call-template name="string-replace-all">
+                        <xsl:with-param name="text" select="@textid" tunnel="yes" />
+                        <xsl:with-param name="replace" select="'\'" tunnel="yes" />
+                        <xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
+                     </xsl:call-template>
+                     <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                  </xsl:element>
+               </xsl:for-each>
+            </xsl:for-each>
+         </xsl:when>
+         <xsl:when test="category_idosell/@path != ''">
+            <xsl:element name="g:product_type">
+               <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+               <xsl:value-of select="category_idosell/@path"></xsl:value-of>
+               <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </xsl:element>
+         </xsl:when>
+         <xsl:when test="category/@name != '' and category/@id != '0'">
             <xsl:element name="g:product_type">
                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
                <xsl:call-template name="string-replace-all">
-                  <xsl:with-param name="text" select="@textid" tunnel="yes" />
-                  <xsl:with-param name="replace" select="'\'" tunnel="yes" />
+                  <xsl:with-param name="text" select="category/@name" tunnel="yes" />
+                  <xsl:with-param name="replace" select="'/'" tunnel="yes" />
                   <xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
                </xsl:call-template>
                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
             </xsl:element>
-         </xsl:for-each>
-      </xsl:for-each>
+         </xsl:when>
+      </xsl:choose>
       
       <xsl:choose>
          <xsl:when test="images/icons/auction_icon/@url">
@@ -598,78 +628,78 @@
             </xsl:element>
          </xsl:when>
       </xsl:choose>
-      
-      <!-- kolor -->
-      <!-- 2026-01-29 - MD -->
-      <xsl:choose>
-         <xsl:when test="parameters/parameter/@context_id = 'CONTEXT_COLOR'">
-            <xsl:element name="g:color">
-               <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-               <xsl:for-each select="parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]">
-                  <xsl:choose>
-                     <xsl:when test="position() = 1">
+
+        <!-- kolor -->
+        <!-- 2026-08-03 - MD -->
+        <xsl:choose>
+            <xsl:when test="parameters/parameter/@context_id = 'CONTEXT_COLOR'">
+                <xsl:element name="g:color">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:for-each select="parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]">
+                        <xsl:choose>
+                            <xsl:when test="position() = 1">
+                                <xsl:value-of select="@name" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>/</xsl:text>
+                                <xsl:value-of select="@name" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each>
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </xsl:element>
+            </xsl:when>
+            <xsl:when test="$kolor_nazwa_w_panelu != '' and parameters/parameter[@hide = 'n' and 
+                            contains(translate($kolor_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
+                <xsl:variable name='kolor_get' select="parameters/parameter[@hide = 'n' and 
+                                                       contains(translate($kolor_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                       ]/@name" />
+                <xsl:variable name="value">
+                    <xsl:for-each select="parameters/parameter[@name= $kolor_get]/value">
                         <xsl:value-of select="@name" />
-                     </xsl:when>
-                     <xsl:otherwise>
                         <xsl:text>/</xsl:text>
-                        <xsl:value-of select="@name" />
-                     </xsl:otherwise>
-                  </xsl:choose>
-               </xsl:for-each>
-               <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-            </xsl:element>
-         </xsl:when>
-         <xsl:when test="$kolor_nazwa_w_panelu != '' and parameters/parameter[@hide = 'n' and 
-                         contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
-            <xsl:variable name='kolor_get' select="parameters/parameter[@hide = 'n' and 
-                                                   contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
-                                                   ]/@name" />
+                    </xsl:for-each>
+                </xsl:variable>
+                <xsl:variable name="value_tokenized">
+                    <xsl:call-template name="tokenize">
+                        <xsl:with-param name="text" select="substring(normalize-space($value),1,100)" />
+                        <xsl:with-param name="delimiter" select="'/'" />
+                    </xsl:call-template>
+                </xsl:variable>
+                <xsl:element name="g:color">
+                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                    <xsl:value-of select="substring($value_tokenized, 1, string-length($value_tokenized) - 1)" />
+                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                </xsl:element>
+            </xsl:when>
+        </xsl:choose>
+        
+        <!-- materiał -->
+        <!-- 2026-08-03 - MD -->
+        <xsl:if test="$material_nazwa_w_panelu != '' and parameters/parameter[@hide = 'n' and 
+                      contains(translate($material_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
+            <xsl:variable name='material_get' select="parameters/parameter[@hide = 'n' and 
+                                                      contains(translate($material_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                      ]/@name" />
             <xsl:variable name="value">
-               <xsl:for-each select="parameters/parameter[@name= $kolor_get]/value">
-                  <xsl:value-of select="@name" />
-                  <xsl:text>/</xsl:text>
-               </xsl:for-each>
+                <xsl:for-each select="parameters/parameter[@name= $material_get]/value">
+                    <!-- <xsl:choose><xsl:when test=" position()= 1"><xsl:value-of select="@name" /></xsl:when><xsl:otherwise><xsl:text>/</xsl:text><xsl:value-of select="@name" /></xsl:otherwise></xsl:choose> -->
+                    <xsl:value-of select="@name" />
+                    <xsl:text>/</xsl:text>
+                </xsl:for-each>
             </xsl:variable>
             <xsl:variable name="value_tokenized">
-               <xsl:call-template name="tokenize">
-                  <xsl:with-param name="text" select="substring(normalize-space($value),1,100)" />
-                  <xsl:with-param name="delimiter" select="'/'" />
-               </xsl:call-template>
+                <xsl:call-template name="tokenize">
+                    <xsl:with-param name="text" select="substring(normalize-space($value),1,200)" />
+                    <xsl:with-param name="delimiter" select="'/'" />
+                </xsl:call-template>
             </xsl:variable>
-            <xsl:element name="g:color">
-               <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-               <xsl:value-of select="substring($value_tokenized, 1, string-length($value_tokenized) - 1)" />
-               <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            <xsl:element name="g:material">
+                <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                <xsl:value-of select="substring($value_tokenized, 1, string-length($value_tokenized) - 1)" />
+                <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
             </xsl:element>
-         </xsl:when>
-      </xsl:choose>
-      
-      <!-- materiał -->
-      <!-- 2026-01-29 - MD -->
-      <xsl:if test="$material_nazwa_w_panelu != '' and parameters/parameter[@hide = 'n' and 
-                    contains($material_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
-         <xsl:variable name='material_get' select="parameters/parameter[@hide = 'n' and 
-                                                   contains($material_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
-                                                   ]/@name" />
-         <xsl:variable name="value">
-            <xsl:for-each select="parameters/parameter[@name= $material_get]/value">
-               <!-- <xsl:choose><xsl:when test=" position()= 1"><xsl:value-of select="@name" /></xsl:when><xsl:otherwise><xsl:text>/</xsl:text><xsl:value-of select="@name" /></xsl:otherwise></xsl:choose> -->
-               <xsl:value-of select="@name" />
-               <xsl:text>/</xsl:text>
-            </xsl:for-each>
-         </xsl:variable>
-         <xsl:variable name="value_tokenized">
-            <xsl:call-template name="tokenize">
-               <xsl:with-param name="text" select="substring(normalize-space($value),1,200)" />
-               <xsl:with-param name="delimiter" select="'/'" />
-            </xsl:call-template>
-         </xsl:variable>
-         <xsl:element name="g:material">
-            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-            <xsl:value-of select="substring($value_tokenized, 1, string-length($value_tokenized) - 1)" />
-            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-         </xsl:element>
-      </xsl:if>
+        </xsl:if>
       
       <!-- 2026.05.07 MD -->
       <!-- płeć -->
@@ -912,7 +942,7 @@
                             or contains($jednostki_-_analiza_nazwy_z_kategorii, concat('|',$value_pom,'|'))">
                <xsl:variable name="cleanTitle">
                   <xsl:call-template name="extract-measure">
-                     <xsl:with-param name="str" select="translate($wybierzZrodloNazwy,$upperLetters,$lowerLetters)"/>
+                     <xsl:with-param name="str" select="translate($nazwaTowaru,$upperLetters,$lowerLetters)"/>
                   </xsl:call-template>
                </xsl:variable>
                <xsl:call-template name="normalize-measure">
@@ -1282,11 +1312,18 @@
                </xsl:choose>
             </xsl:element>
          </xsl:otherwise>
-      </xsl:choose>
+      </xsl:choose>      
       
       <xsl:element name="g:size">
          <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-         <xsl:value-of select="@name" />
+         <xsl:choose>
+            <xsl:when test="../../parameters/parameter/@name = 'Rozmiar'">
+               <xsl:value-of select="../../parameters/parameter[@name = 'Rozmiar']/value/@name" />
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="@name" />
+            </xsl:otherwise>
+         </xsl:choose>
          <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
       </xsl:element>
       
@@ -1491,7 +1528,7 @@
          <xsl:when test="contains($text, $open) and not(contains(substring-after($text, $open), $close))">
             <xsl:value-of select="normalize-space($text)" />
          </xsl:when>
-         <xsl:when test="contains($text, $open) and $depth &lt; 1000">
+         <xsl:when test="contains($text, $open) and $depth &lt; 1200">
             <xsl:value-of select="substring-before($text, $open)" />
             <xsl:text><![CDATA[ ]]></xsl:text>
             <xsl:call-template name="strip-tags">
@@ -1527,6 +1564,8 @@
    <xsl:template name="wordFormat">
       <xsl:param name="text" />
       <xsl:param name="delimiter" select="' '" />
+      <xsl:param name="correct" select="'\GRATIS\'" />
+
       <xsl:choose>
          <xsl:when test="contains($text, $delimiter) and not(contains(substring-before($text, $delimiter),'/'))">
             <xsl:variable name="word">
@@ -1535,7 +1574,7 @@
                <xsl:text><![CDATA[\]]></xsl:text>
             </xsl:variable>
             <xsl:choose>
-               <xsl:when test="contains($corrected, $word)">
+               <xsl:when test="contains($correct, $word)">
                   <xsl:value-of select="substring(translate($word, '\', ''),1,1)" />
                   <xsl:value-of select="translate(substring(translate($word, '\', ''),2), $upperLetters, $lowerLetters)" />
                   <xsl:value-of select="$delimiter" />
@@ -1559,7 +1598,7 @@
                <xsl:text><![CDATA[\]]></xsl:text>
             </xsl:variable>
             <xsl:choose>
-               <xsl:when test="contains($corrected, $word)">
+               <xsl:when test="contains($correct, $word)">
                   <xsl:value-of select="substring(translate($word, '\', ''),1,1)" />
                   <xsl:value-of select="translate(substring(translate($word, '\', ''),2), $upperLetters, $lowerLetters)" />
                   <xsl:text><![CDATA[/]]></xsl:text>
@@ -1583,7 +1622,7 @@
                <xsl:text><![CDATA[\]]></xsl:text>
             </xsl:variable>
             <xsl:choose>
-               <xsl:when test="contains($corrected, $word)">
+               <xsl:when test="contains($correct, $word)">
                   <xsl:value-of select="substring(translate($word, '\', ''),1,1)" />
                   <xsl:value-of select="translate(substring(translate($word, '\', ''),2), $upperLetters, $lowerLetters)" />
                </xsl:when>

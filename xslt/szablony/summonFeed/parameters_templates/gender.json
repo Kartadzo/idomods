@@ -52,6 +52,7 @@
       "delimeter": "|"
     }
   ],
+  "globals": ["upperLetters", "lowerLetters"],
   "helpers": [],
   "notes": "Supports explicit gender parameter mapping and menu ID-based gender detection."
 }

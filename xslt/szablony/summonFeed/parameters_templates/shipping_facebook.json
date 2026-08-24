@@ -25,10 +25,18 @@
     {
       "name": "Koszt_dostawy_wiekszych_zamowien",
       "default": "0.00"
+    },
+    {
+      "name": "Kraj_dostawy",
+      "default": "PL"
+    },
+    {
+      "name": "Serwis_dostawy_zamówienia",
+      "default": "Kurier Standard"
     }
   ],
   "createVars": ["product_currency"],
-  "globals": ["Kraj_dostawy", "Serwis_dostawy_zamówienia"],
+  "globals": [],
   "helpers": [],
   "notes": "Wariant Facebooka: emituje wyłącznie g:country, g:service i g:price. Zależność: product_currency (współdzielony z price/shipping). Kraj_dostawy i Serwis_dostawy_zamówienia to zmienne globalne (feed)."
 }

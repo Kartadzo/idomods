@@ -11,8 +11,14 @@
     "producer/@name"
   ],
   "parameterContexts": [],
-  "configVars": [],
-  "globals": ["corrected", "upperLetters", "lowerLetters"],
+  "configVars": [
+    {
+      "name": "corrected",
+      "default": "\\GRATIS\\",
+      "delimeter": "\\"
+    }
+   ],
+  "globals": ["upperLetters", "lowerLetters"],
   "createVars": [
     "nazwaTowaru",
     "upperCaseCount",

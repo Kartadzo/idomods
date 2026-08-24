@@ -580,6 +580,11 @@
                 <xsl:text>|Promocja|</xsl:text>
             </xsl:if>
         </g:custom_label_1>
+        <g:custom_label_0>
+            <xsl:if test="iaiext:priority_menu/site/menu/item/@id = '3571'">
+                <xsl:text>|Enterprise|</xsl:text>
+            </xsl:if>
+        </g:custom_label_0>
     </xsl:template>
     
     <xsl:template name="productSizeMatter"

@@ -18,19 +18,19 @@
     <xsl:variable name="corrected" select="'\GRATIS\'" />
     
     <!-- dane potrzebne aby przekazywać informacje o płci - nazwa parametru lub id kategorii menu -->
-    <xsl:variable name='gender_nazwa_w_panelu'>Pohlavie</xsl:variable>
-    <xsl:variable name='gender_male'>|Chlapec|Muži|</xsl:variable>
-    <xsl:variable name='gender_female'>|Dievča|Žena|</xsl:variable>
+    <xsl:variable name='gender_nazwa_w_panelu'>Gender</xsl:variable>
+    <xsl:variable name='gender_male'>|Fiú|Férfi|</xsl:variable>
+    <xsl:variable name='gender_female'>|Lány|Nő|</xsl:variable>
     <xsl:variable name='gender_unisex'>|Unisex|</xsl:variable>
     <xsl:variable name='gender_id_w_panelu'></xsl:variable>
     <xsl:variable name='gender_male_id_menu'></xsl:variable>
     <xsl:variable name='gender_female_id_menu'></xsl:variable>
     <xsl:variable name='gender_unisex_id_menu'></xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o grupie wiekowej - nazwa parametru lub id kategorii menu -->
-    <xsl:variable name='age_group_nazwa_w_panelu'>Vek</xsl:variable>
+    <xsl:variable name='age_group_nazwa_w_panelu'>Kor</xsl:variable>
     <xsl:variable name='age_group_newborn'>|0+|</xsl:variable>
     <xsl:variable name='age_group_infant'>|3m+|3+|</xsl:variable>
-    <xsl:variable name='age_group_toddler'>|18 mesiacov +|3-6 rokov|2-3 roky|</xsl:variable>
+    <xsl:variable name='age_group_toddler'>|18 miesc. +|3-6 év|2-3 év|</xsl:variable>
     <xsl:variable name='age_group_kids'>|5+|</xsl:variable>
     <xsl:variable name='age_group_adult'>|</xsl:variable>
     <xsl:variable name='age_group_id_w_menu'></xsl:variable>
@@ -41,9 +41,9 @@
     <xsl:variable name='age_group_adult_id_menu1'></xsl:variable>
     <xsl:variable name='age_group_adult_id_menu2'></xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o kolorze -->
-    <xsl:variable name='kolor_nazwa_w_panelu'>|farba|</xsl:variable>
+    <xsl:variable name='kolor_nazwa_w_panelu'>|színes|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o materiale -->
-    <xsl:variable name='material_nazwa_w_panelu'>|materiál|</xsl:variable>
+    <xsl:variable name='material_nazwa_w_panelu'>|anyag|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o produkcie product_highlight -->
     <xsl:variable name='informacje_wyroznione_nazwa_w_panelu'>|wyróżnione|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o wadze -->
@@ -58,9 +58,9 @@
         <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
             <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
             <channel>
-                <title>4fizjo.sk</title>
-                <link>https://4fizjo.sk/</link>
-                <description>Produkty ze sklepu https://4fizjo.sk/</description>
+                <title>4fizjo.hu</title>
+                <link>https://4fizjo.hu/</link>
+                <description>Produkty ze sklepu https://4fizjo.hu/</description>
                 <xsl:for-each select="/offer/products/product[
                                       price/@gross &gt; 0 and 
                                   description/name/. != '']">
@@ -357,19 +357,11 @@
         </xsl:choose>
         
         <!-- g product type -->
-        <xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]">
-            <xsl:for-each select="iaiext:item[position() &lt; 10]">
-                <xsl:element name="g:product_type">
-                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                    <xsl:call-template name="string-replace-all">
-                        <xsl:with-param name="text" select="@textid" tunnel="yes" />
-                        <xsl:with-param name="replace" select="'\'" tunnel="yes" />
-                        <xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
-                    </xsl:call-template>
-                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                </xsl:element>
-            </xsl:for-each>
-        </xsl:for-each>
+        <xsl:element name="g:product_type">
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:value-of select="parameters/parameter[@id = 8059]/value/@name"/>
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </xsl:element>
         
         <xsl:choose>
             <xsl:when test="images/icons/auction_icon/@url">

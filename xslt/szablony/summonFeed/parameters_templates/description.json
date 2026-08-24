@@ -35,5 +35,5 @@
     "strip-tags",
     "tokenize"
   ],
-  "notes": "Creates a safe description value with fallback from product name and parameters when description fields are empty or too short. Źródło: xslt/szablony/Facebook.xml (2026.07.08) — normalizuje encje HTML (nbsp, eacute, oacute…) przez string-normalize-all."
+  "notes": "Creates a safe description value with fallback from product name and parameters when description fields are empty or too short. Normalizuje encje HTML (nbsp, eacute, oacute…) przez string-normalize-all."
 }

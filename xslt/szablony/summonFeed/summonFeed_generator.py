@@ -36,6 +36,7 @@ class SummonFeedGenerator:
         self.lang: str = 'pl'
         self.output_overrides: Dict[str, str] = {}
         self.prefix_override: Optional[str] = None
+        self._config_answers: Dict[str, str] = {}
 
         self._load_data()
 
@@ -196,43 +197,106 @@ class SummonFeedGenerator:
         
         return filtered
     
+    # ---------------------------------------------------------
+    #  PARAMETRY WZAJEMNIE WYKLUCZAJĄCE SIĘ (exclusiveGroup)
+    # ---------------------------------------------------------
+
+    def _exclusive_groups(self, structure_name: str) -> Dict[str, List[str]]:
+        """Grupy parametrów wykluczających się wzajemnie, dostępnych w danej strukturze:
+        nazwa grupy → lista nazw parametrów (np. 'link' → link, link_raw, link_default_id).
+        Z jednej grupy można wybrać najwyżej jeden parametr — wszystkie emitują ten sam
+        element wyjściowy, więc dwa naraz dałyby zduplikowane pole w feedzie."""
+        groups: Dict[str, List[str]] = {}
+        for param_name, info in sorted(self.parameters.items()):
+            data = info['data']
+            group = data.get('exclusiveGroup')
+            if not group or structure_name not in data.get('structure', []):
+                continue
+            groups.setdefault(group, []).append(param_name)
+        return groups
+
+    def _exclusive_default(self, members: List[str], structure_name: str) -> Optional[str]:
+        """Parametr z grupy zaznaczany domyślnie dla danej struktury: ten, który ma ją
+        w 'exclusiveDefaultFor'. Gdy żaden nie wskazuje tej struktury — pierwszy z listy."""
+        for name in members:
+            if structure_name in self.parameters[name]['data'].get('exclusiveDefaultFor', []):
+                return name
+        return members[0] if members else None
+
+    def _exclusive_conflicts(self, selected: Dict[str, List[str]],
+                             structure_name: str) -> List[Tuple[str, List[str]]]:
+        """Grupy, z których wybrano więcej niż jeden parametr: [(grupa, [wybrane]), …]."""
+        chosen = {p for params in selected.values() for p in params}
+        conflicts = []
+        for group, members in self._exclusive_groups(structure_name).items():
+            picked = [m for m in members if m in chosen]
+            if len(picked) > 1:
+                conflicts.append((group, picked))
+        return conflicts
+
     def _show_parameters_menu(self, available_params: Dict[str, List[str]]) -> Dict[str, List[str]]:
         """Pokaż menu wyboru parametrów."""
-        self._print_header(self.t('header_params'))
+        structure_name = self.selected_structure['data']['name']
+        groups = self._exclusive_groups(structure_name)
+        # parametr → (grupa, czy zalecany dla tej struktury)
+        group_of = {}
+        for group, members in groups.items():
+            recommended = self._exclusive_default(members, structure_name)
+            for m in members:
+                group_of[m] = (group, m == recommended)
 
-        selected = {}
+        while True:
+            self._print_header(self.t('header_params'))
+            if groups:
+                print(self.t('exclusive_hint') + "\n")
 
-        for context, param_names in sorted(available_params.items()):
-            print("\n" + self.t('context', context=context))
-            print("-" * 70)
+            selected = {}
 
-            # Wyświetl dostępne parametry
-            for i, param_name in enumerate(param_names, 1):
-                param_data = self.parameters[param_name]['data']
-                print(f"{i}. {param_name}: {self._desc(param_data)}")
+            for context, param_names in sorted(available_params.items()):
+                print("\n" + self.t('context', context=context))
+                print("-" * 70)
 
-            print()
-            print(self.t('params_hint'))
+                # Wyświetl dostępne parametry
+                for i, param_name in enumerate(param_names, 1):
+                    param_data = self.parameters[param_name]['data']
+                    tag = ""
+                    if param_name in group_of:
+                        group, is_default = group_of[param_name]
+                        tag = " " + self.t('exclusive_tag', group=group)
+                        if is_default:
+                            tag += " " + self.t('exclusive_recommended')
+                    print(f"{i}. {param_name}{tag}: {self._desc(param_data)}")
 
-            while True:
-                try:
-                    user_input = input(self.t('choice_for', context=context)).strip()
+                print()
+                print(self.t('params_hint'))
 
-                    if not user_input:  # Pomiń ten kontekst
-                        break
+                while True:
+                    try:
+                        user_input = input(self.t('choice_for', context=context)).strip()
 
-                    choices = [int(x.strip()) for x in user_input.split()]
+                        if not user_input:  # Pomiń ten kontekst
+                            break
 
-                    # Waliduj wybory
-                    if all(1 <= c <= len(param_names) for c in choices):
-                        selected[context] = [param_names[c - 1] for c in choices]
-                        break
-                    else:
-                        print(self.t('out_of_range'))
-                except ValueError:
-                    print(self.t('invalid_numbers'))
+                        choices = [int(x.strip()) for x in user_input.split()]
 
-        return selected
+                        # Waliduj wybory
+                        if all(1 <= c <= len(param_names) for c in choices):
+                            selected[context] = [param_names[c - 1] for c in choices]
+                            break
+                        else:
+                            print(self.t('out_of_range'))
+                    except ValueError:
+                        print(self.t('invalid_numbers'))
+
+            conflicts = self._exclusive_conflicts(selected, structure_name)
+            if not conflicts:
+                return selected
+
+            # z jednej grupy wybrano kilka parametrów — powtórz wybór
+            for group, picked in conflicts:
+                print("\n" + self.t('exclusive_conflict',
+                                    group=group, params=", ".join(picked)))
+            input("\n" + self.t('press_enter'))
 
     def _ask_output_names(self, selected: Dict[str, List[str]]) -> None:
         """Pozwól nadpisać prefiks 'g:' oraz nazwę elementu wyjściowego każdego parametru
@@ -310,6 +374,24 @@ class SummonFeedGenerator:
     def _get_config_vars(self, param_name: str) -> List[Dict]:
         return self.parameters[param_name]['data'].get('configVars', [])
 
+    def _selected_config_vars(self) -> Dict[str, Dict]:
+        """configVars wszystkich wybranych parametrów, po nazwie (pierwsza definicja wygrywa)."""
+        found: Dict[str, Dict] = {}
+        for params in self.selected_params.values():
+            for param_name in params:
+                for var in self._get_config_vars(param_name):
+                    found.setdefault(var['name'], var)
+        return found
+
+    def _get_config_value(self, var: Dict) -> str:
+        """Wartość configVara — pytana raz na nazwę w całym przebiegu generowania.
+        Ta sama configVar bywa deklarowana przez kilka parametrów (np. Kraj_dostawy
+        w 'link', 'shipping' i 'shipping_facebook') i musi mieć jedną wartość."""
+        name = var['name']
+        if name not in self._config_answers:
+            self._config_answers[name] = self._ask_single_config_var(var)
+        return self._config_answers[name]
+
     def _ask_for_config_vars(self, config_vars: List[Dict]) -> Dict[str, str]:
         values = {}
         if not config_vars:
@@ -318,7 +400,7 @@ class SummonFeedGenerator:
         print("\n" + self.t('configvars_header') + "\n")
 
         for var in config_vars:
-            values[var['name']] = self._ask_single_config_var(var)
+            values[var['name']] = self._get_config_value(var)
 
         return values
 
@@ -399,7 +481,7 @@ class SummonFeedGenerator:
             for var in self.parameters[param_name]['data'].get('configVars', []):
                 if var['name'] in seen_cfg:
                     continue
-                seen_cfg[var['name']] = self._ask_single_config_var(var)
+                seen_cfg[var['name']] = self._get_config_value(var)
         for name, value in seen_cfg.items():
             lines.append(f"      <xsl:variable name='{name}'>{value}</xsl:variable>")
 
@@ -431,7 +513,16 @@ class SummonFeedGenerator:
 
     def _build_xslt_structure(self) -> str:
         """Zbuduj ostateczny plik XSLT."""
+        # świeże odpowiedzi na configVary — GUI reużywa tę samą instancję
+        # przy kolejnych przebiegach kreatora
+        self._config_answers = {}
         structure_data = self.selected_structure['data']
+
+        # ostrzeż, gdy wybór omija menu/kreator (np. konfiguracja wczytana z pliku)
+        for group, picked in self._exclusive_conflicts(self.selected_params,
+                                                       structure_data['name']):
+            print(self.t('exclusive_conflict_build',
+                         group=group, params=", ".join(picked)))
         base_xsl = self._read_xslt_file(self.selected_structure['xsl_path'])
 
         # Znajdź i wypełnij każdy insertion point
@@ -518,7 +609,12 @@ class SummonFeedGenerator:
 
     def _inject_globals(self, base_xsl: str) -> str:
         """Wstaw po <xsl:output> te zmienne globalne (scope=global z rejestru),
-        które są referowane ($nazwa) w arkuszu, a nie są jeszcze zadeklarowane."""
+        które są referowane ($nazwa) w arkuszu, a nie są jeszcze zadeklarowane.
+
+        Jeśli zmienna globalna jest jednocześnie configVarem wybranego parametru
+        (np. Kraj_dostawy w 'link'), wstawiamy wartość z konfiguracji zamiast
+        treści pliku — inaczej ustawienie użytkownika byłoby po cichu ignorowane."""
+        config_vars = self._selected_config_vars()
         decls = []
         for name, meta in self.variables_registry.items():
             if meta.get("scope") != "global":
@@ -527,6 +623,10 @@ class SummonFeedGenerator:
             declared = re.search(
                 r'<xsl:variable\s+name=["\']' + re.escape(name) + r'["\']', base_xsl)
             if referenced and not declared:
+                if name in config_vars:
+                    value = self._get_config_value(config_vars[name])
+                    decls.append(f"   <xsl:variable name='{name}'>{value}</xsl:variable>")
+                    continue
                 global_file = self.variables_path / f"{name}.xsl"
                 if global_file.exists():
                     decls.append("   " + self._read_xslt_file(global_file).strip())

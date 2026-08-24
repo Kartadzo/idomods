@@ -71,8 +71,33 @@
                                  price/@gross &gt; 0 
                                  and description/name/. != ''
                                  and @type != 'packaging'
-                                 and not(iaiext:priority_menu/site/menu/item/@id = '5341')
-                                 ]">
+                                 and not(iaiext:priority_menu/site/menu/item/@id = '5418' 
+                                or iaiext:priority_menu/site/menu/item/@id = '5417')
+                                 ]">     
+                    <!-- and not(iaiext:priority_menu/site/menu/item/@id = '5341')
+                                or iaiext:priority_menu/site/menu/item/@id = '5467'
+                                or iaiext:priority_menu/site/menu/item/@id = '5475'
+                                or iaiext:priority_menu/site/menu/item/@id = '5419'
+                                  or @id = '5670' or @id = '6220' or @id = '5849' or @id = '5922' or @id = '6195'
+                                  or @id = '5916' or @id = '4815' or @id = '5272' or @id = '2451' or @id = '4561'
+                                  or @id = '5160' or @id = '5096' or @id = '5213' or @id = '5152' or @id = '5014'
+                                  or @id = '6185' or @id = '6184' or @id = '6301' or @id = '6189' or @id = '6169'
+                                  or @id = '6165' or @id = '6123' or @id = '6108' or @id = '5993' or @id = '5962'
+                                  or @id = '5954' or @id = '5949' or @id = '5886' or @id = '5843' or @id = '5839'
+                                  or @id = '5779' or @id = '5754' or @id = '5753' or @id = '5653' or @id = '5574'
+                                  or @id = '5515' or @id = '5509' or @id = '5295' or @id = '5293' or @id = '5181'
+                                  or @id = '5167' or @id = '4812' or @id = '4843' or @id = '4762' or @id = '4575'
+                                  or @id = '4574' or @id = '4562' or @id = '3160' or @id = '2547' or @id = '1150'
+                                  or @id = '1104' or @id = '1100' or @id = '202' or @id = '694' or @id = '6160'
+                                  or @id = '5889' or @id = '5604' or @id = '5483' or @id = '5374' or @id = '5193'
+                                  or @id = '4739' or @id = '4576' or @id = '4483' or @id = '4076' or @id = '3291'
+                                  or @id = '3508' or @id = '3078' or @id = '3038' or @id = '3040' or @id = '1042'
+                                  or @id = '1261' or @id = '1966' or @id = '2538' or @id = '3523' or @id = '6465'
+                                  or @id = '4363' or @id = '6160' or @id = '4618' or @id = '3078' or @id = '289'
+                                  or @id = '504' or @id = '1622' or @id = '550' or @id = '6095' or @id = '2888'
+                                  or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000'
+                                  or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000'
+                                  or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000' or @id = '00000' -->
                     <!-- Id towaru -->
                     <xsl:choose>
                         <xsl:when test="count(sizes/size) &lt; 1">

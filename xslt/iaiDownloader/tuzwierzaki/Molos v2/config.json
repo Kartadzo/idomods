@@ -1,0 +1,721 @@
+{
+  "interval_minutes": 60,
+  "brands": {
+    "4DOGS": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "8in1": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Acana": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Adbi": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Alegia": {
+      "enabled": true,
+      "margin": 50.0
+    },
+    "Amanova": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Animonda": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Animonda Carny": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Animonda GranCarno": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Animonda Integra": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Animonda vom Feinsten": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Applaws": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Arkwrights": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Arm&Hammer": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Balto": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Barry King": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Baskerville": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Beaphar": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Bimbay": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Biofaktor": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Boomer Ball": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Bosch": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Botaniqa": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Bozita": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Brit": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "BUBA Pet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Bult": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Calcium": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Calitti": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Camon": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Carnilove": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Cat's Best": {
+      "enabled": true,
+      "margin": 50.0
+    },
+    "Catz Finefood": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Certech": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Chaba": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Champion": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Chewies": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Chipsi": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Chrup&Go": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Chuckit!": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Collar": {
+      "enabled": true,
+      "margin": 50.0
+    },
+    "Curver": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "DermaPharm": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Dermoscent": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Dingo": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Diversa": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Dogz Finefood": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Dolfos": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Dolina Noteci": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Dr Seidel": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Dr.Zoo": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Drewuś": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Earth Rated": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Empire": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Eurowet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Feliway": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Felix": {
+      "enabled": true,
+      "margin": 50.0
+    },
+    "Felix Fantastic": {
+      "enabled": true,
+      "margin": 25.0
+    },
+    "Felix Sensations": {
+      "enabled": true,
+      "margin": 20.0
+    },
+    "Ferplast": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Flamingo": {
+      "enabled": true,
+      "margin": 50.0
+    },
+    "Flexi": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Food Studio Chefs": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Francodex": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Fraspo": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Friskies": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "FURminator": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Gattino": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Gilpa": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Gimpet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Golden Grey": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Gottlieb": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Gourmet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Grande Finale": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "H3D": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Halti": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Healthy": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Herbal Pets": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "IdeaPet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Josera": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "JW Pet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Kattovit": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Kippy": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Kiwi Walker": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "LickiMat": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Little One": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Lovcat": {
+      "enabled": true,
+      "margin": 20.0
+    },
+    "Lovdog": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Lucky Jim": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Lucky Lou": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Maced": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Magnum": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Matteo": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Mediterranean Natural": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Megan": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Meglium": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Meridian Animal Health": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Miamor": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Miamor Feine Filets": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Miamor Ragout Royale": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "MidWest": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Mikita": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Miluś": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "MIMIKO Pets": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "MyKotty": {
+      "enabled": true,
+      "margin": 20.0
+    },
+    "Natural-Vit": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Nestor": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Nutra Nuggets": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Opharm": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Orijen": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Outward Hound": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Over Zoo": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Paka Zwierzaka": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Pan Mięsko": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Pawerce": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Pawsome": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Pet Corrector": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Pet Supplies": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "PetDreamHouse": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Petstages": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Pigwa drzewna": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Piper": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Primordial": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Profine": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Protexin Veterinary": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Purbello": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Purina": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Purina Cat Chow": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Purina Dog Chow": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Purina Pro Plan": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Rafi": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Rinti": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Rio": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Robto": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Royal Canin Breed": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Royal Canin Feline": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Royal Canin Linia Weterynaryjna": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Royal Canin Size": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Royal Canin Veterinary Diet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Sabunol": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Sammy's": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Sanabelle": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "ScanVet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Simple Solution": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "SloDog": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Smoothie": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Spark": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Spin": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Stefanplast": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Sum-Plast": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Super Benek": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Super Pinio": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Taste of the Wild": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Tetra": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Toby's Choice": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Trixie": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Trovet": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Tymofarm": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Urine Off": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Vector-Food": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Versele-Laga": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Vet's Best": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "VetExpert": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Vetfood": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Vetoquinol": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Vitakraft": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Vitapol": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Vivere": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Whimzees": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Wiejska Zagroda": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Wiko": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Wildcat": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Wio-Mar": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Wolfsblut": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Woolf": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Yarro": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Yow Up!": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Yummeez": {
+      "enabled": true,
+      "margin": 0.0
+    },
+    "Zolux": {
+      "enabled": true,
+      "margin": 0.0
+    }
+  }
+}

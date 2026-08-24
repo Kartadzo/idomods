@@ -608,7 +608,8 @@
                                 or ../../@id = 37776
                                 or ../../@id = 75966
                                 or ../../@id = 76796
-                                or ../../@id = 84130">
+                                or ../../@id = 84130
+                                or ../../@id = 37767">
                   <g:link>
                     <xsl:value-of select="../../card/@url"/>
                     <xsl:text disable-output-escaping="yes">?discount_code=PROMO5</xsl:text>

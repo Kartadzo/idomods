@@ -589,22 +589,6 @@
                </xsl:choose>
             </xsl:for-each> -->
 
-                     <xsl:choose>
-                        <xsl:when test="../../images/icons/auction_icon/@url">
-                           <g:image_link>
-                              <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                              <xsl:value-of select="../../images/icons/auction_icon/@url"></xsl:value-of>
-                              <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                           </g:image_link>
-                           <xsl:for-each select="../../images/large/image[position() &lt;= 10]">
-                              <g:additional_image_link>
-                                 <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                                 <xsl:value-of select="@url" />
-                                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                              </g:additional_image_link>
-                           </xsl:for-each>
-                        </xsl:when>
-                        <xsl:otherwise>
                            <xsl:variable name="vLowest">
                               <xsl:for-each select="../../images/large/image/@iaiext:priority">
                                  <xsl:sort data-type="number" />
@@ -632,8 +616,6 @@
                                  </xsl:otherwise>
                               </xsl:choose>
                            </xsl:for-each>
-                        </xsl:otherwise>
-                     </xsl:choose>
                      
                      <!-- jeśli na sklepie są jakieś zestawy -->
                      <g:is_bundle>

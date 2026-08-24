@@ -16,7 +16,6 @@
   "upperLetters":                { "scope": "global" },
   "lowerLetters":                { "scope": "global" },
   "unitsList":                   { "scope": "global" },
-  "corrected":                   { "scope": "global" },
 
   "Czas_obsługi_zamówienia_na_magazynie": { "scope": "global" },
   "Czas_dostawy_zamówienia":              { "scope": "global" },

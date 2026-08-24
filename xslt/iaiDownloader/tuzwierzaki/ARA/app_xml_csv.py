@@ -69,7 +69,7 @@ for child in records[0]:
 
 os.makedirs(os.path.dirname(out_csv) or '.', exist_ok=True)
 with open(out_csv, 'w', newline='', encoding='utf-8') as csvfile:
-    writer = csv.writer(csvfile, delimiter=';')
+    writer = csv.writer(csvfile, delimiter=',')
     writer.writerow(columns)
     for rec in records:
         row = []

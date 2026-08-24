@@ -135,11 +135,13 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        
         <xsl:variable name="upperCaseCount">
             <xsl:call-template name="upperCaseCount">
                 <xsl:with-param name="text" select="$nazwaTowaru" />
             </xsl:call-template>
         </xsl:variable>
+        
         <xsl:variable name="lowerCaseCount">
             <xsl:call-template name="lowerCaseCount">
                 <xsl:with-param name="text" select="$nazwaTowaru" />
@@ -148,29 +150,470 @@
         
         <xsl:element name="g:title">
             <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-            <xsl:choose>
-                <xsl:when test="($lowerCaseCount div $upperCaseCount) &lt; 0.3">
-                    <!-- wszystkie litery oprócz pierwszej i producenta zamienia na małe litery -->
-                    <xsl:variable name="lower-text">
-                        <xsl:value-of select="concat(substring($nazwaTowaru, 1, 1), translate(substring(normalize-space($nazwaTowaru), 2), $upperLetters, $lowerLetters))" />
-                    </xsl:variable>
-                    <xsl:choose>
-                        <xsl:when test="contains($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))">
-                            <xsl:value-of select="substring-before($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
-                            <xsl:value-of select="producer/@name" />
-                            <xsl:value-of select="substring-after($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="$lower-text" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$nazwaTowaru" />
-                </xsl:otherwise>
-            </xsl:choose>
+            
+            <!-- bazowy tytuł po Twojej logice wielkości liter -->
+            <xsl:variable name="baseTitle">
+                <xsl:choose>
+                    <xsl:when test="($lowerCaseCount div $upperCaseCount) &lt; 0.3">
+                        <xsl:variable name="lower-text">
+                            <xsl:value-of select="concat(substring($nazwaTowaru, 1, 1),
+                                                  translate(substring(normalize-space($nazwaTowaru), 2),
+                                                  $upperLetters, $lowerLetters))" />
+                        </xsl:variable>
+                        <xsl:choose>
+                            <xsl:when test="contains($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))">
+                                <xsl:value-of select="substring-before($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
+                                <xsl:value-of select="producer/@name" />
+                                <xsl:value-of select="substring-after($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="$lower-text" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$nazwaTowaru" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <!-- rok i kraj z parametrów -->
+            <xsl:variable name="year" select="parameters/parameter[@name = 'Rok Wydania']/value/@name" />
+            <xsl:variable name="rawCountry" select="parameters/parameter[@name = 'Kraj']/value/@name" />
+            
+            <!-- normalizacja do małych liter -->
+            <xsl:variable name="titleLower" select="translate($baseTitle, $upperLetters, $lowerLetters)" />
+            <xsl:variable name="countryLower" select="translate($rawCountry, $upperLetters, $lowerLetters)" />
+            
+            <!-- rozszerzona mapa krajów -->
+            <xsl:variable name="countryNormalized">
+                <xsl:choose>
+                    <!-- Japonia -->
+                    <xsl:when test="contains($countryLower,'jap') or contains($countryLower,'japan') or contains($countryLower,'japonia')">
+                        <xsl:text>Japonia</xsl:text>
+                    </xsl:when>
+                    <!-- Stany Zjednoczone -->
+                    <xsl:when test="contains($countryLower,'us')">
+                        <xsl:text>Stany Zjednoczone</xsl:text>
+                    </xsl:when>
+                    <!-- Jamajka -->
+                    <xsl:when test="contains($countryLower,'jamaica')">
+                        <xsl:text>Jamajka</xsl:text>
+                    </xsl:when>
+                    <!-- Nowa Zelandia -->
+                    <xsl:when test="contains($countryLower,'new zeland')">
+                        <xsl:text>Nowa Zelandia</xsl:text>
+                    </xsl:when>
+                    <!-- Europa -->
+                    <xsl:when test="contains($countryLower,'eu')">
+                        <xsl:text>Europe</xsl:text>
+                    </xsl:when>
+                    <!-- Wielka Brytania -->
+                    <xsl:when test="contains($countryLower,'uk')">
+                        <xsl:text>Wielka Brytania</xsl:text>
+                    </xsl:when>
+                    <!-- Włochy -->
+                    <xsl:when test="contains($countryLower,'italy')">
+                        <xsl:text>Włochy</xsl:text>
+                    </xsl:when>
+                    <!-- Skandynawia -->
+                    <xsl:when test="contains($countryLower,'scandinavia')">
+                        <xsl:text>SKANDYNAWIA</xsl:text>
+                    </xsl:when>
+                    <!-- Holandia -->
+                    <xsl:when test="contains($countryLower,'holland') or contains($countryLower,'nl')">
+                        <xsl:text>Holandia</xsl:text>
+                    </xsl:when>
+                    <!-- Niemcy -->
+                    <xsl:when test="contains($countryLower,'germany')">
+                        <xsl:text>Niemcy</xsl:text>
+                    </xsl:when>
+                    <!-- Hiszpania -->
+                    <xsl:when test="contains($countryLower,'spain')">
+                        <xsl:text>HISZPANIA</xsl:text>
+                    </xsl:when>
+                    <!-- Francja -->
+                    <xsl:when test="contains($countryLower,'france')">
+                        <xsl:text>Francja</xsl:text>
+                    </xsl:when>
+                    <!-- USA -->
+                    <xsl:when test="
+                                contains($countryLower,'usa') or
+                                contains($countryLower,'us') or
+                                contains($countryLower,'u.s.') or
+                                contains($countryLower,'united states') or
+                                contains($countryLower,'america') or
+                                contains($countryLower,'ameryka')
+                                ">
+                        <xsl:text>Stany Zjednoczone</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Wielka Brytania -->
+                    <xsl:when test="
+                                contains($countryLower,'uk') or
+                                contains($countryLower,'u.k.') or
+                                contains($countryLower,'united kingdom') or
+                                contains($countryLower,'england') or
+                                contains($countryLower,'gb') or
+                                contains($countryLower,'wielka brytania')
+                                ">
+                        <xsl:text>Wielka Brytania</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Niemcy -->
+                    <xsl:when test="
+                                contains($countryLower,'germany') or
+                                contains($countryLower,'niemcy') or
+                                contains($countryLower,'deutschland') or
+                                contains($countryLower,'de')
+                                ">
+                        <xsl:text>Niemcy</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Japonia -->
+                    <xsl:when test="
+                                contains($countryLower,'japan') or
+                                contains($countryLower,'jap') or
+                                contains($countryLower,'jpn') or
+                                contains($countryLower,'japonia')
+                                ">
+                        <xsl:text>Japonia</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Francja -->
+                    <xsl:when test="
+                                contains($countryLower,'france') or
+                                contains($countryLower,'francja') or
+                                contains($countryLower,'fr')
+                                ">
+                        <xsl:text>Francja</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Włochy -->
+                    <xsl:when test="
+                                contains($countryLower,'italy') or
+                                contains($countryLower,'italia') or
+                                contains($countryLower,'włochy')
+                                ">
+                        <xsl:text>Włochy</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Holandia -->
+                    <xsl:when test="
+                                contains($countryLower,'holland') or
+                                contains($countryLower,'holandia') or
+                                contains($countryLower,'netherlands') or
+                                contains($countryLower,'nl')
+                                ">
+                        <xsl:text>Holandia</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Kanada -->
+                    <xsl:when test="
+                                contains($countryLower,'canada') or
+                                contains($countryLower,'kanada') or
+                                contains($countryLower,'ca')
+                                ">
+                        <xsl:text>Kanada</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Australia -->
+                    <xsl:when test="
+                                contains($countryLower,'australia') or
+                                contains($countryLower,'au')
+                                ">
+                        <xsl:text>Australia</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Hiszpania -->
+                    <xsl:when test="
+                                contains($countryLower,'spain') or
+                                contains($countryLower,'hiszpania') or
+                                contains($countryLower,'es')
+                                ">
+                        <xsl:text>Hiszpania</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Szwecja -->
+                    <xsl:when test="
+                                contains($countryLower,'sweden') or
+                                contains($countryLower,'szwecja') or
+                                contains($countryLower,'se')
+                                ">
+                        <xsl:text>Szwecja</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Norwegia -->
+                    <xsl:when test="
+                                contains($countryLower,'norway') or
+                                contains($countryLower,'norwegia') or
+                                contains($countryLower,'no')
+                                ">
+                        <xsl:text>Norwegia</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Dania -->
+                    <xsl:when test="
+                                contains($countryLower,'denmark') or
+                                contains($countryLower,'dania') or
+                                contains($countryLower,'dk')
+                                ">
+                        <xsl:text>Dania</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Finlandia -->
+                    <xsl:when test="
+                                contains($countryLower,'finland') or
+                                contains($countryLower,'finlandia') or
+                                contains($countryLower,'fi')
+                                ">
+                        <xsl:text>Finlandia</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Brazylia -->
+                    <xsl:when test="
+                                contains($countryLower,'brazil') or
+                                contains($countryLower,'brazylia') or
+                                contains($countryLower,'br')
+                                ">
+                        <xsl:text>Brazylia</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Argentyna -->
+                    <xsl:when test="
+                                contains($countryLower,'argentina') or
+                                contains($countryLower,'argentyna') or
+                                contains($countryLower,'ar')
+                                ">
+                        <xsl:text>Argentyna</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Meksyk -->
+                    <xsl:when test="
+                                contains($countryLower,'mexico') or
+                                contains($countryLower,'meksyk') or
+                                contains($countryLower,'mx')
+                                ">
+                        <xsl:text>Meksyk</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Korea Południowa -->
+                    <xsl:when test="
+                                contains($countryLower,'korea') or
+                                contains($countryLower,'south korea') or
+                                contains($countryLower,'korea południowa') or
+                                contains($countryLower,'kr')
+                                ">
+                        <xsl:text>Korea Południowa</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Chiny -->
+                    <xsl:when test="
+                                contains($countryLower,'china') or
+                                contains($countryLower,'chiny') or
+                                contains($countryLower,'cn')
+                                ">
+                        <xsl:text>Chiny</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Rosja -->
+                    <xsl:when test="
+                                contains($countryLower,'russia') or
+                                contains($countryLower,'rosja') or
+                                contains($countryLower,'ru')
+                                ">
+                        <xsl:text>Rosja</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Polska -->
+                    <xsl:when test="
+                                contains($countryLower,'poland') or
+                                contains($countryLower,'polska') or
+                                contains($countryLower,'pl')
+                                ">
+                        <xsl:text>Polska</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Czechy -->
+                    <xsl:when test="
+                                contains($countryLower,'czech') or
+                                contains($countryLower,'czechy') or
+                                contains($countryLower,'cz')
+                                ">
+                        <xsl:text>Czechy</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Słowacja -->
+                    <xsl:when test="
+                                contains($countryLower,'slovakia') or
+                                contains($countryLower,'słowacja') or
+                                contains($countryLower,'sk')
+                                ">
+                        <xsl:text>Słowacja</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Węgry -->
+                    <xsl:when test="
+                                contains($countryLower,'hungary') or
+                                contains($countryLower,'węgry') or
+                                contains($countryLower,'hu')
+                                ">
+                        <xsl:text>Węgry</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Grecja -->
+                    <xsl:when test="
+                                contains($countryLower,'greece') or
+                                contains($countryLower,'grecja') or
+                                contains($countryLower,'gr')
+                                ">
+                        <xsl:text>Grecja</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Turcja -->
+                    <xsl:when test="
+                                contains($countryLower,'turkey') or
+                                contains($countryLower,'turcja') or
+                                contains($countryLower,'tr')
+                                ">
+                        <xsl:text>Turcja</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Szwajcaria -->
+                    <xsl:when test="
+                                contains($countryLower,'switzerland') or
+                                contains($countryLower,'szwajcaria') or
+                                contains($countryLower,'ch')
+                                ">
+                        <xsl:text>Szwajcaria</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Austria -->
+                    <xsl:when test="
+                                contains($countryLower,'austria') or
+                                contains($countryLower,'at')
+                                ">
+                        <xsl:text>Austria</xsl:text>
+                    </xsl:when>
+                    
+                    <!-- Belgia -->
+                    <xsl:when test="
+                                contains($countryLower,'belgium') or
+                                contains($countryLower,'belgia') or
+                                contains($countryLower,'be')
+                                ">
+                        <xsl:text>Belgia</xsl:text>
+                    </xsl:when>
+                    <!-- fallback -->
+                    <xsl:otherwise>
+                        <xsl:value-of select="$rawCountry" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <!-- usuwanie akronimów krajów -->
+            <!-- usuwamy tylko samodzielne tokeny (removeToken), nigdy pojedyncze litery -
+                 translate() kasowało litery w całym tytule, np. PRINCE -> PRINC -->
+            <xsl:variable name="titleNoJapan">
+                <xsl:call-template name="removeToken">
+                    <xsl:with-param name="text" select="$baseTitle" />
+                    <xsl:with-param name="token" select="'JAPAN'" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleNoJap">
+                <xsl:call-template name="removeToken">
+                    <xsl:with-param name="text" select="$titleNoJapan" />
+                    <xsl:with-param name="token" select="'JAP'" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleNoEu">
+                <xsl:call-template name="removeToken">
+                    <xsl:with-param name="text" select="$titleNoJap" />
+                    <xsl:with-param name="token" select="'EU'" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleNoUk">
+                <xsl:call-template name="removeToken">
+                    <xsl:with-param name="text" select="$titleNoEu" />
+                    <xsl:with-param name="token" select="'UK'" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleNoUs">
+                <xsl:call-template name="removeToken">
+                    <xsl:with-param name="text" select="$titleNoUk" />
+                    <xsl:with-param name="token" select="'US'" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleNoAcronym" select="normalize-space($titleNoUs)" />
+
+            <!-- usunięcie roku - tylko jako osobny token, nie pojedyncze cyfry -->
+            <xsl:variable name="titleNoYearRaw">
+                <xsl:choose>
+                    <xsl:when test="$year != ''">
+                        <xsl:call-template name="removeToken">
+                            <xsl:with-param name="text" select="$titleNoAcronym" />
+                            <xsl:with-param name="token" select="$year" />
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$titleNoAcronym" />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:variable name="titleNoYearNorm" select="normalize-space($titleNoYearRaw)" />
+
+            <!-- sprzątanie odstępu, który został w nawiasie po usuniętym tokenie,
+                 np. '(1 PRESS )' -> '(1 PRESS)', '( PRESS)' -> '(PRESS)' -->
+            <xsl:variable name="titleCleanParen1">
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="$titleNoYearNorm" />
+                    <xsl:with-param name="replace" select="'( '" />
+                    <xsl:with-param name="by" select="'('" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleCleanParen2">
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="$titleCleanParen1" />
+                    <xsl:with-param name="replace" select="' )'" />
+                    <xsl:with-param name="by" select="')'" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleCleanBracket1">
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="$titleCleanParen2" />
+                    <xsl:with-param name="replace" select="'[ '" />
+                    <xsl:with-param name="by" select="'['" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleCleanBracket2">
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="$titleCleanBracket1" />
+                    <xsl:with-param name="replace" select="' ]'" />
+                    <xsl:with-param name="by" select="']'" />
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="titleNoYear" select="normalize-space($titleCleanBracket2)" />
+
+            <!-- finalny tytuł -->
+            <xsl:variable name="finalTitle">
+                <xsl:value-of select="$titleNoYear" />
+                <xsl:if test="$year != ''">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="$year" />
+                </xsl:if>
+                <xsl:if test="$countryNormalized != ''">
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="$countryNormalized" />
+                </xsl:if>
+            </xsl:variable>
+            
+            <xsl:value-of select="$finalTitle" />
+            
             <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
         </xsl:element>
+
+            
+
         <!-- Opis -->
         <!-- 26.11.2025 MD -->
         <xsl:variable name="from_parameters_raw">
@@ -825,6 +1268,14 @@
                 <xsl:with-param name="delimiter" select="' |'" />
             </xsl:call-template>
         </g:custom_label_3>
+        
+        <g:custom_label_4>
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:value-of select="parameters/parameter[@id = 1629]/@name"/>
+            <xsl:text> - </xsl:text>
+            <xsl:value-of select="parameters/parameter[@id = 1629]/value/@name"/>
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </g:custom_label_4>
     </xsl:template>
     
     <xsl:template name="productSizeMatter"
@@ -1298,6 +1749,54 @@
         </xsl:choose>
     </xsl:template>
     
+    <!-- 19.08.2026 MD -->
+    <!-- Usuwa z tekstu wszystkie wystąpienia $token występujące jako samodzielny wyraz.
+         Porównanie bez rozróżniania wielkości liter (ASCII), zwracany tekst zachowuje
+         oryginalną pisownię i otaczające znaki, np. '(1 PRESS EU)' -> '(1 PRESS )'. -->
+    <xsl:template name="removeToken">
+        <xsl:param name="text" />
+        <xsl:param name="token" />
+        <xsl:param name="depth" select="0" />
+        <xsl:variable name="asciiLower" select="'abcdefghijklmnopqrstuvwxyz'" />
+        <xsl:variable name="asciiUpper" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+        <!-- granice tokena: początek/koniec tekstu albo znak niealfanumeryczny -->
+        <xsl:variable name="boundary" select="' ()[]{}/\,.;:-_&quot;'" />
+        <xsl:variable name="upperText" select="translate($text, $asciiLower, $asciiUpper)" />
+        <xsl:variable name="upperToken" select="translate($token, $asciiLower, $asciiUpper)" />
+        <xsl:choose>
+            <xsl:when test="$upperToken != '' and contains($upperText, $upperToken) and $depth &lt; 100">
+                <xsl:variable name="offset" select="string-length(substring-before($upperText, $upperToken))" />
+                <xsl:variable name="before" select="substring($text, 1, $offset)" />
+                <xsl:variable name="after" select="substring($text, $offset + string-length($token) + 1)" />
+                <xsl:variable name="prevChar" select="substring($before, string-length($before), 1)" />
+                <xsl:variable name="nextChar" select="substring($after, 1, 1)" />
+                <xsl:choose>
+                    <xsl:when test="($before = '' or contains($boundary, $prevChar))
+                                    and ($after = '' or contains($boundary, $nextChar))">
+                        <xsl:value-of select="$before" />
+                        <xsl:call-template name="removeToken">
+                            <xsl:with-param name="text" select="$after" />
+                            <xsl:with-param name="token" select="$token" />
+                            <xsl:with-param name="depth" select="$depth + 1" />
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- trafienie wewnątrz wyrazu (np. EU w PRINCE/EUROPE) - zostawiamy -->
+                        <xsl:value-of select="concat($before, substring($text, $offset + 1, string-length($token)))" />
+                        <xsl:call-template name="removeToken">
+                            <xsl:with-param name="text" select="$after" />
+                            <xsl:with-param name="token" select="$token" />
+                            <xsl:with-param name="depth" select="$depth + 1" />
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
     <!-- 08.10.2025 MD -->
     <xsl:template name="throwLastNode">
         <xsl:param name="text" />

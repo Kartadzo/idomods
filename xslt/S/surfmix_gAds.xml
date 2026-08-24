@@ -1103,33 +1103,54 @@
             <xsl:with-param name="delimiter" select="';'" />
          </xsl:call-template>
       </g:custom_label_3>
-      
+
       <xsl:element name="g:custom_label_4">
          <xsl:choose>
-            <xsl:when test="contains(concat(' ', $wybierzZrodloNazwy, ' '), 'Pianka')">
+            <xsl:when test="contains(
+                            translate(concat(' ', $wybierzZrodloNazwy, ' '), $upperLetters, $lowerLetters),
+                            translate('Pianka', $upperLetters, $lowerLetters)
+                            )">
                <xsl:text>Pianki</xsl:text>
             </xsl:when>
-            <xsl:when test="contains(concat(' ', $wybierzZrodloNazwy, ' '), 'Kamizelka Asekuracyjna')">
+            <xsl:when test="contains(
+                            translate(concat(' ', $wybierzZrodloNazwy, ' '), $upperLetters, $lowerLetters),
+                            translate('Kamizelka Asekuracyjna', $upperLetters, $lowerLetters)
+                            )">
                <xsl:text>Kamizelki Asekuracyjne</xsl:text>
             </xsl:when>
-            <xsl:when test="contains(concat(' ', $wybierzZrodloNazwy, ' '), 'Deska SUP')">
+            <xsl:when test="contains(
+                            translate(concat(' ', $wybierzZrodloNazwy, ' '), $upperLetters, $lowerLetters),
+                            translate('Deska SUP', $upperLetters, $lowerLetters)
+                            )">
                <xsl:text>Deski SUP</xsl:text>
             </xsl:when>
-            <xsl:when test="contains(concat(' ', $wybierzZrodloNazwy, ' '), ' Trapez ')">
+            <xsl:when test="contains(
+                            translate(concat(' ', $wybierzZrodloNazwy, ' '), $upperLetters, $lowerLetters),
+                            translate(' Trapez ', $upperLetters, $lowerLetters)
+                            )">
                <xsl:text>Trapezy KITE</xsl:text>
             </xsl:when>
-            <xsl:when test="contains(concat(' ', $wybierzZrodloNazwy, ' '), 'Deska Windsurfing')">
+            <xsl:when test="contains(
+                            translate(concat(' ', $wybierzZrodloNazwy, ' '), $upperLetters, $lowerLetters),
+                            translate('Deska Windsurfing', $upperLetters, $lowerLetters)
+                            )">
                <xsl:text>Deski Windsurfingowe</xsl:text>
             </xsl:when>
-            <xsl:when test="contains(concat(' ', $wybierzZrodloNazwy, ' '), 'Żagiel')">
+            <xsl:when test="contains(
+                            translate(concat(' ', $wybierzZrodloNazwy, ' '), $upperLetters, $lowerLetters),
+                            translate('Żagiel', $upperLetters, $lowerLetters)
+                            )">
                <xsl:text>Żagle</xsl:text>
             </xsl:when>
-            <xsl:when test="contains(concat(' ', $wybierzZrodloNazwy, ' '), 'Foil Wing')">
+            <xsl:when test="contains(
+                            translate(concat(' ', $wybierzZrodloNazwy, ' '), $upperLetters, $lowerLetters),
+                            translate('Foil Wing', $upperLetters, $lowerLetters)
+                            )">
                <xsl:text>Foil Wing</xsl:text>
             </xsl:when>
             <xsl:otherwise>
                <xsl:text>Inne</xsl:text>
-            </xsl:otherwise>           
+            </xsl:otherwise>
          </xsl:choose>
       </xsl:element>
    </xsl:template>

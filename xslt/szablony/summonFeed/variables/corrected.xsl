@@ -1,1 +1,0 @@
-<xsl:variable name="corrected" select="'\GRATIS\'"/>

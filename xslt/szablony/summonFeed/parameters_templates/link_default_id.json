@@ -1,0 +1,19 @@
+{
+  "name": "link_default_id",
+  "description": "Generate product URLs exactly as provided by the data source, with size selection when applicable.",
+  "description_pl": "Generuje linki feedu z domyślnym identyfikatorem IdoSell do adresów produktów które wskazuje źródło danych.",
+  "structure": ["Google", "Samba"],
+  "output": "g:link",
+  "context": "size",
+  "exclusiveGroup": "link",
+  "exclusiveDefaultFor": ["Samba"],
+  "xpathCandidates": [
+    "../../card/@url",
+    "card/@url",
+    "@id"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "notes": "Produces product URLs from card/@url or ../../card/@url without trimming the source address, and appends size selection for multiple sizes."
+}

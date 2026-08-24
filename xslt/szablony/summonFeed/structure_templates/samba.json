@@ -1,9 +1,12 @@
 {
   "name": "Samba",
   "description": "Top-level feed structure for Samba channel; outputs PRODUCTS/PRODUCT/VARIANT structure.",
+  "description_pl": "Standardowa struktura szablonu danych dla katalogu Samba.",
   "output": "PRODUCTS/PRODUCT",
   "context": "feed",
-  "xpathCandidates": ["/offer/products/product"],
+  "xpathCandidates": [
+    "/offer/products/product"
+  ],
   "parameterContexts": [],
   "configVars": [],
   "helpers": [],

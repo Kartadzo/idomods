@@ -38,12 +38,12 @@
                 <xsl:for-each select="/offer/products/product[
                                       price/@gross &gt; 0 and 
                                   description/name/. != '' and not(
-                                  category/@id = '1214553885' or
-                                  category/@id = '1214553884'
-                                  )]">
-                                  <!--category/@id = '1214553882' or
+                                  category/@id = '1214553882' or
                                   category/@id = '1214553855' or
-                                  category/@id = '1214553889'-->
+                                  category/@id = '1214553889'
+                                  )]">
+                                  <!-- category/@id = '1214553885' or
+                                  category/@id = '1214553884' -->
                     <!-- Id towaru -->
                     <xsl:choose>
                         <xsl:when test="count(sizes/size) &lt; 1">
@@ -457,6 +457,12 @@
         <g:custom_label_2>
             <xsl:value-of select="category/@name" />
         </g:custom_label_2>
+        
+        <xsl:if test="iaiext:navigation/iaiext:site/iaiext:menu/iaiext:item/@id = '227'">
+            <g:custom_label_3>
+                <xsl:text>Kolekcja jesienna</xsl:text>
+            </g:custom_label_3>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template name="productSizeMatter"

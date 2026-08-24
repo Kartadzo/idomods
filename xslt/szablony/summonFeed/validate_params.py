@@ -22,6 +22,8 @@ VAR_REF = re.compile(r'\$([A-Za-z_À-ɏ][A-Za-z0-9_\-À-ɏ]*)')
 VAR_DECL = re.compile(r'<xsl:variable\s+name\s*=\s*["\']([^"\']+)["\']')
 CALL_TPL = re.compile(r'<xsl:call-template\s+name\s*=\s*["\']([^"\']+)["\']')
 XSL_PARAM = re.compile(r'<xsl:param\s+name\s*=\s*["\']([^"\']+)["\']')
+# musi odpowiadać wzorcowi z _apply_config_vars_to_xslt w summonFeed_generator.py
+CONFIGVAR_DECL = r"<xsl:variable name=['\"]{name}['\"]>.*?</xsl:variable>"
 
 errors, warnings = [], []
 
@@ -84,6 +86,9 @@ def main():
 
     # --- parametry ---
     count = 0
+    # exclusiveGroup: grupa → {parametr: (structure, exclusiveDefaultFor)}
+    exclusive: dict = {}
+    PARAMS_OUTPUT: dict = {}
     for jf in sorted(PARAMS.glob("*.json")):
         if jf.name.startswith('_'):
             continue
@@ -102,6 +107,21 @@ def main():
             warn(name, "brak 'description_pl' (opis PL)")
         if data.get("name") != jf.stem:
             err(name, f"pole 'name' ({data.get('name')}) ≠ nazwa pliku ({jf.stem})")
+
+        PARAMS_OUTPUT[name] = data.get("output")
+        group = data.get("exclusiveGroup")
+        default_for = data.get("exclusiveDefaultFor", [])
+        if group:
+            if not isinstance(default_for, list):
+                err(name, "'exclusiveDefaultFor' musi być listą nazw struktur")
+                default_for = []
+            for s in default_for:
+                if s not in data.get("structure", []):
+                    err(name, f"'exclusiveDefaultFor' wskazuje strukturę '{s}', "
+                              f"której nie ma w 'structure'")
+            exclusive.setdefault(group, {})[name] = (data.get("structure", []), default_for)
+        elif default_for:
+            warn(name, "'exclusiveDefaultFor' bez 'exclusiveGroup' — pole jest ignorowane")
 
         xsl_file = jf.with_suffix(".xsl")
         if not xsl_file.exists():
@@ -156,12 +176,52 @@ def main():
             if f"${c}" not in effective:
                 warn(name, f"configVar '{c}' zadeklarowany, ale nieużywany")
 
+        # Czy generator dostarczy wartość configVara? Są trzy poprawne drogi:
+        #   • parametr zmigrowany (wszystkie createVars w rejestrze) → deklaracja z preambuły,
+        #   • configVar o nazwie zmiennej globalnej → deklaracja wstrzykiwana po <xsl:output>,
+        #   • legacy → podmiana w .xsl wzorcem CONFIGVAR_DECL.
+        # Deklaracja w innej formie (np. self-closing z select=) jest po cichu ignorowana
+        # i parametr zawsze bierze wartość domyślną.
+        migrated = bool(create) and all(cv in var_reg for cv in create)
+        for c in cfg_names:
+            declared_replaceable = re.search(
+                CONFIGVAR_DECL.format(name=re.escape(c)), xsl, flags=re.DOTALL)
+            if migrated or c in globals_:
+                if declared_replaceable:
+                    warn(name, f"configVar '{c}' zadeklarowany w {xsl_file.name}, choć wartość "
+                               f"dostarcza preambuła/blok globalny — deklaracja jest zbędna")
+            elif not declared_replaceable:
+                err(name, f"configVar '{c}' nie ma w {xsl_file.name} deklaracji w formie "
+                          f"<xsl:variable name=\"{c}\">…</xsl:variable> — generator jej nie "
+                          f"podmieni i wartość z konfiguracji zostanie zignorowana")
+
         # referencje $zmienna: pokryte przez configVars / createVars / lokalne / globalne / params
         local = inline_decls | set(XSL_PARAM.findall(xsl))
         known = set(cfg_names) | set(create) | local | globals_
         for ref in sorted(set(VAR_REF.findall(xsl))):
             if ref not in known and ref not in var_reg:
                 warn(name, f"referencja ${ref} bez deklaracji (configVar/createVar/global/lokalna)")
+
+    # --- grupy wykluczające się: jeden domyślny na strukturę, spójne wyjście ---
+    for group, members in exclusive.items():
+        if len(members) < 2:
+            warn(f"grupa '{group}'", "ma tylko jeden parametr — 'exclusiveGroup' nic nie wnosi")
+        outs = {PARAMS_OUTPUT.get(m) for m in members}
+        if len(outs) > 1:
+            warn(f"grupa '{group}'", "parametry emitują różne elementy 'output' "
+                                    f"({', '.join(sorted(str(o) for o in outs))}) — "
+                                    f"czy na pewno się wykluczają?")
+        structures = {s for structs, _ in members.values() for s in structs}
+        for s in sorted(structures):
+            in_struct = [m for m, (structs, _) in members.items() if s in structs]
+            defaults = [m for m, (_, dflt) in members.items() if s in dflt]
+            if len(defaults) > 1:
+                errors.append(f"  ✗ grupa '{group}': dla struktury '{s}' kilka parametrów "
+                              f"jest domyślnych ({', '.join(sorted(defaults))})")
+            elif not defaults and len(in_struct) > 1:
+                warnings.append(f"  ⚠ grupa '{group}': dla struktury '{s}' żaden z "
+                                f"{len(in_struct)} parametrów nie ma 'exclusiveDefaultFor' "
+                                f"— domyślnie zaznaczy się pierwszy alfabetycznie")
 
     print(f"Sprawdzono {count} parametrów, {len(var_reg)} zmiennych, {len(helper_reg)} helperów.\n")
     if errors:

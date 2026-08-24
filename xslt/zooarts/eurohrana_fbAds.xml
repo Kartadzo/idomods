@@ -22,7 +22,7 @@
    <xsl:variable name='kwota_dla_wiekszych_zamowien'></xsl:variable>
    <xsl:variable name="Koszt_dostawy">14.90</xsl:variable>
    <xsl:variable name="Koszt_dostawy_wiekszych_zamowien">0.00</xsl:variable>
-   <xsl:variable name="Kraj_dostawy" select="'PL'" />
+   <xsl:variable name="Kraj_dostawy" select="'RO'" />
    
    <!-- dane potrzebne aby przekazywać informacje o kolorze -->
    <xsl:variable name='kolor_nazwa_w_panelu'>|kolor|culoare|</xsl:variable>

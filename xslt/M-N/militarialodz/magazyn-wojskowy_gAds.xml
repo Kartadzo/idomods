@@ -388,22 +388,43 @@
             </xsl:when>
         </xsl:choose>
         
-        <!-- g product type -->
-        <xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]">
-            <xsl:for-each select="iaiext:item[position() &lt; 10]">
-                <xsl:element name="g:product_type">
-                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                    <!-- <xsl:value-of select="translate(@textid,'\','&gt;')"/> -->
-                    <xsl:call-template name="string-replace-all">
-                        <xsl:with-param name="text" select="@textid" tunnel="yes" />
-                        <xsl:with-param name="replace" select="'\'" tunnel="yes" />
-                        <xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
-                    </xsl:call-template>
-                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                </xsl:element>
-            </xsl:for-each>
-        </xsl:for-each>
-        
+        <!-- 2026-07-15 - MD -->
+        <xsl:choose>
+            <xsl:when test="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]/iaiext:item[1]/@id != ''">
+                <xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]">
+                    <xsl:for-each select="iaiext:item[position() &lt; 6]">
+                        <xsl:element name="g:product_type">
+                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                            <xsl:call-template name="string-replace-all">
+                                <xsl:with-param name="text" select="@textid" tunnel="yes" />
+                                <xsl:with-param name="replace" select="'\'" tunnel="yes" />
+                                <xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
+                            </xsl:call-template>
+                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </xsl:element>
+                    </xsl:for-each>
+                </xsl:for-each>
+            </xsl:when>
+         <xsl:when test="category_idosell/@path != ''">
+            <xsl:element name="g:product_type">
+               <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+               <xsl:value-of select="category_idosell/@path"></xsl:value-of>
+               <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </xsl:element>
+         </xsl:when>
+         <xsl:when test="category/@name != '' and category/@id != '0'">
+            <xsl:element name="g:product_type">
+               <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+               <xsl:call-template name="string-replace-all">
+                  <xsl:with-param name="text" select="category/@name" tunnel="yes" />
+                  <xsl:with-param name="replace" select="'/'" tunnel="yes" />
+                  <xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
+               </xsl:call-template>
+               <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </xsl:element>
+         </xsl:when>
+        </xsl:choose>
+
         <xsl:choose>
             <xsl:when test="images/icons/auction_icon/@url">
                 <xsl:element name="g:image_link">

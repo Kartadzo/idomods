@@ -594,6 +594,14 @@
                 <xsl:with-param name="delimiter" select="';'" />
             </xsl:call-template>
         </g:custom_label_3>
+        
+        <g:custom_label_4>
+            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+            <xsl:value-of select="parameters/parameter[@id = 1629]/@name"/>
+            <xsl:text> - </xsl:text>
+            <xsl:value-of select="parameters/parameter[@id = 1629]/value/@name"/>
+            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+        </g:custom_label_4>
     </xsl:template>
     
     <xsl:template name="productSizeMatter"

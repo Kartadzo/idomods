@@ -15,25 +15,16 @@
     <xsl:variable name='minimalna_dlugosc_opisu_dla_parametrow'>120</xsl:variable>
     <!-- słowa formatowane do pisanych z dużej litery w tytule -->
     <xsl:variable name="corrected" select="'\GRATIS\'" />
-    
-    <!-- Liczba dni roboczych -->
-    <xsl:variable name="Czas_obsługi_zamówienia_na_magazynie" select="0" />
-    <xsl:variable name="Czas_dostawy_zamówienia" select="1" />
-    <!-- serwis realizacji zamówienia - wybierz jedno - Ground, Express, Air -->
-    <xsl:variable name="Serwis_dostawy_zamówienia" select="'Ground'" />
-    <!-- Dni realizacji zamówienia - pon., wt., śr., czw., pt., sob., nd.-->
-    <xsl:variable name="Dni_obsługi_zamówienia_na_magazynie" select="'Pon.–pt.'" />
-    <xsl:variable name="Dni_dostawy_zamówienia" select="'pon.;wt.;śr.;czw.;pt.'" />
-    
+        
     <!-- dane potrzebne aby przekazywać informacje o płci - nazwa parametru lub id w kategorii menu -->
     <xsl:variable name='gender_nazwa_w_panelu'>Sex</xsl:variable>
     <xsl:variable name='gender_male'>|Men|</xsl:variable>
     <xsl:variable name='gender_female'>|Women|</xsl:variable>
     <xsl:variable name='gender_unisex'>|Unisex Children|Unisex|</xsl:variable>
-    <xsl:variable name='gender_id_w_panelu'></xsl:variable>
-    <xsl:variable name='gender_male_id_menu'></xsl:variable>
-    <xsl:variable name='gender_female_id_menu'></xsl:variable>
-    <xsl:variable name='gender_unisex_id_menu'></xsl:variable>
+    <xsl:variable name='gender_id_w_panelu'>1</xsl:variable>
+    <xsl:variable name='gender_male_id_menu'>|21052|21005|21016|21011|21015|21008|21077|</xsl:variable>
+    <xsl:variable name='gender_female_id_menu'>|21050|21006|21017|21009|</xsl:variable>
+    <xsl:variable name='gender_unisex_id_menu'>|21051|21007|21010|21019|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o grupie wiekowej - nazwa parametru lub id w kategorii menu -->
     <xsl:variable name='age_group_nazwa_w_panelu'>Age group</xsl:variable>
     <xsl:variable name='age_group_newborn'>|</xsl:variable>
@@ -41,13 +32,12 @@
     <xsl:variable name='age_group_toddler'>|</xsl:variable>
     <xsl:variable name='age_group_kids'>|Kids|</xsl:variable>
     <xsl:variable name='age_group_adult'>|Adults|</xsl:variable>
-    <xsl:variable name='age_group_id_w_menu'></xsl:variable>
+    <xsl:variable name='age_group_id_w_menu'>1</xsl:variable>
     <xsl:variable name='age_group_newborn_id_menu'></xsl:variable>
     <xsl:variable name='age_group_infant_id_menu'></xsl:variable>
-    <xsl:variable name='age_group_toddler_id_menu'></xsl:variable>
-    <xsl:variable name='age_group_kids_id_menu'></xsl:variable>
-    <xsl:variable name='age_group_adult_id_menu1'></xsl:variable>
-    <xsl:variable name='age_group_adult_id_menu2'></xsl:variable>
+    <xsl:variable name='age_group_toddler_id_menu'>|20968|</xsl:variable>
+    <xsl:variable name='age_group_kids_id_menu'>|21051|21007|21010|21019|</xsl:variable>
+    <xsl:variable name='age_group_adult_id_menu'>|21018|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o kolorze -->
     <xsl:variable name='kolor_nazwa_w_panelu'>|colour|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o materiale -->
@@ -63,6 +53,10 @@
     <!-- magazyny sprzedaży, identyfikator otoczony '|' -->
     <xsl:variable name="sales_stocks" select="'|-3|-2|-1|0|1|2|3|4|5|6|7|8|9|10|11|12|'"/>
     
+    <!-- Ogranicz analizę nazw do id kategorii produktu -->
+    <!-- Jeśli puste - sprawdź każde -->
+    <xsl:variable name='jednostki_-_analiza_nazwy_z_kategorii'>|</xsl:variable>
+    <xsl:variable name="unitsList" select="'|ml|l|g|kg|'"/>
     
     <xsl:template match="/">
         <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
@@ -545,9 +539,10 @@
             </xsl:when>
         </xsl:choose>
         
-        <!-- 2026.01.22 MD -->
+        <!-- 2026.05.07 MD -->
         <!-- płeć -->
-        <xsl:if test="$gender_id_w_panelu != ''  and iaiext:priority_menu/site/menu[1]/item[contains($gender_id_w_panelu, concat('|',translate(@id, $upperLetters, $lowerLetters),'|'))]/@textId 
+        <xsl:if test="substring($gender_id_w_panelu, 1, 1) = '*'
+                      or $gender_id_w_panelu != ''  and iaiext:priority_menu/site/menu[1]/item[contains($gender_id_w_panelu, concat('|',translate(@id, $upperLetters, $lowerLetters),'|'))]/@textId 
                       or $gender_nazwa_w_panelu != '' and parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name != ''">
             <xsl:element name="g:gender">
                 <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
@@ -566,23 +561,27 @@
                     <xsl:when test="contains($gender_unisex, $gender_wer)">
                         <![CDATA[unisex]]>
                     </xsl:when>
-                    <xsl:when test="iaiext:priority_menu/site/menu[1]/item[@id = $gender_male_id_menu]">
+                    <xsl:when test="contains($gender_male_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[male]]>
                     </xsl:when>
-                    <xsl:when test="iaiext:priority_menu/site/menu[1]/item[@id = $gender_female_id_menu]">
+                    <xsl:when test="contains($gender_female_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[female]]>
                     </xsl:when>
-                    <xsl:when test="iaiext:priority_menu/site/menu[1]/item[@id = $gender_unisex_id_menu]">
+                    <xsl:when test="contains($gender_unisex_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[unisex]]>
+                    </xsl:when>
+                    <xsl:when test="substring($gender_id_w_panelu, 1, 1) = '*'">
+                        <xsl:value-of select="substring-after($gender_id_w_panelu,'*')" />
                     </xsl:when>
                 </xsl:choose>
                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
             </xsl:element>
         </xsl:if>
         
-        <!-- 2026.01.22 MD -->
+        <!-- 2026.05.07 MD -->
         <!-- wiek -->
-        <xsl:if test="$age_group_id_w_menu != '' and iaiext:priority_menu/site/menu[1]/item[contains($age_group_id_w_menu, concat('|',translate(@id, $upperLetters, $lowerLetters),'|'))]/@textId 
+        <xsl:if test="substring($age_group_id_w_menu, 1, 1) = '*' 
+                      or $age_group_id_w_menu != '' and iaiext:priority_menu/site/menu[1]/item[contains($age_group_id_w_menu, concat('|',translate(@id, $upperLetters, $lowerLetters),'|'))]/@textId 
                       or $age_group_nazwa_w_panelu != '' and parameters/parameter[@name = $age_group_nazwa_w_panelu]/value/@name != ''">
             <xsl:element name="g:age_group">
                 <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
@@ -593,24 +592,27 @@
                 </xsl:variable>
                 <xsl:choose>
                     <xsl:when test="contains($age_group_newborn, $age_wer) or 
-                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_newborn_id_menu]/@textId != ''">
+                                    contains($age_group_newborn_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[newborn]]>
                     </xsl:when>
                     <xsl:when test="contains($age_group_infant, $age_wer) or 
-                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_infant_id_menu]/@textId != ''">
+                                    contains($age_group_infant_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[infant]]>
                     </xsl:when>
                     <xsl:when test="contains($age_group_toddler, $age_wer) or 
-                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_toddler_id_menu]/@textId != ''">
+                                    contains($age_group_toddler_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[toddler]]>
                     </xsl:when>
                     <xsl:when test="contains($age_group_kids, $age_wer) or 
-                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_kids_id_menu]/@textId != ''">
+                                    contains($age_group_kids_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[kids]]>
                     </xsl:when>
                     <xsl:when test="contains($age_group_adult, $age_wer) or 
-                                    iaiext:priority_menu/site/menu[1]/item[@id = $age_group_adult_id_menu1 or @id = $age_group_adult_id_menu2]/@textId != ''">
+                                    contains($age_group_adult_id_menu, concat('|',iaiext:priority_menu/site/menu[1]/item/@id,'|'))">
                         <![CDATA[adult]]>
+                    </xsl:when>
+                    <xsl:when test="substring($age_group_id_w_menu, 1, 1) = '*'">
+                        <xsl:value-of select="substring-after($age_group_id_w_menu,'*')" />
                     </xsl:when>
                 </xsl:choose>
                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
@@ -665,11 +667,17 @@
             </xsl:element>
         </xsl:if>
         
-        <!-- 2026-01-19 - MD -->
+        <!-- 2026-07-07 - MD -->
+        <xsl:variable name="value_pom">
+            <xsl:call-template name="throwLastNode">
+                <xsl:with-param name="text" select="category/@name" />
+                <xsl:with-param name="delimiter" select="'/'" />
+            </xsl:call-template>
+        </xsl:variable>
         <xsl:variable name="final_form_unit_measure">
             <xsl:choose>
                 <!-- Jeśli wartość pochodzi z parametru z kontekstem CONTEXT_STD_UNIT_WEIGHT -->
-                <xsl:when test="parameters/parameter[@hide = 'n' and @context_id='CONTEXT_STD_UNIT_WEIGHT']/value/@name != ''">
+                <xsl:when test="parameters/parameter[@context_id='CONTEXT_STD_UNIT_WEIGHT']/value/@name != ''">
                     <xsl:variable name="raw" select="translate(parameters/parameter[@context_id='CONTEXT_STD_UNIT_WEIGHT']/value/@name, ',', '.')"/>
                     <xsl:variable name="number_part">
                         <xsl:choose>
@@ -692,7 +700,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
-                <xsl:when test="parameters/parameter[@hide = 'n' and @context_id='CONTEXT_STD_UNIT_VOLUME']/value/@name != ''">
+                <xsl:when test="parameters/parameter[@context_id='CONTEXT_STD_UNIT_VOLUME']/value/@name != ''">
                     <xsl:variable name="raw" select="translate(parameters/parameter[@context_id='CONTEXT_STD_UNIT_VOLUME']/value/@name, ',', '.')" />
                     <xsl:variable name="number_part">
                         <xsl:choose>
@@ -763,16 +771,22 @@
                     </xsl:choose>
                 </xsl:when>
                 <xsl:when test="bundled/product/@quantity > 1 and count(bundled/product) = 1">
-                    <xsl:value-of select="bundled/product/@quantity"/>
+                    <xsl:value-of select="format-number(bundled/product/@quantity, '#')"/>
                     <xsl:text> ct</xsl:text>
                 </xsl:when>
-                <!-- <xsl:when test="iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 1">
-                     <xsl:value-of select="iaiext:sell_by/iaiext:retail/@quantity"/>
-                     <xsl:text> ct</xsl:text>
-                     </xsl:when> -->
-                <xsl:when test="@type = 'regular'">
-                    <xsl:call-template name="find_unit_measure">
-                        <xsl:with-param name="str" select="translate($nazwaTowaru,$upperLetters,$lowerLetters)"/>
+                <xsl:when test="@type='regular' and iaiext:sell_by/iaiext:retail and iaiext:sell_by/iaiext:retail/@quantity > 1">
+                    <xsl:value-of select="format-number(iaiext:sell_by/iaiext:retail/@quantity, '#')"/>
+                    <xsl:text> ct</xsl:text>
+                </xsl:when>
+                <xsl:when test="$jednostki_-_analiza_nazwy_z_kategorii = '' 
+                                or contains($jednostki_-_analiza_nazwy_z_kategorii, concat('|',$value_pom,'|'))">
+                    <xsl:variable name="cleanTitle">
+                        <xsl:call-template name="extract-measure">
+                            <xsl:with-param name="str" select="translate($nazwaTowaru,$upperLetters,$lowerLetters)"/>
+                        </xsl:call-template>
+                    </xsl:variable>
+                    <xsl:call-template name="normalize-measure">
+                        <xsl:with-param name="value" select="$cleanTitle"/>
                     </xsl:call-template>
                 </xsl:when>
             </xsl:choose>
@@ -1003,6 +1017,7 @@
     <xsl:template name="productSizeMatter"
                   xmlns:g="http://base.google.com/ns/1.0" 
                   version="2.0">
+        
         <!-- 18.07.2025 MD -->
         <!-- link do produktu -->
         <xsl:element name="g:link">
@@ -1015,7 +1030,7 @@
                     <xsl:value-of select="card/@url" />
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:if test="count(sizes/size) &gt; 0">
+            <xsl:if test="count(../size) &gt; 1">
                 <xsl:text>?selected_size=</xsl:text>
                 <xsl:value-of select="@id" />
             </xsl:if>
@@ -1031,7 +1046,7 @@
                     <xsl:value-of select="card/@url" />
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:if test="count(sizes/size) &gt; 0">
+            <xsl:if test="count(../size) &gt; 1">
                 <xsl:text>?selected_size=</xsl:text>
                 <xsl:value-of select="@id" />
             </xsl:if>
@@ -1047,12 +1062,13 @@
                     <xsl:value-of select="card/@url" />
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:if test="count(sizes/size) &gt; 0">
+            <xsl:if test="count(../size) &gt; 1">
                 <xsl:text>?selected_size=</xsl:text>
                 <xsl:value-of select="@id" />
             </xsl:if>
             <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
         </xsl:element>
+
         <xsl:variable name="sell_by">
             <xsl:choose>
                 <xsl:when test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail/@quantity > 0">
@@ -1550,82 +1566,98 @@
         <xsl:value-of select="string-length($lowercaseOnly)"/> 
     </xsl:template> 
     
-    <!-- 07.08.2025 MD -->
-    <xsl:template name="find_unit_measure">
-        <xsl:param name="str"/> 
-        <xsl:param name="prev" select="''"/> 
-        <!-- 1) Rozbijamy na pierwszy token i resztę --> 
-        <xsl:variable name="token"> 
-            <xsl:choose> 
-                <xsl:when test="contains($str,' ')"> 
-                    <xsl:value-of select="substring-before($str,' ')"/> 
-                </xsl:when> 
-                <xsl:otherwise> 
-                    <xsl:value-of select="$str"/> 
-                </xsl:otherwise> 
-            </xsl:choose> 
-        </xsl:variable> 
-        <xsl:variable name="remainingString"> 
-            <xsl:choose> 
-                <xsl:when test="contains($str,' ')"> 
-                    <xsl:value-of select="substring-after($str,' ')"/> 
-                </xsl:when> 
-                <xsl:otherwise/> 
-            </xsl:choose> 
-        </xsl:variable> 
-        <!-- 2) Normalizacja i usunięcie znaków specjalnych (*, %) -->
-        <xsl:variable name="normalizedToken" select="normalize-space($token)"/> 
-        <xsl:variable name="cleanedToken" select="translate($normalizedToken,'*%&amp;;\/-+()','')"/> 
-        <!-- 3) Przygotowujemy części przed i po 'x' --> 
-        <xsl:variable name="countPart" select="number(substring-before($cleanedToken,'x'))"/> 
-        <xsl:variable name="afterXPart" select="substring-after($cleanedToken,'x')"/> 
-        <xsl:choose> <!-- 3o) odfiltrowanie problematycznych tokenów -->
-            <xsl:when test="contains($token,'xl') and $remainingString != ''"> 
-                <xsl:call-template name="find_unit_measure"> 
-                    <xsl:with-param name="str" select="$remainingString"/> 
-                    <xsl:with-param name="prev" select="$cleanedToken"/> 
-                </xsl:call-template> 
-            </xsl:when> <!-- 3a) wzorzec “3x40ml” --> 
-            <xsl:when test="$afterXPart != '' and 
-                            translate($countPart,'0123456789.,','') = '' and 
-                            string-length(translate($afterXPart,'0123456789.,','')) &gt; 0 and
-                                                                         string-length(translate($afterXPart,'0123456789.,','')) &lt; 3 and
-                                                                         string-length(translate($afterXPart,'0123456789.,kgml','')) = 0"> 
-                <xsl:variable name="singleQuantity" select="number( translate($afterXPart,$lowerLetters,'') )"/> 
-                <xsl:variable name="unit" select="translate($afterXPart,'0123456789.,','')"/> 
-                <xsl:value-of select="concat($countPart * $singleQuantity, ' ', $unit)"/> 
-            </xsl:when> <!-- 3b) wzorzec “3x50” + oddzielna jednostka w następnym tokenie --> 
-            <xsl:when test="$afterXPart != '' and 
-                            translate($countPart,'0123456789.,','') = '' and 
-                            translate($afterXPart,'0123456789.,','') = '' "> 
-                <xsl:variable name="nextTok" select="substring-before(concat($remainingString,' '),' ')"/> 
-                <xsl:variable name="unit" select="translate($nextTok,'0123456789.,','')"/> 
-                <xsl:if test=" $unit='ml' or $unit='l' or $unit='g' or $unit='kg' "> 
-                    <xsl:variable name="singleQuantity" select="number($afterXPart)"/> 
-                    <xsl:value-of select="concat($countPart * $singleQuantity, ' ', $unit)"/> 
-                </xsl:if> 
-            </xsl:when> <!-- 4) prosty token typu “1000ml” lub “1000ml*” --> 
-            <xsl:when test="translate($cleanedToken,$lowerLetters,'') != '' and 
-                            string-length(translate($cleanedToken,'0123456789.,','')) &gt; 0 and 
-                                                                           (translate($cleanedToken,'0123456789.,','')='ml' or 
-                                                                           translate($cleanedToken,'0123456789.,','')='l' or 
-                                                                           translate($cleanedToken,'0123456789.,','')='g' or 
-                                                                           translate($cleanedToken,'0123456789.,','')='kg' ) "> 
-                <xsl:variable name="numPart" select="translate($cleanedToken,$lowerLetters,'')"/> 
-                <xsl:variable name="unitPart" select="translate($cleanedToken,'0123456789.,','')"/> 
-                <xsl:value-of select="concat($numPart, ' ', $unitPart)"/> 
-            </xsl:when> <!-- 5) rozdzielone “50” + “ml” jako osobne tokeny --> 
-            <xsl:when test=" ($cleanedToken='ml' or $cleanedToken='l' or $cleanedToken='g' or $cleanedToken='kg') and 
-                            translate($prev,$lowerLetters,'') != '' "> 
-                <xsl:value-of select="concat(translate($prev,$lowerLetters,''), ' ', $cleanedToken ) "/> 
-            </xsl:when> <!-- 6) inaczej rekurencyjnie dalej --> 
-            <xsl:when test="$remainingString != ''"> 
-                <xsl:call-template name="find_unit_measure"> 
-                    <xsl:with-param name="str" select="$remainingString"/> 
-                    <xsl:with-param name="prev" select="$cleanedToken"/> 
-                </xsl:call-template> 
+    <!-- 2026.06.03 MD -->
+    <xsl:template name="extract-measure">
+        <xsl:param name="str"/>
+        
+        <xsl:variable name="token" select="substring-before(concat($str,' '),' ')"/>
+        <xsl:variable name="rest"  select="substring-after($str,' ')"/>
+        
+        <xsl:variable name="clean" select="translate($token,'*%&amp;;\/-+()','')"/>
+        
+        <xsl:choose>
+            <!-- 1) format: 500ml, 1,5l, 1.5l -->
+            <xsl:when test="
+                        translate($clean,'0123456789.,','') != '' and
+                        contains($unitsList, concat('|', translate($clean,'0123456789.,',''), '|')) and
+                        string-length(translate($clean,'0123456789.,','')) &gt; 0 and
+                                                                    string-length(translate($clean,'0123456789.,','')) &lt; 4 and
+                                                                    string-length(translate($clean,'0123456789','')) &lt; string-length($clean)
+                                                                  ">
+                <xsl:value-of select="$clean"/>
             </xsl:when>
-        </xsl:choose> 
+            <!-- 2) format: 500 ml, 1,5 l, 1.5 l, 15 kg -->
+            <xsl:when test="
+                        translate($clean,'0123456789.,','') = '' and
+                        string-length($clean) &gt; 0 and
+                                       string-length(translate($clean,'0123456789','')) &lt; string-length($clean) and
+                                                                  contains($unitsList, concat('|', substring-before(concat($rest,' '),' '), '|')) and
+                                                                  not(contains($unitsList, concat('|', $clean, '|')))
+                                                                  ">
+                <xsl:value-of select="concat($clean, ' ', substring-before(concat($rest,' '),' '))"/>
+            </xsl:when>
+            <!-- 3) format: 4x500ml, 4x1,5l, 4x1.5l -->
+            <xsl:when test="
+                        contains($clean,'x') and
+                        translate(substring-before($clean,'x'),'0123456789.,','') = '' and
+                        translate(substring-after($clean,'x'),'0123456789.,','') != '' and
+                        contains($unitsList, concat('|', translate(substring-after($clean,'x'),'0123456789.,',''), '|'))
+                        ">
+                <xsl:value-of select="$clean"/>
+            </xsl:when>
+            <!-- 4) format: 4 x 500ml, 4 x 1,5l, 4 x 1.5l -->
+            <xsl:when test="
+                        translate($clean,'0123456789.,','') = '' and
+                        substring($rest,2,1) = 'x'
+                        ">
+                <xsl:variable name="afterX" select="substring($rest,3)"/>
+                <xsl:if test="
+                            translate($afterX,'0123456789.,','') != '' and
+                            contains($unitsList, concat('|', translate($afterX,'0123456789.,',''), '|'))
+                            ">
+                    <xsl:value-of select="concat($clean, ' x ', $afterX)"/>
+                </xsl:if>
+            </xsl:when>
+            <xsl:when test="$rest != ''">
+                <xsl:call-template name="extract-measure">
+                    <xsl:with-param name="str" select="$rest"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise/>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="normalize-measure">
+        <xsl:param name="value"/>
+        
+        <xsl:variable name="clean" select="normalize-space(translate($value,'*%&amp;;\/-+() ',''))"/>
+        
+        <xsl:choose>
+            <!-- 1) format NxMunit (np. 4x120g, 3x1,5l, 4x500 ml) -->
+            <xsl:when test="contains($clean,'x')">
+                <xsl:variable name="left"  select="substring-before($clean,'x')"/>
+                <xsl:variable name="right" select="substring-after($clean,'x')"/>
+                
+                <xsl:value-of select="concat(number(translate($left,',','.')) * number(translate($right,'abcdefghijklmnopqrstuvwxyz,','.' ))
+                                      , ' '
+                                      , substring-before(concat(translate($right,'0123456789.,',''),' '),' '))"/>
+            </xsl:when>
+            <!-- 2) format liczba + jednostka (np. 500ml, 1,5l, 15kg) -->
+            <xsl:when test="
+                        translate($clean,'0123456789.,','') != '' and
+                        string-length(translate($clean,'0123456789','')) &lt; string-length($clean)
+                                                                  ">
+                <xsl:value-of select="concat(translate(substring-before($clean,translate($clean,'0123456789.,','')),',','.'), ' ', translate($clean,'0123456789.,',''))"/>
+            </xsl:when>
+            <!-- 3) format liczba + spacja + jednostka (np. 500 ml, 1,5 l, 15 kg) -->
+            <xsl:when test="
+                        contains($clean,' ') and
+                        translate(substring-before($clean,' '),'0123456789.,','') = ''
+                        ">
+                <xsl:value-of select="concat(translate(substring-before($clean,' '),',','.'), ' ', substring-before(concat(substring-after($clean,' '),' '),' '))"/>
+            </xsl:when>
+            <xsl:otherwise/>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template name="searchGoogleCategory">

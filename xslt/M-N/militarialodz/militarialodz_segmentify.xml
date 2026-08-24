@@ -515,11 +515,22 @@
       
       <!-- Sprawdzić system grupowania wariantów. Dopytać klienta. -->
       <!-- Grupuj tylko rozmiary -->
-      <g:item_group_id>
-         <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-         <xsl:value-of select="@id" />
-         <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-      </g:item_group_id>
+      <xsl:choose>
+         <xsl:when test="group/@id">
+            <g:item_group_id>
+               <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+               <xsl:value-of select="group/@id"/>
+               <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </g:item_group_id>
+         </xsl:when>
+         <xsl:otherwise>
+            <g:item_group_id>
+               <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+               <xsl:value-of select="@id"/>
+               <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+            </g:item_group_id>
+         </xsl:otherwise>
+      </xsl:choose>
       
       <!-- jeśli na sklepie są jakieś zestawy -->
       <xsl:choose>
@@ -748,6 +759,30 @@
             </xsl:for-each>
          </xsl:when>
       </xsl:choose>
+      
+      <xsl:if test="iaiext:omnibus_price_retail/iaiext:site/@gross > 0">
+         <omnibus_price>
+            <xsl:value-of select="iaiext:omnibus_price_retail/iaiext:site/@gross"></xsl:value-of>
+            <xsl:text><![CDATA[ ]]></xsl:text>
+            <xsl:value-of select="@currency"/>    
+         </omnibus_price>
+      </xsl:if>
+      
+      <!-- 09.01.2026 MD -->
+      <g:custom_label_1>
+         <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'newproduct']/@visible='yes'">
+            <xsl:text>|Nowość|</xsl:text>
+         </xsl:if>
+         <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'bestseller']/@visible='yes'">
+            <xsl:text>|Bestseller|</xsl:text>
+         </xsl:if>
+         <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'promotion']/@visible='yes'">
+            <xsl:text>|Promocja|</xsl:text>
+         </xsl:if>
+         <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'distinguished']/@visible='yes'">
+            <xsl:text>|Wyróżniony|</xsl:text>
+         </xsl:if>
+      </g:custom_label_1>
    </xsl:template>
   
    <xsl:template name="productSizeMatter"
@@ -896,10 +931,20 @@
       
       <xsl:element name="g:size">
          <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-         <xsl:value-of select="@name" />
+         <xsl:choose>
+            <xsl:when test="../../parameters/parameter/@name = 'Rozmiar' 
+                            and ../../parameters/parameter[@name = 'Rozmiar']/value/@name != ''
+                            and ../../parameters/parameter[@name = 'Rozmiar']/value/@name != 'null'
+                            and ../../group/@id > 0">
+               <xsl:value-of select="../../parameters/parameter[@name = 'Rozmiar']/value/@name" />
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="@name" />
+            </xsl:otherwise>
+         </xsl:choose>
          <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
       </xsl:element>
-      
+
       <xsl:variable name="size_id">
          <xsl:choose>
             <xsl:when test="@name!=''">

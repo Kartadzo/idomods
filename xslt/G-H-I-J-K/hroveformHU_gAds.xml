@@ -1,8 +1,12 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
-                xmlns:php="http://php.net/xsl">
+                xmlns:php="http://php.net/xsl"
+                xmlns:exsl="http://exslt.org/common"
+               extension-element-prefixes="exsl">
+   
    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+   
    <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
    <xsl:variable name="upperLetters" 
                  select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'" />
@@ -905,17 +909,33 @@
       </g:custom_label_1>
       
       <g:custom_label_2>
-         <xsl:variable name="label2">
-            <xsl:call-template name="throwNode">
-               <xsl:with-param name="index" select="1"/>
-               <xsl:with-param name="border" select="'\'"/>
+         <xsl:variable name="label1">
+            <xsl:call-template name="extractModel">
+               <xsl:with-param name="name" select="translate($nazwaTowaru, $upperLetters, $lowerLetters)"/>
             </xsl:call-template>
+            <xsl:text>;</xsl:text>
          </xsl:variable>
-         <xsl:call-template name="tokenize">
-            <xsl:with-param name="text" select="substring(normalize-space($label2),1,100)" />
-            <xsl:with-param name="delimiter" select="';'" />
-         </xsl:call-template>
+         
+         <xsl:variable name="isException">
+            <xsl:choose>
+               <xsl:when test="contains(translate($nazwaTowaru,$upperLetters,$lowerLetters),'fotel frey')">fotel frey</xsl:when>
+               <xsl:when test="contains(translate($nazwaTowaru,$upperLetters,$lowerLetters),'sofa frey')">sofa frey</xsl:when>
+               <xsl:otherwise></xsl:otherwise>
+            </xsl:choose>
+         </xsl:variable>
+         
+         <xsl:choose>
+            <xsl:when test="$isException != ''">
+               <xsl:value-of select="$isException"/>
+            </xsl:when>
+            <xsl:when test="starts-with($label1, 'hr')
+                            or starts-with($label1, 'hc')
+                            or (starts-with($label1, 'st') and translate($label1, $lowerLetters, '') != '')">
+               <xsl:value-of select="$label1"/>
+            </xsl:when>
+         </xsl:choose>
       </g:custom_label_2>
+
       <g:custom_label_3>
          <xsl:variable name="label3">
             <xsl:call-template name="throwNode">
@@ -1665,6 +1685,136 @@
       </xsl:choose>
    </xsl:template>
    
+   <xsl:template name="split">
+      <xsl:param name="text"/>
+      <xsl:param name="delimiter" select="' '"/>
+      
+      <xsl:choose>
+         <xsl:when test="contains($text, $delimiter)">
+            <xsl:variable name="head" select="substring-before($text, $delimiter)"/>
+            <xsl:variable name="tail" select="substring-after($text, $delimiter)"/>
+            
+            <xsl:if test="normalize-space($head) != ''">
+               <token><xsl:value-of select="normalize-space($head)"/></token>
+            </xsl:if>
+            
+            <xsl:call-template name="split">
+               <xsl:with-param name="text" select="$tail"/>
+               <xsl:with-param name="delimiter" select="$delimiter"/>
+            </xsl:call-template>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:if test="normalize-space($text) != ''">
+               <token><xsl:value-of select="normalize-space($text)"/></token>
+            </xsl:if>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   <xsl:template name="extractModel">
+      <xsl:param name="name"/>
+      
+      <xsl:variable name="nameLower"
+                    select="translate(normalize-space($name), $upperLetters, $lowerLetters)"/>
+      
+      <xsl:variable name="isException">
+         <xsl:choose>
+            <xsl:when test="contains($nameLower,'fotel frey')">1</xsl:when>
+            <xsl:when test="contains($nameLower,'sofa frey')">1</xsl:when>
+            <xsl:otherwise>0</xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      
+      <xsl:variable name="firstWord"
+                    select="substring-before(concat($nameLower,' '),' ')"/>
+      
+      <xsl:variable name="textForSplit">
+         <xsl:choose>
+            <xsl:when test="starts-with($firstWord,'hr')
+                            or starts-with($firstWord,'hc')
+                            or starts-with($firstWord,'st')">
+               <xsl:value-of select="$nameLower"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="substring-after($nameLower,' ')"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      
+      <xsl:variable name="tokensRTF">
+         <xsl:call-template name="split">
+            <xsl:with-param name="text" select="$textForSplit"/>
+         </xsl:call-template>
+      </xsl:variable>
+      
+      <xsl:variable name="tokens" select="exsl:node-set($tokensRTF)" />
+      
+      <xsl:variable name="modelRaw">
+         <xsl:for-each select="$tokens/token">
+            <xsl:variable name="t" select="normalize-space(.)"/>
+            
+            <xsl:if test="$isException = 1">
+               <xsl:value-of select="$t"/>
+            </xsl:if>
+            
+            <xsl:if test="$isException = 0 and
+                          (starts-with($t, 'hr')
+                          or starts-with($t, 'hc')
+                          or starts-with($t, 'st'))">
+               <xsl:value-of select="$t"/>
+            </xsl:if>
+         </xsl:for-each>
+      </xsl:variable>
+      
+      <xsl:choose>
+         <xsl:when test="$isException = 1">
+            <xsl:value-of select="$modelRaw"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:call-template name="stripAfterDigits">
+               <xsl:with-param name="text" select="$modelRaw"/>
+            </xsl:call-template>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   
+   <xsl:template name="stripAfterDigits">
+      <xsl:param name="text"/>
+      <xsl:param name="out" select="''"/>
+      <xsl:param name="digitsFound" select="0"/>
+      
+      <xsl:choose>
+         <xsl:when test="string-length($text) = 0">
+            <xsl:value-of select="$out"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:variable name="char" select="substring($text, 1, 1)"/>
+            <xsl:variable name="rest" select="substring($text, 2)"/>
+            
+            <xsl:choose>
+               <xsl:when test="contains('0123456789', $char)">
+                  <xsl:call-template name="stripAfterDigits">
+                     <xsl:with-param name="text" select="$rest"/>
+                     <xsl:with-param name="out" select="concat($out, $char)"/>
+                     <xsl:with-param name="digitsFound" select="1"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:when test="$digitsFound = 0">
+                  <xsl:call-template name="stripAfterDigits">
+                     <xsl:with-param name="text" select="$rest"/>
+                     <xsl:with-param name="out" select="concat($out, $char)"/>
+                     <xsl:with-param name="digitsFound" select="0"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="$out"/>
+               </xsl:otherwise>
+            </xsl:choose>            
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+
    <xsl:template name="searchGoogleCategory">
       <xsl:param name="cat_id" />
       <xsl:choose>
