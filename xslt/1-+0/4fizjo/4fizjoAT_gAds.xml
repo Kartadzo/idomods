@@ -3,6 +3,13 @@
                 xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
                 xmlns:php="http://php.net/xsl">
     <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+    
+    <xsl:variable name='kodRabatowy'>LATO26</xsl:variable>
+    <xsl:variable name='rabatPr'>0.9</xsl:variable>
+    <xsl:variable name='idProduktów'>|1|
+        |3|2|</xsl:variable>
+    <xsl:variable name='terminWaznosci'>2026|08|12</xsl:variable>
+    
     <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
     <xsl:variable name="upperLetters" 
                   select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'" />
@@ -975,16 +982,21 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+
+        <xsl:variable name="genYear"   select="number(substring(/offer/@generated, 1, 4))"/>
+        <xsl:variable name="genMonth"  select="number(substring(/offer/@generated, 6, 2))"/>
+        <xsl:variable name="genDay"    select="number(substring(/offer/@generated, 9, 2))"/>
+        
+        <xsl:variable name="terYear"   select="number(substring-before($terminWaznosci,'|'))"/>
+        <xsl:variable name="terMonth"  select="number(substring-before(substring-after($terminWaznosci,'|'),'|'))"/>
+        <xsl:variable name="terDay"    select="number(substring-after(substring-after($terminWaznosci,'|'),'|'))"/>
         
         <xsl:choose>
-            <xsl:when test="../../@id = 101
-                            or ../../@id = 1174
-                            or ../../@id = 126
-                            or ../../@id = 1313
-                            or ../../@id = 1459
-                            or ../../@id = 1598
-                            or ../../@id = 329
-                            or ../../@id = 617">
+            <xsl:when test="(contains(translate($idProduktów, $upperLetters, $lowerLetters), '|all|')
+                            or contains($idProduktów, concat('|', ../../@id, '|')))
+                            and ($genYear  &lt; $terYear
+                            or ($genYear = $terYear and $genMonth &lt; $terMonth)
+                            or ($genYear = $terYear and $genMonth = $terMonth and $genDay &lt; $terDay))">
                 
                 <!-- 10-LATO26 -->
                 
@@ -1000,7 +1012,8 @@
                             <xsl:value-of select="card/@url" />
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:text disable-output-escaping="yes">?discount_code=LATO26</xsl:text>
+                    <xsl:text>?discount_code=</xsl:text>
+                    <xsl:value-of select="$kodRabatowy" />
                     <xsl:if test="count(sizes/size) &gt; 0">
                         <xsl:text disable-output-escaping="yes">&amp;selected_size=</xsl:text>
                         <xsl:value-of select="@id" />
@@ -1017,7 +1030,8 @@
                             <xsl:value-of select="card/@url" />
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:text disable-output-escaping="yes">?discount_code=LATO26</xsl:text>
+                    <xsl:text>?discount_code=</xsl:text>
+                    <xsl:value-of select="$kodRabatowy" />
                     <xsl:if test="count(sizes/size) &gt; 0">
                         <xsl:text disable-output-escaping="yes">&amp;selected_size=</xsl:text>
                         <xsl:value-of select="@id" />
@@ -1034,7 +1048,8 @@
                             <xsl:value-of select="card/@url" />
                         </xsl:otherwise>
                     </xsl:choose>
-                    <xsl:text disable-output-escaping="yes">?discount_code=LATO26</xsl:text>
+                    <xsl:text>?discount_code=</xsl:text>
+                    <xsl:value-of select="$kodRabatowy" />
                     <xsl:if test="count(sizes/size) &gt; 0">
                         <xsl:text disable-output-escaping="yes">&amp;selected_size=</xsl:text>
                         <xsl:value-of select="@id" />
@@ -1044,7 +1059,7 @@
                 
                 <xsl:element name="g:sale_price">
                     <!-- <xsl:value-of select="price/@gross * $sell_by" /> -->
-                    <xsl:value-of select="format-number(price/@gross*0.9, '#.##')" />
+                    <xsl:value-of select="format-number(price/@gross*$rabatPr, '#.##')" />
                     <xsl:text><![CDATA[ ]]></xsl:text>
                     <xsl:value-of select="$product_currency" />
                 </xsl:element>
