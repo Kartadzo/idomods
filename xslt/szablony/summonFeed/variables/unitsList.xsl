@@ -1,1 +1,0 @@
-<xsl:variable name="unitsList" select="'|ml|l|g|kg|'"/>

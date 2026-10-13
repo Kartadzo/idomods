@@ -1155,15 +1155,12 @@
          <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
          <xsl:choose>
             <xsl:when test="../../card/@url">
-               <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+               <xsl:value-of select="../../card/@url" />
             </xsl:when>
             <xsl:otherwise>
-               <xsl:value-of select="substring-before(card/@url, '.feed')" />
+               <xsl:value-of select="card/@url" />
             </xsl:otherwise>
          </xsl:choose>
-         <xsl:text disable-output-escaping="yes">.googleshopping</xsl:text>
-         <xsl:value-of select="translate($Kraj_dostawy, $upperLetters, $lowerLetters)" />
-         <xsl:text disable-output-escaping="yes">.html</xsl:text>
          <xsl:if test="count(../size) &gt; 1">
             <xsl:text>?selected_size=</xsl:text>
             <xsl:value-of select="@id" />
@@ -1174,13 +1171,12 @@
          <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
          <xsl:choose>
             <xsl:when test="../../card/@url">
-               <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+               <xsl:value-of select="../../card/@url" />
             </xsl:when>
             <xsl:otherwise>
-               <xsl:value-of select="substring-before(card/@url, '.feed')" />
+               <xsl:value-of select="card/@url" />
             </xsl:otherwise>
          </xsl:choose>
-         <xsl:text disable-output-escaping="yes">.googleremarketing.html</xsl:text>
          <xsl:if test="count(../size) &gt; 1">
             <xsl:text>?selected_size=</xsl:text>
             <xsl:value-of select="@id" />
@@ -1191,15 +1187,12 @@
          <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
          <xsl:choose>
             <xsl:when test="../../card/@url">
-               <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+               <xsl:value-of select="../../card/@url" />
             </xsl:when>
             <xsl:otherwise>
-               <xsl:value-of select="substring-before(card/@url, '.feed')" />
+               <xsl:value-of select="card/@url" />
             </xsl:otherwise>
          </xsl:choose>
-         <xsl:text disable-output-escaping="yes">.googleshopping</xsl:text>
-         <xsl:value-of select="translate($Kraj_dostawy, $upperLetters, $lowerLetters)" />
-         <xsl:text disable-output-escaping="yes">.html</xsl:text>
          <xsl:if test="count(../size) &gt; 1">
             <xsl:text>?selected_size=</xsl:text>
             <xsl:value-of select="@id" />

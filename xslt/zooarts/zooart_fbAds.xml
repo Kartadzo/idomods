@@ -21,7 +21,7 @@
    <xsl:variable name='kwota_dla_darmowej_dostawy'>99</xsl:variable>
    <xsl:variable name='kwota_dla_wiekszych_zamowien'>79.99</xsl:variable>
    <xsl:variable name="Koszt_dostawy">15.00</xsl:variable>
-   <xsl:variable name="Koszt_dostawy_wiekszych_zamowien">9.50</xsl:variable>
+   <xsl:variable name="Koszt_dostawy_wiekszych_zamowien">7.50</xsl:variable>
    <xsl:variable name="Kraj_dostawy" select="'PL'" />
    
    <!-- dane potrzebne aby przekazywać informacje o kolorze -->
@@ -36,10 +36,11 @@
       <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
          <channel>
             <xsl:for-each select="/offer/products/product[
-                                 price/@gross &gt; 0 
-                                 and description/name/. != ''
-                                 and @type != 'packaging'
-                                 ]">
+                                  price/@gross &gt; 0 
+                           and description/name/. != ''
+                           and @type != 'packaging'
+                           and not(iaiext:priority_menu/site/menu[1]/item[@id = '5002'])
+                           ]">
                <!-- Id towaru -->
                <xsl:choose>
                   <xsl:when test="count(sizes/size) &lt; 1">
