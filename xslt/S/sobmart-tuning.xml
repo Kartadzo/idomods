@@ -34,8 +34,7 @@
          <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
          <channel>
             <xsl:for-each select="/offer/products/product[
-                                 price/@gross &gt; 0 
-                                 and description/name/. != ''
+                                 description/name/. != ''
                                  and @type != 'packaging'
                                  ]">
                <!-- Id towaru -->

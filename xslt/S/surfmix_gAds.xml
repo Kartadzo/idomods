@@ -1272,6 +1272,9 @@
             <xsl:when test="@available = 'on_order' and $avail >= $sell_by">
                <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
             </xsl:when>
+            <xsl:when test="@available = 'on_preorder' and $avail >= $sell_by">
+               <xsl:text disable-output-escaping="yes">&lt;![CDATA[preorder]]&gt;</xsl:text>
+            </xsl:when>
             <xsl:when test="@available = 'in_stock' and $avail >= $sell_by">
                <xsl:text disable-output-escaping="yes">&lt;![CDATA[in stock]]&gt;</xsl:text>
             </xsl:when>

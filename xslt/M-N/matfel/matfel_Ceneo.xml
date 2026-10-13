@@ -95,6 +95,7 @@
                            </xsl:attribute>
                         </xsl:otherwise>
                      </xsl:choose>
+                            <xsl:attribute name="basket">1</xsl:attribute>
                      
                             <cat>
                                 <xsl:call-template name="ceneoCat"/>
@@ -592,6 +593,7 @@
                                     </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
+                            <xsl:attribute name="basket">1</xsl:attribute>
                             <cat>
                                 <xsl:call-template name="ceneoCat"/>
                             </cat>

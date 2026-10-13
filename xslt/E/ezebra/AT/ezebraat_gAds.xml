@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- XSLT GoogleShopping ver. 1.0 final (13.03.2019) https://support.google.com/merchants/answer/188494 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:g="http://base.google.com/ns/1.0">
-	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" cdata-section-elements="g:id title description g:google_product_category g:product_type link g:mobile_link g:image_link g:additional_image_link g:availability g:price g:sale_price g:gtin g:mpn g:brand g:size g:item_group_id g:condition g:shipping_weight adwords_grouping"/>
+	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" cdata-section-elements="g:id title description g:google_product_category link g:mobile_link g:image_link g:additional_image_link g:availability g:price g:sale_price g:gtin g:mpn g:brand g:size g:item_group_id g:condition g:shipping_weight adwords_grouping"/>
+	
+	<!-- konfiguracja cennika dostaw 
+						- uzupełnić jeśli nie jest wykorzystywana konfiguracja gmc (9.99) lub jeśli się koszty często zmieniają (*) -->
+	<!-- kwota_dla_darmowej_dostawy - powyżej tej kwoty podawana zostanie cena 0 PLN -->
+	<xsl:variable name='kwota_dla_darmowej_dostawy'>39</xsl:variable>
+	<!-- kwota_dla_wiekszych_zamowien - można pominąć; Jeśli oferowany jest dodatkowy w przedziale cenowym to powyżej podanej tu wartości produktu wyświetlona zostanie cena podana w Koszt_dostawy_wiekszych_zamowien -->
+	<xsl:variable name='kwota_dla_wiekszych_zamowien'></xsl:variable>
+	<!-- Koszt_dostawy - cena domyślna dostawy, dodawana do każdego produktu który nie spełnia powyższych dwóch warunków -->
+	<xsl:variable name="Koszt_dostawy">20.00</xsl:variable>
+	<xsl:variable name="Koszt_dostawy_wiekszych_zamowien">0.00</xsl:variable>
+	<xsl:variable name="Kraj_dostawy" select="'AT'" />
+	<!-- Liczba dni roboczych -->
+	<xsl:variable name="Czas_obsługi_zamówienia_na_magazynie" select="0" />
+	<xsl:variable name="Czas_dostawy_zamówienia" select="1" />
+	<!-- serwis realizacji zamówienia - wybierz jedno - Ground, Express, Air -->
+	<xsl:variable name="Serwis_dostawy_zamówienia" select="'Kurier Standard'" />
+	<!-- Dni realizacji zamówienia - pon., wt., śr., czw., pt., sob., nd.-->
+	<xsl:variable name="Dni_obsługi_zamówienia_na_magazynie" select="'Pon.–pt.'" />
+	<xsl:variable name="Dni_dostawy_zamówienia" select="'pon.;wt.;śr.;czw.;pt.'" />
+	
 	<xsl:template match="/">
 		<rss xmlns:g="http://base.google.com/ns/1.0" xmlns:c="http://base.google.com/cns/1.0" version="2.0">
 			<xsl:element name="channel">
@@ -48,66 +68,53 @@
 										<xsl:value-of select="@category_id"/>
 									</xsl:element>
 								</xsl:for-each>
-								<!-- Typ produktu -->
-								<xsl:element name="g:product_type">
+
+								<xsl:for-each select="../..">
+									<!-- 2026-09-23 - MD -->
+									<!-- g product type -->
 									<xsl:choose>
-										<xsl:when test="contains(../../category/@name, '*')">	
-											<xsl:value-of select="substring-after(../../category/@name, '*')"/>
+										<xsl:when test="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]/iaiext:item[1]/@id != ''">
+											<xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu">
+												<xsl:for-each select="iaiext:item[position() &lt; 6]">
+													<xsl:sort
+														select="string-length(@textid) - string-length(translate(@textid, '\', ''))"
+														data-type="number"
+														order="descending"/>
+													<g:product_type>
+														<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+														<xsl:call-template name="string-replace-all">
+															<xsl:with-param name="text" select="@textid"/>
+															<xsl:with-param name="replace" select="'\'"/>
+															<xsl:with-param name="by" select="' &gt; '"/>
+														</xsl:call-template>
+														<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+													</g:product_type>
+												</xsl:for-each>
+											</xsl:for-each>
 										</xsl:when>
-										<xsl:otherwise>
-                                            <xsl:variable name="kier2"><![CDATA[ > ]]></xsl:variable>
-                                            <xsl:variable name="category" select="normalize-space(../../category/@name)"/>
-                                            <xsl:variable name="cat1" select="substring-before($category, '/')"/>
-                                            <xsl:variable name="cat11" select="substring-after($category, '/')"/>
-                                            <xsl:variable name="cat2" select="substring-before($cat11, '/')"/>
-                                            <xsl:variable name="cat22" select="substring-after($cat11, '/')"/>
-                                            <xsl:variable name="cat3" select="substring-before($cat22, '/')"/>										
-                                            <xsl:variable name="cat33" select="substring-after($cat22, '/')"/>
-                                            <xsl:variable name="cat4" select="substring-before($cat33, '/')"/>
-                                            <xsl:variable name="cat44" select="substring-after($cat33, '/')"/>	
-                                            <xsl:variable name="cat5" select="substring-before($cat44, '/')"/>
-                                            <xsl:variable name="cat55" select="substring-after($cat44, '/')"/>
-                                            <xsl:variable name="cat6" select="substring-before($cat55, '/')"/>
-                                            <xsl:variable name="cat66" select="substring-after($cat55, '/')"/>
-                                            <xsl:variable name="cat7" select="substring-before($cat66, '/')"/>
-                                            <xsl:variable name="cat77" select="substring-after($cat66, '/')"/>	
-                                            <xsl:variable name="cat8" select="substring-before($cat77, '/')"/>
-                                            <!-- poziom 1 -->
-                                            <xsl:if test="$cat1=''"><xsl:value-of select="$category"/></xsl:if>
-                                            <xsl:if test="$cat1 !=''"><xsl:value-of select="$cat1"/></xsl:if>
-                                            <!-- poziom 2 -->	
-                                            <xsl:if test="($cat11 !='' or $cat2 !='')"><xsl:value-of select="$kier2"/></xsl:if>
-                                            <xsl:if test="$cat2 !=''"><xsl:value-of select="$cat2"/></xsl:if>
-                                            <xsl:if test="$cat11 !='' and $cat2=''"><xsl:value-of select="$cat11"/></xsl:if>
-                                            <!-- poziom 3 -->
-                                            <xsl:if test="($cat22 !='' or $cat3 !='')"><xsl:value-of select="$kier2"/></xsl:if>
-                                            <xsl:if test="$cat3 !=''"><xsl:value-of select="$cat3"/></xsl:if>
-                                            <xsl:if test="$cat22 !='' and $cat3=''"><xsl:value-of select="$cat22"/></xsl:if>
-                                            <!-- poziom 4 -->
-                                            <xsl:if test="($cat33 !='' or $cat4 !='')"><xsl:value-of select="$kier2"/></xsl:if>
-                                            <xsl:if test="$cat4 !=''"><xsl:value-of select="$cat4"/></xsl:if>
-                                            <xsl:if test="$cat33 !='' and $cat4=''"><xsl:value-of select="$cat33"/></xsl:if>
-                                            <!-- poziom 5 -->
-                                            <xsl:if test="($cat44 !='' or $cat5 !='')"><xsl:value-of select="$kier2"/></xsl:if>	
-                                            <xsl:if test="$cat5 !=''"><xsl:value-of select="$cat5"/></xsl:if>
-                                            <xsl:if test="$cat44 !='' and $cat5=''"><xsl:value-of select="$cat44"/></xsl:if>
-                                            <!-- poziom 6 -->
-                                            <xsl:if test="($cat55 !='' or $cat6 !='')"><xsl:value-of select="$kier2"/></xsl:if>
-                                            <xsl:if test="$cat6 !=''"><xsl:value-of select="$cat6"/></xsl:if>
-                                            <xsl:if test="$cat55 !='' and $cat6=''"><xsl:value-of select="$cat55"/></xsl:if>
-                                            <!-- poziom 7 -->
-                                            <xsl:if test="($cat66 !='' or $cat7 !='')"><xsl:value-of select="$kier2"/></xsl:if>
-                                            <xsl:if test="$cat7 !=''"><xsl:value-of select="$cat7"/></xsl:if>
-                                            <xsl:if test="$cat66 !='' and $cat7=''"><xsl:value-of select="$cat66"/></xsl:if>
-                                            <!-- poziom 8 -->
-                                            <xsl:if test="($cat77 !='' or $cat8 !='')"><xsl:value-of select="$kier2"/></xsl:if>
-                                            <xsl:if test="$cat8 !=''"><xsl:value-of select="$cat8"/></xsl:if>
-                                            <xsl:if test="$cat77 !='' and $cat8=''"><xsl:value-of select="$cat77"/></xsl:if>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:element>
-                                <!-- ETYKIETA custom_label_0 -->
-                                <xsl:variable name="kier"><![CDATA[ > ]]></xsl:variable>
+										<xsl:when test="category_idosell/@path != ''">
+											<xsl:element name="g:product_type">
+												<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+												<xsl:value-of select="category_idosell/@path"></xsl:value-of>
+												<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+											</xsl:element>
+										</xsl:when>
+										<xsl:when test="category/@name != '' and category/@id != '0'">
+											<xsl:element name="g:product_type">
+												<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+												<xsl:call-template name="string-replace-all">
+													<xsl:with-param name="text" select="category/@name" tunnel="yes" />
+													<xsl:with-param name="replace" select="'/'" tunnel="yes" />
+													<xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
+												</xsl:call-template>
+												<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+											</xsl:element>
+										</xsl:when>
+									</xsl:choose>								
+								</xsl:for-each>
+
+								<!-- ETYKIETA custom_label_0 -->
+								<xsl:variable name="kier"><![CDATA[ > ]]></xsl:variable>
 								<xsl:choose>
 									<xsl:when test="../../iaiext:navigation/iaiext:site/iaiext:menu/iaiext:item/@textid != ''">
 										<xsl:for-each select="../../iaiext:navigation/iaiext:site/iaiext:menu/iaiext:item">
@@ -178,29 +185,29 @@
 									</xsl:otherwise>
 								</xsl:choose>
 								<!-- URL & URL Mobile -->
-       							<link>
-       							    <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
-       							    <xsl:text disable-output-escaping="yes">.html</xsl:text>
-       							    <xsl:if test="@id != 'uniw'">
-       							        <xsl:text>?selected_size=</xsl:text>
-       							        <xsl:value-of select="@id" />
-       							    </xsl:if>
-       							</link>
-       							<g:display_ads_link>
-       							    <xsl:value-of select="concat(substring-before(../../card/@url, '.feed'),'.html')" />
-       							    <xsl:if test="@id != 'uniw'">
-       							        <xsl:text>?selected_size=</xsl:text>
-       							        <xsl:value-of select="@id" />
-       							    </xsl:if>
-       							</g:display_ads_link>
-       							<g:mobile_link>
-       							    <xsl:value-of select="substring-before(../../card/@url, '.feed')" />
-       							    <xsl:text disable-output-escaping="yes">.html</xsl:text>
-       							    <xsl:if test="@id != 'uniw'">
-       							        <xsl:text>?selected_size=</xsl:text>
-       							        <xsl:value-of select="@id" />
-       							    </xsl:if>
-       							</g:mobile_link>
+								<link>
+									<xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+									<xsl:text disable-output-escaping="yes">.html</xsl:text>
+									<xsl:if test="@id != 'uniw'">
+										<xsl:text>?selected_size=</xsl:text>
+										<xsl:value-of select="@id" />
+									</xsl:if>
+								</link>
+								<g:display_ads_link>
+									<xsl:value-of select="concat(substring-before(../../card/@url, '.feed'),'.html')" />
+									<xsl:if test="@id != 'uniw'">
+										<xsl:text>?selected_size=</xsl:text>
+										<xsl:value-of select="@id" />
+									</xsl:if>
+								</g:display_ads_link>
+								<g:mobile_link>
+									<xsl:value-of select="substring-before(../../card/@url, '.feed')" />
+									<xsl:text disable-output-escaping="yes">.html</xsl:text>
+									<xsl:if test="@id != 'uniw'">
+										<xsl:text>?selected_size=</xsl:text>
+										<xsl:value-of select="@id" />
+									</xsl:if>
+								</g:mobile_link>
 								<!-- IMG -->
 								<xsl:choose>
 									<xsl:when test="../../images/large">
@@ -331,21 +338,21 @@
 								<xsl:variable name="mainPrice">
 									<xsl:choose>
 										<!-- <xsl:when test="../../srp and ../../srp/@gross > 0 and
-										  ../../srp/@gross > price/@gross and 
-										  price/@gross = ../../price/@gross">
-											<xsl:choose>
-												<xsl:when test="../../srp/@gross > price/@gross">
-													<xsl:value-of select="../../srp/@gross"></xsl:value-of>
-												</xsl:when>
-												<xsl:otherwise>
-													<xsl:value-of select="price/@gross"></xsl:value-of>
-												</xsl:otherwise>
-											</xsl:choose>
-										</xsl:when> -->
+															../../srp/@gross > price/@gross and 
+															price/@gross = ../../price/@gross">
+															<xsl:choose>
+															<xsl:when test="../../srp/@gross > price/@gross">
+															<xsl:value-of select="../../srp/@gross"></xsl:value-of>
+															</xsl:when>
+															<xsl:otherwise>
+															<xsl:value-of select="price/@gross"></xsl:value-of>
+															</xsl:otherwise>
+															</xsl:choose>
+															</xsl:when> -->
 										<xsl:when test="../../strikethrough_retail_price and  ../../strikethrough_retail_price/@gross > 0 and
-										  ../../strikethrough_retail_price/@gross > price/@gross and 
-										  price/@gross = ../../price/@gross and 
-										  ../../strikethrough_retail_price/@gross > $cena_serwis">
+												../../strikethrough_retail_price/@gross > price/@gross and 
+												price/@gross = ../../price/@gross and 
+												../../strikethrough_retail_price/@gross > $cena_serwis">
 											<xsl:choose>
 												<xsl:when test="../../strikethrough_retail_price/@gross > price/@gross">
 													<xsl:value-of select="../../strikethrough_retail_price/@gross"/>
@@ -368,11 +375,11 @@
 										<xsl:when test="price/@gross">
 											<xsl:choose>
 												<xsl:when test="price/@gross != ../../price/@gross and
-												../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross > price/@gross">
+														../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross > price/@gross">
 													<xsl:value-of select="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross"/>
 												</xsl:when>
 												<xsl:when test="price/@gross = ../../price/@gross and
-												../../promotion/price/normal_retail_price/@gross > price/@gross">
+														../../promotion/price/normal_retail_price/@gross > price/@gross">
 													<xsl:value-of select="../../promotion/price/normal_retail_price/@gross"/>
 												</xsl:when>
 												<xsl:otherwise>
@@ -392,10 +399,10 @@
 								<xsl:if test="../../promotion/price/normal_retail_price or ../../strikethrough_retail_price">
 									<xsl:choose>        <!-- (../../srp and ../../srp/@gross > price/@gross) or -->
 										<xsl:when test = "
-										  (../../strikethrough_retail_price and ../../strikethrough_retail_price/@gross > price/@gross) or
-										  (../../promotion/price/normal_retail_price and ../../promotion/price/normal_retail_price/@gross > price/@gross) or
-										  (../../promotion/price/normal_retail_price and ../../price/@gross != price/@gross and 
-										  ../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross > price/@gross)">
+												(../../strikethrough_retail_price and ../../strikethrough_retail_price/@gross > price/@gross) or
+												(../../promotion/price/normal_retail_price and ../../promotion/price/normal_retail_price/@gross > price/@gross) or
+												(../../promotion/price/normal_retail_price and ../../price/@gross != price/@gross and 
+												../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = ../../../../../sizes/size/@id]/@gross > price/@gross)">
 											<g:sale_price>
 												<xsl:value-of select="price/@gross"/>
 												<xsl:text><![CDATA[ ]]></xsl:text>
@@ -475,18 +482,82 @@
 									<xsl:value-of select="../../@id"/>
 								</xsl:element>	
 								<!-- Koszt dostawy -->
-								<xsl:if test="price/price_marketplace_site/delivery_cost/prepayment/@gross != ''">
+								<!-- <xsl:if test="price/price_marketplace_site/delivery_cost/prepayment/@gross != ''">
 									<xsl:element name="g:shipping">
 										<xsl:element name="g:price">
 											<xsl:value-of select="price/price_marketplace_site/delivery_cost/prepayment/@gross"/><xsl:text> </xsl:text><xsl:value-of select="$currencyPrice"/>
 										</xsl:element>
-                    <xsl:element name="g:country">
-                      <!-- DO ZMIANY JAK PD DODA -->
+										<xsl:element name="g:country"> -->
+											<!-- DO ZMIANY JAK PD DODA -->
 											<!-- <xsl:value-of select="../../../@delivery_country"/> -->
-                      <![CDATA[AT]]>
+											<!-- <![CDATA[AT]]>
+										</xsl:element>
+									</xsl:element>
+								</xsl:if> -->
+								
+								<xsl:variable name="product_currency">
+									<xsl:choose>
+										<xsl:when test="../../@currency!=''">
+											<xsl:value-of select="../../@currency" />
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="@currency" />
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:variable>
+								<!-- 2026.09.14  MD -->
+								<xsl:if test="$kwota_dla_darmowej_dostawy != ''">
+									<xsl:element name="g:shipping">
+										<xsl:element name="g:price">
+											<!-- <xsl:value-of select="price/price_marketplace_site/delivery_cost/prepayment/@gross"/> -->
+											<xsl:choose>
+												<xsl:when test="'*' = $kwota_dla_darmowej_dostawy">
+													<xsl:value-of select="price/price_marketplace_site/delivery_cost/prepayment/@gross" />
+												</xsl:when>
+												<xsl:when test="price/@gross >= $kwota_dla_darmowej_dostawy">
+													<xsl:text><![CDATA[0]]></xsl:text>
+												</xsl:when>
+												<xsl:when test="$kwota_dla_wiekszych_zamowien != '' and price/@gross >= $kwota_dla_wiekszych_zamowien">
+													<xsl:value-of select="$Koszt_dostawy_wiekszych_zamowien" />
+												</xsl:when>
+												<xsl:otherwise>
+													<xsl:value-of select="$Koszt_dostawy" />
+												</xsl:otherwise>
+											</xsl:choose>
+											<xsl:text><![CDATA[ ]]></xsl:text>
+											<xsl:value-of select="$product_currency" />
+										</xsl:element>
+										<xsl:element name="g:country">
+											<xsl:value-of select="$Kraj_dostawy" />
+										</xsl:element>
+										<xsl:element name="g:min_handling_time">
+											<xsl:value-of select="$Czas_obsługi_zamówienia_na_magazynie" />
+										</xsl:element>
+										<xsl:element name="g:max_handling_time">
+											<xsl:value-of select="$Czas_obsługi_zamówienia_na_magazynie + ceiling(($Czas_obsługi_zamówienia_na_magazynie + 1) div 3)" />
+										</xsl:element>
+										<xsl:element name="g:min_transit_time">
+											<xsl:value-of select="$Czas_dostawy_zamówienia" />
+										</xsl:element>
+										<xsl:element name="g:max_transit_time">
+											<xsl:value-of select="$Czas_dostawy_zamówienia + ceiling(($Czas_dostawy_zamówienia + 1) div 3)" />
+										</xsl:element>
+										<xsl:element name="g:service">
+											<xsl:value-of select="$Serwis_dostawy_zamówienia" />
+										</xsl:element>
+									</xsl:element>
+									<xsl:element name="g:free_shipping_threshold">
+										<xsl:element name="g:price_threshold">
+											<xsl:value-of select="$kwota_dla_darmowej_dostawy" />
+											<xsl:text><![CDATA[ ]]></xsl:text>
+											<xsl:value-of select="$product_currency" />
+										</xsl:element>
+										<xsl:element name="g:country">
+											<xsl:value-of select="$Kraj_dostawy" />
 										</xsl:element>
 									</xsl:element>
 								</xsl:if>
+
 								<!-- Waga -->							
 								<xsl:element name="g:shipping_weight">
 									<xsl:variable name="weight" select="@weight"/>
@@ -509,9 +580,6 @@
 								</xsl:for-each>							
 								<xsl:for-each select="../../parameters/parameter[@context_id = 'CONTEXT_AGE_GROUP']">
 									<xsl:choose>
-										<xsl:when test="value[@context_id = 'CONTEXT_AGE_GROUP_ADULT']">
-											<xsl:element name="g:age_group"><![CDATA[adult]]></xsl:element>
-										</xsl:when>
 										<xsl:when test="value[@context_id = 'CONTEXT_AGE_GROUP_MINOR']">
 											<xsl:element name="g:age_group"><![CDATA[kids]]></xsl:element>
 										</xsl:when>											
@@ -525,32 +593,15 @@
 										</xsl:if>
 									</xsl:for-each>		
 								</xsl:for-each>
-								<xsl:for-each select="../../parameters/parameter[@context_id = 'CONTEXT_ONLY_ADULTS']">
-									<xsl:choose>
-										<xsl:when test="value[@context_id = 'CONTEXT_ONLY_ADULTS_YES']">
-											<xsl:element name="g:adult"><![CDATA[yes]]></xsl:element>
-										</xsl:when>
-										<xsl:when test="value[@context_id = 'CONTEXT_ONLY_ADULTS_NO']">
-											<xsl:element name="g:adult"><![CDATA[no]]></xsl:element>
-										</xsl:when>
-										<xsl:otherwise/>
-									</xsl:choose>
-								</xsl:for-each>
-
-								<xsl:element name="adwords_grouping">
-									<xsl:choose>
-										<xsl:when test="contains(../../category/@name, '*')">	
-											<xsl:value-of select="substring-after(../../category/@name, '*')"/>
-										</xsl:when>
-										<xsl:otherwise>
-											<xsl:variable name="rcategory" select="normalize-space(../../category/@name)"/>
-											<xsl:variable name="rcat" select="substring-before($rcategory, '/')"/>
-											<!-- poziom 1 -->
-											<xsl:if test="$rcat=''"><xsl:value-of select="$rcategory"/></xsl:if>
-											<xsl:if test="$rcat !=''"><xsl:value-of select="$rcat"/></xsl:if>
-										</xsl:otherwise>
-									</xsl:choose>
-								</xsl:element>
+								
+								<xsl:if test="../../iaiext:priority_menu/site/menu[1]/item[@id = '6602']">
+									<xsl:element name="g:age_group">
+										<xsl:value-of select="'adult'"/>
+									</xsl:element>
+									<xsl:element name="g:adult">
+										<xsl:value-of select="'yes'"/>
+									</xsl:element>
+								</xsl:if>
 							</xsl:element>
 						</xsl:if>
 					</xsl:for-each>
@@ -574,4 +625,26 @@
 			</xsl:if>
 		</xsl:if>
 	</xsl:template>
+    
+  <xsl:template name="string-replace-all">
+        <xsl:param name="text" />
+        <xsl:param name="replace" />
+        <xsl:param name="by" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $replace) and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text,$replace)" />
+                <xsl:value-of select="$by" />
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="substring-after($text,$replace)" />
+                    <xsl:with-param name="replace" select="$replace" />
+                    <xsl:with-param name="by" select="$by" />
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text" />
+            </xsl:otherwise>
+        </xsl:choose>
+  </xsl:template>
 </xsl:stylesheet>

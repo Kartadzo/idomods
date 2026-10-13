@@ -21,7 +21,7 @@
     <xsl:variable name="Kraj_dostawy" select="'PL'"/>
     <xsl:variable name="Czas_obsługi_zamówienia_na_magazynie" select="'1'"/>
     <xsl:variable name="Czas_dostawy_zamówienia" select="'1'"/>
-        
+    
     <!-- dane potrzebne aby przekazywać informacje o płci - nazwa parametru lub id w kategorii menu  - '*' w gender_id_w_panelu uruchamia wartość domyślną -->
     <xsl:variable name='gender_nazwa_w_panelu'>Płeć</xsl:variable>
     <xsl:variable name='gender_male'>|</xsl:variable>
@@ -49,7 +49,7 @@
     <xsl:variable name='kolor_nazwa_w_panelu'>|kolor|kolor dodatkowy|kolor torebki|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje o materiale -->
     <xsl:variable name='material_nazwa_w_panelu'>|materiał|materiał zewnętrzny|materiał zewnętrzny|materiał wewnętrzny|materiał wkładki|</xsl:variable>
-
+    
     
     
     <xsl:template match="/">
@@ -268,7 +268,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </g:description>
-
+        
         <xsl:variable name="var_google_product_category">
             <xsl:call-template name="searchGoogleCategory">
                 <xsl:with-param name="cat_id" select="category_idosell/@id" tunnel="yes" />
@@ -286,17 +286,20 @@
                 </g:google_product_category>
             </xsl:when>
         </xsl:choose>
-
+        
         <!-- g product type -->
         <xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu">
             <xsl:for-each select="iaiext:item[position() &lt; 10]">
+                <xsl:sort
+                    select="string-length(@textid) - string-length(translate(@textid, '\', ''))"
+                    data-type="number"
+                    order="descending"/>
                 <g:product_type>
                     <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                    <!-- <xsl:value-of select="translate(@textid,'\','&gt;')"/> -->
                     <xsl:call-template name="string-replace-all">
-                        <xsl:with-param name="text" select="@textid" tunnel="yes"/>
-                        <xsl:with-param name="replace" select="'\'" tunnel="yes"/>
-                        <xsl:with-param name="by" select="' &gt; '" tunnel="yes"/>
+                        <xsl:with-param name="text" select="@textid"/>
+                        <xsl:with-param name="replace" select="'\'"/>
+                        <xsl:with-param name="by" select="' &gt; '"/>
                     </xsl:call-template>
                     <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
                 </g:product_type>
@@ -587,7 +590,7 @@
                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
             </xsl:element>
         </xsl:if>
-
+        
         <!-- waga sizes/size/@weight-->
         <xsl:variable name="weight_final_form">
             <xsl:choose>
@@ -923,7 +926,6 @@
                 </xsl:when>
             </xsl:choose>
         </g:custom_label_0>
-
         <g:custom_label_1>
             <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='newproduct' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
                 <xsl:text>|Nowość|</xsl:text>
@@ -934,12 +936,30 @@
             <xsl:if test="iaiext:hotspots/iaiext:site/flag/@type='promotion' and iaiext:hotspots/iaiext:site/flag/@visible='yes'">
                 <xsl:text>|Promocja|</xsl:text>
             </xsl:if>
+            <!-- <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'distinguished']/@visible='yes'">
+                <xsl:text>|Wyróżniony|</xsl:text>
+            </xsl:if> -->
         </g:custom_label_1>
-        <xsl:if test="iaiext:priority_menu/site[1]/menu[1]/item/@id = '170'">
-            <g:custom_label_2>
-                <xsl:text>Półbuty</xsl:text>
-            </g:custom_label_2>
+
+        <g:custom_label_2>
+            <xsl:variable name="label2">
+                <xsl:call-template name="throwNode">
+                    <xsl:with-param name="index" select="1"/>
+                    <xsl:with-param name="border" select="'\'"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:call-template name="tokenize">
+                <xsl:with-param name="text" select="substring(normalize-space($label2),1,100)" />
+                <xsl:with-param name="delimiter" select="';'" />
+            </xsl:call-template>
+        </g:custom_label_2>
+        
+        <xsl:if test="series/@name!= ''">
+            <g:custom_label_3>
+                <xsl:value-of select="series/@name" />
+            </g:custom_label_3>
         </xsl:if>
+        
         <xsl:if test="iaiext:priority_menu/site[1]/menu[1]/item/@id = '227'">
             <g:custom_label_4>
                 <xsl:text>Kolekcja jesienna</xsl:text>
@@ -1005,7 +1025,7 @@
             </xsl:if>
             <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
         </g:mobile_link>
-
+        
         <!-- Dostępność -->
         <xsl:variable name="sell_by">
             <xsl:choose>
@@ -1418,12 +1438,104 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
+    <!-- 2026.02.12 MD -->
+    <xsl:template name="throwNode">
+        <xsl:param name="pos" select="1"/>
+        <xsl:param name="index" />
+        <xsl:param name="prev" select="''"/>
+        <xsl:param name="border" select="'\'"/>
+        
+        <xsl:variable name="items" select="iaiext:priority_menu/site[1]/menu[1]/item[contains(@textId,$border)]"/>
+        <xsl:variable name="total" select="count($items)"/>
+        
+        <xsl:choose>
+            <xsl:when test="$pos &gt; $total">
+                <xsl:if test="string-length($prev) > 2">
+                    <xsl:value-of select="$prev"/>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="node">
+                    <xsl:call-template name="extract-node">
+                        <xsl:with-param name="text"  select="$items[$pos]/@textId"/>
+                        <xsl:with-param name="index" select="$index"/>
+                    </xsl:call-template>
+                </xsl:variable>
+                
+                <xsl:variable name="nodeNorm" select="normalize-space($node)"/>
+                
+                <xsl:variable name="result">
+                    <xsl:value-of select="$prev"/>
+                    <xsl:if test="string-length($nodeNorm) > 0 
+                                  and not(contains(concat(';', $prev, ';'),concat('; ', $nodeNorm, ';')) 
+                                  or contains(concat(';', $prev, ';'),concat(';', $nodeNorm, ';')))">
+                        <xsl:value-of select="$nodeNorm"/>
+                        <xsl:text>; </xsl:text>
+                    </xsl:if>
+                </xsl:variable>
+                <xsl:call-template name="throwNode">
+                    <xsl:with-param name="pos"      select="$pos +1"/>
+                    <xsl:with-param name="index"    select="$index"/>
+                    <xsl:with-param name="prev"     select="$result"/>	
+                    <xsl:with-param name="border"   select="$border"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <!-- 08.09.2025 MD -->
+    <xsl:template name="extract-node">
+        <xsl:param name="text"/>
+        <xsl:param name="index"/>
+        <xsl:param name="counter" select="1"/>
+        
+        <xsl:choose>
+            <xsl:when test="not(contains($text,'\'))">
+                <xsl:if test="$counter = $index">
+                    <xsl:value-of select="$text"/>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="head">
+                    <xsl:choose> 
+                        <xsl:when test="contains($text,' \ ')"> 
+                            <xsl:value-of select="substring-before($text,' \ ')"/>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:value-of select="substring-before($text,'\')"/>
+                        </xsl:otherwise> 
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="tail">
+                    <xsl:choose> 
+                        <xsl:when test="contains($text,' \ ')"> 
+                            <xsl:value-of select="substring-after($text,' \ ')"/>
+                        </xsl:when> 
+                        <xsl:otherwise>
+                            <xsl:value-of select="substring-after($text,'\')"/>
+                        </xsl:otherwise> 
+                    </xsl:choose>
+                </xsl:variable>
+                
+                <xsl:if test="$counter = $index">
+                    <xsl:value-of select="$head"/>
+                </xsl:if>
+                
+                <xsl:call-template name="extract-node">
+                    <xsl:with-param name="text"     select="$tail"/>
+                    <xsl:with-param name="index"    select="$index"/>
+                    <xsl:with-param name="counter"  select="$counter + 1"/>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
     <xsl:template name="searchGoogleCategory">
         <xsl:param name="cat_id" />
         <xsl:choose>
-            <xsl:when test="$cat_id = '5976' or $cat_id = '5977' or $cat_id = '5980' or $cat_id = '5985' or $cat_id = '5989' or $cat_id = '5990' or $cat_id = '5991' or $cat_id = '5992' or $cat_id = '5994'">
-              <xsl:value-of select="'187'" />
+            <xsl:when test="$cat_id = '5976' or $cat_id = '5977' or $cat_id = '5980' or $cat_id = '5985' or $cat_id = '5987' or $cat_id = '5989' or $cat_id = '5990' or $cat_id = '5991' or $cat_id = '5992' or $cat_id = '5994'">
+                <xsl:value-of select='187' />
             </xsl:when>
             <xsl:otherwise>
                 <xsl:text>0</xsl:text>

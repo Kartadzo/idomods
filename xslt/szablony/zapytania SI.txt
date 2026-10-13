@@ -1,3 +1,70 @@
+
+
+
+"
+Pomóż mi zaplanować projekt:
+
+<projekt>
+Nazwa: [NAZWA PROJEKTU]
+Cel: [CO CHCĘ OSIĄGNĄĆ]
+Deadline: [KIEDY MA BYĆ GOTOWE]
+Zasoby: [CO MAM DO DYSPOZYCJI - LUDZIE, BUDŻET, NARZĘDZIA]
+</projekt>
+
+Stwórz:
+
+1. **Podział na etapy** (milestones)
+   - Etap 1: [nazwa] - [opis] - [kryteria sukcesu]
+   - ...
+
+2. **Lista zadań** dla każdego etapu
+   - [ ] Zadanie - [czas realizacji] - [zależności]
+
+3. **Potencjalne ryzyka** i plan B
+   - Ryzyko: [...] → Mitygacja: [...]
+
+4. **Checklistę gotowości** przed startem
+   - [ ] [Co musi być zrobione zanim zacznę]
+"
+
+"
+Wyjaśnij poniższy kod tak, jakbyś tłumaczył go programiście-juniorowi.
+
+<kod>
+[WKLEJ KOD]
+</kod>
+
+Format odpowiedzi:
+1. **Ogólny opis** - co ten kod robi (1-2 zdania)
+2. **Krok po kroku** - wyjaśnienie każdej ważnej linii
+3. **Potencjalne problemy** - co może pójść nie tak
+4. **Sugestie ulepszeń** - jak można to napisać lepiej
+"
+
+"
+Pomóż mi zdebugować ten problem.
+
+<jezyk>[JĘZYK PROGRAMOWANIA]</jezyk>
+
+<kod>
+[WKLEJ KOD]
+</kod>
+
+<blad>
+[WKLEJ KOMUNIKAT BŁĘDU LUB OPIS PROBLEMU]
+</blad>
+
+<oczekiwane_zachowanie>
+[CO KOD POWINIEN ROBIĆ]
+</oczekiwane_zachowanie>
+
+Przeanalizuj:
+1. Co jest przyczyną błędu
+2. Jak go naprawić (z przykładem kodu)
+3. Jak uniknąć podobnych błędów w przyszłości
+"
+
+
 Eksport pamięci
 """
 Wymień wszystko, co o mnie wiesz na podstawie:
@@ -24,3 +91,123 @@ SEO - konfiguracja meta (tytuł, opis, słowa kluczowe) strony internetowej skle
    2. Dla każdego problemu zaproponuj konkretną poprawkę
    3. Przepisz jeden akapit jako przykład
    4. Oceń poziom trudności poprawek (łatwe/średnie/trudne)"
+
+
+Zacznim zaczniesz wykonywać plan, napisz jak go rozumiesz. Dodajmy teraz skrypt z graficznym UX aplkacji 'summonFeed\summonFeed_generator.py' w osobnym pliku. Każde okno, oprócz wymaganych opcji konfiguracji, w górnym prawym rogu posiadać ma dwa przyciski: 'Kontynuuj' i 'Cofnij'. Niech to będzie okno które po uruchomieniu: 
+1. zapyta o język (jeśli nie znajdzie tłumaczenia to wyświetla domyślne); 
+2. bezczynny krok - tu coś później dodamy; 
+3. zapyta czy użytkownik chce wygenerować nowy plik na podstawie wcześniejszej konfiguracji. Jeśli tak, to użytkownik wskaże plik zapisu (tworzony w kroku 7) którego konfiguracja staje się tymczasowymi wartościami domyślnymi. Jeśli nie, to nic nie robimy. Trzecia opcja to zamknij aplikację; 
+4. zapyta o strukturę -> rozwinie listę opcji parametrów do wyboru; 5. wyświetli listę wszystkich wybranych parametrów i obok nich dwa pola do opcjonalnej konfiguracji oraz jeden przełącznik: 
+5a. pole pierwsze dotyczy nowej nazwy parametru. jeśli nieuzupełnione przez użytkownika to wyświetla wyszarzoną domyślną nazwę; 
+5b. pole drugie na wysokość 6 linii. jeśli nieuzupełnione przez użytkownika to wyświetla wyszarzoną domyślną wartość parametru. Każda nowa wartość będzie dodawana w nowej linii a w końcowym wyniku, te nowe linie staną się separatorami zmiennej; 
+5c. przełącznik jest domyślnia włączony, użytkownik może zrezygnować z dodania danego parametru do skryptu; 
+6. aplikacja wygeneruje wyjściowy skrypt; 
+7. zapyta czy użytkownik chce zapisać konfgurację w pliku; 
+8. powrót do kroku 3.
+
+
+Utwórzmy teraz osobną aplikację z graficznym UX która będzie aktualizować lub dodawać nowe elementy struktury i parametrów. Każde okno, oprócz wymaganych opcji konfiguracji, w górnym prawym rogu posiadać ma dwa przyciski: 'Kontynuuj' i 'Cofnij'. Niech to będzie okno które po uruchomieniu: 
+1. zapyta o język (jeśli nie znajdzie tłumaczenia to wyświetla domyślne); 
+2. zapyta czego dotyczy operacja (parametr/struktura) oraz czy użytkownik chce wygenerować nowy plik na podstawie wcześniejszej konfiguracji. Jeśli jest to aktualizacja, to użytkownik wskaże plik zapisu (.json) którego konfiguracja staje się tymczasowymi wartościami domyślnymi. Jeśli jest to nowy element, to nic nie robimy. Jeśli wskazany plik nie pasuje do wybanego typu elementu (parametr/struktura) to Wyświetli się monit uwagi i zaczeka na poprawę. Trzecia opcja to zamknij aplikację; 
+3. wyświetli, w zależności od elementu (parametr/struktura) listę wszystkich elementów JSON do uzupełnienia, obok nich pole do opcjonalnej konfiguracji i pola zawierające właściwy kod xsl: 
+3a. dla elementów 'struktura' (folder 'structure_templates') w oknie edytujemy: 'name' (zawsze uzupełnione, na jej podstawie wygenerowana zostanie nazwa pliku, jeśli nazwa jest zajęta to tu linia zmieni kolor na czerwony i wyświetli monit informacyjny), 'description', 'description_pl', 'output' (domyślnie 'rss/channel/item'), 'notes'. Pozostałe elementy pozostają domyślne;
+3b. dla elementu 'parametr' (folder 'parametrs_templates') w oknie edytujemy: 'name' (zawsze uzupełnione, na jej podstawie wygenerowana zostanie nazwa pliku, jeśli nazwa jest zajęta to tu linia zmieni kolor na czerwony i wyświetli monit informacyjny), 'description', 'description_pl', 'output' (domyślnie kopiuje pole 'name'), 'xpathCandidates', 'parameterContexts', 'configVars' (sześć pól dla 'name', 'default', 'delimeter' oraz wyłączony przełącznik z zapytaniem czy jest to zmienna globalna (jeśli włączony, to będzie ona wydzielona do nowego pliku (jeśli się duplikuje to nie wklejaj kolejnego; jeśli się różnią to wyświetli oba w następnym kroku i będzie zapytanie czy zaktualizować)), 'order', 'uses' i 'scope'; z każdym uzupełnionym 'name' pojawi się kolejny pusty zestaw do uzupełnienia; Jeśli wartość zmiennej jest wyciągana z 'select="value"' to zmień jej strukturę do '<var>value</var>'), 'globals' (jeśli użytkownik włączy przełącznik to wyświetli się do wybrania dostępna lista nie edytowalnych zmiennych), 'helpers' (zestaw czterech pól: 'name' oraz kod szablonu który zostanie dodany do folderu 'helpers' (jeśli się duplikuje to nie wklejaj kolejnego pliku; jeśli się różnią to wyświetli oba w następnym kroku i będzie zapytanie czy zaktualizować), 'uses', 'globals'; z każdym uzupełnionym 'name' pojawi się kolejny pusty zestaw do uzupełnienia), 'notes';
+4. krok dla wszelkich dodatkowych decyzji które musi podjąć użytkownik;
+5. zrobienie kopii zapasowej aktualizowanych plików i zapisanie nowych lub zaktualizowanych plików;
+6. walidacja nowego kodu za pomocą skryptu 'validate.py' - wyświetla podgląd odpowiedzi;
+7. zapytanie czy kontunuujemy pracę (skok do kroku 2) czy zamykamy aplikację.
+Jeśli jest coś nieprecyzyjne, pominąłem ważną funkcję, masz jakieś pytania lub widzisz lepsze rozwiązanie to zapytaj.
+
+Dodajmy teraz plik .exe który pozwoli na uruchomienie aplikacji na urządzeniach, nie posiadających wymaganego python i bibliotek. Wykorzystaj 'Aplikacja.ink' jako ikonę aplikacji. Do nowego folderu przenieś kopie plików 'C:\Users\Admin\Desktop\Domino\xslt\iaiDownloader\tuzwierzaki\ARA v2\' wymagane do działania gotowej aplikacji które będą przenoszone z tego urządzenia.
+
+"
+Działaj jako profesjonalny redaktor z 10-letnim doświadczeniem w wydawnictwach biznesowych.
+
+<zadanie>
+Popraw poniższy tekst. Twoim celem jest:
+1. Wyeliminować błędy językowe i interpunkcyjne.
+2. Poprawić stylistykę na bardziej płynną i czytelną (Plain Language).
+3. Skrócić tekst o ok. 20% usuwając tzw. "wodolejstwo", ale zachowując wszystkie kluczowe informacje.
+</zadanie>
+
+<ton>
+Profesjonalny, ale przystępny. Unikaj żargonu.
+</ton>
+
+<tekst_do_poprawy>
+[TUTAJ WKLEJ SWÓJ TEKST]
+</tekst_do_poprawy>
+"
+"
+Przepisz poniższy tekst, zmieniając jego ton.
+
+<ton_oryginalny>[NP. FORMALNY/AGRESYWNY/NUDNY]</ton_oryginalny>
+<ton_docelowy>[NP. PRZYJAZNY/PROFESJONALNY/ENTUZJASTYCZNY]</ton_docelowy>
+
+<zasady>
+- Zachowaj wszystkie fakty i informacje
+- Nie dodawaj nowych treści
+- Dopasuj słownictwo do nowego tonu
+- Zachowaj długość (±10%)
+</zasady>
+
+<tekst>
+[WKLEJ TEKST]
+</tekst>
+"
+
+"
+Przeanalizuj poniższy tekst/dokument. Przygotuj "Executive Summary" dla zajętego prezesa, który ma tylko 2 minuty na zapoznanie się z tematem.
+
+Format odpowiedzi:
+
+## Główna Teza (Jeden akapit)
+[Synteza w max 3 zdaniach]
+
+## Kluczowe Fakty/Dane (Lista)
+- [Fakt 1]
+- [Fakt 2]
+- [Fakt 3]
+
+## Wymagane Decyzje/Akcje
+- [Co trzeba zrobić?]
+- [Jakie są terminy?]
+
+## Wnioski i Rekomendacje
+- [Co autor sugeruje?]
+
+<dokument>
+[WKLEJ TEKST/DOKUMENT]
+</dokument>
+"
+
+"
+Przekształć poniższe notatki ze spotkania w uporządkowany dokument.
+
+<notatki>
+[WKLEJ CHAOTYCZNE NOTATKI]
+</notatki>
+
+Format wyjściowy:
+
+## Podsumowanie spotkania
+- Data: [...]
+- Uczestnicy: [...]
+- Temat główny: [...]
+
+## Podjęte decyzje
+1. [Decyzja] - podjęta przez [kogo]
+2. ...
+
+## Action items
+| Zadanie | Odpowiedzialny | Deadline | Priorytet |
+|---------|----------------|----------|-----------|
+| [...] | [...] | [...] | Wysoki/Średni/Niski |
+
+## Otwarte pytania (do rozstrzygnięcia)
+- [...]
+
+## Następne kroki
+- [...]
+"
+

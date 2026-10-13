@@ -123,7 +123,26 @@
                 <xsl:for-each select="/offer/products/product[
                                       not(contains(translate(description/name, $upperLetters, $lowerLetters), 'misoprostol')) and 
                                       not(contains(translate(description/short_desc, $upperLetters, $lowerLetters), 'misoprostol')) and 
-                                      not(contains(translate(description/long_desc, $upperLetters, $lowerLetters), 'misoprostol'))]">
+                                      not(contains(translate(description/long_desc, $upperLetters, $lowerLetters), 'misoprostol')) and 
+                                      substring-before(translate(description/name, $upperLetters, $lowerLetters), ' ') != 'ebook'  
+                                      and not(@id = '2091856' or @id = '1394822' or @id = '2363175'
+                                      or @id = '442704' or @id = '504250' or @id = '899184' or @id = '1475524' or @id = '2106734'
+                                      or @id = '323919' or @id = '409851' or @id = '1044393' or @id = '311511' or @id = '2576201'
+                                      or @id = '726369' or @id = '1038139' or @id = '1044409' or @id = '1428808' or @id = '2583335'
+                                      or @id = '508823' or @id = '546037' or @id = '2587647' or @id = '2587648' or @id = '2584642'
+                                      or @id = '2587649' or @id = '2587650' or @id = '1774865' or @id = '1780077' or @id = '2589464'
+                                      or @id = '2017599' or @id = '2093820' or @id = '2099819' or @id = '2420026' or @id = '2594710'
+                                      or @id = '2589447' or @id = '2594709' or @id = '2595049' or @id = '492340' or @id = '290134'
+                                      or @id = '510190' or @id = '563663' or @id = '1365852' or @id = '1776049' or @id = '396358'
+                                      or @id = '436799' or @id = '1855996' or @id = '2011464' or @id = '2043426' or @id = '2420030'
+                                      or @id = '350270' or @id = '363900' or @id = '1012710' or @id = '1106760' or @id = '1365869'
+                                      or @id = '2437461' or @id = '2583006' or @id = '2604672' or @id = '511560' or @id = '1930006'
+                                      or @id = '2596641' or @id = '1705043' or @id = '2451009' or @id = '2454506' or @id = '2457104'
+                                      or @id = '2457105' or @id = '2475856' or @id = '2479482' or @id = '2480325' or @id = '2626407'
+                                      or @id = '1025231' or @id = '1034140' or @id = '2583005' or @id = '2662421' or @id = '2444621' 
+                                      or @id = '2435614' or @id = '2433372' or @id = '1338637' or @id = '2673816' or @id = '2722279'
+                                      or @id = '2736986' or @id = '2732431' or @id = '1021959' or @id = '1810004' or @id = '2392484'
+                                      or @id = '2482682' or @id = '2737595' or @id = '2737596')]">
                     <item>
                         <g:id>
                             <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>

@@ -102,7 +102,7 @@ Poczta aftermarket na wydelegowanej domenie-------------------
 MX: mx.aftermarket.pl
 SPF: v=spf1 ip4:185.237.29.0/27 -all
 
-Poczta home na wydelegowanej domenie-------------------
+Poczta ovh na wydelegowanej domenie-------------------
 MX: 
 SPF: 
 
@@ -135,7 +135,14 @@ abud gAds - modyfikacja kolejności zdjęć
 
 ---------------zasady generowania cen w feedach produktowych
 Wyjaśniając zasady generowania ceny produktu:
-Jeśli jest skonfigurowana cena indywidualna dla serwisu, to ona jest podawana jako cena sprzedaży 'price' (jeśli jest niższa od ceny regularnej to staje się 'sale_price' a cena regularna 'price');
+Jeśli jest skonfigurowana cena indywidualna dla serwisu, to ona jest podawana jako cena sprzedaży 'price' (jeśli jest niższa od ceny regularnej to staje się 'sale_price' a cena regularna 'price') (wymaga dedykowanego linku feedu);
 Jeśli mamy uzupełnioną cenę przekreśloną to staje się ona 'price', a cena sprzedaży 'sale_price';
 Jeśli nie ma ani ceny serwisu, ani ceny przekeślonej to zostawiamy 'price' bez zmian;
 Jeśli mamy promocję ale nie ma ceny indywidualnej dla serwisu to dodajemy 'sale_price'.
+
+
+
+
+
+
+

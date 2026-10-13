@@ -41,7 +41,8 @@
                                   category/@id = '1214553882' or
                                   category/@id = '1214553855' or
                                   category/@id = '1214553889'
-                                  )]">
+                                  ) 
+                                  and iaiext:navigation/iaiext:site/iaiext:menu/iaiext:item/@id = '227']">
                                   <!-- category/@id = '1214553885' or
                                   category/@id = '1214553884' -->
                     <!-- Id towaru -->

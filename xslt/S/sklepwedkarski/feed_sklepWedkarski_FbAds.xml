@@ -17,11 +17,13 @@ xmlns:php="http://php.net/xsl">
 <!-- słowa formatowane do pisanych z dużej litery w tytule -->
 <xsl:variable name="corrected" select="'GRATIS'"/>
     <!-- kwoty stawek wysyłek do ustalenia -->
-    <xsl:variable name='kwota_dla_darmowej_dostawy'>350.00</xsl:variable>
+    <xsl:variable name='kwota_dla_darmowej_dostawy'>350</xsl:variable>
     <xsl:variable name='kwota_dla_wiekszych_zamowien'></xsl:variable>
-    <xsl:variable name="Koszt_dostawy">10.90</xsl:variable>
+    <xsl:variable name="Koszt_dostawy">10.99</xsl:variable>
     <xsl:variable name="Koszt_dostawy_wiekszych_zamowien">0.00</xsl:variable>
     <xsl:variable name="Kraj_dostawy" select="'PL'" />
+   <!-- serwis realizacji zamówienia - wybierz jedno - Ground, Express, Air -->
+   <xsl:variable name="Serwis_dostawy_zamówienia" select="'Kurier Standard'" />
     <!-- dane potrzebne aby przekazywać informacje o kolorze -->
     <xsl:variable name='kolor_nazwa_w_panelu'>|kolor|kolor soczewek|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje -->
@@ -36,7 +38,11 @@ xmlns:php="http://php.net/xsl">
         <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
         <channel>
 
-            <xsl:for-each select="/offer/products/product">
+            <xsl:for-each select="/offer/products/product[
+                                 price/@gross &gt; 0 
+                                 and description/name/. != ''
+                                 and @type != 'packaging'
+                                 ]">
          
             <xsl:variable name="menu_">
                 <xsl:if test="iaiext:navigation/iaiext:site/iaiext:menu[@id = '1']/iaiext:item[@textid = 'Marketing\Wykluczone z feedu Facebook Ads']">
@@ -404,7 +410,7 @@ xmlns:php="http://php.net/xsl">
                             </xsl:for-each>
                         </xsl:variable>
                         <xsl:choose>
-                            <xsl:when test="contains(translate($productMenuPlacement, $upperLetters, $lowerLetters), 'promocja tygodnia')">
+                            <xsl:when test="iaiext:navigation/iaiext:site/iaiext:menu[5]/iaiext:item/@id = '68127'">
                                 <g:custom_label_1>
                                     <xsl:text disable-output-escaping="yes">Promocje tygodnia</xsl:text>
                                 </g:custom_label_1>
@@ -529,82 +535,82 @@ xmlns:php="http://php.net/xsl">
                                 </xsl:variable>
                                 <quantity_to_sell_on_facebook>
                                     <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                                    <xsl:value-of select="$avail"/>
+                                    <xsl:value-of select="format-number($avail, '#')"/>
                                     <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
                                 </quantity_to_sell_on_facebook>
                             </xsl:for-each>
-        <xsl:variable name="size_id">
-            <xsl:choose>
-                <xsl:when test="@name!=''">
-                    <xsl:value-of select="@id"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>-</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="product_currency">
-            <xsl:choose>
-                <xsl:when test="../../@currency != ''">
-                    <xsl:value-of select="../../@currency"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="@currency"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="cena_serwis">
-            <xsl:choose>
-                <xsl:when test="../../iaiext:pricecomparator_price/iaiext:site">
-                    <xsl:value-of select="../../iaiext:pricecomparator_price/iaiext:site/@gross"/>
-                </xsl:when>
-                <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
-                    <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>0</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="cena_przekreslona">
-            <xsl:choose>
-                <!-- cena przekreslona dla rozmiaru lub domyślna -->
-                <xsl:when test="sizes/size/strikethrough_retail_price">
-                    <xsl:value-of select="sizes/size/strikethrough_retail_price/@gross"/>
-                </xsl:when>
-                <xsl:when test="strikethrough_retail_price">
-                    <xsl:value-of select="strikethrough_retail_price/@gross"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>0</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="cena_przedpromocyjna">
-            <xsl:choose>
-                <!-- cena standard gdy jest cena promocyjna rozmiaru -->
-                <xsl:when test="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@panel_name != '' and
-                                ../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross > price/@gross">
-                    <xsl:value-of select="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
-                </xsl:when>
-                <!-- cena standard gdy jest cena promocyna standardowej ceny -->
-                <xsl:when test="../../promotion/price/normal_retail_price and ../../promotion/price/normal_retail_price/@gross > price/@gross">
-                    <xsl:value-of select="../../promotion/price/normal_retail_price/@gross"/>
-                </xsl:when>
-                <!-- cena standard gdy jest cena promocyjna rozmiaru -->
-                <xsl:when test="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@panel_name != '' and
-                                promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross > price/@gross">
-                    <xsl:value-of select="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
-                </xsl:when>
-                <!-- cena standard gdy jest cena promocyna standardowej ceny -->
-                <xsl:when test="promotion/price/normal_retail_price and promotion/price/normal_retail_price/@gross > price/@gross">
-                    <xsl:value-of select="promotion/price/normal_retail_price/@gross"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text>0</xsl:text>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
+                            <xsl:variable name="size_id">
+                                <xsl:choose>
+                                    <xsl:when test="@name!=''">
+                                        <xsl:value-of select="@id"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>-</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="product_currency">
+                                <xsl:choose>
+                                    <xsl:when test="../../@currency != ''">
+                                        <xsl:value-of select="../../@currency"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="@currency"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_serwis">
+                                <xsl:choose>
+                                    <xsl:when test="../../iaiext:pricecomparator_price/iaiext:site">
+                                        <xsl:value-of select="../../iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:when test="iaiext:pricecomparator_price/iaiext:site">
+                                        <xsl:value-of select="iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_przekreslona">
+                                <xsl:choose>
+                                    <!-- cena przekreslona dla rozmiaru lub domyślna -->
+                                    <xsl:when test="sizes/size/strikethrough_retail_price">
+                                        <xsl:value-of select="sizes/size/strikethrough_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <xsl:when test="strikethrough_retail_price">
+                                        <xsl:value-of select="strikethrough_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_przedpromocyjna">
+                                <xsl:choose>
+                                    <!-- cena standard gdy jest cena promocyjna rozmiaru -->
+                                    <xsl:when test="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@panel_name != '' and
+                                                    ../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross > price/@gross">
+                                        <xsl:value-of select="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
+                                    </xsl:when>
+                                    <!-- cena standard gdy jest cena promocyna standardowej ceny -->
+                                    <xsl:when test="../../promotion/price/normal_retail_price and ../../promotion/price/normal_retail_price/@gross > price/@gross">
+                                        <xsl:value-of select="../../promotion/price/normal_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <!-- cena standard gdy jest cena promocyjna rozmiaru -->
+                                    <xsl:when test="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@panel_name != '' and
+                                                    promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross > price/@gross">
+                                        <xsl:value-of select="promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
+                                    </xsl:when>
+                                    <!-- cena standard gdy jest cena promocyna standardowej ceny -->
+                                    <xsl:when test="promotion/price/normal_retail_price and promotion/price/normal_retail_price/@gross > price/@gross">
+                                        <xsl:value-of select="promotion/price/normal_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:text>0</xsl:text>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
         <xsl:variable name="mainPrice">
             <xsl:choose>
                 <xsl:when test="$cena_serwis > 0">
@@ -649,29 +655,38 @@ xmlns:php="http://php.net/xsl">
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:element name="g:shipping">
-            <xsl:element name="g:country">
-                <xsl:value-of select="$Kraj_dostawy" />
-            </xsl:element>
-            <xsl:element name="g:service">
-                <xsl:value-of select="'Ground'" />
-            </xsl:element>
-            <xsl:element name="g:price">
-                <xsl:choose>
-                    <xsl:when test="price/@gross >= $kwota_dla_darmowej_dostawy">
-                        <xsl:text><![CDATA[0]]></xsl:text>
-                    </xsl:when>
-                    <xsl:when test="$kwota_dla_wiekszych_zamowien != '' and price/@gross >= $kwota_dla_wiekszych_zamowien">
-                        <xsl:value-of select="$Koszt_dostawy_wiekszych_zamowien" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$Koszt_dostawy" />
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text><![CDATA[ ]]></xsl:text>
-                <xsl:value-of select="$product_currency" />
-            </xsl:element>
-        </xsl:element>
+                            
+                            <!-- 2026.09.14  MD -->
+                            <xsl:if test="$kwota_dla_darmowej_dostawy != ''">
+                                <xsl:element name="g:shipping">
+                                    <xsl:element name="g:country">
+                                        <xsl:value-of select="$Kraj_dostawy" />
+                                    </xsl:element>
+                                    <xsl:element name="g:service">
+                                        <xsl:value-of select="$Serwis_dostawy_zamówienia" />
+                                    </xsl:element>
+                                    <xsl:element name="g:price">
+                                        <!-- <xsl:value-of select="price/price_marketplace_site/delivery_cost/prepayment/@gross"/> -->
+                                        <xsl:choose>
+                                            <xsl:when test="'*' = $kwota_dla_darmowej_dostawy
+                                                            and '' != price/price_marketplace_site/delivery_cost/prepayment/@gross">
+                                                <xsl:value-of select="price/price_marketplace_site/delivery_cost/prepayment/@gross" />
+                                            </xsl:when>
+                                            <xsl:when test="price/@gross >= $kwota_dla_darmowej_dostawy">
+                                                <xsl:text><![CDATA[0]]></xsl:text>
+                                            </xsl:when>
+                                            <xsl:when test="$kwota_dla_wiekszych_zamowien != '' and price/@gross >= $kwota_dla_wiekszych_zamowien">
+                                                <xsl:value-of select="$Koszt_dostawy_wiekszych_zamowien" />
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="$Koszt_dostawy" />
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <xsl:text><![CDATA[ ]]></xsl:text>
+                                        <xsl:value-of select="$product_currency" />
+                                    </xsl:element>
+                                </xsl:element>
+                            </xsl:if>
                     </item>
                 </xsl:if>
             </xsl:for-each>
