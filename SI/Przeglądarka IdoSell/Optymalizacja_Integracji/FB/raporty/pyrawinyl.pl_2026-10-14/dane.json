@@ -1,0 +1,94 @@
+{
+  "sklep": "pyrawinyl.pl",
+  "data": "2026-10-14",
+  "okres": "16.09–13.10.2026 (28 dni, zakres Meta); historia pobrań feedu od 15.08.2026",
+  "kolejna_weryfikacja": "ok. 12.01.2027 (cykl 90 dni)",
+  "podsumowanie": [
+    "Katalog produktów działa prawidłowo: Meta pobiera feed co godzinę, wczytuje wszystkie 3569 produktów, bez błędów przesyłania.",
+    "Dopasowanie produktów z katalogu do zdarzeń na stronie wynosi 99,6% (zalecane minimum to 90%), więc reklamy dynamiczne mają pełne dane.",
+    "Piksel i API konwersji działają: wszystkie kluczowe zdarzenia są odbierane na bieżąco, deduplikacja działa w 100%, a proporcje zdarzeń z serwera i przeglądarki mieszczą się w normie dla integracji IdoSell.",
+    "Drobne korekty: niewypełniony szablon listy utworów w części opisów, koszt dostawy w feedzie (13,00 zł zamiast 12,90 zł) oraz 4 produkty odrzucone przez Meta za nagość na okładce."
+  ],
+  "sekcje": [
+    {
+      "tytul": "Feed produktowy w IdoSell",
+      "status": "ok",
+      "wynik": "Generowanie aktywne, 3569 produktów, pobrania co godzinę bez błędów",
+      "opis": [
+        "Feed dla Meta jest generowany w module porównywarek cen (serwis „Facebook ads [IdoMods]”) z dedykowanego szablonu. Ostatnie generowanie: 14.10.2026, 14:01. Do feedu trafia 3569 produktów.",
+        "W historii pobrań (dostępna od 15.08.2026) występują wyłącznie poprawne pobrania przez serwery Meta, w rytmie godzinowym. Nie odnotowano błędów.",
+        "Feed zawiera jedną pozycję na produkt, z identyfikatorem produktu zgodnym z tym, który przekazuje piksel na stronie."
+      ],
+      "zrzuty": [
+        {"plik": "01_idosell_feed_fb.png", "podpis": "Status feedu Facebook ads w panelu IdoSell"},
+        {"plik": "02_idosell_historia_pobran.png", "podpis": "Historia pobrań feedu przez Meta"}
+      ]
+    },
+    {
+      "tytul": "Koszty dostawy w feedzie",
+      "status": "uwaga",
+      "wynik": "Feed: 13,00 zł / darmowa od 400 zł; sklep: od 12,90 zł / darmowa od 400 zł",
+      "opis": [
+        "Feed przekazuje do Meta koszt dostawy 13,00 zł oraz darmową dostawę dla produktów powyżej 400 zł.",
+        "W cenniku sklepu najtańsza forma dostawy (InPost Paczkomaty) kosztuje 12,90 zł do 400 zł, a powyżej tej kwoty jest darmowa. Próg darmowej dostawy jest zgodny, różnica dotyczy 10 groszy."
+      ],
+      "zrzuty": [
+        {"plik": "03_idosell_cennik_dostaw.png", "podpis": "Profil dostaw STANDARD w panelu IdoSell"},
+        {"plik": "04_idosell_inpost_progi.png", "podpis": "Progi kosztu dostawy InPost Paczkomaty"}
+      ],
+      "rekomendacja": "Ujednolicić koszt dostawy w feedzie do 12,90 zł, aby odpowiadał najtańszej opcji w sklepie."
+    },
+    {
+      "tytul": "Katalog w Meta (Commerce Manager)",
+      "status": "uwaga",
+      "wynik": "3569/3569 wczytanych, 0 błędów; 996 niedostępnych, 4 odrzucone",
+      "opis": [
+        "Ostatnie wczytanie feedu (14.10.2026, 17:01): 3569 produktów zaktualizowanych, 0 usuniętych, 0 błędów przesyłania. Aktualizacja zaplanowana co godzinę.",
+        "996 produktów ma status „niedostępny” – to produkty bez stanu magazynowego, które sklep celowo pokazuje. Meta nie wyświetla ich w reklamach dynamicznych, co jest oczekiwanym zachowaniem.",
+        "4 produkty zostały odrzucone za nagość na zdjęciu okładki: trzy wydania „Electric Ladyland” (The Jimi Hendrix Experience) oraz „Lovedrive” (Scorpions). Okładki rzeczywiście przedstawiają nagość, dlatego prośba o ponowną weryfikację zostałaby odrzucona i jej nie wysłaliśmy.",
+        "W części opisów produktów na początku znajduje się niewypełniony szablon listy utworów („Utwór1 2:32” powtórzone 4 razy). Taki tekst trafia do katalogu i obniża jakość opisu w reklamach."
+      ],
+      "zrzuty": [
+        {"plik": "05_meta_zrodla_danych.png", "podpis": "Źródła danych katalogu – feed i piksel"},
+        {"plik": "06_meta_feed_podsumowanie.png", "podpis": "Podsumowanie ostatniego wczytania feedu"},
+        {"plik": "15_meta_odrzucone_produkty.png", "podpis": "Produkty odrzucone przez Meta i przykładowe opisy z niewypełnionym szablonem"}
+      ],
+      "rekomendacja": "Odrzucone okładki: pozostawić poza reklamami albo ustawić jako zdjęcie główne neutralne ujęcie (np. etykieta płyty, tył okładki). Opisy: usunąć niewypełniony szablon „Utwór1 2:32” albo uzupełnić listę utworów."
+    },
+    {
+      "tytul": "Dopasowanie katalogu do piksela",
+      "status": "ok",
+      "wynik": "99,6% (wyświetlenia 99,8%, koszyk 97,7%, zakupy 92,1%)",
+      "opis": [
+        "Wskaźnik dopasowania katalogu z ostatnich 28 dni wynosi 99,6% przy zalecanym minimum 90%.",
+        "Najniższe dopasowanie dotyczy zakupów (92,1%). Część kupowanych produktów nie występuje w katalogu – prawdopodobnie są to produkty w przedsprzedaży, które celowo nie są eksportowane do feedu. Wynik mieści się w zaleceniach Meta."
+      ],
+      "zrzuty": [
+        {"plik": "09_meta_dopasowanie_zdarzen.png", "podpis": "Wskaźnik dopasowania katalogu wg typu zdarzenia"}
+      ]
+    },
+    {
+      "tytul": "Zdarzenia i jakość dopasowania (piksel + API konwersji)",
+      "status": "ok",
+      "wynik": "Zdarzenia aktywne, deduplikacja 100%; Zakup EMQ 8,2/10, pozostałe 6,1–6,8",
+      "opis": [
+        "Wszystkie kluczowe zdarzenia są aktywne i przesyłane na bieżąco (wyświetlenie produktu, wyszukiwanie, dodanie do koszyka, rozpoczęcie płatności, zakup). Deduplikacja zdarzeń z piksela i API konwersji działa w 100%.",
+        "Jakość dopasowania zdarzeń: Zakup 8,2/10 (dobra), pozostałe zdarzenia 6,1–6,8/10 – to typowy poziom dla odwiedzających, którzy nie są zalogowani.",
+        "API konwersji przesyła więcej zdarzeń niż piksel w przeglądarce, a Meta usuwa duplikaty po swojej stronie. Obecna proporcja jest typowa dla integracji IdoSell i nie wskazuje na błąd.",
+        "Liczba zdarzeń dziennie spadła z ok. 2500 (połowa września) do ok. 1800 (ostatni tydzień), czyli o ok. 26%. Warto porównać to z ruchem w sklepie."
+      ],
+      "zrzuty": [
+        {"plik": "10_meta_zdarzenia_przeglad.png", "podpis": "Zdarzenia w Menedżerze zdarzeń (28 dni)"},
+        {"plik": "12_meta_zakup_piksel_vs_capi.png", "podpis": "Zakupy: API konwersji vs piksel w przeglądarce"},
+        {"plik": "14_meta_emq_zakup.png", "podpis": "Jakość dopasowania zdarzenia Zakup"}
+      ],
+      "rekomendacja": "Bez zmian. Proporcje zdarzeń monitorujemy przy każdej weryfikacji."
+    }
+  ],
+  "dzialania": [
+    {"priorytet": "Średni", "dzialanie": "Usunąć z opisów produktów niewypełniony szablon listy utworów („Utwór1 2:32”) lub uzupełnić listy utworów.", "kto": "Sklep"},
+    {"priorytet": "Niski", "dzialanie": "4 produkty z okładkami odrzuconymi za nagość: pozostawić poza reklamami lub zmienić zdjęcie główne na neutralne ujęcie.", "kto": "Sklep"},
+    {"priorytet": "Niski", "dzialanie": "Zmienić koszt dostawy w feedzie z 13,00 zł na 12,90 zł.", "kto": "Agencja"}
+  ],
+  "komentarz_clickup": "Weryfikacja integracji Meta (14.10.2026): katalog działa prawidłowo – feed pobierany co godzinę, 3569/3569 produktów bez błędów, dopasowanie do piksela 99,6%. Piksel i API konwersji działają w normie: zdarzenia odbierane na bieżąco, deduplikacja 100%, jakość dopasowania zakupów 8,2/10. Do poprawy pozostają drobiazgi: niewypełniony szablon listy utworów w części opisów, koszt dostawy w feedzie (13,00 zł zamiast 12,90 zł) i 4 okładki odrzucone przez Meta za nagość. Szczegóły i plan działań w załączonym raporcie."
+}
