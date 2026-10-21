@@ -5,7 +5,7 @@ description: Okresowa (co 90 dni) weryfikacja integracji sklepu IdoSell z Meta A
 
 # Weryfikacja integracji IdoSell ↔ Meta Ads
 
-KATALOG: `SI/Przeglądarka IdoSell/Optymalizacja_Integracji/FB/`. Specyfikacja i wnioski techniczne: `ANALIZA_FB_Ads.md`.
+KATALOG: `SI/Przeglądarka IdoSell/Optymalizacja_Integracji/FB/` (narzędzia wspólne z GMC: `../narzedzia/`). Specyfikacja i wnioski techniczne: `ANALIZA_FB_Ads.md`.
 Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetrzny.md`).
 
 ## Zasady (zawsze)
@@ -24,7 +24,7 @@ Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetr
 - Filtr rozszerzenia blokuje wyniki z parametrami URL lub tokenami (`[BLOCKED: …]`). Z linków zwracam tylko `pathname`, a z XSLT pojedyncze zmienne bez adresów. Filtra nie obchodzę (żadnego base64 ani kodowania).
 - Po `navigate` na Meta karta często przekierowuje (`business.` ↔ `eventsmanager.`). Przy błędzie „navigated to a different domain” robię `tabs_context_mcp` i ponawiam.
 - **Zrzuty**: przed zrzutem oznaczam kartę: `document.title='[CLAUDE] '+document.title.replace(/^\[CLAUDE\] /,'')`, potem w KATALOGU:
-  `python narzedzia/zrzut.py "[claude]" "raporty/<domena>_<data>/zrzuty/NN_opis.png" --obszar strona`
+  `python ../narzedzia/zrzut.py "[claude]" "raporty/<domena>_<data>/zrzuty/NN_opis.png" --obszar strona`
   (PrintWindow, okno nie może być zminimalizowane; ucina pasek zakładek i baner debugowania). Współrzędne na zrzucie = współrzędne viewportu do `left_click`. Podgląd roboczy zapisuję do scratchpada i oglądam przez Read.
 
 ## 0. Start
@@ -63,6 +63,6 @@ Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetr
 
 ## D. Raport
 1. `raporty/<domena>_<data>/dane.json` (struktura jak we wzorcu): `sklep`, `data`, `okres`, `kolejna_weryfikacja` (+90 dni), `podsumowanie` (3–4 punkty), `sekcje` (tytuł, `status`: ok / uwaga / problem, `wynik`, `opis`, `zrzuty`, opcjonalnie `rekomendacja`), `dzialania` (priorytet, działanie, kto), `komentarz_clickup` (dokładnie 4 zdania). Język nietechniczny, bez wewnętrznych identyfikatorów i bez analizy parametrów.
-2. W KATALOGU: `python narzedzia/raport_docx.py "raporty/<domena>_<data>"` → `Raport_Meta_<domena>_<data>.docx` + `komentarz_clickup.txt`.
+2. W KATALOGU: `python ../narzedzia/raport_docx.py "raporty/<domena>_<data>"` → `Raport_Meta_<domena>_<data>.docx` + `komentarz_clickup.txt`.
 3. `raporty/<domena>_<data>/RAPORT_wewnetrzny.md` (jak we wzorcu): identyfikatory, tabele A/B/C, stan bazowy proporcji, parametry vs sterownik, proponowane zmiany (gdzie, przed → po, status).
 4. Zamykam kartę. Podsumowanie dla użytkownika: co w normie, co do poprawy, propozycje zmian do decyzji, ścieżki plików i treść komentarza do ClickUp.

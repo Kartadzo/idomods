@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Generator raportu dla klienta (.docx) z weryfikacji integracji IdoSell ↔ Meta Ads.
+Generator raportu dla klienta (.docx) z weryfikacji integracji IdoSell ↔ Meta Ads / Google Merchant Center.
 
 Użycie:
     python raport_docx.py <folder_raportu>
 
-Folder raportu (np. raporty/pyrawinyl.pl_2026-10-14) musi zawierać dane.json oraz zrzuty/.
-Wynik: <folder>/Raport_Meta_<sklep>_<data>.docx oraz <folder>/komentarz_clickup.txt.
+Folder raportu (np. FB/raporty/pyrawinyl.pl_2026-10-14) musi zawierać dane.json oraz zrzuty/.
+Pole "platforma" w dane.json wybiera tytuł i przedrostek pliku (domyślnie "Meta Ads").
+Wynik: <folder>/Raport_<przedrostek>_<sklep>_<data>.docx oraz <folder>/komentarz_clickup.txt.
 """
 
 import json
@@ -26,6 +27,11 @@ STATUSY = {
     "problem": ("Wymaga działania", "C62828"),
 }
 KOLOR_NAGLOWKA = RGBColor(0x1F, 0x3A, 0x5F)
+# platforma -> przedrostek nazwy pliku
+PLATFORMY = {
+    "Meta Ads": "Meta",
+    "Google Merchant Center": "GMC",
+}
 
 
 def cieniuj_komorke(komorka, kolor_hex):
@@ -60,6 +66,7 @@ def etykieta_statusu(doc, status):
 
 def buduj(folder):
     dane = json.loads((folder / "dane.json").read_text(encoding="utf-8"))
+    platforma = dane.get("platforma", "Meta Ads")
     doc = Document()
 
     styl = doc.styles["Normal"]
@@ -71,7 +78,7 @@ def buduj(folder):
 
     # Nagłówek
     tytul = doc.add_heading(level=0)
-    run = tytul.add_run("Weryfikacja integracji z Meta Ads")
+    run = tytul.add_run(f"Weryfikacja integracji z {platforma}")
     run.font.color.rgb = KOLOR_NAGLOWKA
     akapit(doc, f"Sklep: {dane['sklep']}", 12, True, odstep_po=0)
     akapit(doc, f"Data weryfikacji: {dane['data']}    Okres analizy: {dane['okres']}", 10, odstep_po=12)
@@ -145,7 +152,7 @@ def buduj(folder):
     akapit(doc, "", odstep_po=6)
     akapit(doc, f"Kolejna weryfikacja: {dane['kolejna_weryfikacja']}", 10, kolor=RGBColor(0x55, 0x55, 0x55))
 
-    nazwa = f"Raport_Meta_{dane['sklep']}_{dane['data']}.docx"
+    nazwa = f"Raport_{PLATFORMY[platforma]}_{dane['sklep']}_{dane['data']}.docx"
     doc.save(folder / nazwa)
     (folder / "komentarz_clickup.txt").write_text(dane["komentarz_clickup"] + "\n", encoding="utf-8")
     print(f"Zapisano: {folder / nazwa}")

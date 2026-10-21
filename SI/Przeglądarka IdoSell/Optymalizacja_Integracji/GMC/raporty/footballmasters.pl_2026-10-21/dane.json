@@ -1,0 +1,96 @@
+{
+  "platforma": "Google Merchant Center",
+  "sklep": "footballmasters.pl",
+  "data": "2026-10-21",
+  "okres": "24.09–21.10.2026 (28 dni, zakres Merchant Center); historia pobrań feedu od 23.08.2026",
+  "kolejna_weryfikacja": "ok. 19.01.2027 (cykl 90 dni)",
+  "podsumowanie": [
+    "Feed produktowy działa stabilnie: Google pobiera go codziennie o 1:00, w ciągu ostatnich dwóch miesięcy nie było ani jednego nieudanego pobrania, a ostatnie 10 przetworzeń zakończyło się bez błędów.",
+    "Spośród 507 produktów w Merchant Center 506 jest zatwierdzonych. Na koncie nie ma problemów, witryna jest zweryfikowana, a koszty dostawy w Google zgadzają się z cennikiem sklepu (19 zł, darmowa dostawa od 500 zł).",
+    "Do poprawy: 18 zdjęć jest mniejszych niż 500 × 500 px, a od 31 stycznia 2027 r. Google będzie wymagał co najmniej takiego rozmiaru. Jeden produkt ma niedostępną stronę, a jednemu brakuje ceny jednostkowej.",
+    "Proponujemy uzupełnić feed o płeć i grupę wiekową (np. rozmiary juniorskie), dodać w sklepie parametr materiału i ujednolicić nazwy kolorów, bo Google wskazuje 296 koszulek bez koloru, wzoru i materiału."
+  ],
+  "sekcje": [
+    {
+      "tytul": "Feed produktowy w IdoSell",
+      "status": "ok",
+      "wynik": "Generowanie codziennie o północy, 264 produkty w 427 wariantach",
+      "opis": [
+        "Feed dla Google jest generowany w IdoSell codziennie o północy przez nasz sterownik, który przekazuje m.in. kategorie, kolor, rozmiar, cenę promocyjną, koszt i czas dostawy, cenę jednostkową oraz etykiety do kampanii (przedział cenowy, nowości, bestsellery, kategorie).",
+        "Do feedu trafiają produkty dostępne w magazynach, a także te chwilowo niedostępne z informacją o braku. Ostatnie generowanie: 21.10.2026, 14:28, 264 produkty w 427 wariantach.",
+        "Plik nie ma ograniczenia dostępu do adresów Google. Poza Google codziennie pobiera go jeszcze jedna zewnętrzna usługa, którą warto zidentyfikować."
+      ],
+      "zrzuty": [
+        {"plik": "01_idosell_feed_google.png", "podpis": "Feed Google Ads w panelu IdoSell – status i liczba eksportowanych towarów"},
+        {"plik": "02_idosell_historia_pobran.png", "podpis": "Historia pobrań feedu – codzienne pobrania przez Google o 1:00"}
+      ]
+    },
+    {
+      "tytul": "Pobieranie i przetwarzanie feedu w Merchant Center",
+      "status": "ok",
+      "wynik": "Codzienne pobrania bez błędów od 23.08; 10 ostatnich przetworzeń bez problemów",
+      "opis": [
+        "Merchant Center pobiera feed codziennie o 1:00, czyli godzinę po jego wygenerowaniu w IdoSell. Od 23.08 nie brakuje żadnego dnia, a ostatnie 10 przetworzeń zakończyło się komunikatem „Nie znaleziono problemów”. Wszystkie atrybuty zostały rozpoznane.",
+        "Google sam poprawił ceny 15 produktów i ceny przekreślone 5 produktów na podstawie strony sklepu. To niewielka liczba, wynikająca ze zmian cen w ciągu dnia, po porannym pobraniu pliku.",
+        "Włączona jest ochrona przed przypadkowym usunięciem produktów (limit 40%). Na koncie są też dwa stare, puste źródła z Arkuszy Google z wstrzymanymi aktualizacjami. Nie mają wpływu na działanie i można je usunąć."
+      ],
+      "zrzuty": [
+        {"plik": "06_gmc_zrodla_podstawowe.png", "podpis": "Źródła danych w Merchant Center – feed z IdoSell i dwa nieużywane arkusze"}
+      ]
+    },
+    {
+      "tytul": "Stan produktów w Merchant Center",
+      "status": "uwaga",
+      "wynik": "506 z 507 zatwierdzonych; 18 zdjęć za małych, 1 strona niedostępna, 1 bez ceny jednostkowej",
+      "opis": [
+        "Na koncie nie ma problemów z zasadami ani z konfiguracją. Jeden produkt jest odrzucony, bo Google nie mógł otworzyć jego strony w sklepie.",
+        "18 produktów ma zdjęcie mniejsze niż 500 × 500 px. Od 31 stycznia 2027 r. Google będzie wymagał co najmniej takiego rozmiaru, a produkty z mniejszymi zdjęciami mogą przestać się wyświetlać.",
+        "Jednemu produktowi brakuje ceny jednostkowej (np. cena za 100 ml), wymaganej w UE dla produktów sprzedawanych na objętość lub wagę.",
+        "W ciągu ostatnich 28 dni liczba produktów w Google stopniowo spadła z ok. 660 do 507 (feed obejmuje tylko produkty dostępne lub oznaczone jako chwilowo niedostępne). Google znalazł też w sklepie ponad 200 produktów, których nie ma w feedzie."
+      ],
+      "zrzuty": [
+        {"plik": "05_gmc_stan_produktow.png", "podpis": "Stan produktów z ostatnich 28 dni i lista problemów"}
+      ],
+      "rekomendacja": "Wymienić 18 zdjęć na co najmniej 500 × 500 px, sprawdzić odrzucony produkt i uzupełnić pojemność w produkcie bez ceny jednostkowej."
+    },
+    {
+      "tytul": "Koszty dostawy",
+      "status": "ok",
+      "wynik": "Koszt w Google zgodny z cennikiem sklepu: 19 zł, darmowa dostawa od 500 zł",
+      "opis": [
+        "Koszt dostawy Google bierze z feedu: 19 zł, a od 500 zł 0 zł. Zgadza się to z cennikiem sklepu dla Kuriera InPost i Paczkomatów InPost (przedpłata).",
+        "Zasady dostawy zapisane w Merchant Center mają te same stawki, więc zadziałałyby poprawnie także wtedy, gdyby feed przestał przekazywać koszt dostawy. Jedynie czas dostawy (2–30 dni) jest tam zapisany bardzo szeroko.",
+        "Zasady zwrotów (14 dni, koszt zwrotu 9,23 zł) są zweryfikowane przez Google. Google zwraca uwagę, że konkurencja oferuje dłuższy termin i bezpłatne zwroty."
+      ],
+      "zrzuty": [
+        {"plik": "03_idosell_cennik_dostaw.png", "podpis": "Cennik dostaw w IdoSell – profil standardowy"},
+        {"plik": "07_gmc_zasady_dostawy.png", "podpis": "Zasady dostawy w Merchant Center – 19 zł, darmowa od 500 zł"},
+        {"plik": "09_gmc_kalkulator_dostawy.png", "podpis": "Kalkulator dostawy – koszt pobierany z feedu (19 zł)"}
+      ]
+    },
+    {
+      "tytul": "Możliwości rozbudowy feedu",
+      "status": "uwaga",
+      "wynik": "Google sugeruje uzupełnienie koloru, wzoru i materiału w 296 koszulkach",
+      "opis": [
+        "W kategorii „Koszulki i topy” Google wskazuje 296 produktów, w których brakuje koloru, wzoru i materiału, czyli informacji, których klienci szukają.",
+        "Feed jest już przygotowany na przekazywanie materiału i wyróżników produktu, ale w sklepie nie ma jeszcze takich parametrów. Wystarczy je dodać i uzupełnić w produktach, a trafią do Google automatycznie.",
+        "Feed nie przekazuje płci ani grupy wiekowej, choć w sklepie są np. rozmiary juniorskie. Kolory mają część nazw po angielsku (Black, White) i różne zapisy kolorów łączonych (Czarno Złoty, Czarny-Złoty)."
+      ],
+      "zrzuty": [
+        {"plik": "10_gmc_brakujace_szczegoly.png", "podpis": "Sugestia Google – brakujące szczegóły w opisach koszulek"}
+      ],
+      "rekomendacja": "Dodać w sklepie parametr „Materiał” (i ewentualnie „Wzór”), ujednolicić nazwy kolorów, a po naszej stronie przekazać do Google płeć i grupę wiekową."
+    }
+  ],
+  "dzialania": [
+    {"priorytet": "Wysoki", "dzialanie": "Wymienić 18 zdjęć produktów na co najmniej 500 × 500 px przed 31 stycznia 2027 r., kiedy Google zacznie egzekwować nowe wymagania.", "kto": "Sklep"},
+    {"priorytet": "Średni", "dzialanie": "Dodać w sklepie parametr „Materiał” i uzupełnić go w koszulkach i odzieży; feed przekaże go do Google automatycznie.", "kto": "Sklep"},
+    {"priorytet": "Średni", "dzialanie": "Przekazywać do Google płeć i grupę wiekową (dorośli / juniorzy) na podstawie kategorii sklepu.", "kto": "BrandsManago"},
+    {"priorytet": "Średni", "dzialanie": "Ujednolicić nazwy kolorów: polskie nazwy zamiast angielskich i jeden zapis kolorów łączonych.", "kto": "Sklep + BrandsManago"},
+    {"priorytet": "Średni", "dzialanie": "Sprawdzić produkt z niedostępną stroną i uzupełnić cenę jednostkową w produkcie z pojemnością.", "kto": "BrandsManago"},
+    {"priorytet": "Niski", "dzialanie": "Usunąć dwa puste źródła z Arkuszy Google w Merchant Center i zawęzić czas dostawy w zasadach konta.", "kto": "BrandsManago"},
+    {"priorytet": "Niski", "dzialanie": "Rozważyć wydłużenie terminu lub obniżenie kosztu zwrotów, które Google porównuje z konkurencją.", "kto": "Sklep"}
+  ],
+  "komentarz_clickup": "Weryfikacja Merchant Center (21.10.2026): feed jest pobierany codziennie bez błędów, 506 z 507 produktów jest zatwierdzonych, a koszty dostawy w Google zgadzają się z cennikiem sklepu. Najpilniejsze jest 18 zdjęć poniżej 500 × 500 px, które od 31 stycznia 2027 r. mogą przestać się wyświetlać. Google wskazuje też 296 koszulek bez koloru, wzoru i materiału, dlatego proponujemy dodać w sklepie parametr materiału i ujednolicić kolory, a po naszej stronie przekazać do feedu płeć i grupę wiekową. Szczegóły i plan działań w załączonym raporcie."
+}

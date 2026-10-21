@@ -1066,7 +1066,8 @@
       </xsl:choose>
       
       <!-- 2026.09.14  MD -->
-      <xsl:if test="$kwota_dla_darmowej_dostawy != ''">
+      <xsl:if test="($kwota_dla_darmowej_dostawy != '' and $kwota_dla_darmowej_dostawy != '*')
+                    or ($kwota_dla_darmowej_dostawy = '*' and price/price_marketplace_site/delivery_cost/prepayment/@gross >= 0)">
          <xsl:element name="g:shipping">
             <xsl:element name="g:country">
                <xsl:value-of select="$Kraj_dostawy" />

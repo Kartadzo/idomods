@@ -65,7 +65,7 @@ Zrzuty z narzędzia Claude in Chrome trafiają tylko do mnie, nie na dysk. Dlate
 - Przed zrzutem przewijam do właściwego elementu; dane osobowe klientów (np. lista zamówień) nie trafiają na zrzuty.
 
 ### Generator `.docx`
-- `FB/narzedzia/raport_docx.py` — buduje raport dla klienta z pliku `dane.json` (znaleziska, rekomendacje, ścieżki zrzutów) zapisanego przeze mnie w trakcie weryfikacji.
+- `narzedzia/raport_docx.py` (od 2026-10-21 wspólny z GMC, w `Optymalizacja_Integracji/narzedzia/`) — buduje raport dla klienta z pliku `dane.json` (znaleziska, rekomendacje, ścieżki zrzutów) zapisanego przeze mnie w trakcie weryfikacji.
 - Biblioteka `python-docx` — **wymaga instalacji** (`pip install python-docx`), bo jej nie ma. Alternatywa bez zależności: ręczne składanie XML w ZIP (więcej kodu, trudniej w utrzymaniu).
 - Struktura: nagłówek (sklep, data, okres), podsumowanie w 3–4 punktach, sekcje IdoSell / Katalog / Piksel i API konwersji (stan + zrzut + rekomendacja), lista zalecanych działań.
 - Obok: `komentarz_clickup.txt` — 4 zdania do wklejenia w zadaniu.

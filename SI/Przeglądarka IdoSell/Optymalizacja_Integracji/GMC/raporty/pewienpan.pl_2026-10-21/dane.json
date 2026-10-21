@@ -1,0 +1,100 @@
+{
+  "platforma": "Google Merchant Center",
+  "sklep": "pewienpan.pl",
+  "data": "2026-10-21",
+  "okres": "24.09–21.10.2026 (28 dni, zakres Merchant Center); historia pobrań feedu od 22.08.2026",
+  "kolejna_weryfikacja": "ok. 19.01.2027 (cykl 90 dni)",
+  "podsumowanie": [
+    "Feed produktowy działa stabilnie: Google pobiera go codziennie, w ciągu ostatnich dwóch miesięcy nie było ani jednego nieudanego pobrania, a ostatnie 10 przetworzeń zakończyło się bez błędów.",
+    "Wszystkie 1759 produktów z feedu są zatwierdzone, bez odrzuceń i bez problemów na poziomie konta. Witryna jest zweryfikowana, a konto połączone z Google Ads, Google Analytics i Profilem Firmy.",
+    "Do poprawy: 63 zdjęcia są mniejsze niż 500 × 500 px, a Google zapowiada zaostrzenie zasad w tym zakresie. 34 produktom brakuje ceny jednostkowej. Ceny i dostępność kilkudziesięciu produktów Google poprawia sam, bo plik pobiera przed odświeżeniem danych.",
+    "Proponujemy przesunąć godzinę pobierania feedu, zaktualizować cennik dostaw zapisany w Merchant Center, usunąć 60 starych produktów dodanych ręcznie w 2020 r. i wzbogacić feed o wzór, krój i wyróżniki produktów."
+  ],
+  "sekcje": [
+    {
+      "tytul": "Feed produktowy w IdoSell",
+      "status": "ok",
+      "wynik": "Generowanie co 4 godziny, 653 produkty (1694 warianty), dostęp tylko dla Google",
+      "opis": [
+        "Feed dla Google Shopping jest generowany w IdoSell co 4 godziny, począwszy od 6:00. Ostatnie generowanie: 21.10.2026, 10:07. Do feedu trafiają 653 produkty w 1694 wariantach rozmiarowych, również te chwilowo niedostępne i w przedsprzedaży.",
+        "Obok działa drugi, nasz feed uzupełniający. Przekazuje kolor, materiał, płeć, grupę wiekową, koszt i czas dostawy oraz etykiety (np. przedział cenowy, bestsellery).",
+        "Dostęp do pliku jest ograniczony do adresów Google. W historii pobrań widać 42 odrzucone próby pobrania przez zewnętrzny serwer, który nie należy do Google. Zabezpieczenie działa prawidłowo."
+      ],
+      "zrzuty": [
+        {"plik": "01_idosell_feed_google.png", "podpis": "Feed Google Shopping w panelu IdoSell – status i liczba eksportowanych towarów"},
+        {"plik": "02_idosell_historia_pobran.png", "podpis": "Historia pobrań feedu – codzienne pobrania przez Google o 6:00"}
+      ]
+    },
+    {
+      "tytul": "Pobieranie i przetwarzanie feedu w Merchant Center",
+      "status": "uwaga",
+      "wynik": "Codzienne pobrania bez błędów; pobranie o 6:00 trafia na starszą wersję pliku",
+      "opis": [
+        "Merchant Center pobiera feed codziennie o 6:00. Od 22.08 nie brakuje żadnego dnia, a ostatnie 10 przetworzeń zakończyło się komunikatem „Nie znaleziono problemów”. Wszystkie atrybuty zostały rozpoznane.",
+        "IdoSell zaczyna generować nowy plik również o 6:00 i kończy po kilku minutach. Google pobiera więc plik przygotowany o 2:00 w nocy. Stąd automatyczne korekty, które Google wprowadza sam na podstawie strony sklepu: 16 cen, 10 stanów dostępności i 1 cena przekreślona.",
+        "Włączona jest ochrona przed przypadkowym usunięciem produktów (limit 40%). Zabezpiecza ona konto na wypadek, gdyby IdoSell udostępnił niepełny plik."
+      ],
+      "zrzuty": [
+        {"plik": "06_gmc_zrodla_podstawowe.png", "podpis": "Źródła danych w Merchant Center – feed główny"},
+        {"plik": "06b_gmc_zrodla_dodatkowe.png", "podpis": "Źródła dodatkowe – feed uzupełniający i arkusz"}
+      ],
+      "rekomendacja": "Przesunąć godzinę pobierania feedu w Merchant Center z 6:00 na ok. 7:00, żeby Google pobierał świeżo wygenerowany plik."
+    },
+    {
+      "tytul": "Stan produktów w Merchant Center",
+      "status": "uwaga",
+      "wynik": "1759 zatwierdzonych, 0 odrzuconych; 63 zdjęcia za małe, 34 bez ceny jednostkowej",
+      "opis": [
+        "Wszystkie produkty z feedu są zatwierdzone, a liczba produktów była stabilna przez cały okres. Na koncie nie ma problemów z zasadami ani z konfiguracją.",
+        "63 produkty mają zdjęcie mniejsze niż 500 × 500 px. Od 31 stycznia 2027 r. Google będzie wymagał co najmniej takiego rozmiaru, a produkty z mniejszymi zdjęciami mogą przestać się wyświetlać. Kolejne 4 zdjęcia mają niską jakość.",
+        "34 produktom brakuje miary ceny jednostkowej (np. cena za 100 ml). W UE jest ona wymagana dla produktów sprzedawanych na objętość lub wagę.",
+        "Na koncie jest też 60 produktów dodanych ręcznie w Merchant Center w listopadzie i grudniu 2020 r. Od lat czekają na sprawdzenie i się nie wyświetlają."
+      ],
+      "zrzuty": [
+        {"plik": "05_gmc_stan_produktow.png", "podpis": "Stan produktów z ostatnich 28 dni i lista problemów"}
+      ],
+      "rekomendacja": "Wymienić 63 zdjęcia na co najmniej 500 × 500 px, uzupełnić cenę jednostkową w 34 produktach i zarchiwizować 60 starych produktów dodanych ręcznie."
+    },
+    {
+      "tytul": "Koszty dostawy",
+      "status": "uwaga",
+      "wynik": "Klienci widzą prawidłowy koszt z feedu; ustawienia konta są nieaktualne",
+      "opis": [
+        "Koszt dostawy Google bierze z feedu. Dla produktów od 70 zł jest to 0 zł, co zgadza się z bezpłatną dostawą do Paczkomatów InPost i ORLEN Paczki od 70 zł w sklepie.",
+        "W ustawieniach Merchant Center zostały stare stawki: InPost i DPD po 19,50 zł, ORLEN 16 zł, darmowa dostawa od 250 zł. Dziś nie są używane, ale zadziałałyby, gdyby feed przestał przekazywać koszt dostawy.",
+        "Dla nielicznych produktów tańszych niż 70 zł feed podaje 12,92 zł, a najtańsza płatna dostawa w sklepie kosztuje 15,26 zł (ORLEN Paczka).",
+        "Zasady zwrotów (100 dni, wysyłka pocztą) są zweryfikowane przez Google."
+      ],
+      "zrzuty": [
+        {"plik": "03_idosell_cennik_dostaw.png", "podpis": "Cennik dostaw w IdoSell – profil standardowy"},
+        {"plik": "07_gmc_dostawa_inpost.png", "podpis": "Zasady dostawy w Merchant Center – stare stawki"},
+        {"plik": "09_gmc_kalkulator_dostawy.png", "podpis": "Kalkulator dostawy – koszt pobierany z feedu (0 zł)"}
+      ],
+      "rekomendacja": "Zaktualizować zasady dostawy w Merchant Center i kwotę dostawy w feedzie dla produktów poniżej 70 zł, żeby odpowiadały cennikowi sklepu."
+    },
+    {
+      "tytul": "Możliwości rozbudowy feedu",
+      "status": "uwaga",
+      "wynik": "Google sugeruje uzupełnienie koloru, wzoru i materiału w 523 produktach",
+      "opis": [
+        "W kategorii „Koszulki i topy” Google wskazuje 523 produkty, w których opisach brakuje koloru, wzoru i materiału, czyli informacji, których klienci szukają. Opisy są przeważnie jednozdaniowe.",
+        "W sklepie są już uzupełnione cechy, których feed jeszcze nie wykorzystuje: wzór, typ kołnierzyka, krój (Regular/Slim), metoda szycia oraz wyróżniki produktu. Możemy je przekazać do Google w osobnych polach. Pomaga to dopasować produkty do bardziej szczegółowych wyszukiwań.",
+        "Google podpowiada też dodanie programu lojalnościowego i promocji, które mogą się wyświetlać przy produktach."
+      ],
+      "zrzuty": [
+        {"plik": "10_gmc_brakujace_szczegoly.png", "podpis": "Sugestia Google – brakujące szczegóły w opisach produktów"}
+      ],
+      "rekomendacja": "Dodać do feedu uzupełniającego wzór, szczegóły produktu (kołnierzyk, krój, szycie) i wyróżniki, a w dłuższej perspektywie rozbudować opisy produktów."
+    }
+  ],
+  "dzialania": [
+    {"priorytet": "Wysoki", "dzialanie": "Wymienić 63 zdjęcia produktów na co najmniej 500 × 500 px i poprawić 4 zdjęcia niskiej jakości, przed 31 stycznia 2027 r., kiedy Google zacznie egzekwować nowe wymagania.", "kto": "Sklep"},
+    {"priorytet": "Średni", "dzialanie": "Przesunąć godzinę pobierania feedu w Merchant Center na ok. 7:00, żeby ceny i dostępność były aktualne.", "kto": "BrandsManago"},
+    {"priorytet": "Średni", "dzialanie": "Uzupełnić miarę ceny jednostkowej w 34 produktach (wskażemy listę).", "kto": "Sklep + BrandsManago"},
+    {"priorytet": "Średni", "dzialanie": "Zaktualizować stawki dostawy w Merchant Center i w feedzie zgodnie z cennikiem sklepu.", "kto": "BrandsManago"},
+    {"priorytet": "Średni", "dzialanie": "Dodać do feedu wzór, szczegóły produktu (kołnierzyk, krój, szycie) i wyróżniki.", "kto": "BrandsManago"},
+    {"priorytet": "Niski", "dzialanie": "Zarchiwizować 60 starych produktów dodanych ręcznie w Merchant Center w 2020 r.", "kto": "BrandsManago"},
+    {"priorytet": "Niski", "dzialanie": "Ujednolicić wartości koloru w sklepie (duplikaty i różna wielkość liter) i stopniowo rozbudowywać opisy produktów.", "kto": "Sklep"}
+  ],
+  "komentarz_clickup": "Weryfikacja Merchant Center (21.10.2026): feed jest pobierany codziennie bez błędów, a wszystkie 1759 produktów są zatwierdzone, bez problemów na koncie. Najpilniejsze są 63 zdjęcia poniżej 500 × 500 px, które od 31 stycznia 2027 r. mogą przestać się wyświetlać, oraz 34 produkty bez ceny jednostkowej. Po naszej stronie proponujemy przesunąć godzinę pobierania feedu, żeby ceny i dostępność były zawsze aktualne, zaktualizować stawki dostawy w Merchant Center i dodać do feedu wzór, krój i wyróżniki produktów. Szczegóły i plan działań w załączonym raporcie."
+}
