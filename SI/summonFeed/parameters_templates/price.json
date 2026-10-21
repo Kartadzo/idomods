@@ -1,0 +1,25 @@
+{
+  "name": "price",
+  "description": "Generate g:price and g:sale_price using service price, normal price, and promotion pricing rules.",
+  "description_pl": "Generuje g:price i g:sale_price wg reguł ceny serwisowej, normalnej i promocyjnej.",
+  "structure": ["Google", "Facebook", "Samba"],
+  "output": "g:price",
+  "context": "size",
+  "xpathCandidates": [
+    "price/@gross",
+    "../../iaiext:pricecomparator_price/iaiext:site/@gross",
+    "promotion/price/normal_retail_price/@gross"
+  ],
+  "parameterContexts": [],
+  "configVars": [],
+  "createVars": [
+    "size_id",
+    "product_currency",
+    "cena_serwis",
+    "cena_przekreslona",
+    "cena_przedpromocyjna",
+    "mainPrice"
+  ],
+  "helpers": [],
+  "notes": "Determines main price from service, strikethrough, or promotional values and emits sale_price when applicable."
+}

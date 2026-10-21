@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     Sterownik feeda Meta – ezebra.com.ua (wersja poprawiona)
+     Zmiany względem poprzedniej wersji:
+     1. Produkty bez nazwy (brak tłumaczenia UA) są pomijane – nie trafiają do Meta jako odrzucone.
+     2. Opis: fallback short_desc -> long_desc -> tytuł (Meta wymaga niepustego description).
+     3. Usunięte spacje / znaki nowej linii z availability, condition, price, sale_price, link, kategorii.
+     4. Dodany blok GTIN / MPN (jak w feedzie PL).
+     5. g:price / g:sale_price jak w PL; sale_price tylko gdy jest realnie niższa od price.
+     6. Poprawione dopasowanie ceny per rozmiar ($size_id zamiast dowolnego rozmiaru).
+     7. Usunięty "sentence case" (psuł zapis linii produktowych, np. CHRONO AGE, SPF, Q10).
+-->
+<xsl:stylesheet version="1.0"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml"
+                xmlns:php="http://php.net/xsl">
+    
+    <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" cdata-section-elements="cat name desc a"/>
+    
+    <xsl:template match="/">
+        <feed xmlns="http://www.w3.org/2005/Atom" xmlns:g="http://base.google.com/ns/1.0">
+            <title>Product Feed</title>
+            <link rel="self" href="https://www.ezebra.com.ua"><xsl:text> </xsl:text></link>
+            
+            <xsl:for-each select="/offer/products/*">
+                <xsl:variable name="p_title" select="normalize-space(substring(description/name, 1, 150))"/>
+                
+                <!-- 1. Pomiń produkty bez nazwy w języku UA -->
+                <xsl:if test="$p_title != ''">
+                    <xsl:for-each select="sizes/size">
+                        <xsl:variable name="size_id" select="@id"/>
+                        <entry>
+                            
+                            <!-- ID (dla produktów wielorozmiarowych warto zmienić na pełne @code, żeby ID były unikalne) -->
+                            <id><xsl:value-of select="substring-before(concat(@code, '-'), '-')"/></id>
+                            
+                            <!-- TITLE -->
+                            <title><xsl:value-of select="$p_title"/></title>
+                            
+                            <!-- DESCRIPTION: short_desc -> long_desc -> tytuł -->
+                            <description>
+                                <xsl:choose>
+                                    <xsl:when test="normalize-space(../../description/short_desc) != ''">
+                                        <xsl:value-of select="normalize-space(../../description/short_desc)"/>
+                                    </xsl:when>
+                                    <xsl:when test="normalize-space(../../description/long_desc) != ''">
+                                        <xsl:value-of select="substring(normalize-space(../../description/long_desc), 1, 5000)"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="$p_title"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </description>
+                            
+                            <!-- AVAILABILITY -->
+                            <xsl:variable name="unit" select="../../iaiext:delivery_time/@unit"/>
+                            <xsl:variable name="days" select="../../iaiext:delivery_time/@value"/>
+                            <availability>
+                                <xsl:choose>
+                                    <xsl:when test="stock/@id &gt;= 1">in stock</xsl:when>
+                                    <xsl:when test="stock/@id = 0">
+                                        <xsl:choose>
+                                            <xsl:when test="($unit = 'day' and $days &lt;= 3) or ($unit = 'hour' and $days &lt;= 72) or ($unit = 'minute' and $days &lt;= 4320)">in stock</xsl:when>
+                                            <xsl:when test="($unit = 'day' and $days &gt; 3) or ($unit = 'hour' and $days &gt; 72) or ($unit = 'minute' and $days &gt; 4320)">available for order</xsl:when>
+                                            <xsl:otherwise>out of stock</xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:when test="stock/@id = -2">available for order</xsl:when>
+                                    <xsl:otherwise>out of stock</xsl:otherwise>
+                                </xsl:choose>
+                            </availability>
+                            
+                            <!-- CONDITION -->
+                            <condition>new</condition>
+                            
+                            <!-- GTIN / MPN -->
+                            <xsl:choose>
+                                <xsl:when test="(../../@producer_code_standard = 'ISBN10' or ../../@producer_code_standard = 'ISBN13' or
+                                                ../../@producer_code_standard = 'GTIN8' or ../../@producer_code_standard = 'GTIN13' or
+                                                ../../@producer_code_standard = 'GTIN14' or ../../@producer_code_standard = 'GTIN12' or
+                                                ../../@producer_code_standard = 'UPCE') and @code_producer != ''">
+                                    <gtin><xsl:value-of select="@code_producer"/></gtin>
+                                </xsl:when>
+                                <xsl:when test="@code_producer != ''"><mpn><xsl:value-of select="@code_producer"/></mpn></xsl:when>
+                                <xsl:when test="@iaiext:code_external != ''"><mpn><xsl:value-of select="@iaiext:code_external"/></mpn></xsl:when>
+                                <xsl:when test="../../@code_on_card != ''"><mpn><xsl:value-of select="../../@code_on_card"/></mpn></xsl:when>
+                                <xsl:when test="@code_on_card != ''"><mpn><xsl:value-of select="@code_on_card"/></mpn></xsl:when>
+                            </xsl:choose>
+                            
+                            <!-- PRICE -->
+                            <xsl:variable name="cur" select="../../@currency"/>
+                            <xsl:variable name="sell" select="number(price/@gross)"/>
+                            <xsl:variable name="cena_serwis">
+                                <xsl:choose>
+                                    <xsl:when test="../../iaiext:pricecomparator_price/iaiext:site/@gross &gt; 0">
+                                        <xsl:value-of select="../../iaiext:pricecomparator_price/iaiext:site/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>0</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_przekreslona">
+                                <xsl:choose>
+                                    <xsl:when test="strikethrough_retail_price/@gross &gt; 0"><xsl:value-of select="strikethrough_retail_price/@gross"/></xsl:when>
+                                    <xsl:when test="../../strikethrough_retail_price/@gross &gt; 0"><xsl:value-of select="../../strikethrough_retail_price/@gross"/></xsl:when>
+                                    <xsl:otherwise>0</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="cena_przedpromocyjna">
+                                <xsl:choose>
+                                    <xsl:when test="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross &gt; 0">
+                                        <xsl:value-of select="../../promotion/price/normal_retail_price/iaiext:site/iaiext:price_per_size[@id = $size_id]/@gross"/>
+                                    </xsl:when>
+                                    <xsl:when test="../../promotion/price/normal_retail_price/@gross &gt; 0">
+                                        <xsl:value-of select="../../promotion/price/normal_retail_price/@gross"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>0</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            
+                            <!-- Cena aktualna = cena porównywarkowa (jeśli ustawiona), inaczej cena sklepu -->
+                            <xsl:variable name="current">
+                                <xsl:choose>
+                                    <xsl:when test="$cena_serwis &gt; 0"><xsl:value-of select="$cena_serwis"/></xsl:when>
+                                    <xsl:otherwise><xsl:value-of select="$sell"/></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <!-- Cena regularna = najwyższa z: przedpromocyjna / przekreślona / aktualna -->
+                            <xsl:variable name="regular">
+                                <xsl:choose>
+                                    <xsl:when test="$cena_przedpromocyjna &gt; $current and $cena_przedpromocyjna &gt;= $cena_przekreslona"><xsl:value-of select="$cena_przedpromocyjna"/></xsl:when>
+                                    <xsl:when test="$cena_przekreslona &gt; $current"><xsl:value-of select="$cena_przekreslona"/></xsl:when>
+                                    <xsl:otherwise><xsl:value-of select="$current"/></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            
+                            <g:price><xsl:value-of select="concat($regular, ' ', $cur)"/></g:price>
+                            <xsl:if test="number($regular) &gt; number($current)">
+                                <g:sale_price><xsl:value-of select="concat($current, ' ', $cur)"/></g:sale_price>
+                            </xsl:if>
+                            
+                            <!-- LINK -->
+                            <link>
+                                <xsl:value-of select="concat(substring-before(../../card/@url, '.feed'), '.html')"/>
+                                <xsl:if test="$size_id != 'uniw'">
+                                    <xsl:value-of select="concat('?selected_size=', $size_id)"/>
+                                </xsl:if>
+                            </link>
+                            
+                            <!-- IMAGE_LINK -->
+                            <image_link><xsl:value-of select="../../images/large/image[1]/@url"/></image_link>
+                            
+                            <!-- BRAND -->
+                            <xsl:if test="../../producer/@name != ''">
+                                <brand><xsl:value-of select="../../producer/@name"/></brand>
+                            </xsl:if>
+                            
+                            <!-- GOOGLE CATEGORY: kategoria sklepu z separatorem " > " -->
+                            <google_product_category>
+                                <xsl:choose>
+                                    <xsl:when test="contains(../../category/@name, '*')">
+                                        <xsl:value-of select="substring-after(../../category/@name, '*')"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:call-template name="cat-path">
+                                            <xsl:with-param name="text" select="normalize-space(../../category/@name)"/>
+                                        </xsl:call-template>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </google_product_category>
+                            
+                        </entry>
+                    </xsl:for-each>
+                </xsl:if>
+            </xsl:for-each>
+        </feed>
+    </xsl:template>
+    
+    <!-- Zamiana "A/B/C" na "A > B > C" (rekurencyjnie, dowolna liczba poziomów) -->
+    <xsl:template name="cat-path">
+        <xsl:param name="text"/>
+        <xsl:choose>
+            <xsl:when test="contains($text, '/')">
+                <xsl:value-of select="normalize-space(substring-before($text, '/'))"/>
+                <xsl:text> &gt; </xsl:text>
+                <xsl:call-template name="cat-path">
+                    <xsl:with-param name="text" select="substring-after($text, '/')"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise><xsl:value-of select="normalize-space($text)"/></xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+</xsl:stylesheet>

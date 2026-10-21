@@ -1,0 +1,38 @@
+<div id="oaiq-order-items" hidden>
+  [iai:foreach_products_begin]
+  <span data-oaiq-id="[iai:product_id]" data-oaiq-qty="[iai:product_count]" data-oaiq-price="[iai:product_price_gross_float]">[iai:product_name]</span>
+  [iai:foreach_products_end]
+</div>
+<template id="oaiq-client-city">[iai:client_city]</template>
+<script>
+  (function () {
+    if (!window.oaiqSafe) return;
+
+    // Dane klienta przed zdarzeniem — OpenAI przypisuje je do zapytania, a nie do pojedynczego measure.
+    const rawUser = {
+      email_sha256: '[iai:client_email_sha256]',
+      phone_number_sha256: '[iai:client_phone_sha256]',
+      first_name_sha256: '[iai:client_name_sha256]',
+      last_name_sha256: '[iai:client_lastname_sha256]',
+      country: '[iai:client_country_code]'.toUpperCase(),
+      city: oaiqText('#oaiq-client-city'),
+      postal_code: '[iai:client_zip]'
+    };
+    const user = {};
+    Object.keys(rawUser).forEach(function (key) {
+      if (rawUser[key]) user[key] = rawUser[key];
+    });
+    if (Object.keys(user).length) {
+      oaiqSafe('init', { user: user });
+    }
+
+    oaiqSafe('measure', 'order_created', {
+      type: 'contents',
+      amount: oaiqAmount('[iai:order_worth_cpa2]'),
+      currency: 'PLN',
+      contents: oaiqItems('#oaiq-order-items')
+    }, {
+      event_id: 'order_[iai:order_sn]'
+    });
+  })();
+</script>

@@ -1,0 +1,21 @@
+<div id="oaiq-checkout-items" hidden>
+  [iai:foreach_products_begin]
+  <span data-oaiq-id="[iai:product_id]" data-oaiq-qty="[iai:product_count]" data-oaiq-price="[iai:product_price_gross_float]">[iai:product_name]</span>
+  [iai:foreach_products_end]
+</div>
+<script>
+  (function () {
+    if (!window.oaiqSafe) return;
+    const contents = oaiqItems('#oaiq-checkout-items');
+    const amount = contents.reduce(function (sum, item) {
+      return sum + item.amount * item.quantity;
+    }, 0);
+
+    oaiqSafe('measure', 'checkout_started', {
+      type: 'contents',
+      amount: amount,
+      currency: 'PLN',
+      contents: contents
+    });
+  })();
+</script>

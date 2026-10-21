@@ -1,0 +1,22 @@
+{
+  "name": "Samba",
+  "description": "Top-level feed structure for Samba channel; outputs PRODUCTS/PRODUCT/VARIANT structure.",
+  "output": "PRODUCTS/PRODUCT",
+  "context": "feed",
+  "xpathCandidates": ["/offer/products/product"],
+  "parameterContexts": [],
+  "configVars": [],
+  "helpers": [],
+  "insertionPoints": [
+    {
+      "template": "product",
+      "context": "product"
+    },
+    {
+      "template": "productSizeMatter",
+      "context": "size"
+    }
+  ],
+  "defaultXslt": "summonFeed/structure_templates/samba.xsl",
+  "notes": "Preserves current structure and forwards rendering to inner templates."
+}

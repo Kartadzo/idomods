@@ -21,7 +21,7 @@
     <xsl:variable name="Kraj_dostawy" select="'DE'"/>
     <xsl:variable name="Czas_obsługi_zamówienia_na_magazynie" select="'3'"/>
     <!-- dane potrzebne aby przekazywać informacje o kolorze -->
-    <xsl:variable name='kolor_nazwa_w_panelu'>|farbe auswählen|</xsl:variable>
+    <xsl:variable name='kolor_nazwa_w_panelu'>|farbe auswählen|16|</xsl:variable>
     <!-- dane potrzebne aby przekazywać informacje -->
     <xsl:variable name='material_nazwa_w_panelu'>|obermaterial|</xsl:variable>
 
@@ -207,9 +207,7 @@
                             <g:display_ads_link>
                                 <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
                                 <xsl:value-of select="substring-before(../../card/@url, '.feed')"/>
-                                <xsl:text disable-output-escaping="yes">.googleshopping</xsl:text>
-                                <xsl:value-of select="translate($Kraj_dostawy,$upperLetters, $lowerLetters)"/>
-                                <xsl:text disable-output-escaping="yes">.html]]&gt;</xsl:text>
+                                <xsl:text disable-output-escaping="yes">.googleremarketing.html]]&gt;</xsl:text>
                             </g:display_ads_link>
                             <!-- mobile link -->
                             <g:mobile_link>
@@ -482,70 +480,92 @@
                                 </xsl:choose>
                             </xsl:element>
                             
-                            <!-- kolor -->
-                            <xsl:choose>
-                                <xsl:when test="../../parameters/parameter/@context_id = 'CONTEXT_COLOR'">
-                                    <xsl:element name="g:color">
-                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                                        <xsl:for-each select="../../parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]">
-                                            <xsl:choose>
-                                                <xsl:when test="position() = 1">
-                                                    <xsl:value-of select="@name" />
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <xsl:text>/</xsl:text>
-                                                    <xsl:value-of select="@name" />
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </xsl:for-each>
-                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                                    </xsl:element>
-                                </xsl:when>
-                                <xsl:when test="$kolor_nazwa_w_panelu != '' and ../../parameters/parameter[
-                                                contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
-                                    <xsl:variable name='kolor_get' select="../../parameters/parameter[
-                                                                           contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
-                                                                           ]/@name" />
-                                    <xsl:element name="g:color">
-                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                                        <xsl:for-each select="../../parameters/parameter[@name= $kolor_get]/value[position() &lt; 5]">
-                                            <xsl:choose>
-                                                <xsl:when test=" position()= 1">
-                                                    <xsl:value-of select="@name" />
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <xsl:text>/</xsl:text>
-                                                    <xsl:value-of select="@name" />
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </xsl:for-each>
-                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                                    </xsl:element>
-                                </xsl:when>
-                            </xsl:choose>
-                            
-                            <!-- materiał -->
-                            <xsl:if test="$material_nazwa_w_panelu != '' and ../../parameters/parameter[
-                                          contains($material_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
-                                <xsl:variable name='material_get' select="../../parameters/parameter[
-                                                                          contains($material_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
-                                                                          ]/@name" />
-                                <xsl:element name="g:material">
-                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                                    <xsl:for-each select="../../parameters/parameter[@name= $material_get]/value[position() &lt; 5]">
-                                        <xsl:choose>
-                                            <xsl:when test=" position()= 1">
+                            <xsl:for-each select="../..">
+                                <!-- kolor -->
+                                <!-- 2026-09-18 - MD -->
+                                <xsl:choose>
+                                    <xsl:when test="parameters/parameter[@context_id = 'CONTEXT_COLOR']">
+                                        <xsl:element name="g:color">
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:for-each select="parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]">
+                                                <xsl:choose>
+                                                    <xsl:when test="position() = 1">
+                                                        <xsl:value-of select="@name" />
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:text>/</xsl:text>
+                                                        <xsl:value-of select="@name" />
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                            </xsl:for-each>
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </xsl:element>
+                                    </xsl:when>
+                                    <xsl:when test="$kolor_nazwa_w_panelu != '' and parameters/parameter[@hide = 'n'
+                                                    and 
+                                                    (contains(translate($kolor_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                    or 
+                                                    contains($kolor_nazwa_w_panelu, concat('|', @id, '|')))]/@name != ''">
+                                        <xsl:variable name='kolor_get' select="parameters/parameter[@hide = 'n' and 
+                                                                               contains(translate($kolor_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                                               ]/@name" />
+                                        <xsl:variable name='kolor_ID_get' select="parameters/parameter[@hide = 'n' and 
+                                                                                  contains($kolor_nazwa_w_panelu, concat('|', @id, '|'))
+                                                                                  ]/@name" />
+                                        <xsl:variable name="value">
+                                            <xsl:for-each select="parameters/parameter[@name = $kolor_get or @name = $kolor_ID_get]/value">
                                                 <xsl:value-of select="@name" />
-                                            </xsl:when>
-                                            <xsl:otherwise>
                                                 <xsl:text>/</xsl:text>
-                                                <xsl:value-of select="@name" />
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:for-each>
-                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                                </xsl:element>
-                            </xsl:if>
+                                            </xsl:for-each>
+                                        </xsl:variable>
+                                        <xsl:variable name="value_tokenized">
+                                            <xsl:call-template name="tokenize">
+                                                <xsl:with-param name="text" select="substring(normalize-space($value),1,100)" />
+                                                <xsl:with-param name="delimiter" select="'/'" />
+                                            </xsl:call-template>
+                                        </xsl:variable>
+                                        <xsl:element name="g:color">
+                                            <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                            <xsl:value-of select="substring($value_tokenized, 1, string-length($value_tokenized) - 1)" />
+                                            <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                        </xsl:element>
+                                    </xsl:when>
+                                </xsl:choose>
+                                
+                                <!-- materiał -->
+                                <!-- 2026-09-18 - MD -->
+                                <xsl:if test="$material_nazwa_w_panelu != '' and parameters/parameter[@hide = 'n' 
+                                              and 
+                                              (contains(translate($material_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                              or
+                                              contains($material_nazwa_w_panelu, concat('|', @id, '|')))]">
+                                    <xsl:variable name='material_get' select="parameters/parameter[@hide = 'n' and 
+                                                                              contains(translate($material_nazwa_w_panelu, $upperLetters, $lowerLetters), concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                                              ]/@name" />
+                                    <xsl:variable name='material_ID_get' select="parameters/parameter[@hide = 'n' and 
+                                                                                 contains($material_nazwa_w_panelu, concat('|', @id, '|'))
+                                                                                 ]/@name" />
+                                    <xsl:variable name="value">
+                                        <xsl:for-each select="parameters/parameter[@name = $material_get or @name = $material_ID_get]/value">
+                                            <!-- <xsl:choose><xsl:when test=" position()= 1"><xsl:value-of select="@name" /></xsl:when><xsl:otherwise><xsl:text>/</xsl:text><xsl:value-of select="@name" /></xsl:otherwise></xsl:choose> -->
+                                            <xsl:value-of select="@name" />
+                                            <xsl:text>/</xsl:text>
+                                        </xsl:for-each>
+                                    </xsl:variable>
+                                    <xsl:variable name="value_tokenized">
+                                        <xsl:call-template name="tokenize">
+                                            <xsl:with-param name="text" select="substring(normalize-space($value),1,200)" />
+                                            <xsl:with-param name="delimiter" select="'/'" />
+                                        </xsl:call-template>
+                                    </xsl:variable>
+                                    <xsl:element name="g:material">
+                                        <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                        <xsl:value-of select="substring($value_tokenized, 1, string-length($value_tokenized) - 1)" />
+                                        <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                    </xsl:element>
+                                </xsl:if>     
+                                        </xsl:for-each>     
+
                             <!-- grupa wiekowa -->
                             <xsl:if test="../../category[@id = '1214553939' or @id = '1214553935' or @id = '1214553949' or
                             @id = '1214553914' or @id = '1214553946' or @id = '1214553929' or @id = '1214553938' or

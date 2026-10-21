@@ -1,0 +1,67 @@
+<script>
+  (function (w, d, s, u) {
+    if (w.oaiq) return;
+    var q = function () {
+      q.q.push(arguments);
+    };
+    q.q = [];
+    w.oaiq = q;
+    var js = d.createElement(s);
+    js.async = true;
+    js.src = u;
+    var f = d.getElementsByTagName(s)[0];
+    f.parentNode.insertBefore(js, f);
+  })(window, document, 'script', 'https://bzrcdn.openai.com/sdk/oaiq.min.js');
+
+  // Bufor do czasu zgody. Dodatki dynamiczne IdoSell wstrzykuje w losowej kolejności,
+  // a zdarzenia wysłane przy consent=false OpenAI odrzuca bez ponowienia.
+  window.oaiqConsentGranted = window.oaiqConsentGranted || false;
+  window.oaiqBuffer = window.oaiqBuffer || [];
+
+  window.oaiqSafe = function () {
+    try {
+      if (window.oaiqConsentGranted) {
+        window.oaiq.apply(window, arguments);
+      } else {
+        window.oaiqBuffer.push(arguments);
+      }
+    } catch (e) {}
+  };
+
+  // Tekst z <template> (nazwy produktów, miasto) — bez ryzyka apostrofów w kodzie JS.
+  window.oaiqText = function (selector) {
+    const el = document.querySelector(selector);
+    if (!el) return '';
+    const text = (el.content ? el.content.textContent : el.textContent) || '';
+    return text.trim();
+  };
+
+  // Kwota w groszach (OpenAI: liczba całkowita, np. 2599 = 25,99).
+  window.oaiqAmount = function (value) {
+    const number = parseFloat(String(value).replace(',', '.').replace(/\s/g, ''));
+    return isNaN(number) ? 0 : Math.round(number * 100);
+  };
+
+  // Lista towarów z ukrytego kontenera wypełnionego pętlą [iai:foreach_products_begin].
+  window.oaiqItems = function (containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return [];
+    return Array.from(container.querySelectorAll('[data-oaiq-id]')).map(function (item) {
+      const entry = {
+        id: item.getAttribute('data-oaiq-id'),
+        content_type: 'product',
+        quantity: Math.max(1, Math.round(parseFloat(item.getAttribute('data-oaiq-qty')) || 1)),
+        amount: window.oaiqAmount(item.getAttribute('data-oaiq-price')),
+        currency: 'PLN'
+      };
+      const name = (item.textContent || '').trim();
+      if (name) entry.name = name;
+      return entry;
+    });
+  };
+
+  oaiq('consent', false);
+  oaiq('init', {
+    pixelId: 'HxtQFAbcYQsJiSDLYxZj57'
+  });
+</script>

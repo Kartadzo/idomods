@@ -1,0 +1,42 @@
+{
+  "name": "shipping_facebook",
+  "description": "Generate Facebook g:shipping with country, service and shipping price (no handling/transit times).",
+  "description_pl": "Generuje Facebook g:shipping z krajem, serwisem i ceną dostawy (bez czasów obsługi i transportu).",
+  "structure": ["Facebook"],
+  "output": "g:shipping",
+  "context": "size",
+  "xpathCandidates": [
+    "price/@gross"
+  ],
+  "parameterContexts": [],
+  "configVars": [
+    {
+      "name": "kwota_dla_darmowej_dostawy",
+      "default": "399.00"
+    },
+    {
+      "name": "kwota_dla_wiekszych_zamowien",
+      "default": ""
+    },
+    {
+      "name": "Koszt_dostawy",
+      "default": "20.00"
+    },
+    {
+      "name": "Koszt_dostawy_wiekszych_zamowien",
+      "default": "0.00"
+    },
+    {
+      "name": "Kraj_dostawy",
+      "default": "PL"
+    },
+    {
+      "name": "Serwis_dostawy_zamówienia",
+      "default": "Kurier Standard"
+    }
+  ],
+  "createVars": ["product_currency"],
+  "globals": [],
+  "helpers": [],
+  "notes": "Wariant Facebooka: emituje wyłącznie g:country, g:service i g:price. Zależność: product_currency (współdzielony z price/shipping). Kraj_dostawy i Serwis_dostawy_zamówienia to zmienne globalne (feed)."
+}

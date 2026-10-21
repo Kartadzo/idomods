@@ -1,0 +1,23 @@
+<template id="oaiq-product-name">[iai:itemcardpage_product_name]</template>
+<script>
+  (function () {
+    if (!window.oaiqSafe) return;
+    const amount = oaiqAmount('[iai:itemcardpage_product_price_gross_float]');
+    const product = {
+      id: '[iai:itemcardpage_product_id]',
+      content_type: 'product',
+      quantity: 1,
+      amount: amount,
+      currency: 'PLN'
+    };
+    const name = oaiqText('#oaiq-product-name');
+    if (name) product.name = name;
+
+    oaiqSafe('measure', 'contents_viewed', {
+      type: 'contents',
+      amount: amount,
+      currency: 'PLN',
+      contents: [product]
+    });
+  })();
+</script>

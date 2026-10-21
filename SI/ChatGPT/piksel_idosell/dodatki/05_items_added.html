@@ -1,0 +1,32 @@
+<template id="oaiq-atc-name">[iai:itemcardpage_product_name]</template>
+<script>
+  (function () {
+    const button = document.querySelector('#projector_button_basket');
+    if (!button || !window.oaiqSafe || button.getAttribute('data-oaiq-bound')) return;
+    button.setAttribute('data-oaiq-bound', '1');
+
+    button.addEventListener('click', function () {
+      try {
+        const quantityInput = document.querySelector('#projector_number, input[name="number"]');
+        const quantity = Math.max(1, Math.round(parseFloat(quantityInput ? quantityInput.value : 1) || 1));
+        const unitAmount = oaiqAmount('[iai:itemcardpage_product_price_gross_float]');
+        const product = {
+          id: '[iai:itemcardpage_product_id]',
+          content_type: 'product',
+          quantity: quantity,
+          amount: unitAmount,
+          currency: 'PLN'
+        };
+        const name = oaiqText('#oaiq-atc-name');
+        if (name) product.name = name;
+
+        oaiqSafe('measure', 'items_added', {
+          type: 'contents',
+          amount: unitAmount * quantity,
+          currency: 'PLN',
+          contents: [product]
+        });
+      } catch (e) {}
+    });
+  })();
+</script>
