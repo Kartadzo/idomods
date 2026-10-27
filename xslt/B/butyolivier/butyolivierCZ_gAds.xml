@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:iaiext="http://www.iai-shop.com/developers/iof/extensions.phtml" xmlns:php="http://php.net/xsl" version="1.0">
+   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
+   
+   <!-- PL|DE|CZ|SK|RO|UA||||||||||||||||||||||||||||||| -->
+   <xsl:variable name="upperLetters"
+                 select="'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻÄÖÜẞÁČĎÉĚÍŇÓŘŠŤÚŮÝŽÁÄČĎŽÉÍĹĽŇÓÔŔŠŤÚÝŽĂÂÎȘȚАБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ'" />
+   <xsl:variable name="lowerLetters"
+                 select="'aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźżäöüßáčďéěíňóřšťúůýžáäčďžéíĺľňóôŕšťúýžăâîșțабвгґдеєжзиіїйклмнопрстуфхцчшщьюя'" />
+   
+   <!-- dane potrzebne aby przekazywać informacje o płci -->
+    <xsl:variable name='gender_nazwa_w_panelu'>Pohlaví</xsl:variable>
+    <xsl:variable name='gender_male'>|Pánské|</xsl:variable>
+    <xsl:variable name='gender_female'>|Dámské|</xsl:variable>
+    <xsl:variable name='gender_unisex'>|Dětské|unisex|</xsl:variable>
+    <!-- dane potrzebne aby przekazywać informacje o kolorze -->
+    <xsl:variable name='kolor_nazwa_w_panelu'>|barva|barva:|</xsl:variable>
+    <!-- dane potrzebne aby przekazywać informacje -->
+    <xsl:variable name='material_nazwa_w_panelu'>|materiál|dominantní materiál|</xsl:variable>
+   
+   
+   <xsl:template match="/">
+      <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+         <!-- <updated><xsl:value-of select="/offer/@generated"/></updated> -->
+         <channel>
+            <title>Butyoliver.pl</title>
+            <link>https://butyolivier.pl/</link>
+            <description>Produkty ze sklepu https://butyolivier.pl/</description>
+            <xsl:for-each select="/offer/products/product">
+
+
+            <xsl:for-each select="sizes/size">
+            <item>
+
+                     <!--Unikalny
+                     identyfikator produktu  -->
+                  <g:id>
+                     <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                     <xsl:value-of select="@code" />
+                     <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                  </g:id>
+
+                     <!-- jeśli na sklepie są jakieś zestawy -->
+                     <g:is_bundle>
+                        <xsl:choose>
+                           <xsl:when test="sum(../../bundled/product/@quantity) > 1">
+                              <xsl:text>yes</xsl:text>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:text>no</xsl:text>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </g:is_bundle>
+                     
+                     <!-- kolor -->
+                     <xsl:choose>
+                        <xsl:when test="../../parameters/parameter/@context_id = 'CONTEXT_COLOR'">
+                           <g:color>
+                              <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                              <xsl:for-each select="../../parameters/parameter[@context_id = 'CONTEXT_COLOR']/value[position() &lt; 5]">
+                                 <xsl:choose>
+                                    <xsl:when test="position() = 1">
+                                       <xsl:value-of select="@name" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                       <xsl:text>/</xsl:text>
+                                       <xsl:value-of select="@name" />
+                                    </xsl:otherwise>
+                                 </xsl:choose>
+                              </xsl:for-each>
+                              <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                           </g:color>
+                        </xsl:when>
+                        <xsl:when test="../../parameters/parameter[@name = 'Kolor']/@group_distinction = 'y'">
+                           <g:color>
+                              <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                              <xsl:for-each select="../../parameters/parameter[@name = 'Kolor']/value[position() &lt; 5]">
+                                 <xsl:choose>
+                                    <xsl:when test="position() = 1">
+                                       <xsl:value-of select="@name" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                       <xsl:text>/</xsl:text>
+                                       <xsl:value-of select="@name" />
+                                    </xsl:otherwise>
+                                 </xsl:choose>
+                              </xsl:for-each>
+                              <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                           </g:color>
+                        </xsl:when>
+                        <xsl:when test="$kolor_nazwa_w_panelu != '' and ../../parameters/parameter[
+                                        contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
+                           <xsl:variable name='kolor_get' select="../../parameters/parameter[
+                              contains($kolor_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                                  ]/@name" />
+                           <g:color>
+                              <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                              <xsl:for-each select="../../parameters/parameter[@name= $kolor_get]/value[position() &lt; 5]">
+                                 <xsl:choose>
+                                    <xsl:when test=" position()= 1">
+                                       <xsl:value-of select="@name" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                       <xsl:text>/</xsl:text>
+                                       <xsl:value-of select="@name" />
+                                    </xsl:otherwise>
+                                 </xsl:choose>
+                              </xsl:for-each>
+                              <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                           </g:color>
+                        </xsl:when>
+                     </xsl:choose>
+                     <!-- płeć -->
+                     <xsl:if test="$gender_nazwa_w_panelu != '' and ../../parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name != ''">
+                        <g:gender>
+                           <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                           <xsl:variable name='gender_wer'>
+                              <xsl:text>|</xsl:text>
+                              <xsl:value-of select="../../parameters/parameter[@name = $gender_nazwa_w_panelu]/value/@name" />
+                              <xsl:text>|</xsl:text>
+                           </xsl:variable>
+                           <xsl:choose>
+                              <xsl:when test="contains($gender_male, $gender_wer)">
+                                 <![CDATA[male]]>
+                              </xsl:when>
+                              <xsl:when test="contains($gender_female, $gender_wer)">
+                                 <![CDATA[female]]>
+                              </xsl:when>
+                              <xsl:when test="contains($gender_unisex, $gender_wer)">
+                                 <![CDATA[unisex]]>
+                              </xsl:when>
+                           </xsl:choose>
+                           <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:gender>
+                     </xsl:if>
+                     
+                     <!-- materiał -->
+                     <xsl:if test="$material_nazwa_w_panelu != '' and ../../parameters/parameter[
+                                   contains($material_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))]">
+                        <xsl:variable name='material_get' select="../../parameters/parameter[
+                           contains($material_nazwa_w_panelu,concat('|',translate(@name, $upperLetters, $lowerLetters),'|'))
+                                                                  ]/@name" />
+                        <g:material>
+                           <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                           <xsl:for-each select="../../parameters/parameter[@name= $material_get]/value[position() &lt; 5]">
+                              <xsl:choose>
+                                 <xsl:when test=" position()= 1">
+                                    <xsl:value-of select="@name" />
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                    <xsl:text>/</xsl:text>
+                                    <xsl:value-of select="@name" />
+                                 </xsl:otherwise>
+                              </xsl:choose>
+                           </xsl:for-each>
+                           <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                        </g:material>
+                     </xsl:if>
+
+                  </item>
+               </xsl:for-each>
+
+            </xsl:for-each>
+         </channel>
+      </rss>
+   </xsl:template>
+
+</xsl:stylesheet>

@@ -1127,22 +1127,27 @@
          </xsl:choose>
       </xsl:element>
       
-      <!-- 09.01.2026 MD -->
-      <g:custom_label_1>
+      <!-- 2026.10.26 MD -->
+      <xsl:variable name="label_1">
          <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'newproduct']/@visible='yes'">
-            <xsl:text>|Nowość|</xsl:text>
+            <xsl:text>, Nowość</xsl:text>
          </xsl:if>
          <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'bestseller']/@visible='yes'">
-            <xsl:text>|Bestseller|</xsl:text>
+            <xsl:text>, Bestseller</xsl:text>
          </xsl:if>
          <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'promotion']/@visible='yes'">
-            <xsl:text>|Promocja|</xsl:text>
+            <xsl:text>, Promocja</xsl:text>
          </xsl:if>
          <xsl:if test="iaiext:hotspots/iaiext:site/flag[@type = 'distinguished']/@visible='yes'">
-            <xsl:text>|Wyróżniony|</xsl:text>
+            <xsl:text>, Wyróżniony</xsl:text>
          </xsl:if>
-      </g:custom_label_1>
-      
+      </xsl:variable>
+      <xsl:if test="$label_1 != ''">
+         <g:custom_label_1>
+            <xsl:value-of select="substring(substring($label_1, 3), 1, 100)"/>
+         </g:custom_label_1>
+      </xsl:if>
+
       <g:custom_label_2>
          <xsl:variable name="label2">
             <xsl:call-template name="throwNode">
@@ -1502,7 +1507,7 @@
          </xsl:when>
       </xsl:choose>
 
-      <!-- 2026.09.14  MD -->
+      <!-- 2026.10.23  MD -->
       <xsl:if test="($kwota_dla_darmowej_dostawy != '' and $kwota_dla_darmowej_dostawy != '*')
                     or ($kwota_dla_darmowej_dostawy = '*' and price/price_marketplace_site/delivery_cost/prepayment/@gross >= 0)">
          <xsl:element name="g:shipping">
@@ -1557,6 +1562,8 @@
             </xsl:element>
          </xsl:if>
       </xsl:if>
+      
+      <!-- 2026.10.23  MD -->
       <!-- <xsl:element name="g:shipping_handling_business_days">
            <xsl:value-of select="$Dni_obsługi_zamówienia_na_magazynie" />
            </xsl:element>

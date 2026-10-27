@@ -11,13 +11,26 @@
 	
 	<!-- konfiguracja cennika dostaw 
 						- uzupełnić jeśli nie jest wykorzystywana konfiguracja gmc (9.99) lub jeśli się koszty często zmieniają (*) -->
-	<!-- kwota_dla_darmowej_dostawy - powyżej tej kwoty podawana zostanie cena 0 PLN -->
+	<!-- kwota_dla_darmowej_dostawy - wartość g:free_shipping_threshold (stała dla wszystkich przedziałów, prośba klienta;
+						wersja z progiem per przedział - wariant B, zakomentowany przy g:free_shipping_threshold);
+						pusta = brak g:shipping i g:free_shipping_threshold; '*' = koszt z cennika IdoSell zamiast przedziałów -->
 	<xsl:variable name='kwota_dla_darmowej_dostawy'>39</xsl:variable>
-	<!-- kwota_dla_wiekszych_zamowien - można pominąć; Jeśli oferowany jest dodatkowy w przedziale cenowym to powyżej podanej tu wartości produktu wyświetlona zostanie cena podana w Koszt_dostawy_wiekszych_zamowien -->
-	<xsl:variable name='kwota_dla_wiekszych_zamowien'></xsl:variable>
-	<!-- Koszt_dostawy - cena domyślna dostawy, dodawana do każdego produktu który nie spełnia powyższych dwóch warunków -->
-	<xsl:variable name="Koszt_dostawy">20.00</xsl:variable>
-	<xsl:variable name="Koszt_dostawy_wiekszych_zamowien">0.00</xsl:variable>
+	<!-- przedziały wagi wariantu (size/@weight, w gramach) - 2026.10.22 MD
+						waga_do_N - górna granica przedziału (włącznie); waga 0 / brak → przedział 1; powyżej waga_do_3 → przedział 4
+						koszt_dostawy_N - koszt dostawy w przedziale
+						prog_darmowej_dostawy_N - od tej ceny wariantu koszt dostawy w przedziale = 0 -->
+	<xsl:variable name="waga_do_1">10000</xsl:variable>
+	<xsl:variable name="koszt_dostawy_1">4.49</xsl:variable>
+	<xsl:variable name="prog_darmowej_dostawy_1">39</xsl:variable>
+	<xsl:variable name="waga_do_2">15000</xsl:variable>
+	<xsl:variable name="koszt_dostawy_2">6.00</xsl:variable>
+	<xsl:variable name="prog_darmowej_dostawy_2">1000</xsl:variable>
+	<xsl:variable name="waga_do_3">25000</xsl:variable>
+	<xsl:variable name="koszt_dostawy_3">8.00</xsl:variable>
+	<xsl:variable name="prog_darmowej_dostawy_3">1000</xsl:variable>
+	<xsl:variable name="waga_do_4">29000</xsl:variable>
+	<xsl:variable name="koszt_dostawy_4">10.00</xsl:variable>
+	<xsl:variable name="prog_darmowej_dostawy_4">1000</xsl:variable>
 	<xsl:variable name="Kraj_dostawy" select="'DE'" />
 	<!-- Liczba dni roboczych -->
 	<xsl:variable name="Czas_obsługi_zamówienia_na_magazynie" select="0" />
@@ -769,8 +782,34 @@
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:variable>
-								<!-- 2026.09.14  MD -->
+								<!-- 2026.09.14  MD; przedziały wagi 2026.10.22 MD -->
 								<xsl:if test="$kwota_dla_darmowej_dostawy != ''">
+									<!-- przedział wagi wariantu (1-4) -->
+									<xsl:variable name="waga" select="number(@weight)" />
+									<xsl:variable name="przedzial">
+										<xsl:choose>
+											<xsl:when test="not($waga > $waga_do_1)">1</xsl:when>
+											<xsl:when test="not($waga > $waga_do_2)">2</xsl:when>
+											<xsl:when test="not($waga > $waga_do_3)">3</xsl:when>
+											<xsl:otherwise>4</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:variable name="koszt_przedzialu">
+										<xsl:choose>
+											<xsl:when test="$przedzial = 1"><xsl:value-of select="$koszt_dostawy_1" /></xsl:when>
+											<xsl:when test="$przedzial = 2"><xsl:value-of select="$koszt_dostawy_2" /></xsl:when>
+											<xsl:when test="$przedzial = 3"><xsl:value-of select="$koszt_dostawy_3" /></xsl:when>
+											<xsl:otherwise><xsl:value-of select="$koszt_dostawy_4" /></xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+									<xsl:variable name="prog_przedzialu">
+										<xsl:choose>
+											<xsl:when test="$przedzial = 1"><xsl:value-of select="$prog_darmowej_dostawy_1" /></xsl:when>
+											<xsl:when test="$przedzial = 2"><xsl:value-of select="$prog_darmowej_dostawy_2" /></xsl:when>
+											<xsl:when test="$przedzial = 3"><xsl:value-of select="$prog_darmowej_dostawy_3" /></xsl:when>
+											<xsl:otherwise><xsl:value-of select="$prog_darmowej_dostawy_4" /></xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
 									<xsl:element name="g:shipping">
 										<xsl:element name="g:price">
 											<!-- <xsl:value-of select="price/price_marketplace_site/delivery_cost/prepayment/@gross"/> -->
@@ -778,14 +817,11 @@
 												<xsl:when test="'*' = $kwota_dla_darmowej_dostawy">
 													<xsl:value-of select="price/price_marketplace_site/delivery_cost/prepayment/@gross" />
 												</xsl:when>
-												<xsl:when test="price/@gross >= $kwota_dla_darmowej_dostawy">
+												<xsl:when test="price/@gross >= number($prog_przedzialu)">
 													<xsl:text><![CDATA[0]]></xsl:text>
 												</xsl:when>
-												<xsl:when test="$kwota_dla_wiekszych_zamowien != '' and price/@gross >= $kwota_dla_wiekszych_zamowien">
-													<xsl:value-of select="$Koszt_dostawy_wiekszych_zamowien" />
-												</xsl:when>
 												<xsl:otherwise>
-													<xsl:value-of select="$Koszt_dostawy" />
+													<xsl:value-of select="$koszt_przedzialu" />
 												</xsl:otherwise>
 											</xsl:choose>
 											<xsl:text><![CDATA[ ]]></xsl:text>
@@ -794,7 +830,7 @@
 										<xsl:element name="g:country">
 											<xsl:value-of select="$Kraj_dostawy" />
 										</xsl:element>
-										<xsl:element name="g:min_handling_time">
+										<!-- <xsl:element name="g:min_handling_time">
 											<xsl:value-of select="$Czas_obsługi_zamówienia_na_magazynie" />
 										</xsl:element>
 										<xsl:element name="g:max_handling_time">
@@ -808,11 +844,24 @@
 										</xsl:element>
 										<xsl:element name="g:service">
 											<xsl:value-of select="$Serwis_dostawy_zamówienia" />
-										</xsl:element>
+										</xsl:element> -->
 									</xsl:element>
-									<xsl:element name="g:free_shipping_threshold">
+									<!-- wariant: próg darmowej dostawy stały dla wszystkich przedziałów = kwota_dla_darmowej_dostawy -->
+									<!-- <xsl:element name="g:free_shipping_threshold">
 										<xsl:element name="g:price_threshold">
 											<xsl:value-of select="$kwota_dla_darmowej_dostawy" />
+											<xsl:text><![CDATA[ ]]></xsl:text>
+											<xsl:value-of select="$product_currency" />
+										</xsl:element>
+										<xsl:element name="g:country">
+											<xsl:value-of select="$Kraj_dostawy" />
+										</xsl:element>
+									</xsl:element> -->
+									<!-- wariant: próg darmowej dostawy wg przedziału wagi = prog_darmowej_dostawy_N;
+										aby włączyć - zakomentuj wariant A i odkomentuj poniższy blok -->
+									<xsl:element name="g:free_shipping_threshold">
+										<xsl:element name="g:price_threshold">
+											<xsl:value-of select="$prog_przedzialu" />
 											<xsl:text><![CDATA[ ]]></xsl:text>
 											<xsl:value-of select="$product_currency" />
 										</xsl:element>

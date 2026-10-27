@@ -8,8 +8,10 @@
 		<xsl:for-each select="/offer/products/*">
             <xsl:for-each select="sizes/size">
                 <entry>
-                    <!-- ID -->
-                    <xsl:element name="id"><xsl:value-of select="@code"/></xsl:element>
+                  <!-- ID -->
+                  <xsl:element name="id">
+                     <xsl:value-of select="substring-before(concat(@code, '-'), '-')"/>
+                  </xsl:element>
 
                     <!-- TITLE -->
                     <xsl:element name="title">
@@ -227,6 +229,23 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:element>
+                                    
+                  <!-- CUSTOM_LABEL_1 - wszystkie etykiety marketingowe w kolejności priorytetu, max 100 znaków (ANALIZA_etykiety_gmc.md) -->
+                  <xsl:variable name="flagi" select="../../iaiext:hotspots/iaiext:site/flag[@visible = 'yes']/@type"/>
+                  <xsl:variable name="ramka" select="../../parameters/parameter[@id = '87890' or @id = '30936']/value/@id"/>
+                  <xsl:variable name="etykiety">
+                     <xsl:if test="$ramka = '87896'"><xsl:text>, Outlet</xsl:text></xsl:if>
+                     <xsl:if test="$flagi = 'promotion'"><xsl:text>, Promocje</xsl:text></xsl:if>
+                     <xsl:if test="$flagi = 'distinguished'"><xsl:text>, Nie przegap</xsl:text></xsl:if>
+                     <xsl:if test="$ramka = '87891'"><xsl:text>, Hity z TikToka</xsl:text></xsl:if>
+                     <xsl:if test="$ramka = '87881'"><xsl:text>, Wybór kosmetologa</xsl:text></xsl:if>
+                     <xsl:if test="$flagi = 'bestseller'"><xsl:text>, Bestseller</xsl:text></xsl:if>
+                     <xsl:if test="$flagi = 'newproduct'"><xsl:text>, Nowość</xsl:text></xsl:if>
+                  </xsl:variable>
+                  <xsl:if test="$etykiety != ''">
+                     <!-- usunięcie wiodącego ", " i obcięcie do limitu 100 znaków -->
+                     <custom_label_1><xsl:value-of select="substring(substring($etykiety, 3), 1, 100)"/></custom_label_1>
+                  </xsl:if>
                 </entry>
             </xsl:for-each>
 		</xsl:for-each>

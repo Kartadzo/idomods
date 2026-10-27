@@ -1363,7 +1363,7 @@
                     <xsl:value-of select="$Serwis_dostawy_zamówienia" />
                 </xsl:element>
             </xsl:element>
-            <!-- <xsl:element name="g:free_shipping_threshold">
+            <xsl:element name="g:free_shipping_threshold">
                 <xsl:element name="g:price_threshold">
                     <xsl:value-of select="$kwota_dla_darmowej_dostawy" />
                     <xsl:text><![CDATA[ ]]></xsl:text>
@@ -1372,7 +1372,7 @@
                 <xsl:element name="g:country">
                     <xsl:value-of select="$Kraj_dostawy" />
                 </xsl:element>
-            </xsl:element> -->
+            </xsl:element>
         </xsl:if>
         
         <xsl:if test="@weight and @weight != 0">
