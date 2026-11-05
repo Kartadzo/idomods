@@ -1,0 +1,546 @@
+{
+  "name": "ClickUp - SUBTASK (n8n)",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $json.task_id }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        -64
+      ],
+      "id": "38fba06c-ffd7-4e92-bda0-84b80c51e708",
+      "name": "pobierz dane nowego zadania",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "get",
+        "id": "={{ $json.parent }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -64
+      ],
+      "id": "1155696e-020c-4399-837a-cf241adc1829",
+      "name": "pobierz dane rodzica",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c1311254-152c-4431-9710-0a5acef0b60d",
+              "leftValue": "={{ $json.parent }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -432,
+        -64
+      ],
+      "id": "f3a6f34d-01b0-4783-b000-3f3005e71078",
+      "name": "jeśli jest rodzic i nie uzupełniono pól"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "team": "36829874",
+        "events": [
+          "taskCreated"
+        ],
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.clickUpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        -64
+      ],
+      "id": "0c601db7-bb13-4d5b-8d53-effd252da400",
+      "name": "ClickUp Trigger",
+      "webhookId": "3d4dd669-8cde-43dc-8b6f-0a9f7a154166",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $('pobierz dane nowego zadania').item.json.id }}",
+        "field": "={{ $json.custom_fields[13].id }}",
+        "jsonParse": true,
+        "value": "=[\n  {\n    \"id\": {{ $json.custom_fields[13].value[0].id }}\n  }\n]"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -256
+      ],
+      "id": "672eb257-fa74-4dbd-b64e-e22de4782715",
+      "name": "przepisz od rodzica 'Opiekun'",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $('pobierz dane nowego zadania').item.json.id }}",
+        "field": "={{ $('pobierz dane nowego zadania').item.json.custom_fields[0].id }}",
+        "value": "={{ $json.custom_fields[0].value }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        240,
+        -352
+      ],
+      "id": "76dfc5d4-77fd-43c0-ba48-c826332de75c",
+      "name": "przepisz od rodzica 'Projekt'",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.clickup.com/api/v2/task/{{ $('pobierz dane nowego zadania').item.json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "clickUpOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields\": [\n    {\n      \"id\": \"{{ $('pobierz dane nowego zadania').item.json.custom_fields[13].id }}\",\n      \"value\": [\n        {\n          \"id\": {{ $json.custom_fields[13].value[0].id }}\n        }\n      ]\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        464,
+        -64
+      ],
+      "id": "b6bba482-4113-4295-8570-92d8849bebf0",
+      "name": "HTTP Request",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('pobierz dane nowego zadania').item.json.space.id }}",
+                    "rightValue": "60744178",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "891c40dc-d310-410d-b19b-7038b9727049"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "klienci"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d3a088d5-9f9d-42ec-b8d4-ce2a0f6ab75a",
+                    "leftValue": "={{ $json.space.id }}",
+                    "rightValue": "60747517",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "wewnętrzne zadania"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        -64
+      ],
+      "id": "453ab7c9-be36-48b4-ad26-f3c9177daccc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $('pobierz dane nowego zadania').item.json.id }}",
+        "field": "={{ $json.fieldId }}",
+        "jsonParse": true,
+        "value": "={{ $json.valueJson }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        464,
+        128
+      ],
+      "id": "0ad38c22-a09a-4f31-a894-ff0e94c2229f",
+      "name": "przepisz od rodzica 'Opiekun'2",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "operation": "setCustomField",
+        "task": "={{ $('pobierz dane nowego zadania').item.json.id }}",
+        "field": "={{ $('pobierz dane nowego zadania').item.json.custom_fields[0].id }}",
+        "value": "={{ $json.custom_fields[0].value }}"
+      },
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        240,
+        32
+      ],
+      "id": "077d8340-85aa-43ed-b7aa-83f2d37901f8",
+      "name": "przepisz od rodzica 'Projekt'1",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const targetId = \"805fca92-5634-4b72-a379-a5b9111f3f74\";\nconst fields = $json.custom_fields || [];\nconst field = fields.find(f => f.id === targetId);\nreturn [{ json: { value: field ? field.value : null } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -160
+      ],
+      "id": "7573e136-2fca-4a9b-8fd8-de9534d85cb4",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Przepisanie pola \"Opiekun\" (Custom Field typu USERS) z zadania-rodzica na podzadanie.\n// Wejście: dane rodzica z węzła \"pobierz dane rodzica\".\n// Wyjście: gotowy JSON-string dla węzła ClickUp -> Task: Set Custom Field (Value Is JSON = true).\n//          Brak itemów (return []) = nie ma czego przepisać -> dalsze węzły się nie wykonają.\n\n// ID pola \"Opiekun\" (users) w przestrzeni \"wewnętrzne zadania\" (60747517)\nconst FIELD_ID = \"7e6d0b2e-0d6d-4284-af1a-63b49a9843d5\";\n\nconst parent = $json;\nconst child = $(\"pobierz dane nowego zadania\").item.json;\n\n// Szukamy po ID pola, nie po pozycji w tablicy - kolejność custom_fields nie jest stała.\nfunction readUsers(task) {\n  const cf = (task.custom_fields || []).find((f) => f.id === FIELD_ID);\n  const value = cf ? cf.value : null;\n  return Array.isArray(value) ? value : [];\n}\n\nconst parentUsers = readUsers(parent);\nconst childUsers = readUsers(child);\n\n// Rodzic nie ma opiekuna albo podzadanie już go ma - nie nadpisujemy.\nif (parentUsers.length === 0 || childUsers.length > 0) {\n  return [];\n}\n\nconst userIds = parentUsers\n  .map((u) => u && u.id)\n  .filter((id) => id !== null && id !== undefined);\n\nif (userIds.length === 0) {\n  return [];\n}\n\n// ClickUp dla pól typu \"users\" oczekuje przy ZAPISIE { \"add\": [...], \"rem\": [...] },\n// a nie tablicy [{ \"id\": ... }] - to jest format ODCZYTU z GET /task.\nreturn [\n  {\n    json: {\n      fieldId: FIELD_ID,\n      userIds: userIds,\n      valueJson: JSON.stringify({ add: userIds, rem: [] }),\n    },\n    pairedItem: 0,\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        224
+      ],
+      "id": "6159d818-f365-4158-ae82-17cb26da5324",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.clickup.com/api/v2/task/{{ $('pobierz dane nowego zadania').item.json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "clickUpOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"custom_fields\": [\n    {\n      \"id\": \"{{ $json.fieldId }}\",\n      \"value\": {{ $json.valueJson }}\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        464,
+        320
+      ],
+      "id": "48362ae0-db5a-442f-aaa1-771b465130e7",
+      "name": "HTTP Request2",
+      "credentials": {
+        "clickUpOAuth2Api": {
+          "id": "7QIUCb4UPr282M8T",
+          "name": "ClickUp: Eryk Jakubik"
+        }
+      },
+      "disabled": true
+    }
+  ],
+  "pinData": {
+    "ClickUp Trigger": [
+      {
+        "json": {
+          "event": "taskCreated",
+          "history_items": [
+            {
+              "id": "5243672869737268024",
+              "type": 1,
+              "date": "1788343398351",
+              "field": "status",
+              "parent_id": "901206284638",
+              "data": {
+                "status_type": "open"
+              },
+              "source": null,
+              "user": {
+                "id": 50639757,
+                "username": "Dominik Matyjasek",
+                "email": "dominik.matyjasek@brandsmanago.pl",
+                "color": "#e040fb",
+                "initials": "DM",
+                "profilePicture": "https://attachments.clickup.com/profilePictures/50639757_NbL.jpg",
+                "role": 3,
+                "role_subtype": 0
+              },
+              "before": {
+                "status": null,
+                "color": "#000000",
+                "type": "removed",
+                "orderindex": -1
+              },
+              "after": {
+                "status": "nie rozpoczęte ⛔",
+                "color": "#808080",
+                "orderindex": 0,
+                "type": "open"
+              }
+            },
+            {
+              "id": "5243672869720490807",
+              "type": 1,
+              "date": "1788343398351",
+              "field": "task_creation",
+              "parent_id": "901206284638",
+              "data": {
+                "via": "user",
+                "trace_id": "9111625818712026167",
+                "subcategory_id": "901206284638"
+              },
+              "source": "user",
+              "user": {
+                "id": 50639757,
+                "username": "Dominik Matyjasek",
+                "email": "dominik.matyjasek@brandsmanago.pl",
+                "color": "#e040fb",
+                "initials": "DM",
+                "profilePicture": "https://attachments.clickup.com/profilePictures/50639757_NbL.jpg",
+                "role": 3,
+                "role_subtype": 0
+              },
+              "before": null,
+              "after": null
+            }
+          ],
+          "task_id": "869euadpu",
+          "team_id": "36829874",
+          "webhook_id": "b0f0eef5-10a3-4202-8be2-6f9603532f34"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "pobierz dane nowego zadania": {
+      "main": [
+        [
+          {
+            "node": "jeśli jest rodzic i nie uzupełniono pól",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pobierz dane rodzica": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "jeśli jest rodzic i nie uzupełniono pól": {
+      "main": [
+        [
+          {
+            "node": "pobierz dane rodzica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ClickUp Trigger": {
+      "main": [
+        [
+          {
+            "node": "pobierz dane nowego zadania",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "przepisz od rodzica 'Opiekun'": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "przepisz od rodzica 'Projekt'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "przepisz od rodzica 'Projekt'1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "przepisz od rodzica 'Opiekun'",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "przepisz od rodzica 'Opiekun'2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9c277b35-698c-46db-8735-16719892b6a7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b81abeab99892deef42bcd9e11177a1bb9de8d3e100457282780cf6c1f91e796"
+  },
+  "id": "SAjUe2wL7g49sbsD",
+  "tags": []
+}

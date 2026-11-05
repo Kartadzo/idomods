@@ -1,0 +1,12 @@
+<script>
+  // Wywoływane po zgodzie na pliki cookies (reklamowe). Wysyła zdarzenia zebrane wcześniej w buforze.
+  try {
+    if (window.oaiq) {
+      oaiq('consent', true);
+      window.oaiqConsentGranted = true;
+      (window.oaiqBuffer || []).splice(0).forEach(function (args) {
+        oaiq.apply(window, args);
+      });
+    }
+  } catch (e) {}
+</script>

@@ -1,0 +1,43 @@
+<script>
+  // Wyzwalacz: zdarzenie „idm_formularz_wyslany” z tagu 05.
+  // Dane z formularza idą do SDK surowe: SDK normalizuje je i hashuje SHA-256 w przeglądarce
+  // (do OpenAI trafia tylko hash). init { user } przed measure — OpenAI przypisuje dane do zapytania.
+  (function (w, d) {
+    if (!w.oaiqSafe) return;
+
+    var view = d.querySelector('[id="idmCfSuccessView"][data-oaiq-pending]');
+    var card = view && view.parentNode;
+    if (view) view.removeAttribute('data-oaiq-pending');
+
+    function val(id) {
+      var el = card && card.querySelector('[id="' + id + '"]');
+      return el && el.value ? String(el.value).replace(/^\s+|\s+$/g, '') : '';
+    }
+
+    // Telefon do E.164: 9 cyfr → +48…, 00… → +…, 48 + 9 cyfr → +48…
+    function phoneE164(raw) {
+      var digits = raw.replace(/[^\d]/g, '');
+      if (!digits) return '';
+      if (/^\s*\+/.test(raw)) return '+' + digits;
+      if (digits.indexOf('00') === 0) return '+' + digits.slice(2);
+      if (digits.length === 9) return '+48' + digits;
+      if (digits.length === 11 && digits.indexOf('48') === 0) return '+' + digits;
+      return digits;
+    }
+
+    var rawUser = {
+      email_sha256: val('idmCfEmail').toLowerCase(),
+      phone_number_sha256: phoneE164(val('idmCfPhone')),
+      first_name_sha256: val('idmCfFirstName')
+    };
+    var user = {};
+    for (var key in rawUser) {
+      if (rawUser.hasOwnProperty(key) && rawUser[key]) user[key] = rawUser[key];
+    }
+    if (user.email_sha256 || user.phone_number_sha256) {
+      w.oaiqSafe('init', { user: user });
+    }
+
+    w.oaiqSafe('measure', 'custom', { type: 'custom' }, { custom_event_name: 'wyslanieformularza' });
+  })(window, document);
+</script>

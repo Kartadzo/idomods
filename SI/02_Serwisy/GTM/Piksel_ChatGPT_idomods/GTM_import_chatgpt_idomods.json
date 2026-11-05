@@ -1,0 +1,361 @@
+{
+  "exportFormatVersion": 2,
+  "exportTime": "2026-11-03 14:50:05",
+  "containerVersion": {
+    "path": "accounts/0/containers/0/versions/0",
+    "accountId": "0",
+    "containerId": "0",
+    "containerVersionId": "0",
+    "name": "OpenAI ChatGPT Ads - idomods.pl",
+    "container": {
+      "path": "accounts/0/containers/0",
+      "accountId": "0",
+      "containerId": "0",
+      "name": "idomods.pl - OpenAI ChatGPT Ads",
+      "publicId": "GTM-W34PX5W",
+      "usageContext": [
+        "WEB"
+      ],
+      "fingerprint": "1762128000000",
+      "features": {
+        "supportUserPermissions": true,
+        "supportEnvironments": true,
+        "supportWorkspaces": true,
+        "supportGtagConfigs": false,
+        "supportBuiltInVariables": true,
+        "supportClients": false,
+        "supportFolders": true,
+        "supportTags": true,
+        "supportTemplates": true,
+        "supportTriggers": true,
+        "supportVariables": true,
+        "supportVersions": true,
+        "supportZones": true,
+        "supportTransformations": false
+      },
+      "tagIds": [
+        "GTM-W34PX5W"
+      ]
+    },
+    "tag": [
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "tagId": "201",
+        "name": "OpenAI - 01 init",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "<script>\n  // Tylko kolejka oaiq i bufor do czasu zgody. SDK (oaiq.min.js), init i zgodę ładuje tag „02 zgoda i SDK”.\n  // Bez consent false: w SDK consent false kasuje cookie __oppref (ID kliknięcia reklamy) i __obref.\n  (function (w) {\n    if (!w.oaiq) {\n      var q = function () {\n        q.q.push(arguments);\n      };\n      q.q = [];\n      w.oaiq = q;\n    }\n\n    w.oaiqConsentGranted = w.oaiqConsentGranted || false;\n    w.oaiqBuffer = w.oaiqBuffer || [];\n\n    // Zdarzenia przed zgodą marketingową czekają w buforze; tag 02 wysyła je po zgodzie.\n    w.oaiqSafe = w.oaiqSafe || function () {\n      try {\n        if (w.oaiqConsentGranted) {\n          w.oaiq.apply(w, arguments);\n        } else {\n          w.oaiqBuffer.push(arguments);\n        }\n      } catch (e) {}\n    };\n  })(window);\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "fingerprint": "1762128000000",
+        "firingTriggerId": [
+          "2147479573"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT",
+        "monitoringMetadata": {
+          "type": "MAP"
+        },
+        "consentSettings": {
+          "consentStatus": "NOT_SET"
+        }
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "tagId": "202",
+        "name": "OpenAI - 02 zgoda i SDK",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "<script>\n  // Wyzwalacz: zdarzenie Complianz „cmplz_event_marketing” (zgoda marketingowa — przy wejściu\n  // z zapisaną zgodą albo od razu po kliknięciu w banerze). Dopiero tu ładuje się SDK OpenAI:\n  // bez zgody nie ma zapytań ani cookies. Potem wysyłka zdarzeń zebranych wcześniej w buforze.\n  (function (w) {\n    try {\n      var pixelId = '{{OpenAI - Pixel ID}}';\n      if (!pixelId || pixelId.indexOf('UZUPELNIJ') === 0) return; // brak Pixel ID — nic nie wysyłamy\n      if (!w.oaiq || w.oaiqConsentGranted) return;\n\n      w.oaiq('init', { pixelId: pixelId });\n      w.oaiq('consent', true);\n\n      if (!document.querySelector('script[data-oaiq-sdk]')) {\n        var js = document.createElement('script');\n        js.async = true;\n        js.src = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';\n        js.setAttribute('data-oaiq-sdk', '1');\n        var f = document.getElementsByTagName('script')[0];\n        f.parentNode.insertBefore(js, f);\n      }\n\n      w.oaiqConsentGranted = true;\n      var buffered = (w.oaiqBuffer || []).splice(0);\n      for (var i = 0; i < buffered.length; i++) {\n        w.oaiq.apply(w, buffered[i]);\n      }\n    } catch (e) {}\n  })(window);\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "fingerprint": "1762128000000",
+        "firingTriggerId": [
+          "101"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT",
+        "monitoringMetadata": {
+          "type": "MAP"
+        },
+        "consentSettings": {
+          "consentStatus": "NOT_SET"
+        }
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "tagId": "203",
+        "name": "OpenAI - 03 page_viewed",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "<script>\n  if (window.oaiqSafe) {\n    window.oaiqSafe('measure', 'page_viewed', { type: 'contents' });\n  }\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "fingerprint": "1762128000000",
+        "firingTriggerId": [
+          "2147479553"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT",
+        "monitoringMetadata": {
+          "type": "MAP"
+        },
+        "consentSettings": {
+          "consentStatus": "NOT_SET"
+        }
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "tagId": "204",
+        "name": "OpenAI - 04 kontakt",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "<script>\n  // Wyzwalacz: kliknięcie linku tel: lub mailto: (Click URL pasuje do ^(tel|mailto)), wszystkie strony.\n  if (window.oaiqSafe) {\n    window.oaiqSafe('measure', 'custom', { type: 'custom' }, { custom_event_name: 'kontakt' });\n  }\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "fingerprint": "1762128000000",
+        "firingTriggerId": [
+          "102"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT",
+        "monitoringMetadata": {
+          "type": "MAP"
+        },
+        "consentSettings": {
+          "consentStatus": "NOT_SET"
+        }
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "tagId": "205",
+        "name": "OpenAI - 05 nasluch formularza",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "<script>\n  // Formularz „IdoMods Contact Form” nie przekierowuje i nie pisze do warstwy danych.\n  // Po udanej wysyłce (odpowiedź CRM OK) z bloku #idmCfSuccessView znika klasa idm-cf-hidden.\n  // Obserwujemy tę klasę i wysyłamy zdarzenie raz na kartę formularza — bez danych osobowych.\n  (function (w, d) {\n    if (!w.MutationObserver) return;\n    var views = d.querySelectorAll('[id=\"idmCfSuccessView\"]');\n\n    function check(view) {\n      if (view.getAttribute('data-oaiq-sent')) return;\n      if (/(^|\\s)idm-cf-hidden(\\s|$)/.test(view.className)) return;\n      view.setAttribute('data-oaiq-sent', '1');\n      view.setAttribute('data-oaiq-pending', '1'); // tag 06 czyta dane z tej karty\n      w.dataLayer = w.dataLayer || [];\n      w.dataLayer.push({ event: 'idm_formularz_wyslany' });\n    }\n\n    for (var i = 0; i < views.length; i++) {\n      (function (view) {\n        if (view.getAttribute('data-oaiq-observed')) return;\n        view.setAttribute('data-oaiq-observed', '1');\n        new MutationObserver(function () {\n          check(view);\n        }).observe(view, { attributes: true, attributeFilter: ['class'] });\n      })(views[i]);\n    }\n  })(window, document);\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "fingerprint": "1762128000000",
+        "firingTriggerId": [
+          "103"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT",
+        "monitoringMetadata": {
+          "type": "MAP"
+        },
+        "consentSettings": {
+          "consentStatus": "NOT_SET"
+        }
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "tagId": "206",
+        "name": "OpenAI - 06 wyslanieformularza",
+        "type": "html",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "html",
+            "value": "<script>\n  // Wyzwalacz: zdarzenie „idm_formularz_wyslany” z tagu 05.\n  // Dane z formularza idą do SDK surowe: SDK normalizuje je i hashuje SHA-256 w przeglądarce\n  // (do OpenAI trafia tylko hash). init { user } przed measure — OpenAI przypisuje dane do zapytania.\n  (function (w, d) {\n    if (!w.oaiqSafe) return;\n\n    var view = d.querySelector('[id=\"idmCfSuccessView\"][data-oaiq-pending]');\n    var card = view && view.parentNode;\n    if (view) view.removeAttribute('data-oaiq-pending');\n\n    function val(id) {\n      var el = card && card.querySelector('[id=\"' + id + '\"]');\n      return el && el.value ? String(el.value).replace(/^\\s+|\\s+$/g, '') : '';\n    }\n\n    // Telefon do E.164: 9 cyfr → +48…, 00… → +…, 48 + 9 cyfr → +48…\n    function phoneE164(raw) {\n      var digits = raw.replace(/[^\\d]/g, '');\n      if (!digits) return '';\n      if (/^\\s*\\+/.test(raw)) return '+' + digits;\n      if (digits.indexOf('00') === 0) return '+' + digits.slice(2);\n      if (digits.length === 9) return '+48' + digits;\n      if (digits.length === 11 && digits.indexOf('48') === 0) return '+' + digits;\n      return digits;\n    }\n\n    var rawUser = {\n      email_sha256: val('idmCfEmail').toLowerCase(),\n      phone_number_sha256: phoneE164(val('idmCfPhone')),\n      first_name_sha256: val('idmCfFirstName')\n    };\n    var user = {};\n    for (var key in rawUser) {\n      if (rawUser.hasOwnProperty(key) && rawUser[key]) user[key] = rawUser[key];\n    }\n    if (user.email_sha256 || user.phone_number_sha256) {\n      w.oaiqSafe('init', { user: user });\n    }\n\n    w.oaiqSafe('measure', 'custom', { type: 'custom' }, { custom_event_name: 'wyslanieformularza' });\n  })(window, document);\n</script>\n"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "supportDocumentWrite",
+            "value": "false"
+          }
+        ],
+        "fingerprint": "1762128000000",
+        "firingTriggerId": [
+          "104"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT",
+        "monitoringMetadata": {
+          "type": "MAP"
+        },
+        "consentSettings": {
+          "consentStatus": "NOT_SET"
+        }
+      }
+    ],
+    "trigger": [
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "triggerId": "101",
+        "name": "OpenAI - CE cmplz_event_marketing",
+        "type": "CUSTOM_EVENT",
+        "fingerprint": "1762128000000",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "cmplz_event_marketing"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "triggerId": "102",
+        "name": "OpenAI - klik tel/mailto",
+        "type": "LINK_CLICK",
+        "fingerprint": "1762128000000",
+        "filter": [
+          {
+            "type": "MATCH_REGEX",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{Click URL}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "^(tel|mailto)"
+              },
+              {
+                "type": "BOOLEAN",
+                "key": "ignore_case",
+                "value": "true"
+              }
+            ]
+          }
+        ],
+        "waitForTags": {
+          "type": "BOOLEAN",
+          "value": "false"
+        },
+        "checkValidation": {
+          "type": "BOOLEAN",
+          "value": "false"
+        },
+        "waitForTagsTimeout": {
+          "type": "TEMPLATE",
+          "value": "2000"
+        },
+        "uniqueTriggerId": {
+          "type": "TEMPLATE"
+        }
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "triggerId": "103",
+        "name": "OpenAI - DOM Ready",
+        "type": "DOM_READY",
+        "fingerprint": "1762128000000"
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "triggerId": "104",
+        "name": "OpenAI - CE idm_formularz_wyslany",
+        "type": "CUSTOM_EVENT",
+        "fingerprint": "1762128000000",
+        "customEventFilter": [
+          {
+            "type": "EQUALS",
+            "parameter": [
+              {
+                "type": "TEMPLATE",
+                "key": "arg0",
+                "value": "{{_event}}"
+              },
+              {
+                "type": "TEMPLATE",
+                "key": "arg1",
+                "value": "idm_formularz_wyslany"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "variable": [
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "variableId": "301",
+        "name": "OpenAI - Pixel ID",
+        "type": "c",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "value",
+            "value": "UZUPELNIJ_PIXEL_ID"
+          }
+        ],
+        "fingerprint": "1762128000000",
+        "formatValue": {}
+      }
+    ],
+    "builtInVariable": [
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "type": "CLICK_URL",
+        "name": "Click URL"
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "type": "EVENT",
+        "name": "Event"
+      }
+    ],
+    "fingerprint": "1762128000000"
+  }
+}

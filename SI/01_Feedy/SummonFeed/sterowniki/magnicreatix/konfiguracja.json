@@ -1,0 +1,23 @@
+{
+  "domena": "shop49855-1.yourtechnicaldomain.com",
+  "panel": "https://shop49855-1.yourtechnicaldomain.com/panel/",
+  "shop_id": "1",
+  "serwis": "ceneo",
+  "szablon": "Ceneo.xml",
+  "wyjscie": "shop49855-1.yourtechnicaldomain.com_ceneo.xml",
+  "odpowiedzi": {
+    "dostawa": "nie dotyczy (format Ceneo)",
+    "linki": "C",
+    "item_group_id": "nie dotyczy (format Ceneo)",
+    "prefiks_grupy": "",
+    "avail_m0": "3",
+    "test": "eksport sklepu products_export-magnicreatix.pl-2026-10-28_14.47.xml (36 produktów)",
+    "gpsr": "w feedzie tylko ID; CSV z oryginalnego narzędzia python/transform_xml — gpsr"
+  },
+  "dozwolone": "",
+  "zmienne": {
+    "czas_dostawy": "1",
+    "czas_dostawy_magazyn_obcy_m0": "3"
+  },
+  "teksty": []
+}

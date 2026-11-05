@@ -1,0 +1,98 @@
+
+<attrs>
+    <a name="Rozmiar">uniwersalny</a>
+    <xsl:if test="producer/@name != ''">
+        <a name="Producent">
+            <xsl:value-of select="producer/@name"/>
+        </a>
+    </xsl:if>
+    <xsl:if test="sizes/size[1]/@code != ''">
+        <a name="Kod_producenta">
+            <xsl:value-of select="sizes/size[1]/@code"/>
+        </a>
+    </xsl:if>
+    
+    <xsl:if test="parameters/parameter[@name = 'Autorzy']/value/@name != ''">
+        <a name="Autor">
+            <xsl:value-of select="parameters/parameter[@name = 'Autorzy']/value/@name"/>
+        </a>
+    </xsl:if>
+    
+    <xsl:variable name="code_producer_variable">
+        <xsl:value-of select="sizes/size[1]/@code_producer"></xsl:value-of>
+    </xsl:variable>
+    <xsl:if test="$code_producer_variable != ''">
+        <xsl:choose>
+            <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = ''">
+                <!-- Nie mamy nic -->
+                <a name="EAN">
+                    <xsl:value-of select="substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1)))" />
+                </a>
+                <a name="Wersja">
+                    <![CDATA[towar fizyczny]]>
+                </a>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '1'">
+                        <a name="EAN">
+                            <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                        </a>
+                        <a name="Wersja">
+                            <![CDATA[audiobook (MP3)]]>
+                        </a>
+                    </xsl:when>
+                    <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '2'">
+                        <a name="EAN">
+                            <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                        </a>
+                        <a name="Wersja">
+                            <![CDATA[Audio CD]]>
+                        </a>
+                    </xsl:when>
+                    <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '3'">
+                        <a name="EAN">
+                            <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                        </a>
+                        <a name="Wersja">
+                            <![CDATA[ebook (PDF)]]>
+                        </a>
+                    </xsl:when>
+                    <xsl:when test="substring-after(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_') = '4'">
+                        <a name="EAN">
+                            <xsl:value-of select="substring-before(substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1))),'_')" />
+                        </a>
+                        <a name="Wersja">
+                            <![CDATA[DVD]]>
+                        </a>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <a name="EAN">
+                            <xsl:value-of select="substring-after($code_producer_variable, substring-before($code_producer_variable, substring(translate($code_producer_variable, '0', ''), 1, 1)))" />
+                        </a>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:if>
+    <xsl:for-each select="parameters/parameter">
+        <xsl:if test="value[1]/@name != '' and @name != 'Autorzy'">
+            <a>
+                <xsl:attribute name="name">
+                    <xsl:value-of select="@name"/>
+                </xsl:attribute>
+                <xsl:value-of select="value[1]/@name"/>
+            </a>
+        </xsl:if>
+    </xsl:for-each>
+    <xsl:if test="iaiext:responsible_entity/producer/code != ''">
+        <a name="Producent odpowiedzialny">
+            <xsl:value-of select="iaiext:responsible_entity/producer/@id"/>
+        </a>
+    </xsl:if>
+    <xsl:if test="iaiext:responsible_entity/persons/person/code != ''">
+        <a name="Podmiot odpowiedzialny">
+            <xsl:value-of select="iaiext:responsible_entity/persons/person/@id"/>
+        </a>
+    </xsl:if>
+</attrs>

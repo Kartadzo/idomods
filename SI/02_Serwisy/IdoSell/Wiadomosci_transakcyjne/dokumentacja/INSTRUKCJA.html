@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiadomości transakcyjne — instrukcja</title>
+<style>
+  :root { --tekst: #1f2328; --tlo: #ffffff; --akcent: #1a7f4b; --szary: #f3f4f6; --ramka: #d0d7de; --uwaga: #fff4e5; --uwaga-ramka: #f0b45a; }
+  body { font: 16px/1.6 "Segoe UI", Arial, sans-serif; color: var(--tekst); background: var(--tlo); margin: 0; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { color: var(--akcent); margin-bottom: 4px; }
+  h2 { border-bottom: 2px solid var(--akcent); padding-bottom: 4px; margin-top: 40px; }
+  h3 { margin-top: 28px; }
+  .podtytul { color: #57606a; margin-top: 0; }
+  ol li, ul li { margin: 6px 0; }
+  .przycisk { display: inline-block; background: var(--szary); border: 1px solid var(--ramka); border-radius: 4px; padding: 0 6px; font-weight: 600; white-space: nowrap; }
+  .klawisz { display: inline-block; border: 1px solid var(--ramka); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font-family: Consolas, monospace; font-size: 14px; }
+  code, .sciezka { font-family: Consolas, monospace; font-size: 14px; background: var(--szary); padding: 1px 4px; border-radius: 3px; word-break: break-all; }
+  .uwaga { background: var(--uwaga); border-left: 4px solid var(--uwaga-ramka); padding: 10px 14px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  .dobrze { background: #e8f5ee; border-left: 4px solid var(--akcent); padding: 10px 14px; margin: 16px 0; border-radius: 0 4px 4px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  th, td { border: 1px solid var(--ramka); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--szary); }
+  nav { background: var(--szary); padding: 12px 18px; border-radius: 6px; }
+  nav ol { margin: 0; }
+  @media print { nav { display: none; } h2 { page-break-before: auto; } a { color: inherit; text-decoration: none; } }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Wiadomości transakcyjne</h1>
+<p class="podtytul">Instrukcja obsługi narzędzia do wiadomości e-mail i SMS wysyłanych automatycznie przez sklep IdoSell</p>
+
+<nav>
+  <strong>Spis treści</strong>
+  <ol>
+    <li><a href="#co-to">Co to jest</a></li>
+    <li><a href="#instalacja">Pierwsze uruchomienie (jednorazowo)</a></li>
+    <li><a href="#eksport">Pobranie wiadomości ze sklepu — początek każdej pracy</a></li>
+    <li><a href="#status">Raport: co jest wysyłane i co wymaga poprawy</a></li>
+    <li><a href="#wlaczanie">Włączanie i wyłączanie wiadomości</a></li>
+    <li><a href="#tresc">Zmiana albo tłumaczenie treści</a></li>
+    <li><a href="#sprawdzenie">Sprawdzenie po każdej zmianie</a></li>
+    <li><a href="#bezpieczenstwo">Zasady bezpieczeństwa</a></li>
+    <li><a href="#problemy">Gdy coś nie działa</a></li>
+  </ol>
+</nav>
+
+<h2 id="co-to">1. Co to jest</h2>
+<p>Sklep IdoSell wysyła klientom automatyczne wiadomości: potwierdzenie zamówienia, informację o wysyłce, prośbę o opinię i dziesiątki innych.
+To narzędzie pozwala:</p>
+<ul>
+  <li><strong>sprawdzić stan</strong> — które wiadomości są wysyłane (e-mail, SMS), w jakich językach, gdzie brakuje tłumaczeń i kiedy ktoś je ostatnio zmieniał,</li>
+  <li><strong>włączać i wyłączać</strong> wiele wiadomości naraz w zwykłym arkuszu Excela, zamiast klikać każdą osobno w panelu,</li>
+  <li><strong>zmieniać i tłumaczyć treść</strong> wiadomości w plikach na komputerze, a potem wgrać je z powrotem do sklepu.</li>
+</ul>
+<p>Narzędzie składa się z trzech części, które ze sobą współpracują:</p>
+<table>
+  <tr><th>Część</th><th>Do czego służy</th></tr>
+  <tr><td><strong>Zakładka w przeglądarce Chrome</strong> „Wiadomości transakcyjne”</td><td>Pracuje w panelu sklepu: pobiera wiadomości i wprowadza zmiany. Klikasz ją, gdy jesteś zalogowany w panelu IdoSell.</td></tr>
+  <tr><td><strong>Program</strong> <span class="sciezka">Wiadomości transakcyjne.exe</span></td><td>Pracuje na plikach na Twoim komputerze: przygotowuje raport, arkusz do Excela i paczki zmian.</td></tr>
+  <tr><td><strong>Edytor</strong> <span class="sciezka">Edytor treści.exe</span></td><td>Okno do zmiany i tłumaczenia tytułów i treści maili — z podglądem w przeglądarce (rozdział 6).</td></tr>
+</table>
+
+<h2 id="instalacja">2. Pierwsze uruchomienie (jednorazowo)</h2>
+
+<h3>Krok 1. Rozpakuj folder narzędzia</h3>
+<ol>
+  <li>Skopiuj folder <span class="sciezka">Wiadomosci_transakcyjne</span> blisko dysku, najlepiej bezpośrednio na <span class="sciezka">C:\</span> (wyjdzie <span class="sciezka">C:\Wiadomosci_transakcyjne</span>). Unikaj głęboko zagnieżdżonych folderów — Windows ma limit długości ścieżki, a nazwy niektórych wiadomości są długie.</li>
+  <li>W środku zobaczysz program <span class="sciezka">Wiadomości transakcyjne.exe</span>, tę instrukcję i kilka pustych folderów — program zapisuje w nich wyniki. Nie zmieniaj ich nazw.</li>
+</ol>
+
+<h3>Krok 2. Dodaj zakładkę w Chrome</h3>
+<ol>
+  <li>Otwórz w Notatniku plik <span class="sciezka">zakladka_do_Chrome.txt</span> (dwuklik).</li>
+  <li>Zaznacz całą zawartość: <span class="klawisz">Ctrl</span>+<span class="klawisz">A</span>, skopiuj: <span class="klawisz">Ctrl</span>+<span class="klawisz">C</span>. To jeden bardzo długi wiersz zaczynający się od <code>javascript:</code> — tak ma być.</li>
+  <li>W Chrome pokaż pasek zakładek: <span class="klawisz">Ctrl</span>+<span class="klawisz">Shift</span>+<span class="klawisz">B</span>.</li>
+  <li>Kliknij pasek zakładek <strong>prawym</strong> przyciskiem myszy → <span class="przycisk">Dodaj stronę…</span></li>
+  <li>W polu <strong>Nazwa</strong> wpisz: <code>Wiadomości transakcyjne</code></li>
+  <li>W polu <strong>URL</strong> wklej skopiowany tekst: <span class="klawisz">Ctrl</span>+<span class="klawisz">V</span> → <span class="przycisk">Zapisz</span>.</li>
+</ol>
+<div class="uwaga">Gdy dostaniesz nową wersję narzędzia, zakładkę trzeba podmienić: prawy klik na zakładce → <span class="przycisk">Edytuj…</span> → wklej nową zawartość pliku <span class="sciezka">zakladka_do_Chrome.txt</span> w pole URL.</div>
+
+<h3>Krok 3. Pierwsze uruchomienie programu</h3>
+<ol>
+  <li>Kliknij dwukrotnie <span class="sciezka">Wiadomości transakcyjne.exe</span>.</li>
+  <li>Windows może pokazać niebieskie okno <em>„System Windows ochronił Twój komputer”</em>. To normalne dla programów spoza sklepu Microsoft. Kliknij <span class="przycisk">Więcej informacji</span> → <span class="przycisk">Uruchom mimo to</span>. Pojawia się to tylko za pierwszym razem.</li>
+  <li>Otworzy się czarne okno z ponumerowanym menu. Wybierasz pozycję, wpisując jej <strong>numer</strong> i naciskając <span class="klawisz">Enter</span>. <code>0</code> zamyka program.</li>
+</ol>
+<p>Pobieranie plików w Chrome zostaw tak, jak jest — pliki trafiają do zwykłego folderu <strong>Pobrane</strong>, a program sam je stamtąd zabiera.</p>
+
+<h2 id="eksport">3. Pobranie wiadomości ze sklepu — początek każdej pracy</h2>
+<p>Każda praca zaczyna się od pobrania aktualnego stanu wiadomości ze sklepu.</p>
+<ol>
+  <li>Zaloguj się do panelu IdoSell sklepu.</li>
+  <li>Przejdź do: <strong>Administracja → Konfiguracja wiadomości transakcyjnych</strong> i kliknij <span class="przycisk">[wybierz]</span> przy właściwym sklepie (jeśli panel ma kilka).</li>
+  <li>Kliknij zakładkę <strong>Wiadomości transakcyjne</strong> na pasku zakładek. W prawym górnym rogu pojawi się zielone okienko.</li>
+  <li>Kliknij <span class="przycisk">Eksport wszystkich</span> i poczekaj. Pobranie ~150 wiadomości trwa kilka minut. Postęp widać w okienku; na końcu pojawi się napis <code>Gotowe: eksport_….zip</code>, a plik trafi do Pobranych.</li>
+  <li>Uruchom program i wybierz <strong>1 — Rozpakuj eksport (z Pobranych)</strong>. Program pokaże listę pobranych plików — wpisz numer najnowszego (zwykle <code>1</code>).</li>
+</ol>
+<div class="dobrze">Program przenosi plik z Pobranych do własnego folderu <span class="sciezka">_pobrane</span>. Innych plików w Pobranych nie rusza.</div>
+<p>Chcesz pobrać tylko kilka wiadomości? W okienku kliknij <span class="przycisk">Eksport wybranych…</span> i wpisz ich kody oddzielone przecinkami (kod wiadomości widać w adresie strony jej edycji, po <code>template=</code>, np. <code>order_confirmation</code>).</p>
+
+<h2 id="status">4. Raport: co jest wysyłane i co wymaga poprawy</h2>
+<ol>
+  <li>Pobierz i rozpakuj wiadomości (rozdział 3).</li>
+  <li>W programie wybierz <strong>2 — Raport Status</strong> i numer eksportu.</li>
+  <li>Raport zapisze się w folderze <span class="sciezka">Status\&lt;sklep&gt;\</span> w dwóch plikach:
+    <ul>
+      <li><code>status_&lt;data&gt;.csv</code> — <strong>najwygodniejszy</strong>: otwórz dwuklikiem w Excelu. Na górze status ogólny (jeden wiersz na grupę wiadomości i wiersz RAZEM), niżej tabela wszystkich wiadomości — możesz ją filtrować i sortować.</li>
+      <li><code>status_&lt;data&gt;.md</code> — ten sam raport jako tekst (Notatnik: prawy klik → Otwórz za pomocą → Notatnik).</li>
+    </ul>
+  </li>
+</ol>
+<p>W raporcie znajdziesz:</p>
+<ul>
+  <li><strong>Podsumowanie</strong> — ile wiadomości jest wysyłanych mailem w każdym języku, ile SMS-em, ile ma braki.</li>
+  <li><strong>Tabelę wszystkich wiadomości</strong> — tak/nie dla każdego języka, data i autor ostatniej zmiany.</li>
+  <li><strong>Kontrolę jakości:</strong>
+    <ul>
+      <li><em>Kopie tłumaczeń</em> — język, w którym treść jest identyczna z polską lub angielską, czyli prawdopodobnie nieprzetłumaczona,</li>
+      <li><em>Niezgodne zmienne</em> — w tłumaczeniu brakuje wstawek typu <code>[iai:order_sn]</code> (numer zamówienia itp.), więc klient dostanie niepełną informację,</li>
+      <li><em>Pusta treść przy włączonej wysyłce</em> — wiadomość jest wysyłana, ale nic w niej nie ma,</li>
+      <li><em>SMS dłuższy niż jeden segment</em> — SMS zostanie rozbity na kilka i będzie droższy.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="wlaczanie">5. Włączanie i wyłączanie wiadomości</h2>
+<ol>
+  <li>Pobierz i rozpakuj wiadomości (rozdział 3) — zawsze świeże, tuż przed zmianą.</li>
+  <li>W programie wybierz <strong>3 — Edycja działania: utwórz CSV ze stanu</strong>. Powstanie plik <code>konfiguracja_&lt;data&gt;.csv</code> w folderze <span class="sciezka">Edycja Działania\&lt;sklep&gt;\</span>.</li>
+  <li>Otwórz go w Excelu (dwuklik). Każdy wiersz to jedna wiadomość:
+    <table>
+      <tr><th>Kolumna</th><th>Co oznacza</th><th>Co wpisać</th></tr>
+      <tr><td><code>mail_pol</code>, <code>mail_eng</code>, …</td><td>wysyłka e-maila w danym języku</td><td><code>tak</code> albo <code>nie</code></td></tr>
+      <tr><td><code>sms</code></td><td>wysyłka SMS (jedna dla wszystkich języków — tak działa panel)</td><td><code>tak</code> albo <code>nie</code></td></tr>
+      <tr><td><code>reset_domyslna</code></td><td>przywrócenie domyślnej treści IdoSell (program tylko przypomni, by zrobić to ręcznie w panelu)</td><td>zostaw <code>nie</code>, chyba że naprawdę chcesz</td></tr>
+      <tr><td>wartość <code>nie dotyczy</code></td><td>tej wiadomości nie da się wysłać tym kanałem</td><td>nie zmieniaj</td></tr>
+    </table>
+  </li>
+  <li>Zmień tylko te komórki, które chcesz. Nie zmieniaj kolumn <code>grupa</code>, <code>template</code>, <code>nazwa</code> i nie usuwaj wierszy.</li>
+  <li>Zapisz: <span class="klawisz">Ctrl</span>+<span class="klawisz">S</span>. Jeśli Excel zapyta o format, wybierz <span class="przycisk">Zachowaj bieżący format</span> (CSV).</li>
+  <li>W programie wybierz <strong>4 — Edycja działania: różnice i plan zmian</strong>. Program wypisze, co się zmieni (np. <code>mail eng: tak -&gt; nie</code>). Sprawdź listę. Jeśli się zgadza, wpisz <code>t</code> i <span class="klawisz">Enter</span>.</li>
+  <li>Program poda folder z planem zmian, np. <span class="sciezka">Edycja Działania\zooart6_shop1\zmiany_2026-10-13_162306</span>.</li>
+  <li>Wróć do panelu (strona Konfiguracji wiadomości transakcyjnych, ten sam sklep), kliknij zakładkę → <span class="przycisk">Zastosuj plan…</span> → wskaż ten folder → Chrome zapyta o przesłanie plików z folderu: potwierdź (pliki nie opuszczają Twojego komputera).</li>
+  <li>Potwierdź listę zmian w oknie <span class="przycisk">OK</span>. Poczekaj, aż w okienku pojawi się <code>Wykonane: …</code>. Na koniec pobierze się plik <code>weryfikacja_….zip</code>.</li>
+  <li><strong>Sprawdź wynik</strong> — rozdział 7.</li>
+</ol>
+
+<h2 id="tresc">6. Zmiana albo tłumaczenie treści</h2>
+<ol>
+  <li>Pobierz i rozpakuj wiadomości (rozdział 3).</li>
+  <li>Kliknij dwukrotnie <span class="sciezka">Edytor treści.exe</span> (albo w programie wybierz ostatnią pozycję menu — <strong>Edytor treści</strong>). U góry wybierz eksport — domyślnie najnowszy.</li>
+  <li>Po lewej znajdź wiadomość — są ułożone w grupy tak jak w panelu; możesz też wpisać fragment nazwy w polu <strong>Szukaj</strong>.</li>
+  <li>Po prawej wybierz <strong>język</strong>. Zmień <strong>Tytuł maila</strong> (temat) i/lub <strong>Treść maila</strong>. Treść to kod HTML: zmieniaj tylko widoczny tekst, a nie niebieskie znaczniki w nawiasach <code>&lt; &gt;</code>. Wstawek na żółtym tle, np. <code>[iai:order_sn]</code>, nie tłumacz i nie usuwaj — panel podmienia je np. na numer zamówienia.</li>
+  <li>Kliknij <span class="przycisk">Podgląd w przeglądarce</span>, żeby zobaczyć, jak mail wygląda (żółte wstawki panel uzupełni dopiero przy wysyłce).</li>
+  <li>Kliknij <span class="przycisk">Zapisz</span> (albo <span class="klawisz">Ctrl</span>+<span class="klawisz">S</span>). Jeśli zniknęła albo doszła jakaś wstawka <code>[iai:…]</code>, edytor zapyta, czy na pewno. Zmienione wiadomości mają na liście znak ✎.</li>
+  <li>Pomyłka? <span class="przycisk">Cofnij zmiany</span> przywraca treść, która jest teraz w sklepie.</li>
+  <li>Mail, którego <strong>nie chcesz zmieniać</strong> w sklepie (np. zmieniłeś go przez pomyłkę), oznacz przyciskiem <span class="przycisk">Usuń mail z importu</span> — na liście dostanie znak ⊘, a przy „Zastosuj plan” zostanie w sklepie bez zmian. W sklepie nic nie jest kasowane; przycisk <span class="przycisk">Przywróć mail do importu</span> odwraca tę decyzję.</li>
+  <li>Gdy skończysz, kliknij na dole <span class="przycisk">Przygotuj paczkę do importu</span>. Edytor pokaże listę maili, które się zmienią — jeśli się zgadza, potwierdź. Poda folder <span class="sciezka">do_importu_&lt;data&gt;</span> (ścieżka trafi też do schowka).</li>
+  <li>W panelu: zakładka → <span class="przycisk">Zastosuj plan…</span> → wskaż ten folder → potwierdź.</li>
+  <li>Poczekaj na koniec (w okienku pojawią się wpisy „Zaimportowano…” i „Przywrócono flagi…”), potem <strong>sprawdź wynik</strong> — rozdział 7.</li>
+</ol>
+<div class="dobrze">Mail opisany w edytorze jako <strong>„pusty w sklepie”</strong> nigdy nie był wypełniony w panelu — importem nie da się go utworzyć. Wypełnij go najpierw ręcznie w panelu IdoSell i pobierz nowy eksport.</div>
+<p><strong>Dla zaawansowanych:</strong> zamiast edytora możesz edytować pliki w folderze <span class="sciezka">Eksport i Import Treści\&lt;sklep&gt;\&lt;data&gt;\&lt;wiadomość&gt;\</span> (<code>pol_mail.html</code> — treść, <code>pol_sms.txt</code> — SMS, <code>meta.json</code> — tytuły; plików <code>.icf</code> nie zmieniaj), a paczkę przygotować w programie pozycją <strong>5 — Treści: różnice i ICF do importu</strong>. Treść SMS zmienia się na razie tylko tym sposobem.</p>
+<div class="uwaga">Panel IdoSell przy wgrywaniu treści na chwilę <strong>wyłącza</strong> wysyłkę maila w tym języku. Narzędzie od razu włącza ją z powrotem, jeśli była włączona. Dlatego zawsze kończ pracę sprawdzeniem (rozdział 7) i nie zamykaj karty, dopóki okienko nie pokaże wyniku.</div>
+
+<h2 id="sprawdzenie">7. Sprawdzenie po każdej zmianie</h2>
+<ol>
+  <li>Po „Zastosuj plan” w Pobranych pojawia się plik <code>weryfikacja_….zip</code>.</li>
+  <li>W programie wybierz <strong>6 — Weryfikacja po wykonaniu planu</strong>, potem numer planu (najnowszy) i numer pliku weryfikacji (oznaczony <code>[Pobrane]</code>).</li>
+  <li>Program wypisze wynik i zapisze raport w folderze planu.</li>
+</ol>
+<table>
+  <tr><th>Wynik</th><th>Co znaczy</th><th>Co zrobić</th></tr>
+  <tr><td><strong>OK</strong></td><td>zmiana jest w sklepie dokładnie taka, jak w planie</td><td>nic — gotowe</td></tr>
+  <tr><td><strong>nie zmieniło się</strong></td><td>sklep nie przyjął zmiany</td><td>powtórz „Zastosuj plan”; jeśli znowu — zrób zmianę ręcznie w panelu</td></tr>
+  <tr><td><strong>zmieniło się inaczej</strong></td><td>w sklepie jest coś innego niż w planie</td><td>otwórz tę wiadomość w panelu i sprawdź; zgłoś osobie odpowiedzialnej za narzędzie</td></tr>
+  <tr><td><strong>brak w eksporcie weryfikacyjnym</strong></td><td>nie udało się pobrać wiadomości do sprawdzenia</td><td>sprawdź ręcznie w panelu</td></tr>
+</table>
+<p>Pozycja <code>flaga mail …</code> dotyczy włącznika wysyłki — jeśli nie jest OK, sprawdź w panelu, czy wiadomość jest wysyłana.</p>
+
+<h2 id="bezpieczenstwo">8. Zasady bezpieczeństwa</h2>
+<ul>
+  <li><strong>Najpierw sklep testowy.</strong> Każdy nowy rodzaj zmiany wypróbuj najpierw na sklepie testowym, dopiero potem u klienta.</li>
+  <li><strong>Zawsze świeży eksport</strong> tuż przed zmianą. Jeśli ktoś w międzyczasie zmienił wiadomość w panelu, narzędzie ją <em>pominie</em> i napisze „POMINIĘTO … zmieniona w panelu po eksporcie” — wtedy pobierz eksport jeszcze raz.</li>
+  <li><strong>Zawsze sprawdzenie</strong> (rozdział 7) po każdej zmianie.</li>
+  <li><strong>Inny sklep niż ten, z którego pobrano treści</strong> (np. przenoszenie treści ze sklepu testowego na produkcyjny): narzędzie poprosi o wpisanie adresu sklepu docelowego i najpierw samo pobierze kopię jego wiadomości do Pobranych. Zachowaj ten plik — to jedyna kopia, bo panel nie zapisuje historii takich zmian.</li>
+  <li>Narzędzie nigdy nie używa przycisków <em>„Ustaw domyślną treść wiadomości”</em> ani <em>„przywróć”</em> z historii zmian.</li>
+</ul>
+
+<h2 id="problemy">9. Gdy coś nie działa</h2>
+<table>
+  <tr><th>Objaw</th><th>Rozwiązanie</th></tr>
+  <tr><td>Nie widzę zakładki „Wiadomości transakcyjne”</td><td><span class="klawisz">Ctrl</span>+<span class="klawisz">Shift</span>+<span class="klawisz">B</span> pokazuje pasek zakładek. Jeśli jej nie ma — dodaj ją ponownie (rozdział 2, krok 2).</td></tr>
+  <tr><td>Po kliknięciu zakładki nic się nie dzieje albo pojawia się komunikat „Otwórz w panelu…”</td><td>Zakładkę trzeba kliknąć na stronie <strong>Konfiguracja wiadomości transakcyjnych</strong> w panelu, po zalogowaniu.</td></tr>
+  <tr><td>Chrome nie chce zapisać zakładki (za długi adres)</td><td>Na stronie panelu naciśnij <span class="klawisz">F12</span> → zakładka <strong>Console</strong> → wklej zawartość pliku <span class="sciezka">konsola.js</span> → <span class="klawisz">Enter</span>. Przy pierwszym razie Chrome może poprosić o wpisanie <code>allow pasting</code>.</td></tr>
+  <tr><td>W okienku: „Sesja panelu wygasła”</td><td>Zaloguj się do panelu ponownie i uruchom operację jeszcze raz. Częściowy eksport rozpakuj razem z nowym (program pozwala wybrać kilka plików, numery po przecinku).</td></tr>
+  <tr><td>Chrome pyta „Ta strona chce pobrać wiele plików”</td><td>Kliknij <span class="przycisk">Zezwól</span>.</td></tr>
+  <tr><td>Program: „Nagłówek CSV nie zawiera średnika”</td><td>Plik CSV zapisano w innym formacie. Wygeneruj CSV ponownie (pozycja 3) i przy zapisie w Excelu wybierz „Zachowaj bieżący format”.</td></tr>
+  <tr><td>Program: „Folder … zawiera już rozpakowany eksport”</td><td>Ten eksport był już rozpakowany (może z Twoimi zmianami) — program celowo go nie nadpisuje. Pobierz nowy eksport albo pracuj na istniejącym folderze.</td></tr>
+  <tr><td>Program po uruchomieniu: „Folder programu leży głęboko”, albo Notatnik/Chrome nie otwiera pliku z wynikami</td><td>Ścieżki plików są za długie dla Windows. Zamknij program i przenieś cały folder <span class="sciezka">Wiadomosci_transakcyjne</span> bliżej dysku, np. do <span class="sciezka">C:\Wiadomosci_transakcyjne</span>. Wyniki przenoszą się razem z folderem.</td></tr>
+  <tr><td>Okno programu pokazuje „[BŁĄD] …”</td><td>Przeczytaj komunikat — zwykle mówi, co poprawić. Jeśli nie wiesz, co dalej, zrób zrzut ekranu (<span class="klawisz">Win</span>+<span class="klawisz">Shift</span>+<span class="klawisz">S</span>) i wyślij go osobie odpowiedzialnej za narzędzie.</td></tr>
+  <tr><td>W raporcie Status są „Błędy eksportu” z „HTTP 500”</td><td>To błąd po stronie panelu IdoSell dla tych konkretnych wiadomości — narzędzie działa poprawnie. Te wiadomości sprawdź ręcznie w panelu.</td></tr>
+</table>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<div id="oaiq-order-items" hidden>
+  [iai:foreach_products_begin]
+  <span data-oaiq-id="[iai:product_id]" data-oaiq-qty="[iai:product_count]" data-oaiq-price="[iai:product_price_gross_float]">[iai:product_name]</span>
+  [iai:foreach_products_end]
+</div>
+<template id="oaiq-client-email">[iai:client_email]</template>
+<template id="oaiq-client-phone">[iai:client_phone_e164]</template>
+<template id="oaiq-client-firstname">[iai:client_name]</template>
+<template id="oaiq-client-lastname">[iai:client_lastname]</template>
+<template id="oaiq-client-city">[iai:client_city]</template>
+<template id="oaiq-client-region">[iai:client_province]</template>
+<script>
+  (function () {
+    if (!window.oaiqSafe) return;
+
+    // Dane klienta przed zdarzeniem — OpenAI przypisuje je do zapytania, a nie do pojedynczego measure.
+    // Surowe wartości: SDK normalizuje je wg reguł OpenAI i hashuje SHA-256 w przeglądarce (wysyła tylko hash).
+    // Znaczniki *_sha256 IdoSell nie mają opisanej normalizacji, więc hash mógłby nie pasować.
+    const rawUser = {
+      email_sha256: oaiqText('#oaiq-client-email'),
+      phone_number_sha256: oaiqText('#oaiq-client-phone'),
+      first_name_sha256: oaiqText('#oaiq-client-firstname'),
+      last_name_sha256: oaiqText('#oaiq-client-lastname'),
+      country: '[iai:client_country_code]'.toUpperCase(),
+      city: oaiqText('#oaiq-client-city'),
+      region: oaiqText('#oaiq-client-region'),
+      postal_code: '[iai:client_zip]'
+    };
+    const user = {};
+    Object.keys(rawUser).forEach(function (key) {
+      if (rawUser[key]) user[key] = rawUser[key];
+    });
+    if (Object.keys(user).length) {
+      oaiqSafe('init', { user: user });
+    }
+
+    oaiqSafe('measure', 'order_created', {
+      type: 'contents',
+      amount: oaiqAmount('[iai:order_worth_cpa2]'),
+      currency: 'PLN',
+      contents: oaiqItems('#oaiq-order-items')
+    }, {
+      event_id: 'order_[iai:order_sn]'
+    });
+  })();
+</script>

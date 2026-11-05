@@ -1,0 +1,30 @@
+<script>
+  // Wyzwalacz: zdarzenie Complianz „cmplz_event_marketing” (zgoda marketingowa — przy wejściu
+  // z zapisaną zgodą albo od razu po kliknięciu w banerze). Dopiero tu ładuje się SDK OpenAI:
+  // bez zgody nie ma zapytań ani cookies. Potem wysyłka zdarzeń zebranych wcześniej w buforze.
+  (function (w) {
+    try {
+      var pixelId = '{{OpenAI - Pixel ID}}';
+      if (!pixelId || pixelId.indexOf('UZUPELNIJ') === 0) return; // brak Pixel ID — nic nie wysyłamy
+      if (!w.oaiq || w.oaiqConsentGranted) return;
+
+      w.oaiq('init', { pixelId: pixelId });
+      w.oaiq('consent', true);
+
+      if (!document.querySelector('script[data-oaiq-sdk]')) {
+        var js = document.createElement('script');
+        js.async = true;
+        js.src = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
+        js.setAttribute('data-oaiq-sdk', '1');
+        var f = document.getElementsByTagName('script')[0];
+        f.parentNode.insertBefore(js, f);
+      }
+
+      w.oaiqConsentGranted = true;
+      var buffered = (w.oaiqBuffer || []).splice(0);
+      for (var i = 0; i < buffered.length; i++) {
+        w.oaiq.apply(w, buffered[i]);
+      }
+    } catch (e) {}
+  })(window);
+</script>

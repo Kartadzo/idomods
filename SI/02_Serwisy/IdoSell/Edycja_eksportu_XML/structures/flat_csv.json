@@ -1,0 +1,22 @@
+{
+  "id": "flat_csv",
+  "label": "Płaski CSV",
+  "description": "Tabela o stałym zestawie kolumn - do arkusza, importera lub dalszej obróbki.",
+  "mode": "flat",
+  "format": "csv",
+  "sources": ["xml", "csv"],
+  "row_context": "size",
+  "columns": [
+    {"out": "id_produktu", "field": "product_id"},
+    {"out": "kod", "field": "size_code"},
+    {"out": "ean", "field": "code_on_card"},
+    {"out": "nazwa", "field": "name"},
+    {"out": "producent", "field": "producer_name"},
+    {"out": "kategoria", "field": "category_name"},
+    {"out": "rozmiar", "field": "size_name"},
+    {"out": "cena_brutto", "field": "size_price_gross"},
+    {"out": "cena_netto", "field": "size_price_net"},
+    {"out": "stan", "field": "size_quantity"},
+    {"out": "url", "field": "card_url"}
+  ]
+}

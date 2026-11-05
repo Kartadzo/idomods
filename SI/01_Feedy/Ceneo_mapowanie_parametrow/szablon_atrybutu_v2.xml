@@ -1,0 +1,308 @@
+
+<!--
+  ============================================================================
+  Blok <attrs> dla feedu Ceneo — księgarnia (gałąź Ceneo "Księgarnia")
+  ============================================================================
+  Zastępuje blok <attrs> z matfel_Ceneo.xml (linie 319-386 / 468+).
+  XSLT 1.0, kontekst: element <product>.
+
+  ZALEŻNOŚCI (są już zdefiniowane w matfel_Ceneo.xml, linie 11-12):
+      $lowercase, $uppercase   — do translate() przy porównaniach bez wielkości liter
+
+  ŹRÓDŁO USTALEŃ: raport_mapowania.md (analiza 120 152 produktów,
+  1 325 619 par parametr\wartość, 49 nazw parametrów, 43 atrybuty Księgarni).
+
+  ZMIANY WZGLĘDEM WERSJI PRODUKCYJNEJ:
+   1. "Kod_producenta" -> "Kod"          — słownik Księgarni nie zna nazwy
+                                            "Kod_producenta"; "Kod" jest
+                                            kluczowy w 61 z 69 kategorii.
+   2. "Producent" -> "Wydawnictwo"       — w Księgarni "Producent" istnieje
+                                            w 2 kategoriach jako atrybut
+                                            promocyjny; wydawcę Ceneo czyta
+                                            z "Wydawnictwo" (kluczowy w 8).
+   3. Nowy atrybut "ISBN"                — kluczowy w 46 z 69 kategorii;
+                                            98,5% wartości code_producer ma
+                                            prefiks 978/979, czyli jest ISBN-13.
+   4. Naprawa parsowania code_producer   — 2 069 produktów ma tam LISTĘ kodów
+                                            ("978...._978....") i stara logika
+                                            emitowała je jako jeden EAN.
+   5. Naprawa pustego <a name="EAN"/>    — gdy @producer_code_standard ma
+                                            wartość inną niż OTHER/ISBN13,
+                                            stara wersja emitowała pusty element.
+   6. Naprawa atrybutu "Wersja"          — rozpoznanie po sufiksie code_producer
+                                            (_1.._4), nie tylko po nazwie: ebooki
+                                            mają w nazwie "Wersja elektroniczna
+                                            (PDF)", a nie słowo "ebook", więc
+                                            stara reguła ich nie łapała.
+   7. Mapowanie parametrów panelu        — 22 parametry zamiast przepuszczania
+                                            wszystkich 49 pod nazwą z panelu.
+   8. Usunięta pętla "przepuść resztę"   — emitowała m.in. Kampania (24 056),
+                                            Kampania-Walentynki (16 687), Wyprzedaz,
+                                            Nowosci, TOP Bestsellery, eksportowane-do-*
+                                            oraz wymiary i wagę, których słownik
+                                            Księgarni nie zna.
+  ============================================================================
+-->
+<attrs>
+
+    <!-- ===================================================================
+         SŁOWNIKI WARTOŚCI — konwencja repo: lista |wartość|wartość| pisana
+         małymi literami; dopisanie nowej wartości nie wymaga zmiany logiki.
+         =================================================================== -->
+
+    <!-- Ceneo "Okładka": potwierdzona wzorcowa wartość to "Miękka".
+         Wartości spoza obu list są pomijane (80 wariantów w panelu,
+         m.in. "etui kartonowe", "teczka", "folia" — nie są okładkami). -->
+    <xsl:variable name="okladka_miekka">|broszurowa|miekka|miękka|miekka ze skrzydelkami|miękka ze skrzydełkami|okładka broszurowa (miękka)|okładka broszurowa ze skrzydełkami|broszurowa spirala|paperback|miękka barwione brzegi|półtwarda|flexi|pocket|</xsl:variable>
+    <xsl:variable name="okladka_twarda">|twarda|twarda z obwolutą|okładka twarda|całokartonowa|calokartonowa|książka całokartonowa|zintegrowana|twarda barwione brzegi|twarda lakierowana|twarda w obwolucie|oprawa twarda|oprawa w obwolucie|twarda skóra|skórzana|skóropodobna|skóra|</xsl:variable>
+
+    <!-- Ceneo "Język": wzorce różnią się między kategoriami ("Polski",
+         "Włoski", ale też "Język angielski"). Emitujemy formę jednowyrazową
+         z wielkiej litery; wartości złożone ("polski, angielski") pomijamy. -->
+    <xsl:variable name="jezyki">|polski|angielski|niemiecki|francuski|hiszpański|włoski|rosyjski|ukraiński|czeski|portugalski|szwedzki|norweski|duński|niderlandzki|węgierski|grecki|łaciński|japoński|koreański|chiński|arabski|litewski|turecki|hebrajski|</xsl:variable>
+
+    <!-- Ceneo "Format" w Księgarni = nośnik/format pliku (wzorce: A5, PDF,
+         CD audio) — NIE wymiary. Panelowy parametr "Format" (105 270 sztuk,
+         wartości typu "225x150 mm") celowo NIE jest tu używany. -->
+    <xsl:variable name="format_pliku">|pdf|epub|mobi|mp3|</xsl:variable>
+
+    <!-- ===================================================================
+         IDENTYFIKATORY
+         =================================================================== -->
+
+    <a name="Rozmiar">uniwersalny</a>
+
+    <xsl:if test="producer/@name != ''">
+        <a name="Wydawnictwo">
+            <xsl:value-of select="producer/@name"/>
+        </a>
+    </xsl:if>
+
+    <xsl:if test="sizes/size[1]/@code != ''">
+        <a name="Kod">
+            <xsl:value-of select="sizes/size[1]/@code"/>
+        </a>
+    </xsl:if>
+
+    <!-- code_producer występuje w trzech postaciach:
+           9788375822083                    - sam kod                (117 880)
+           9788327107183_9788327107190      - lista kodów wielotomu  (  2 069)
+           8374832975_3                     - kod + numer wersji     (    202)
+         Kod właściwy to zawsze fragment przed pierwszym '_'. -->
+    <xsl:variable name="cp_raw" select="normalize-space(sizes/size[1]/@code_producer)"/>
+    <xsl:variable name="cp_kod">
+        <xsl:choose>
+            <xsl:when test="contains($cp_raw, '_')">
+                <xsl:value-of select="substring-before($cp_raw, '_')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$cp_raw"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <!-- sufiks jednoznakowy = numer wersji; sufiks dłuższy = kolejny kod z listy -->
+    <xsl:variable name="cp_wersja">
+        <xsl:if test="string-length(substring-after($cp_raw, '_')) = 1">
+            <xsl:value-of select="substring-after($cp_raw, '_')"/>
+        </xsl:if>
+    </xsl:variable>
+    <!-- EAN: kod cyfrowy 13- lub 8-znakowy; odsiewa m.in. "9788378890966_BAD_EAN" -->
+    <xsl:variable name="cp_ean"
+                  select="$cp_kod != ''
+                          and translate($cp_kod, '0123456789', '') = ''
+                          and (string-length($cp_kod) = 13 or string-length($cp_kod) = 8)"/>
+    <!-- ISBN-10: 9 cyfr + cyfra kontrolna albo 'X' (26 produktów, głównie starsze ebooki) -->
+    <xsl:variable name="cp_isbn10"
+                  select="string-length($cp_kod) = 10
+                          and translate($cp_kod, '0123456789', '') = ''
+                          or (string-length($cp_kod) = 10
+                              and translate(substring($cp_kod, 1, 9), '0123456789', '') = ''
+                              and (substring($cp_kod, 10) = 'X' or substring($cp_kod, 10) = 'x'))"/>
+
+    <xsl:if test="$cp_ean">
+        <a name="EAN">
+            <xsl:value-of select="$cp_kod"/>
+        </a>
+    </xsl:if>
+    <!-- ISBN-13 to EAN-13 z prefiksem 978/979 — 118 357 ze 120 152 produktów -->
+    <xsl:if test="($cp_ean and (starts-with($cp_kod, '978') or starts-with($cp_kod, '979')))
+                  or $cp_isbn10">
+        <a name="ISBN">
+            <xsl:value-of select="$cp_kod"/>
+        </a>
+    </xsl:if>
+
+    <!-- ===================================================================
+         WERSJA / FORMAT NOŚNIKA
+         Kolejność rozstrzygania: sufiks code_producer -> parametr "Format
+         pliku" -> parametr "Nośnik" -> słowo kluczowe w nazwie produktu.
+         =================================================================== -->
+    <xsl:variable name="nazwa_lc" select="translate(description/name, $uppercase, $lowercase)"/>
+    <xsl:variable name="format_pliku_lc"
+                  select="translate(normalize-space(parameters/parameter[@name = 'Format pliku']/value[1]/@name), $uppercase, $lowercase)"/>
+    <xsl:variable name="nosnik_lc"
+                  select="translate(normalize-space(parameters/parameter[@name = 'Nośnik']/value[1]/@name), $uppercase, $lowercase)"/>
+
+    <xsl:choose>
+        <xsl:when test="$cp_wersja = '1'">
+            <a name="Wersja"><![CDATA[audiobook (MP3)]]></a>
+            <a name="Format">MP3</a>
+        </xsl:when>
+        <xsl:when test="$cp_wersja = '2'">
+            <a name="Wersja"><![CDATA[Audio CD]]></a>
+            <a name="Format"><![CDATA[CD audio]]></a>
+        </xsl:when>
+        <xsl:when test="$cp_wersja = '3'">
+            <a name="Wersja"><![CDATA[ebook (PDF)]]></a>
+            <a name="Format">PDF</a>
+        </xsl:when>
+        <xsl:when test="$cp_wersja = '4'">
+            <a name="Wersja"><![CDATA[DVD]]></a>
+            <a name="Format">DVD</a>
+        </xsl:when>
+        <xsl:when test="contains($format_pliku, concat('|', $format_pliku_lc, '|'))">
+            <a name="Format">
+                <xsl:value-of select="translate($format_pliku_lc, $lowercase, $uppercase)"/>
+            </a>
+        </xsl:when>
+        <xsl:when test="$nosnik_lc = 'cd'">
+            <a name="Format"><![CDATA[CD audio]]></a>
+        </xsl:when>
+        <xsl:when test="$nosnik_lc = 'dvd'">
+            <a name="Format">DVD</a>
+        </xsl:when>
+        <xsl:when test="contains($nazwa_lc, 'audiobook')">
+            <a name="Wersja"><![CDATA[audiobook (MP3)]]></a>
+        </xsl:when>
+        <xsl:when test="contains($nazwa_lc, 'ebook') or contains($nazwa_lc, 'wersja elektroniczna')">
+            <a name="Wersja"><![CDATA[ebook (PDF)]]></a>
+        </xsl:when>
+    </xsl:choose>
+
+    <!-- ===================================================================
+         PARAMETRY Z PANELU
+         =================================================================== -->
+
+    <!-- Autor: "Autorzy" (114 987), a przy jego braku "Redakcja".
+         Oba parametry ma 2 542 produktów, samą "Redakcję" — 39. -->
+    <xsl:choose>
+        <xsl:when test="parameters/parameter[@name = 'Autorzy']/value[1]/@name != ''">
+            <a name="Autor">
+                <xsl:value-of select="parameters/parameter[@name = 'Autorzy']/value[1]/@name"/>
+            </a>
+        </xsl:when>
+        <xsl:when test="parameters/parameter[@name = 'Redakcja']/value[1]/@name != ''">
+            <a name="Autor">
+                <xsl:value-of select="parameters/parameter[@name = 'Redakcja']/value[1]/@name"/>
+            </a>
+        </xsl:when>
+    </xsl:choose>
+
+    <!-- Rok wydania: 100% wartości to czteroznakowy rok -->
+    <xsl:variable name="rok" select="normalize-space(parameters/parameter[@name = 'Rok wydania']/value[1]/@name)"/>
+    <xsl:if test="string-length($rok) = 4 and translate($rok, '0123456789', '') = ''">
+        <a name="Rok wydania">
+            <xsl:value-of select="$rok"/>
+        </a>
+    </xsl:if>
+
+    <!-- Okładka: zawsze pod tą nazwą (ustalenie), niezależnie od nośnika.
+         "Oprawa" w słowniku Ceneo istnieje, ale w 0 kategorii jest kluczowa,
+         podczas gdy "Okładka" jest kluczowa w 8 z 48. -->
+    <xsl:variable name="oprawa_lc"
+                  select="concat('|', translate(normalize-space(parameters/parameter[@name = 'Oprawa']/value[1]/@name), $uppercase, $lowercase), '|')"/>
+    <xsl:choose>
+        <xsl:when test="contains($okladka_twarda, $oprawa_lc)">
+            <a name="Okładka">Twarda</a>
+        </xsl:when>
+        <xsl:when test="contains($okladka_miekka, $oprawa_lc)">
+            <a name="Okładka">Miękka</a>
+        </xsl:when>
+    </xsl:choose>
+
+    <!-- Ilość stron: "Strony" (102 425), a przy jego braku "Elementy" (44 303).
+         Oba parametry naraz ma 38 830 produktów — stąd choose, nie dwa <if>. -->
+    <xsl:variable name="strony" select="normalize-space(parameters/parameter[@name = 'Strony']/value[1]/@name)"/>
+    <xsl:variable name="elementy" select="normalize-space(parameters/parameter[@name = 'Elementy']/value[1]/@name)"/>
+    <xsl:choose>
+        <xsl:when test="$strony != '' and translate($strony, '0123456789', '') = '' and number($strony) &gt; 0">
+            <a name="Ilość stron">
+                <xsl:value-of select="$strony"/>
+            </a>
+        </xsl:when>
+        <xsl:when test="$elementy != '' and translate($elementy, '0123456789', '') = '' and number($elementy) &gt; 0">
+            <a name="Ilość stron">
+                <xsl:value-of select="$elementy"/>
+            </a>
+        </xsl:when>
+    </xsl:choose>
+
+    <xsl:if test="parameters/parameter[@name = 'Seria']/value[1]/@name != ''">
+        <a name="Seria">
+            <xsl:value-of select="parameters/parameter[@name = 'Seria']/value[1]/@name"/>
+        </a>
+    </xsl:if>
+
+    <!-- Język: "Język" (42 954), a przy jego braku "Język nauczany" (7 854).
+         Emitujemy z wielkiej litery i tylko wartości jednowyrazowe. -->
+    <xsl:variable name="jezyk_src">
+        <xsl:choose>
+            <xsl:when test="parameters/parameter[@name = 'Język']/value[1]/@name != ''">
+                <xsl:value-of select="parameters/parameter[@name = 'Język']/value[1]/@name"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="parameters/parameter[@name = 'Język nauczany']/value[1]/@name"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="jezyk_lc" select="translate(normalize-space($jezyk_src), $uppercase, $lowercase)"/>
+    <xsl:if test="contains($jezyki, concat('|', $jezyk_lc, '|'))">
+        <a name="Język">
+            <xsl:value-of select="concat(translate(substring($jezyk_lc, 1, 1), $lowercase, $uppercase), substring($jezyk_lc, 2))"/>
+        </a>
+    </xsl:if>
+
+    <!-- ===================================================================
+         PODMIOTY ODPOWIEDZIALNE (GPSR) — bez zmian
+         =================================================================== -->
+    <xsl:if test="iaiext:responsible_entity/producer/code != ''">
+        <a name="Producent odpowiedzialny">
+            <xsl:value-of select="iaiext:responsible_entity/producer/@id"/>
+        </a>
+    </xsl:if>
+    <xsl:if test="iaiext:responsible_entity/persons/person/code != ''">
+        <a name="Podmiot odpowiedzialny">
+            <xsl:value-of select="iaiext:responsible_entity/persons/person/@id"/>
+        </a>
+    </xsl:if>
+
+    <!--
+      ŚWIADOMIE POMINIĘTE (analiza w raport_mapowania.md):
+
+      brak odpowiednika w słowniku Ceneo — 21 parametrów:
+        Data premiery (108 385), Cena okładkowa (72 819), Długość/Wysokość/
+        Szerokość towaru w centymetrach (3 x 51 197), Waga gabarytowa w gramach
+        (51 173), Kampania (24 056), Kampania-Walentynki (16 687), Wyprzedaz,
+        Prezenty 2023, Nowosci, Nr dopuszczenia, TOP Bestsellery, TOP zapowiedzi,
+        Rodzaj zabezpieczenia, Waga towaru w gramach, maksymalnie 1 produkt,
+        eksportowane-do-* (empik, emag, kaufland, inpostvonhalsky)
+
+      atrybut istnieje, ale poza gałęzią Księgarnia — 6 parametrów:
+        Stan (114 656 — jedyna wartość "Nowy"; Ceneo ma to jako pole oferty,
+        nie atrybut), Waga (90 775), Opakowanie, Materiał, Wymiary, Pojemność
+
+      dopasowane, ale typ się nie zgadza — do decyzji:
+        Format (105 270) — panel trzyma tam wymiary ("225x150 mm"),
+                           Ceneo oczekuje nośnika ("A5", "PDF", "CD audio")
+        Klasa (7 010)    — 66% wartości to wiek ("3+", "16+"), nie klasa
+                           ("SP 7", "LO 2"); Ceneo "Klasa" istnieje w jednej
+                           kategorii (Podręczniki szkolne, id 412) i oczekuje liczby
+        Grupa wiekowa (2 339) + Minimalny wiek (2 246) -> Ceneo "Wiek",
+                           ale wzorce Ceneo to "3-latki" / "Dla malucha (0-3 lata)",
+                           a panel ma "12+" / "8 - 12" — potrzebna tabela przeliczeń
+        Liczba elementów (622) — 94% wartości dziesiętnych, to nie liczba stron
+        Liczba tomów (573) -> Ceneo "Zestaw" oczekuje tekstu ("Sama książka")
+        Rodzaj (41)      — wartości "klej", "dziurkacz", "organizer" nie należą
+                           do słownika Rodzaju w Księgarni
+    -->
+</attrs>

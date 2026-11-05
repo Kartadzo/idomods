@@ -1,0 +1,28 @@
+<script>
+  // Formularz „IdoMods Contact Form” nie przekierowuje i nie pisze do warstwy danych.
+  // Po udanej wysyłce (odpowiedź CRM OK) z bloku #idmCfSuccessView znika klasa idm-cf-hidden.
+  // Obserwujemy tę klasę i wysyłamy zdarzenie raz na kartę formularza — bez danych osobowych.
+  (function (w, d) {
+    if (!w.MutationObserver) return;
+    var views = d.querySelectorAll('[id="idmCfSuccessView"]');
+
+    function check(view) {
+      if (view.getAttribute('data-oaiq-sent')) return;
+      if (/(^|\s)idm-cf-hidden(\s|$)/.test(view.className)) return;
+      view.setAttribute('data-oaiq-sent', '1');
+      view.setAttribute('data-oaiq-pending', '1'); // tag 06 czyta dane z tej karty
+      w.dataLayer = w.dataLayer || [];
+      w.dataLayer.push({ event: 'idm_formularz_wyslany' });
+    }
+
+    for (var i = 0; i < views.length; i++) {
+      (function (view) {
+        if (view.getAttribute('data-oaiq-observed')) return;
+        view.setAttribute('data-oaiq-observed', '1');
+        new MutationObserver(function () {
+          check(view);
+        }).observe(view, { attributes: true, attributeFilter: ['class'] });
+      })(views[i]);
+    }
+  })(window, document);
+</script>

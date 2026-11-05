@@ -1,0 +1,27 @@
+<script>
+  // Tylko kolejka oaiq i bufor do czasu zgody. SDK (oaiq.min.js), init i zgodę ładuje tag „02 zgoda i SDK”.
+  // Bez consent false: w SDK consent false kasuje cookie __oppref (ID kliknięcia reklamy) i __obref.
+  (function (w) {
+    if (!w.oaiq) {
+      var q = function () {
+        q.q.push(arguments);
+      };
+      q.q = [];
+      w.oaiq = q;
+    }
+
+    w.oaiqConsentGranted = w.oaiqConsentGranted || false;
+    w.oaiqBuffer = w.oaiqBuffer || [];
+
+    // Zdarzenia przed zgodą marketingową czekają w buforze; tag 02 wysyła je po zgodzie.
+    w.oaiqSafe = w.oaiqSafe || function () {
+      try {
+        if (w.oaiqConsentGranted) {
+          w.oaiq.apply(w, arguments);
+        } else {
+          w.oaiqBuffer.push(arguments);
+        }
+      } catch (e) {}
+    };
+  })(window);
+</script>

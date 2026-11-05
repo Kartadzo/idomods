@@ -29,7 +29,6 @@
             <description>Produkty ze sklepu https://butyolivier.pl/</description>
             <xsl:for-each select="/offer/products/product">
 
-
             <xsl:for-each select="sizes/size">
             <item>
 
@@ -232,72 +231,75 @@
                      <xsl:value-of select="@code" />
                      <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
                   </g:id>
-
-                     <!-- Tytuł -->
-                     <xsl:variable name="nazwaTowaruRule">
-                        <xsl:choose>
-                           <xsl:when test="../../iaiext:pricecomparator_name and ../../iaiext:pricecomparator_name != ''">
-                              <xsl:value-of select="../../iaiext:pricecomparator_name/." />
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <xsl:value-of select="../../description/name/." />
-                           </xsl:otherwise>
-                        </xsl:choose>
-                     </xsl:variable>
-                     <xsl:variable name="nazwaTowaru">
-                        <xsl:if test="substring-before($nazwaTowaruRule,' ') != ../../producer/@name">
-                           <xsl:value-of select="../../producer/@name"/>
-                           <xsl:text><![CDATA[ ]]></xsl:text>
-                        </xsl:if>
-                        <xsl:value-of select="$nazwaTowaruRule" />
-                        <xsl:text><![CDATA[ roz. ]]></xsl:text>
-                        <xsl:value-of select="@name"/>
-                     </xsl:variable>
-                     <xsl:variable name="upperCaseCount">
-                        <xsl:call-template name="upperCaseCount">
-                           <xsl:with-param name="text" select="$nazwaTowaru" />
-                        </xsl:call-template>
-                     </xsl:variable>
-                     <xsl:variable name="lowerCaseCount">
-                        <xsl:call-template name="lowerCaseCount">
-                           <xsl:with-param name="text" select="$nazwaTowaru" />
-                        </xsl:call-template>
-                     </xsl:variable>
-
-                     <g:title>
-                        <xsl:choose>
-                           <xsl:when test="($lowerCaseCount div $upperCaseCount) &lt; 0.3">
-                              <!-- wszystkie litery oprócz pierwszej i producenta zamienia na małe
-                              litery -->
-                              <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                              <xsl:variable name="lower-text">
-                                 <xsl:value-of
-                                    select="concat(substring($nazwaTowaru, 1, 1), translate(substring(normalize-space($nazwaTowaru), 2), $upperLetters, $lowerLetters))" />
-                              </xsl:variable>
-                              <xsl:choose>
-                                 <xsl:when
-                                    test="contains($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))">
-                                    <xsl:value-of
-                                       select="substring-before($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
-                                    <xsl:value-of select="producer/@name" />
-                                    <xsl:value-of
-                                       select="substring-after($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
-                                 </xsl:when>
-                                 <xsl:otherwise>
-                                    <xsl:value-of select="$lower-text" />
-                                 </xsl:otherwise>
-                              </xsl:choose>
-                              <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
-                              <xsl:call-template name="wordFormat">
-                                 <xsl:with-param name="text" select="$nazwaTowaru" tunnel="yes" />
-                              </xsl:call-template>
-                              <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
-                           </xsl:otherwise>
-                        </xsl:choose>
-                     </g:title>
+                     
+                     <!-- 2026.04.30 MD -->
+                     <xsl:for-each select="../..">
+                        <xsl:variable name="wybierzZrodloNazwy">
+                           <xsl:choose>
+                              <xsl:when test="iaiext:pricecomparator_name 
+                                              and iaiext:pricecomparator_name != ''
+                                              and ../@language = iaiext:pricecomparator_name/@xml:lang">
+                                 <xsl:call-template name="wordFormat">
+                                    <xsl:with-param name="text" select="substring(iaiext:pricecomparator_name[@xml:lang = ../../@language]/., 1, 146)" tunnel="yes" />
+                                    <xsl:with-param name="cerrected" select="$corrected"  tunnel="yes"/>
+                                 </xsl:call-template>
+                                 <xsl:if test="string-length(iaiext:pricecomparator_name[@xml:lang = ../../@language]/.) >= 146">
+                                    <xsl:text disable-output-escaping="yes">...</xsl:text>
+                                 </xsl:if>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                 <xsl:call-template name="wordFormat">
+                                    <xsl:with-param name="text" select="substring(description/name/., 1, 146)" tunnel="yes" />
+                                    <xsl:with-param name="cerrected" select="$corrected" tunnel="yes" />
+                                 </xsl:call-template>
+                                 <xsl:if test="string-length(description/name/.) >= 146 and description/name/. != ''">
+                                    <xsl:text disable-output-escaping="yes">...</xsl:text>
+                                 </xsl:if>
+                              </xsl:otherwise>
+                           </xsl:choose>
+                        </xsl:variable>
+                        <xsl:variable name="upperCaseCount">
+                           <xsl:call-template name="upperCaseCount">
+                              <xsl:with-param name="text" select="$wybierzZrodloNazwy" />
+                           </xsl:call-template>
+                        </xsl:variable>
+                        <xsl:variable name="lowerCaseCount">
+                           <xsl:call-template name="lowerCaseCount">
+                              <xsl:with-param name="text" select="$wybierzZrodloNazwy" />
+                           </xsl:call-template>
+                        </xsl:variable>
+                        
+                        <xsl:variable name="nazwaTowaru">
+                           <xsl:choose>
+                              <xsl:when test="($lowerCaseCount div $upperCaseCount) &lt; 0.3">
+                                 <!-- wszystkie litery oprócz pierwszej i producenta zamienia na małe litery -->
+                                 <xsl:variable name="lower-text">
+                                    <xsl:value-of select="concat(substring($wybierzZrodloNazwy, 1, 1), translate(substring(normalize-space($wybierzZrodloNazwy), 2), $upperLetters, $lowerLetters))" />
+                                 </xsl:variable>
+                                 <xsl:choose>
+                                    <xsl:when test="contains($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))">
+                                       <xsl:value-of select="substring-before($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
+                                       <xsl:value-of select="producer/@name" />
+                                       <xsl:value-of select="substring-after($lower-text, translate(producer/@name, $upperLetters, $lowerLetters))" />
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                       <xsl:value-of select="$lower-text" />
+                                    </xsl:otherwise>
+                                 </xsl:choose>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                 <xsl:value-of select="$wybierzZrodloNazwy" />
+                              </xsl:otherwise>
+                           </xsl:choose>
+                        </xsl:variable>
+                        
+                        <xsl:element name="g:title">
+                           <xsl:call-template name="normalize-polish-pairs">
+                              <xsl:with-param name="text" select="$nazwaTowaru"/>
+                           </xsl:call-template>
+                        </xsl:element>
+                     </xsl:for-each>
+                     
                      <!-- Opis -->
                      <!-- short descr -->
                      <xsl:choose>
@@ -589,7 +591,7 @@
                </xsl:choose>
             </xsl:for-each> -->
 
-                           <xsl:variable name="vLowest">
+                           <!-- <xsl:variable name="vLowest">
                               <xsl:for-each select="../../images/large/image/@iaiext:priority">
                                  <xsl:sort data-type="number" />
                                  <xsl:if test="position()=1">
@@ -615,8 +617,77 @@
                                     </g:additional_image_link>
                                  </xsl:otherwise>
                               </xsl:choose>
-                           </xsl:for-each>
+                           </xsl:for-each> -->
                      
+                     <xsl:for-each select="../..">
+                        <!-- 2026-09-23 - MD -->
+                        <!-- g product type -->
+                        <xsl:choose>
+                           <xsl:when test="iaiext:item[contains(
+                                           translate(substring-before(@textid, '\'),$upperLetters,$lowerLetters),
+                                           'barefoot'
+                                           )]">
+                              <xsl:for-each select="iaiext:item[
+                                                    contains(
+                                                    translate(substring-before(@textid, '\'),$upperLetters,$lowerLetters),
+                                                    'barefoot'
+                                                    )
+                                                    ]">
+                                 <xsl:sort
+                                    select="string-length(@textid) - string-length(translate(@textid, '\', ''))"
+                                    data-type="number"
+                                    order="descending"/>
+                                 <g:product_type>
+                                    <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                    <xsl:call-template name="string-replace-all">
+                                       <xsl:with-param name="text" select="@textid"/>
+                                       <xsl:with-param name="replace" select="'\'"/>
+                                       <xsl:with-param name="by" select="' &gt; '"/>
+                                    </xsl:call-template>
+                                    <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                 </g:product_type>
+                              </xsl:for-each>
+                           </xsl:when>
+                           <xsl:when test="iaiext:navigation/iaiext:site[1]/iaiext:menu[1]/iaiext:item[1]/@id != ''">
+                              <xsl:for-each select="iaiext:navigation/iaiext:site[1]/iaiext:menu">
+                                 <xsl:for-each select="iaiext:item[position() &lt; 6]">
+                                    <xsl:sort
+                                       select="string-length(@textid) - string-length(translate(@textid, '\', ''))"
+                                       data-type="number"
+                                       order="descending"/>
+                                    <g:product_type>
+                                       <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                       <xsl:call-template name="string-replace-all">
+                                          <xsl:with-param name="text" select="@textid"/>
+                                          <xsl:with-param name="replace" select="'\'"/>
+                                          <xsl:with-param name="by" select="' &gt; '"/>
+                                       </xsl:call-template>
+                                       <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                                    </g:product_type>
+                                 </xsl:for-each>
+                              </xsl:for-each>
+                           </xsl:when>
+                           <xsl:when test="category_idosell/@path != ''">
+                              <xsl:element name="g:product_type">
+                                 <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                 <xsl:value-of select="category_idosell/@path"></xsl:value-of>
+                                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                              </xsl:element>
+                           </xsl:when>
+                           <xsl:when test="category/@name != '' and category/@id != '0'">
+                              <xsl:element name="g:product_type">
+                                 <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
+                                 <xsl:call-template name="string-replace-all">
+                                    <xsl:with-param name="text" select="category/@name" tunnel="yes" />
+                                    <xsl:with-param name="replace" select="'/'" tunnel="yes" />
+                                    <xsl:with-param name="by" select="' &gt; '" tunnel="yes" />
+                                 </xsl:call-template>
+                                 <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
+                              </xsl:element>
+                           </xsl:when>
+                        </xsl:choose>
+                     </xsl:for-each>
+
                      <!-- jeśli na sklepie są jakieś zestawy -->
                      <g:is_bundle>
                         <xsl:choose>
@@ -1065,20 +1136,81 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-
-   <xsl:template name="upperCaseCount">
-      <xsl:variable name="inputText" select="text" />
-      <xsl:variable name="uppercaseOnly"
-         select="translate($inputText, 'abcdefghijklmnopqrstuvwxyz ', '')" />
-      <xsl:variable name="uppercaseCount" select="string-length($uppercaseOnly)" />
-      <xsl:value-of select="$uppercaseCount" />
+   
+   <!-- 2026.06.18 MD -->
+   <xsl:template name="normalize-polish-pairs">
+      <xsl:param name="text"/>
+      
+      <xsl:variable name="hasPair">
+         <xsl:call-template name="has-polish-pair">
+            <xsl:with-param name="tmp" select="$text"/>
+         </xsl:call-template>
+      </xsl:variable>
+      
+      <xsl:choose>
+         <xsl:when test="$hasPair = 'true'">
+            <xsl:value-of select="translate($text, 'ĄĆĘŁŃÓŚŹŻ', 'ACELNOSZZ')"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:value-of select="$text"/>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:template>
-
-   <xsl:template name="lowerCaseCount">
-      <xsl:variable name="inputText" select="text" />
-      <xsl:variable name="lowercaseOnly"
-         select="translate($inputText, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ', '')" />
-      <xsl:variable name="lowercaseCount" select="string-length($lowercaseOnly)" />
-      <xsl:value-of select="$lowercaseCount" />
+   
+   <xsl:template name="has-polish-pair">
+      <xsl:param name="tmp"/>
+      
+      <xsl:variable name="pl" select="'ĄĆĘŁŃÓŚŹŻ'"/>
+      
+      <xsl:choose>
+         <xsl:when test="string-length($tmp) &lt; 2">
+            <xsl:text>false</xsl:text>
+         </xsl:when>
+         <xsl:when test="
+                     contains($pl, substring($tmp,1,1))
+                     and contains($pl, substring($tmp,2,1))
+                     ">
+            <xsl:text>true</xsl:text>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:call-template name="has-polish-pair">
+               <xsl:with-param name="tmp" select="substring($tmp,2)"/>
+            </xsl:call-template>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:template>
+   
+   <!-- 03.07.2025 MD -->
+   <xsl:template name="upperCaseCount"> 
+      <xsl:param name="text"/> 
+      <xsl:variable name="uppercaseOnly" select="translate($text, concat($lowerLetters,'0123456789., *%&amp;;\/-+()'), '')"/> 
+      <xsl:value-of select="string-length($uppercaseOnly)"/> 
+   </xsl:template> 
+   <xsl:template name="lowerCaseCount"> 
+      <xsl:param name="text"/> 
+      <xsl:variable name="lowercaseOnly" select="translate($text, concat($upperLetters,'0123456789., *%&amp;;\/-+()'), '')"/> 
+      <xsl:value-of select="string-length($lowercaseOnly)"/> 
+   </xsl:template> 
+    
+  <xsl:template name="string-replace-all">
+        <xsl:param name="text" />
+        <xsl:param name="replace" />
+        <xsl:param name="by" />
+        <xsl:param name="depth" select="0" />
+        <xsl:choose>
+            <xsl:when test="contains($text, $replace) and $depth &lt; 1000">
+                <xsl:value-of select="substring-before($text,$replace)" />
+                <xsl:value-of select="$by" />
+                <xsl:call-template name="string-replace-all">
+                    <xsl:with-param name="text" select="substring-after($text,$replace)" />
+                    <xsl:with-param name="replace" select="$replace" />
+                    <xsl:with-param name="by" select="$by" />
+                    <xsl:with-param name="depth" select="$depth + 1" />
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$text" />
+            </xsl:otherwise>
+        </xsl:choose>
+  </xsl:template>
 </xsl:stylesheet>

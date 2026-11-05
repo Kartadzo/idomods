@@ -1,0 +1,23 @@
+{
+  "id": "iof_subset",
+  "label": "Przycięty IOF",
+  "description": "Ten sam dokument IOF z wyciętymi gałęziami - odchudzony eksport dla klienta lub innego narzędzia.",
+  "mode": "tree",
+  "format": "xml",
+  "sources": ["xml"],
+  "keep": [
+    "product/@id",
+    "product/@code_on_card",
+    "product/@vat",
+    "product/@currency",
+    "product/producer",
+    "product/category",
+    "product/card",
+    "product/description/name",
+    "product/description/short_desc",
+    "product/price",
+    "product/srp",
+    "product/sizes/size",
+    "product/images/large"
+  ]
+}

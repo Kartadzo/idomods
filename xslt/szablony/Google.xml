@@ -357,6 +357,7 @@
          <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
       </xsl:element>
       
+      <!-- 2026.07.08 MD -->
       <xsl:variable name="var_google_product_category">
          <xsl:call-template name="searchGoogleCategory">
             <xsl:with-param name="cat_id" select="category_idosell/@id" tunnel="yes" />
@@ -422,6 +423,7 @@
          </xsl:when>
       </xsl:choose>
       
+      <!-- 2026.07.08 MD -->
       <xsl:choose>
          <xsl:when test="images/icons/auction_icon/@url">
             <xsl:element name="g:image_link">
@@ -482,6 +484,7 @@
       </xsl:for-each> 
       
       <!-- Stan -->
+      <!-- 2026.07.08 MD -->
       <xsl:variable name="condition_new"><![CDATA[new]]></xsl:variable>
       <xsl:variable name="condition_refurbished"><![CDATA[refurbished]]></xsl:variable>
       <xsl:variable name="condition_used"><![CDATA[used]]></xsl:variable>
@@ -516,6 +519,7 @@
       </xsl:element>
       
       <!-- Marka -->
+      <!-- 2026.07.08 MD -->
       <xsl:if test="producer/@name != 'producent niezdefiniowany'">
          <xsl:element name="g:brand">
             <xsl:value-of select="normalize-space(producer/@name)" />
@@ -524,6 +528,7 @@
       
       <!-- Sprawdzić system grupowania wariantów. Dopytać klienta. -->
       <!-- Grupuj tylko rozmiary -->
+      <!-- 2026.07.08 MD -->
       <g:item_group_id>
          <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
          <xsl:value-of select="@id" />
@@ -556,6 +561,7 @@
            </xsl:choose> -->
       
       <!-- jeśli na sklepie są jakieś zestawy -->
+      <!-- 2026.07.08 MD -->
       <xsl:choose>
          <xsl:when test="sum(bundled/product/@quantity) > 1">
             <xsl:element name="g:is_bundle">
@@ -1098,6 +1104,7 @@
          </xsl:for-each>
       </xsl:if>
       
+      <!-- 2026.07.08 MD -->
       <xsl:element name="g:custom_label_0">
          <xsl:choose>
             <xsl:when test="price/@gross &lt;= 50">
@@ -1147,7 +1154,8 @@
             <xsl:value-of select="substring(substring($label_1, 3), 1, 100)"/>
          </g:custom_label_1>
       </xsl:if>
-
+      
+      <!-- 2026.07.08 MD -->
       <g:custom_label_2>
          <xsl:variable name="label2">
             <xsl:call-template name="throwNode">
@@ -1160,6 +1168,8 @@
             <xsl:with-param name="delimiter" select="';'" />
          </xsl:call-template>
       </g:custom_label_2>
+
+      <!-- 2026.07.08 MD -->
       <g:custom_label_3>
          <xsl:variable name="label3">
             <xsl:call-template name="throwNode">
@@ -1242,7 +1252,8 @@
            <xsl:value-of select="card/@url" />
            </xsl:otherwise>
            </xsl:choose> -->
-
+      
+      <!-- 2026.07.08 MD -->
       <xsl:variable name="sell_by">
          <xsl:choose>
             <xsl:when test="../../iaiext:sell_by/iaiext:retail and ../../iaiext:sell_by/iaiext:retail/@quantity > 0">
@@ -1299,6 +1310,7 @@
             </xsl:otherwise>
          </xsl:choose>
       </xsl:element>
+
       <!-- 2025.01.13 - MD -->
       <!-- Gtin / MPN -->
       <xsl:choose>
@@ -1331,6 +1343,7 @@
          </xsl:otherwise>
       </xsl:choose>      
       
+      <!-- 2026.07.08 MD -->
       <xsl:element name="g:size">
          <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
          <xsl:choose>
@@ -1366,6 +1379,7 @@
          <xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
       </xsl:element>
       
+      <!-- 2026.07.08 MD -->
       <xsl:variable name="size_id">
          <xsl:choose>
             <xsl:when test="@name!=''">
@@ -1483,7 +1497,8 @@
          <xsl:text><![CDATA[ ]]></xsl:text>
          <xsl:value-of select="$product_currency" />
       </xsl:element>
-      <!-- produkcja -->
+
+      <!-- 2026.07.08 MD -->
       <!-- pierwszeństwo dla ceny serwis; jesli bedzie promocja lub przekreślona cena to od razu promocyjna cene większa od
            normalnej-->
       <xsl:choose>
@@ -1570,7 +1585,8 @@
            <xsl:element name="g:shipping_transit_business_days">
            <xsl:value-of select="$Dni_dostawy_zamówienia" />
            </xsl:element> -->
-        
+      
+      <!-- 2026.07.08 MD -->
       <xsl:if test="@weight and @weight != 0">
          <xsl:element name="g:shipping_weight">
             <xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>

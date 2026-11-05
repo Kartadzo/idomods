@@ -1,0 +1,20 @@
+{
+  "id": "simple_xml",
+  "label": "Prosty XML (arkusze)",
+  "description": "Płaskie drzewo bez atrybutów i przestrzeni nazw - Excel i Arkusze Google wczytują je bez konfiguracji.",
+  "mode": "flat",
+  "format": "xml",
+  "sources": ["xml", "csv"],
+  "row_context": "product",
+  "xml": {"root": "products", "item": "product", "keep_empty": true, "cdata": false},
+  "columns": [
+    {"out": "product_id", "field": "product_id"},
+    {"out": "name", "field": "name"},
+    {"out": "quantity", "field": "size_quantity"},
+    {"out": "ean", "field": "code_on_card"},
+    {"out": "price", "field": "price_retail_gross"},
+    {"out": "url", "field": "card_url"}
+  ],
+  "images": {"kind": "large", "mode": "columns", "count": 5,
+             "base_name": "image", "extra_name": "image_extra_*"}
+}

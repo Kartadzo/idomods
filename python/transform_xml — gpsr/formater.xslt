@@ -55,30 +55,30 @@
                     <xsl:if test="iaiext:responsible_entity/persons/person/code != ''">
                         <item>
                             <Nazwawlasna>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/@id"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/@id"/>
                             </Nazwawlasna>
                             <Nazwa>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/name"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/name"/>
                             </Nazwa>
                             <Kraj>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/country"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/country"/>
                             </Kraj>
                             <Ulicainumer>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/street"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/street"/>
                                 <xsl:text> </xsl:text>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/number"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/number"/>
                             </Ulicainumer>   
                             <Miasto>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/city"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/city"/>
                             </Miasto>  
                             <Kodpocztowy>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/zipcode"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/zipcode"/>
                             </Kodpocztowy>
                             <Email>
-                                <xsl:value-of select="iaiext:responsible_entity/producer/mail"/>
+                                <xsl:value-of select="iaiext:responsible_entity/persons/person/mail"/>
                             </Email>
                             <xsl:variable name="phoneRaw"
-                                select="iaiext:responsible_entity/producer/phone"/>
+                                select="iaiext:responsible_entity/persons/person/phone"/>
                             
                             <xsl:variable name="phoneClean">
                                 <xsl:call-template name="normalize-phone">

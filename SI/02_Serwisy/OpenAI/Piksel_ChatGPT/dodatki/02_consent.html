@@ -1,0 +1,26 @@
+<script>
+  // Wywoływane po zgodzie na pliki cookies (reklamowe). Dopiero tu ładuje się SDK OpenAI:
+  // bez zgody nie ma zapytań ani cookies. Potem wysyłka zdarzeń zebranych wcześniej w buforze.
+  try {
+    if (window.oaiq && !window.oaiqConsentGranted) {
+      oaiq('init', {
+        pixelId: 'HxtQFAbcYQsJiSDLYxZj57'
+      });
+      oaiq('consent', true);
+
+      if (!document.querySelector('script[data-oaiq-sdk]')) {
+        const js = document.createElement('script');
+        js.async = true;
+        js.src = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
+        js.setAttribute('data-oaiq-sdk', '1');
+        const f = document.getElementsByTagName('script')[0];
+        f.parentNode.insertBefore(js, f);
+      }
+
+      window.oaiqConsentGranted = true;
+      (window.oaiqBuffer || []).splice(0).forEach(function (args) {
+        oaiq.apply(window, args);
+      });
+    }
+  } catch (e) {}
+</script>
