@@ -1,22 +1,22 @@
 ---
 name: summonfeed
-description: Przygotowanie sterownika feedu XSLT 1.0 dla sklepu IdoSell z aktualnego szablonu (xslt/szablony/Google.xml, Facebook.xml, Ceneo.xml i inne) — kopia szablonu, odczyt parametrów, magazynów i profilu dostaw z panelu przez Claude in Chrome, uzupełnienie zmiennych konfiguracyjnych, warianty linków i item_group_id, dopasowanie do wymagań serwisu, weryfikacja przez lxml. Wynik to nowy plik do ręcznego wgrania w SI/SummonFeed SI/sterowniki/<domena>/. Używaj, gdy użytkownik mówi „przygotuj sterownik/feed XSLT dla <sklep>”, „summonFeed”, „feed Google/Facebook/Ceneo/TikTok/Pinterest… dla <domena>”, „odtwórz sterownik na nowym szablonie / dla innego serwisu” albo wywołuje /summonfeed <link do panelu> <id sklepu> <serwis>.
+description: Przygotowanie sterownika feedu XSLT 1.0 dla sklepu IdoSell z aktualnego szablonu (xslt/szablony/Google.xml, Facebook.xml, Ceneo.xml i inne) — kopia szablonu, odczyt parametrów, magazynów i profilu dostaw z panelu przez Claude in Chrome, uzupełnienie zmiennych konfiguracyjnych, warianty linków i item_group_id, dopasowanie do wymagań serwisu, weryfikacja przez lxml. Wynik to nowy plik do ręcznego wgrania w SI/01_Feedy/SummonFeed/sterowniki/<domena>/. Używaj, gdy użytkownik mówi „przygotuj sterownik/feed XSLT dla <sklep>”, „summonFeed”, „feed Google/Facebook/Ceneo/TikTok/Pinterest… dla <domena>”, „odtwórz sterownik na nowym szablonie / dla innego serwisu” albo wywołuje /summonfeed <link do panelu> <id sklepu> <serwis>.
 ---
 
 # summonFeed — sterownik XSLT 1.0 z szablonu
 
-KATALOG: `SI/SummonFeed SI/`. Specyfikacja: `ANALIZA_skill_summonFeed.md`.
+KATALOG: `SI/01_Feedy/SummonFeed/`. Specyfikacja: `ANALIZA_skill_summonFeed.md`.
 Narzędzia: `narzedzia/konfiguruj.py`, `narzedzia/parametry_oferty.py`, `narzedzia/przytnij.py`, `narzedzia/weryfikuj.py`. Opis zmiennych: `zmienne_szablonow.md`. Warianty linku i grupy: `warianty.md`. Wymagania serwisów: `wymagania/INDEX.md` + `wymagania/<serwis>.md`.
 
 ## Zasady (zawsze)
-- **Szablonów w `xslt/szablony/` nie edytuję.** Przy każdym wywołaniu czytam ich bieżącą wersję. Gdy szablon nie jest poprawnym XML, `konfiguruj.py` się zatrzymuje. Wtedy zgłaszam błąd użytkownikowi (linia, prawdopodobna przyczyna z `git diff`) i nie naprawiam szablonu.
+- **Szablonów w `xslt/szablony/` nie edytuję bez pytania.** Gdy propozycja dotyczy szablonu głównego, pytam użytkownika, czy go aktualizować. Przed aktualizacją kopiuję bieżący plik do `xslt/szablony/old/<Szablon>_<RRRR-MM-DD>.xml` (ustalenie z 2026-10-28). Przy każdym wywołaniu czytam bieżącą wersję szablonów. Gdy szablon nie jest poprawnym XML, `konfiguruj.py` się zatrzymuje. Wtedy zgłaszam błąd użytkownikowi (linia, prawdopodobna przyczyna z `git diff`) i nie naprawiam szablonu.
 - Wynik to **zawsze XSLT 1.0** i nowy plik do ręcznego wgrania. W panelu niczego nie zapisuję ani nie klikam „Zapisz”. Panel tylko czytam, a loguje się użytkownik.
 - Zmiany logiki robię tylko w kopii i każdą opisuję w `zmiany.md`. Zmiana przydatna dla wszystkich sklepów trafia do podsumowania jako propozycja do szablonu.
 - Gdy parametru nie ma, zmienną zostawiam pustą (`''` albo `|`) i dopisuję uwagę. Nie zgaduję.
 - **Zapis zmiennych dopasowywanych do panelu:** parametry jako `|<@id>|<@name PL>|`, węzły menu 1 jako `|<@id>|<nazwa PL>|`, wartości jako `|<id>|<nazwa PL>|` (`zmienne_szablonow.md`, „Standard zapisu”). Przy ID z menu 1 sprawdzam w `/panel/navigation.php`, czy menu jest współdzielone między sklepami. Nazwa jest zapisana jak w panelu. Dotyczy to także `gender_` i `age_group_nazwa_w_panelu`. Gdy wersja szablonu porównuje zmienną jako jedną wartość, `konfiguruj.py` odrzuca listę. Wtedy wpisuję pojedyncze ID, nazwę podaję w `zmiany.md` i odnotowuję, że po aktualizacji szablonu wystarczy odtworzyć sterownik z listą. Szczegóły per zmienna są w „Standardzie zapisu”. Kopii nie łatam.
 - **Elementy obsługiwane przez serwis:** element zostaje, jeśli serwis go obsługuje i jest w szablonie Google albo Facebook. W szablonie starszym aktualizuję go do wersji z Google/FB. Elementów, których nie ma w żadnym z tych dwóch szablonów (np. `g:quantity`), nie dopisuję.
 - Przykładowe wartości z szablonu (`|123456789|987654321|`, `|Male|dla Panów|…|`, `|dzieci|Nastolatki|`) **zawsze** zastępuję danymi sklepu albo czyszczę.
-- Python uruchamiam z katalogu `SI/SummonFeed SI/narzedzia/`, z `PYTHONIOENCODING=utf-8`.
+- Python uruchamiam z katalogu `SI/01_Feedy/SummonFeed/narzedzia/`, z `PYTHONIOENCODING=utf-8`.
 
 ## Szablony
 | Szablon | Kiedy | Uwagi |
@@ -45,7 +45,7 @@ Technika jak w skillu `weryfikacja-gmc`: zamiast `screenshot`/`get_page_text` u�
 - **Magazyny:** lista magazynów sklepu → `sales_stocks`.
 - **Język i waluta sklepu** → `Kraj_dostawy`, tytuł kanału.
 - **Profil dostaw:** `/panel/config-shippingprofiles.php` → „Profile dostaw [wybierz]” → `[edytuj]` (klik przez `setTimeout(()=>a.click(),100)`). Odczytuję kurierów, koszty z przedpłatą, „darmowe od” i oznaczenie **domyślnej** metody w kolumnie przedpłaty.
-- **Oferta IOF do testu:** jeśli w panelu jest dostępny plik oferty sklepu, pytam o zgodę na pobranie (nazwa, źródło, rozmiar) i zapisuję go jako `sterowniki/<domena>/oferta.xml`. Potem uruchamiam `python parametry_oferty.py ../sterowniki/<domena>/oferta.xml`, co daje parametry z liczbą produktów, `group/@id`, GTIN i magazyny. Bez zgody testuję na `SI/summonFeed/products_export.xml` i zaznaczam to w podsumowaniu.
+- **Oferta IOF do testu:** jeśli w panelu jest dostępny plik oferty sklepu, pytam o zgodę na pobranie (nazwa, źródło, rozmiar) i zapisuję go jako `sterowniki/<domena>/oferta.xml`. Potem uruchamiam `python parametry_oferty.py ../sterowniki/<domena>/oferta.xml`, co daje parametry z liczbą produktów, `group/@id`, GTIN i magazyny. Bez zgody testuję na `SI/01_Feedy/SummonFeed/dane/products_export.xml` i zaznaczam to w podsumowaniu.
 
 ## 2. Pytania (zawsze, przez AskUserQuestion, w jednym zestawie)
 1. **Dostawa (`g:shipping`):**
@@ -89,7 +89,12 @@ Pozostałych elementów szablonu nie zmieniam, chyba że wymaga tego serwis (kro
 2. Według sekcji „Różnice względem szablonu”: zmieniam nazwy elementów, dopisuję wymagane elementy, których brakuje, i pilnuję limitów (`dlugosc_opisu`, długość tytułu). Każda zmiana trafia do `zmiany.md`.
 
 ## 5. Elementy wspólne w starszych szablonach
-Gdy bazą nie jest Google ani Facebook, porównuję w kopii elementy wspólne z `Google.xml`: tytuł (`wybierzZrodloNazwy`, `nazwaTowaru`, `wordFormat`), opis (`from_parameters`, `opis_do_kropki`), ceny (`cena_serwis`, `cena_przekreslona`), dostępność (`sales_stocks`), kolor i materiał oraz named templates (`strip-tags`, `string-replace-all`, `tokenize`). Pomagają w tym komentarze z datą (`<!-- 2026.04.30 MD -->`), które pokazują, która wersja jest nowsza. Listę możliwych aktualizacji pokazuję użytkownikowi (AskUserQuestion, multiSelect). Wybrane pozycje przenoszę do kopii, dopasowując nazwy elementów do formatu serwisu, i opisuję w `zmiany.md`.
+Gdy bazą nie jest Google ani Facebook, porównuję w kopii elementy wspólne z `Google.xml`: tytuł (`wybierzZrodloNazwy`, `nazwaTowaru`, `wordFormat`), opis (`from_parameters`, `opis_do_kropki`), ceny (`cena_serwis`, `cena_przekreslona`), dostępność (`sales_stocks`), kolor i materiał oraz named templates (`strip-tags`, `string-replace-all`, `tokenize`). Pomagają w tym komentarze z datą (`<!-- 2026.04.30 MD -->`), które pokazują, która wersja jest nowsza. Listę możliwych aktualizacji pokazuję użytkownikowi (AskUserQuestion, multiSelect). Wybrane pozycje przenoszę do kopii **w całości**: kopiuję cały skrypt elementu z `Google.xml` (zmienne pośrednie, potok przetwarzania, wywoływane named templates), a nie tylko fragment, który wydaje się różnić. Dopasowuję jedynie nazwy elementów do formatu serwisu i opisuję zmianę w `zmiany.md`. Przed porównaniem sprawdzam cały element, nie tylko jeden jego blok (np. opis to `from_parameters` **i** potok czyszczenia `string-normalize-all` → `&nbsp;` → komentarze/style/zdjęcia → `strip-tags`).
+**Elementy dedykowane pomijam:** element oznaczony komentarzem z nazwą serwisu (np. `<!-- Opis - Ceneo -->`) albo przygotowany ręcznie pod sklep lub serwis zostaje bez zmian i nie trafia na listę aktualizacji (ustalenie z 2026-10-28, magnicreatix).
+
+## 5a. Ceneo: słowniki i GPSR
+- Kategorie i atrybuty: słowniki `https://developers.ceneo.pl/api/v3/kategorie` i `/atrybuty` (opis w `wymagania/ceneo.md`, sekcja „Słowniki API v3”). Dla kategorii produktów sklepu wypisuję atrybuty kluczowe i porównuję z parametrami panelu; wzorzec mapowania kategorii: `ceneoCat` w `SI/01_Feedy/Ceneo_mapowanie_parametrow/matfel_Ceneo.xml`.
+- GPSR: w feedzie tylko ID (`Producent odpowiedzialny`, `Podmiot odpowiedzialny`), pełne dane wgrywane plikiem CSV w panelu Ceneo. CSV generuję **oryginalnym** narzędziem `python/transform_xml — gpsr` (eksport IOF jako `source.xml` w jego folderze), bez kopii w folderze sklepu.
 
 ## 6. Weryfikacja
 `python weryfikuj.py ../sterowniki/<domena>/<wyjscie> [--oferta ../sterowniki/<domena>/oferta.xml] --wymagane <pola wymagane serwisu> [--dozwolone <lista>] [--element o]`

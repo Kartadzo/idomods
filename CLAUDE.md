@@ -22,7 +22,11 @@ There is **no build, lint, or test setup** (`npm test` is a placeholder that err
 
 - **Python jobs**: `python app.py` (or the co-located `run*.bat`, which supplies the exact CLI args). Auto-detect input files in the current directory when args are omitted — so run them from inside their own folder. Python 3.8+, standard library only unless a folder says otherwise.
 - **XSLT**: applied with an external processor (xsltproc/libxslt or Saxon; `saxon-js` is the only devDependency). Input is the shop's `offer` XML; output is the target feed XML.
-- **summonFeed generator**: `python xslt/szablony/summonFeed/summonFeed_generator.py` — interactive CLI that assembles a complete XSLT feed from building blocks. See `xslt/szablony/summonFeed/README_GENERATOR.md`.
+- **summonFeed generator** (archived 2026-11-05, superseded by the `/summonfeed` skill in `SI/01_Feedy/SummonFeed/`): `python SI/archiwum/SummonFeed/Generator/summonFeed_generator.py` — interactive CLI that assembles a complete XSLT feed from building blocks. See `SI/archiwum/SummonFeed/Generator/README_GENERATOR.md`.
+
+## `SI/` — Claude-built tools and client jobs
+
+Layout (map, project status table and rules for new projects: `SI/README.md`): `SI/_wspolne/` shared code (IdoSell API client, report/screenshot helpers), `SI/01_Feedy/<Projekt>/` feed tools, `SI/02_Serwisy/<Serwis>/<Projekt>/` work tied to one platform (IdoSell, Facebook, GMC, GTM, OpenAI, Base, Shoparena, Amazon, Erli, n8n, Google_Ads), `SI/03_Zewnetrzne_SI/` external AI machines (planned as git-connected), `SI/archiwum/<klient|serwis>/` finished work. Folder names: ASCII, no spaces. Code paths are relative to `__file__`; `_wspolne` is located by walking up the tree. When starting a new SI project, follow the rules in `SI/README.md` and add it to the status table.
 
 ## IAI/IdoSell input format (key to all XSLT and much of the Python)
 
@@ -35,7 +39,7 @@ A template-composition system (not a template engine). Two directories of paired
 - `structure_templates/` — one pair per feed type (`google`, `facebook`, `samba`). The JSON declares `insertionPoints` (`template` + `context`); the XSL is a skeleton with empty named templates.
 - `parameters_templates/` — one pair per product field (`title`, `price`, `color`, …). The JSON declares which `structure`s the field applies to, its `context` (`product`/`size`/`feed`), the output element name, and the path to its XSL fragment. `helpers.xsl` holds shared named templates.
 
-The generator loads all JSON, filters parameters to the chosen structure, prompts for any required `configVars` once, and splices the selected XSL fragments into the structure skeleton at their insertion points. Output is written to the `summonFeed/` root as `<Structure>_generated_<timestamp>.xsl`. **To add a field/structure, drop in a new `.json`+`.xsl` pair — the generator discovers them automatically; no code change needed.**
+The generator loads all JSON, filters parameters to the chosen structure, prompts for any required `configVars` once, and splices the selected XSL fragments into the structure skeleton at their insertion points. Output is written to the generator's root folder as `<Structure>_generated_<timestamp>.xsl`. **To add a field/structure, drop in a new `.json`+`.xsl` pair — the generator discovers them automatically; no code change needed.**
 
 ## Conventions
 

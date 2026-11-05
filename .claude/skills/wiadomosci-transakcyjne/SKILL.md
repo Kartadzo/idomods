@@ -5,7 +5,7 @@ description: Status, edycja działania (które maile/SMS w jakich językach są 
 
 # Wiadomości transakcyjne IdoSell
 
-Folder narzędzia: `SI/API IdoSell/Wiadomości transakcyjne/` (dalej KATALOG). Specyfikacja: `ANALIZA_wiadomosci_transakcyjne.md`.
+Folder narzędzia: `SI/02_Serwisy/IdoSell/Wiadomosci_transakcyjne/` (dalej KATALOG). Specyfikacja: `ANALIZA_wiadomosci_transakcyjne.md`.
 
 ## Zasady bezpieczeństwa (zawsze)
 - Panel: `https://<domena>/panel/config-messages.php`. Użytkownik loguje się sam; ja nie wpisuję haseł.

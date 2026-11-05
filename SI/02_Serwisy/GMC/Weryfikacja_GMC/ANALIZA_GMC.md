@@ -96,7 +96,7 @@ Tak samo jak w FB:
 ## Planowane zmiany w plikach
 
 - `GMC/ANALIZA_GMC.md` — ten plik.
-- **Narzędzia wspólne**: `zrzut.py` jest niezależny od platformy, a `raport_docx.py` ma na sztywno „Meta Ads” w tytule i nazwie pliku. Proponuję przenieść oba do `Optymalizacja_Integracji/narzedzia/` i dodać do `dane.json` pole `platforma` (`Meta Ads` / `Google Merchant Center`) z domyślną wartością „Meta Ads”, żeby stare raporty FB generowały się bez zmian. Skill FB zaktualizuję o nową ścieżkę.
+- **Narzędzia wspólne**: `zrzut.py` jest niezależny od platformy, a `raport_docx.py` ma na sztywno „Meta Ads” w tytule i nazwie pliku. Proponuję przenieść oba do `_wspolne/` i dodać do `dane.json` pole `platforma` (`Meta Ads` / `Google Merchant Center`) z domyślną wartością „Meta Ads”, żeby stare raporty FB generowały się bez zmian. Skill FB zaktualizuję o nową ścieżkę.
 - `.claude/skills/weryfikacja-gmc/SKILL.md` — pisany **po pilotażu** na PewienPan.pl, z rzeczywistymi selektorami i adresami GMC (jak przy FB).
 - `GMC/Weryfikacja_GMC.bat`.
 - Pamięć: wpis projektowy GMC i odnośnik w `MEMORY.md`.
@@ -120,7 +120,7 @@ Pracuję na gałęzi `optymalizacja-integracji-gmc`.
 ## Ustalenia (wersja 2, 2026-10-21 — odpowiedzi użytkownika)
 
 1. **Pobranie ręczne:** przy błędzie pobierania wolno kliknąć „Pobierz teraz” (lub odpowiednik) w GMC. Ponowienie zwykle wystarcza, a problem po stronie GMC mógł być jednorazowy. Wynik ponowienia zapisuję w raporcie. To jedyny wyjątek od zasady „tylko odczyt”.
-2. **Wspólne narzędzia:** zatwierdzone — `zrzut.py` i `raport_docx.py` przenoszę do `Optymalizacja_Integracji/narzedzia/`, `dane.json` dostaje pole `platforma`.
+2. **Wspólne narzędzia:** zatwierdzone — `zrzut.py` i `raport_docx.py` przenoszę do `_wspolne/`, `dane.json` dostaje pole `platforma`.
 3. **Które konto analizuję:** to **z większą liczbą produktów**. Standardowo produkty wpinamy do konta pod CSS BRANDS MANAGO SP. Z O.O., a konto pod CSS Google Shopping pobiera towary tylko na potrzeby bezpłatnych informacji (free listings) **z konta BRANDS MANAGO**. Drugie konto sprawdzam skrótowo: weryfikacja, liczba produktów, czy źródło danych działa.
 4. **Wzorce problemów z pobieraniem (komunikat w GMC):**
    - **błąd autoryzacji** mimo braku blokady pliku → problem po stronie serwera IdoSell,
