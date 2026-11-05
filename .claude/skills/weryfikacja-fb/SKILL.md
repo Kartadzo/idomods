@@ -5,7 +5,7 @@ description: Okresowa (co 90 dni) weryfikacja integracji sklepu IdoSell z Meta A
 
 # Weryfikacja integracji IdoSell ↔ Meta Ads
 
-KATALOG: `SI/Przeglądarka IdoSell/Optymalizacja_Integracji/FB/` (narzędzia wspólne z GMC: `../narzedzia/`). Specyfikacja i wnioski techniczne: `ANALIZA_FB_Ads.md`.
+KATALOG: `SI/02_Serwisy/Facebook/Weryfikacja_FB/` (narzędzia wspólne z GMC: `../../../_wspolne/` (= `SI/_wspolne/`)). Specyfikacja i wnioski techniczne: `ANALIZA_FB_Ads.md`.
 Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetrzny.md`).
 
 ## Zasady (zawsze)
@@ -24,7 +24,7 @@ Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetr
 - Filtr rozszerzenia blokuje wyniki z parametrami URL lub tokenami (`[BLOCKED: …]`). Z linków zwracam tylko `pathname`, a z XSLT pojedyncze zmienne bez adresów. Filtra nie obchodzę (żadnego base64 ani kodowania).
 - Po `navigate` na Meta karta często przekierowuje (`business.` ↔ `eventsmanager.`). Przy błędzie „navigated to a different domain” robię `tabs_context_mcp` i ponawiam.
 - **Zrzuty**: przed zrzutem oznaczam kartę: `document.title='[CLAUDE] '+document.title.replace(/^\[CLAUDE\] /,'')`, potem w KATALOGU:
-  `python ../narzedzia/zrzut.py "[claude]" "raporty/<domena>_<data>/zrzuty/NN_opis.png" --obszar strona`
+  `python ../../../_wspolne/zrzut.py "[claude]" "raporty/<domena>_<data>/zrzuty/NN_opis.png" --obszar strona`
   (PrintWindow, okno nie może być zminimalizowane; ucina pasek zakładek i baner debugowania). Współrzędne na zrzucie = współrzędne viewportu do `left_click`. Podgląd roboczy zapisuję do scratchpada i oglądam przez Read.
 
 ## 0. Start
@@ -37,7 +37,7 @@ Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetr
 1. `/panel/social-services.php`: stan integracji z ikon `fa-check-circle-o` (WŁ) / `fa-times-circle-o` (WYŁ) w wierszach: Logowanie FB, FBE2, Eksport bazy, Feed produktowy, Pobieranie katalogów, Meta Pixel. ID piksela: link w wierszu „Meta Pixel” → pole „Identyfikator Meta Pixel”.
 2. `/panel/config-pricecomparers.php` (po ~6 s): wiersz „Facebook ads …”: status, „wygenerowany o godzinie”, eksportowane i wyeksportowane towary (porównać z Google ads i z poprzednim raportem). **Zrzut 01.**
    **Liczby FB i Google nie są wprost porównywalne.** Do Meta wysyłamy produkty z `id` równym identyfikatorowi towaru w panelu (jeden item na produkt). Do GMC każde `id` zawiera też kod rozmiaru, więc każdy rozmiar jest osobnym towarem. Feed Google może mieć kilka razy więcej pozycji niż FB i to nie jest błąd. Za brak w katalogu Meta uznaję dopiero sytuację, w której FB ma mniej pozycji niż **liczba produktów** w sklepie (kolumna „Eksportowane towary”), a nie mniej niż feed Google. Jeśli nie ma takiego serwisu, a w A1 natywny feed jest WŁ, sprawdzam feed natywny.
-3. „Wybierz → Historia pobrań” (`a` z tekstem „Historia pobrań” w wierszu): **pierwsze 3 strony, potem co 10.** (link „następna >”, numer strony z elementu z klasą active). Szukam zdarzeń innych niż „Pobranie pliku porównywarki”, hostów spoza `*.fbsv.net` i dużych luk. **Zrzut 02.**
+3. „Wybierz → Historia pobrań” (`a` z tekstem „Historia pobrań” w wierszu): **co piąta strona (1, 6, 11, …)**, a dopiero gdy w próbce trafię na problem (nieudana próba, obcy host, luka), czytam wszystkie strony (link „następna >”, numer strony z elementu z klasą active; ustalenie z użytkownikiem 2026-10-27). W raporcie zaznaczam, czy wynik pochodzi z próbki. Szukam zdarzeń innych niż „Pobranie pliku porównywarki”, hostów spoza `*.fbsv.net` i dużych luk. **Zrzut 02.**
 4. „Wybierz → Ustawienia” (okno „Udostępnianie oferty…”, id serwisu w tytule): format IOF, opcje „Eksportuj”, sterownik (`textarea` > 60 000 zn. do `window.__xsl`). Ze sterownika czytam **tylko zmienne**: `Koszt_dostawy`, `kwota_dla_darmowej_dostawy`, `kwota_dla_wiekszych_zamowien`, `Koszt_dostawy_wiekszych_zamowien`, `Kraj_dostawy`, `*_nazwa_w_panelu` i listy wartości (`gender_*`, `age_group_*`, `kolor_*`, `material_*`). Okno zamykam nawigacją, bez zapisu.
 5. Cennik dostaw: `/panel/config-shipping.php` (kraje i profile) → `/panel/config-shippingprofiles.php` → „Profile dostaw” → `[edytuj]` profilu z kraju feedu (tabela kurierów: koszt, darmowe od). **Zrzut 03.** Najtańszy kurier z przedziałami → jego `[edytuj]` → przewinąć do tabeli „Kwota od/do”. **Zrzut 04.** Porównuję z kosztem i progiem w XSLT oraz z poprzednim raportem.
 6. Parametry: `/panel/parameters.php`, rozwinięcie wszystkich `ul.list-group > li.menu_li_item a.showChildren` (pętla z pauzą 400 ms), nazwa z `div.showMenuSub.parameter`, wartości z zagnieżdżonych `ul li`. Porównuję ze zmiennymi z A4 i wypisuję:
@@ -62,8 +62,22 @@ Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetr
    **Anomalia:** zdarzeń API kilkadziesiąt lub sto razy więcej niż zwykle (względem stanu bazowego lub PageView/przeglądarki). Wtedy: z wykresów ustalam dzień i godzinę początku, robię zrzuty (wykres, serwer vs przeglądarka, diagnostyka), sprawdzam FBE2 i przygotowuję treść zgłoszenia do obsługi klienta IdoSell z przedziałem czasowym. Zgłoszenia nie wysyłam sam.
 4. Spadek lub wzrost wolumenu dziennego > 25% względem początku okresu lub poprzedniego raportu odnotowuję jako „info” do porównania z ruchem i budżetami.
 
+## E. Wyniki platform: raport konwersji IdoSell a Menedżer reklam (opcjonalnie, tylko za zgodą)
+**Nie wykonuję automatycznie.** Po krokach A–C, a przed krokiem D, proponuję użytkownikowi tę analizę jednym pytaniem: okres (domyślnie ostatnie 14 pełnych dni) i link do konta reklamowego (jeśli nie ma go w poprzednim raporcie). Zakres D zależy od odpowiedzi. Bez zgody pomijam E i od razu generuję raport. Okres podany przez użytkownika ma pierwszeństwo przed domyślnym (ustalenie z 2026-10-28, sportwheels.pl).
+**Bez wartości konwersji** (ustalenie z 2026-10-28): porównuję wyłącznie liczby (kliknięcia, wejścia, zamówienia, zakupy, zdarzenia). Nie odczytuję ani nie raportuję wartości zakupów, wartości zamówień ani ROAS.
+1. **IdoSell** `/panel/conversion-report.php`: w formularzu ustawiam ukryte pola `fg_begin_ymd`/`fg_end_ymd` (+ `fg_beginy/m/d`, `fg_endy/m/d`, `fg_begin_end`), zaznaczam tylko sklep główny (bez `test*.iai-shop.com`) i klikam „Pokaż” (to tylko raport, bez zapisu). Z tabeli czytam wiersze FacebookAds, Facebook Catalog, Facebook oraz Podsumowanie: wejścia, kliknięcia, zamówienia zarejestrowane i wykonane. Zamówienia ze strony liczę jako sumę minus „Panel” i „Allegro”. **Zrzut 19.**
+2. **Menedżer reklam**: `adsmanager.facebook.com/adsmanager/manage/campaigns?act=<konto>&business_id=<id>&date=<od>_<do+1>&insights_date=<od>_<do+1>&sort=spend~0`. Koniec zakresu w `date` jest **wyłączny**. Tabela renderuje tylko kolumny widoczne na ekranie, więc czytam dwoma przebiegami z małą liczbą kolumn:
+   - `columns=name,spend,impressions,actions:link_click,actions:landing_page_view,actions:omni_add_to_cart`;
+   - `columns=name,attribution_setting,spend,actions:omni_purchase` z `attribution_windows=default,1d_click,7d_click,1d_view,1d_ev` (podział na kliknięcie i samo obejrzenie). **Zrzut 20.**
+3. **Menedżer zdarzeń**: z wykresu „Zakup” (C3) sumuję po dniach (czas PL) `serverProcessedCount`, `browserProcessedCount` i `metaHostedCapiProcessedCount` w tym samym okresie i porównuję z liczbą zamówień ze strony.
+4. Ocena:
+   - zgodność kliknięć z wejściami (oznaczanie ruchu działa lub nie);
+   - zakupy Meta wobec IdoSell, z wyraźnym rozdzieleniem zakupów po samym obejrzeniu reklamy. IdoSell liczy ostatnie źródło wejścia, więc zakupy po kliknięciu w ciągu 7 dni to górna granica, a IdoSell dolna;
+   - zdarzenia zakupu w Meta wyraźnie powyżej liczby zamówień (np. > 1,5×) → status „problem”: duplikaty lub dodatkowe źródła (ETT, „API konwersji z Meta”). Purchase z serwera IdoSell standardowo przychodzi z `<domena>/graphql/v1/` z `order_id` `EII1|…` — to nie jest obce źródło (dresowka.pl i sportwheels.pl, 2026-10-28). Nadwyżka serwer/zamówienia ok. 1,9–2,5× wystąpiła w obu sklepach.
+   Wynik opisuję w osobnej sekcji `dane.json` i w tabeli E w `RAPORT_wewnetrzny.md`.
+
 ## D. Raport
 1. `raporty/<domena>_<data>/dane.json` (struktura jak we wzorcu): `sklep`, `data`, `okres`, `kolejna_weryfikacja` (+90 dni), `podsumowanie` (3–4 punkty), `sekcje` (tytuł, `status`: ok / uwaga / problem, `wynik`, `opis`, `zrzuty`, opcjonalnie `rekomendacja`), `dzialania` (priorytet, działanie, kto), `komentarz_clickup` (dokładnie 4 zdania). Język nietechniczny, bez wewnętrznych identyfikatorów i bez analizy parametrów.
-2. W KATALOGU: `python ../narzedzia/raport_docx.py "raporty/<domena>_<data>"` → `Raport_Meta_<domena>_<data>.docx` + `komentarz_clickup.txt`.
-3. `raporty/<domena>_<data>/RAPORT_wewnetrzny.md` (jak we wzorcu): identyfikatory, tabele A/B/C, stan bazowy proporcji, parametry vs sterownik, proponowane zmiany (gdzie, przed → po, status).
+2. W KATALOGU: `python ../../../_wspolne/raport_docx.py "raporty/<domena>_<data>"` → `Raport_Meta_<domena>_<data>.docx` + `komentarz_clickup.txt`.
+3. `raporty/<domena>_<data>/RAPORT_wewnetrzny.md` (jak we wzorcu): identyfikatory, tabele A/B/C (oraz E, jeśli użytkownik ją zlecił), stan bazowy proporcji, parametry vs sterownik, proponowane zmiany (gdzie, przed → po, status).
 4. Zamykam kartę. Podsumowanie dla użytkownika: co w normie, co do poprawy, propozycje zmian do decyzji, ścieżki plików i treść komentarza do ClickUp.

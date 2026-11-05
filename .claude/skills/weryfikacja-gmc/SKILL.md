@@ -5,7 +5,7 @@ description: Okresowa (co 90 dni) diagnostyka Google Merchant Center sklepu IdoS
 
 # Diagnostyka IdoSell ↔ Google Merchant Center
 
-KATALOG: `SI/Przeglądarka IdoSell/Optymalizacja_Integracji/GMC/` (narzędzia wspólne z FB: `../narzedzia/`). Specyfikacja: `ANALIZA_GMC.md`.
+KATALOG: `SI/02_Serwisy/GMC/Weryfikacja_GMC/` (narzędzia wspólne z FB: `../../../_wspolne/` (= `SI/_wspolne/`)). Specyfikacja: `ANALIZA_GMC.md`.
 Wzorzec wyniku: `raporty/pewienpan.pl_2026-10-21/` (`dane.json`, `RAPORT_wewnetrzny.md`).
 
 ## Zasady (zawsze)
@@ -23,6 +23,7 @@ Wzorzec wyniku: `raporty/pewienpan.pl_2026-10-21/` (`dane.json`, `RAPORT_wewnetr
 - **Pełna analiza dotyczy konta z większą liczbą produktów.** Drugie konto sprawdzam skrótowo: weryfikacja, liczba produktów, czy źródło działa.
 - Każde konto przed analizą: `/mc/merchantprofile/businessinfo` → „Twój sklep internetowy” musi mieć status **Zweryfikowany**. Bez tego statusu konto opisuję jako nieużywane i nie analizuję dalej.
 - CSS konta odczytuję z przełącznika kont (klik w nazwę konta u góry): „Usługa porównywania cen: …”. Wpisanie fragmentu domeny w „Wyszukaj firmę” pokazuje wszystkie dostępne konta sklepu.
+- **Brak linków w zadaniu:** przełącznik pokazuje tylko konta główne, a podkonta kont zbiorczych są niewidoczne. W przełączniku wybieram konto zbiorcze („Brands Manago Google” albo „IdoMods CSS”), otwieram „Konta” (`/mc/accounts`, lista alfabetyczna po 10 wierszy) i odczytuję ID podkonta (ustalenie z 2026-10-28, tayma-group.sk).
 
 ## Technika Claude in Chrome
 - W GMC i w panelu IdoSell `screenshot`/`find`/`get_page_text` się zawieszają. Używam `javascript_tool` (krótkie wywołania, czekanie przez `await new Promise(r=>setTimeout(r,N))`) i `computer.left_click` po współrzędnych z `getBoundingClientRect()`.
@@ -30,8 +31,9 @@ Wzorzec wyniku: `raporty/pewienpan.pl_2026-10-21/` (`dane.json`, `RAPORT_wewnetr
 - Filtr blokuje query string i base64 (`[BLOCKED: …]`): z linków zwracam tylko `pathname` i nazwy parametrów. Nie obchodzę filtra.
 - GMC ładuje tabele z opóźnieniem: po nawigacji czekam 8–12 s, zanim uznam listę za pustą.
 - **Zrzuty**: karta MCP musi być **aktywną kartą widocznego okna**. Jeśli `zrzut.py` nie znajduje okna, proszę użytkownika o przełączenie na kartę „[CLAUDE] …”. Przed zrzutem: `document.title='[CLAUDE] '+document.title.replace(/^\[CLAUDE\] /,'')`, potem w KATALOGU:
-  `python ../narzedzia/zrzut.py "[claude]" "raporty/<domena>_<data>/zrzuty/NN_opis.png" --obszar strona`
+  `python ../../../_wspolne/zrzut.py "[claude]" "raporty/<domena>_<data>/zrzuty/NN_opis.png" --obszar strona`
   Podgląd roboczy zapisuję do scratchpada i oglądam przez Read.
+- **Panel IdoSell: imię i nazwisko zalogowanego** (lewy dolny róg „Zalogowany jako”, tytuł karty) to dane osobowe. Przed każdym zrzutem zastępuję je przez TreeWalker po węzłach tekstowych (`[użytkownik]`) i nadpisuję `document.title`, a potem sprawdzam zrzut przez Read. Maskowanie znika po każdej nawigacji.
 
 ## 0. Start
 1. `clickup_get_task` (z `include: ["description"]`) → domena (pierwszy człon nazwy) i linki kont. Brak obu linków → pytam.
@@ -42,6 +44,8 @@ Wzorzec wyniku: `raporty/pewienpan.pl_2026-10-21/` (`dane.json`, `RAPORT_wewnetr
 1. `/mc/merchantprofile/businessinfo` — weryfikacja witryny. **Zrzut 04.**
 2. `/mc/products/diagnostics/accountissues` — problemy z kontem i zasadami.
 3. `/mc/products/diagnostics/history` — liczby: zatwierdzone / ograniczone / niezatwierdzone / w trakcie, wykres 28 dni, a w panelu bocznym „Problemy wymagające uwagi (N)” (rozwinąć `expand_more`: nazwa, liczba produktów). **Zrzut 05.** Zakładka „Wymaga uwagi” (`/mc/products/diagnostics`) bywa pusta mimo problemów, dlatego liczy się panel boczny.
+   **Trend liczby produktów (zawsze):** otwieram też okres ok. 60 dni (`&timePeriod=<RRRR-MM-DD>%2C<RRRR-MM-DD>&marketingMethod=1`) i robię zrzut wykresu (**Zrzut 11**). Wykres to canvas, więc wartości odczytuję z obrazu, a dzień zmiany ustalam z historii wersji źródła (A5, łączna liczba produktów w wersji). Nagły spadek lub wzrost (> 20%) to główne ustalenie raportu. Jeśli w tym samym czasie zmieniły się też inne feedy porównywarek w IdoSell, to najpewniej zmiana oferty po stronie klienta: w raporcie proszę klienta o potwierdzenie, zamiast szukać błędu w feedzie (ustalenie z 2026-10-28, militarialodz.pl).
+   **Asortyment ograniczony zasadami Google** (militaria, broń, noże, gaz, treści dla dorosłych): różnica „Eksportowane” vs „Wyeksportowane” w IdoSell i produkty „Znalezione przez Google” wynikające z filtra w XSLT są zamierzone. Nie traktuję ich jako problemu, tylko odnotowuję.
    Typowe: obraz < 500×500, `unit_pricing_measure`, automatyczne korekty ceny i dostępności (sygnał rozjazdu godzin, patrz A5), niska jakość zdjęć. Pobranie listy produktów to pobranie pliku, więc robię je tylko za zgodą.
 4. `/mc/products/sources` — „Znalezione przez Google” (produkty spoza feedu), **Źródła podstawowe** (nazwa, typ, liczba produktów, ostatnia aktualizacja; źródło „Merchant Center / Dodano w Merchant Center” = produkty ręczne). **Zrzut 06.** Zakładka „Źródła dodatkowe” (czekać ~12 s). **Zrzut 06b.**
 5. Szczegóły źródła (`/mc/products/sources/detail`, klik w nazwę): „Wyświetl historię aktualizacji” → lista wersji w `[aria-haspopup]` → dla każdej wersji wynik („Zaktualizowano produkty”, „Nie znaleziono problemów”, liczba nowych). Pętlę po 10 wersjach uruchamiam w tle (`(async()=>{…})()` do `window.__v`) i czytam osobnym wywołaniem, bo dłuższe niż 45 s zawiesza `javascript_tool`. Bez źródeł dodatkowych zakładki „podstawowe/dodatkowe” się nie pojawiają. Zakładka „Konfiguracja źródła danych”: harmonogram, URL pliku (tylko host + `pathname`), kraje, metody marketingowe. Zakładka „Reguły atrybutów”.
@@ -68,7 +72,7 @@ Wzorzec wyniku: `raporty/pewienpan.pl_2026-10-21/` (`dane.json`, `RAPORT_wewnetr
 1. Natywny feed Google: `/panel/config-pricecomparers.php?return=google_shopping` (zwykła lista porównywarek go nie pokazuje): status, „wygenerowany o godzinie”, eksportowane / wyeksportowane. **Zrzut 01.**
    **Model `id` w GMC:** do GMC wysyłamy każdy rozmiar jako osobny towar (`id` = identyfikator produktu z panelu + kod rozmiaru). Do Meta wysyłamy jeden item na produkt (`id` = sam identyfikator z panelu). Dlatego liczba pozycji w GMC i w feedzie Google może być kilka razy większa niż liczba produktów w sklepie i w katalogu Meta. To nie jest duplikacja ani błąd. Liczby produktów porównuję z „Eksportowane towary” (produkty), a nie z katalogiem Meta. Feed uzupełniający („[BM] Google ads …”) jest na zwykłej liście `/panel/config-pricecomparers.php`.
 2. „Wybierz → Ustawienia”: harmonogram (`select[name=pricecomparers_generate_hour]`, `pricecomparers_generate_intervals`), opcje „Eksportuj”, informacja o ograniczeniu dostępu do adresów IP serwisu.
-3. „Wybierz → Historia pobrań” dla obu feedów: strony ładują się AJAX-em, więc przechodzę je wszystkie pętlą w tle (`następna >`, porównanie pierwszego wiersza). Liczę pobrania Google (hosty 173.194 / 172.217 / 74.125 / 172.253), brakujące dni, „Nieudana próba” i ich hosty. **Zrzut 02.**
+3. „Wybierz → Historia pobrań” dla obu feedów: strony ładują się AJAX-em, więc przechodzę je pętlą w tle (`następna >`, porównanie pierwszego wiersza), ale czytam **co piątą stronę (1, 6, 11, …)**, a dopiero gdy w próbce trafię na problem (nieudana próba, obcy host, luka), czytam wszystkie strony (ustalenie z użytkownikiem 2026-10-27). W raporcie zaznaczam, czy wynik pochodzi z próbki. Liczę pobrania Google (hosty 173.194 / 172.217 / 74.125 / 172.253), brakujące dni, „Nieudana próba” i ich hosty. **Zrzut 02.**
 4. XSLT naszego feedu (`textarea[name=driver_body]` > 30 000 zn. do `window.__xsl`): zmienne `<xsl:variable>` (koszty dostawy, progi, `*_nazwa_w_panelu`) i lista `xsl:element name="g:…"`.
 5. Cennik: `/panel/config-shippingprofiles.php` → „Profile dostaw [wybierz]” → `[edytuj]` profilu (kliknąć przez `setTimeout(()=>a.click(),100)`, bo strona przeładowuje się w trakcie). Tabela: kurier, za pobraniem / z przedpłatą (minimalna wartość, koszt, darmowe od). **Zrzut 03.** „Smile” z minimalną wartością X i kosztem 0 oznacza darmową dostawę od X.
 6. Parametry: `/panel/parameters.php`, rozwinąć `ul.list-group > li.menu_li_item a.showChildren` (pauza 500 ms), nazwa z `div.showMenuSub.parameter`, wartości z `ul li`. Mapuję je na atrybuty Google według [specyfikacji danych produktów](https://support.google.com/merchants/answer/7052112?hl=pl). Ściąga z limitami i zakazami jest w `specyfikacja_google.md` w katalogu skilla, a przed powołaniem się na termin lub limit sprawdzam go przez WebFetch. Sprawdzam dwie rzeczy:
@@ -91,7 +95,7 @@ Porównuję trzy źródła: cennik IdoSell, `g:shipping` w feedzie i zasady kont
 
 ## D. Raport
 1. `raporty/<domena>_<data>/dane.json` jak we wzorcu, z polem `"platforma": "Google Merchant Center"`; `sekcje` zwykle: Feed w IdoSell / Pobieranie i przetwarzanie / Stan produktów / Koszty dostawy / Możliwości rozbudowy feedu. Język nietechniczny, bez identyfikatorów, bez analizy parametrów; `komentarz_clickup` = dokładnie 4 zdania.
-2. W KATALOGU: `python ../narzedzia/raport_docx.py "raporty/<domena>_<data>"` → `Raport_GMC_<domena>_<data>.docx` + `komentarz_clickup.txt`.
+2. W KATALOGU: `python ../../../_wspolne/raport_docx.py "raporty/<domena>_<data>"` → `Raport_GMC_<domena>_<data>.docx` + `komentarz_clickup.txt`.
 3. `RAPORT_wewnetrzny.md`: identyfikatory i CSS, tabele IdoSell / GMC, zmienne XSLT, parametry → atrybuty, proponowane zmiany (gdzie, przed → po, status).
 4. Zamykam kartę. Podsumowanie dla użytkownika: co w normie, co do poprawy, zmiany do decyzji, ścieżki plików i komentarz.
 

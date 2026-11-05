@@ -191,7 +191,7 @@ wszystkich znalezionych wyników.
 ## 4. Wzorzec pracy w tym folderze
 
 ```
-SI/API IdoSell/
+SI/02_Serwisy/IdoSell/
 ├── DOKUMENTACJA_API.md          <- ten plik
 ├── _wspolne/
 │   ├── idosell_client.py        <- klient HTTP wielokrotnego użytku
