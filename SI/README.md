@@ -29,6 +29,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Migracja klientów | `02_Serwisy/IdoSell/Migracja_klientow` | gotowe | konwersja eksportu klientów do importu IdoSell |
 | Aktualizacja towarów (Empik) | `02_Serwisy/IdoSell/Aktualizacja_towarow` | gotowe | nazwy i opisy dla serwisu (magnicreatix.pl) |
 | Walidacja aktualizacji API | `02_Serwisy/IdoSell/API_walidacja_aktualizacji` | gotowe (2026-09) | testy zmian Admin API v8; dokumentacja: `02_Serwisy/IdoSell/DOKUMENTACJA_API.md` |
+| Test zdarzeń po OSCOP | `02_Serwisy/IdoSell/Test_zdarzen_OSCOP` | w toku (2026-11-05) | zdarzenia Google/Meta/TikTok w nowym procesie zamówienia; raporty `raporty/<domena>_<data>/` (megadron.pl) |
 | Weryfikacja FB (skill) | `02_Serwisy/Facebook/Weryfikacja_FB` | gotowe, cykl co 90 dni | feed, katalog, piksel/CAPI; raporty `raporty/<domena>_<data>/` |
 | Weryfikacja GMC (skill) | `02_Serwisy/GMC/Weryfikacja_GMC` | gotowe, cykl co 90 dni | konto, produkty, feed, dostawy; raporty `raporty/<domena>_<data>/` |
 | Piksel ChatGPT (dodatki IdoSell) | `02_Serwisy/OpenAI/Piksel_ChatGPT` | gotowe (2026-11-02) | dodatki HTML piksela `oaiq` (butyolivier.pl) + testy |
@@ -40,6 +41,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Amazon: katalog | `02_Serwisy/Amazon/Katalog` | w toku | szablon TOY_BUILDING_BLOCK (magnicreatix.pl) |
 | Erli | `02_Serwisy/Erli` | wiedza | zamówienia Erli ↔ IdoSell (zooart) |
 | n8n + ClickUp | `02_Serwisy/n8n` | w toku | scenariusz „ClickUp - SUBTASK”, dokumentacja |
+| Zadania ClickUp (skill `/zadanie`) | `02_Serwisy/ClickUp/Zadania_ClickUp` | gotowe (2026-11-05) | link ClickUp → analiza → folder → nowe okno z Claude |
 | Shoparena | `02_Serwisy/Shoparena` | — | folder na przyszłe projekty |
 | summonFeed — generator | `archiwum/SummonFeed/Generator` | archiwum (2026-11-05) | stary generator z klocków; wzorce linków nadal używane przez skill |
 
