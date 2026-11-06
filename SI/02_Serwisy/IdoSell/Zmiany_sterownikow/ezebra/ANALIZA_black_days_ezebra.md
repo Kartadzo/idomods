@@ -1,0 +1,79 @@
+# ANALIZA: atrybut „Black Days” w feedach eZebra (Meta, RTB House, WP/Onet)
+Zadanie ClickUp: [eZebra - feed - black friday](https://app.clickup.com/t/1ammhmkcme5) · Klient: ezebra.pl · Data: 2026-11-06
+Termin: 09.11.2026 (deadline 13.11) · szacunek 1 h · priorytet wysoki
+
+## Cel
+Agencje mają oznaczać akcję Black Friday. Do wszystkich feedów Meta (PL i zagraniczne), feedu RTB House i feedu wydawców (WP, Onet) dodać atrybut „Black Days”. Jego wartością jest **wartość parametru o ID 91508**, czyli ID nazwy parametru „Black Friday” w panelu.
+
+## Dane wejściowe i wyjściowe
+Sterowniki są w `xslt/E/ezebra/`. Pliki lokalne mogą być nieaktualne względem panelu.
+
+| Feed | Plik lokalny | Uwagi |
+|---|---|---|
+| Meta PL | `PL/ezebrapl_fbAds.xml` | `g:custom_label_1` zajęte (etykiety marketingowe) |
+| Meta AT | `AT/ezebraat_fbAds.xml` | `custom_label_1` zajęte |
+| Meta DE | `DE/ezebrade_fbAds.xml` | `custom_label_1` zajęte |
+| Meta UA | `UA/ezebraua_fbAds.xml` | `custom_label_1` zajęte |
+| Meta UK | `UK/ezebrauk_fbAds.xml` | `g:custom_label_1` i `g:custom_label_2` zajęte |
+| RTB House | `PL/ezebra_ceneo_RTB.xml` | potwierdzone przez użytkownika |
+| WP + Onet (wydawcy) | `PL/ezebrapl_WP.xml` | serwis PL, ID 10024; jeden feed dla obu wydawców |
+
+ID serwisów Meta i RTB w panelu odczytam w kroku 1.
+
+**Parametr 91508 „Black Friday”** (według eksportu IOF z 02.09, który mógł się zdezaktualizować):
+- wartości: 91509 „Black Friday kosmetyki do makijażu” i 91647 „Najlepsze okazje na Black Friday”;
+- w eksporcie występował w 276 miejscach;
+- ma tłumaczenie `ger`.
+
+**Wyjście:**
+- poprawione sterowniki w `xslt/E/ezebra/<kraj>/`, do ręcznego wgrania w panelu;
+- poprzednie wersje w `old/` z datą;
+- `komentarz_clickup.txt` w tym folderze.
+
+## Plan
+1. **Panel IdoSell** (Claude in Chrome, tylko odczyt):
+   - aktualne wartości parametru 91508 i ich tłumaczenia (DE/AT/UK/UA);
+   - lista serwisów: Meta PL/AT/DE/UA/UK, RTB House, WP (10024), czyli ID i nazwy;
+   - sterownik każdego serwisu: tylko odczyt treści `textarea`, bez zapisu.
+2. **Zgodność wersji lokalnych z panelem.** Treść z panelu porównuję z plikiem lokalnym.
+   - Zgodne: zostawiam.
+   - Różne: plik lokalny przenoszę do `old/<nazwa>_<RRRR-MM-DD>.xml`, a wersję z panelu zapisuję jako aktualną.
+   - Zapisuję listę różnic.
+3. **Zmiana w sterownikach** (na wersji z panelu): atrybut z wartości parametru 91508, dopasowanie po `@id` parametru.
+   - **Meta:** `custom_label_3`, bo to pole jest wolne we wszystkich pięciu feedach. W PL i UK z prefiksem `g:`, jak pozostałe pola.
+   - **RTB i WP:** pole w formacie danego feedu, np. `<black_days>` lub atrybut w bloku parametrów. Format ustalę po odczycie struktury.
+   - Brak parametru: pole pomijam.
+   - Przed zmianą kopia do `old/` z datą.
+4. **Weryfikacja i oddanie:**
+   - lxml na aktualnym eksporcie IOF: kompilacja, liczba produktów z atrybutem, przykładowe wartości;
+   - pliki do ręcznego wgrania i `komentarz_clickup.txt` z listą feedów i nazwą pola dla agencji.
+
+## Założenia
+- Wartość pola to **nazwa wartości parametru** w języku feedu, z rezerwą PL, gdy brak tłumaczenia. Atrybut nazywa się „Black Days” w znaczeniu opisu dla agencji, a w Meta jest to `custom_label_3`.
+- Wartości parametrów eZebra mogą zawierać HTML i style (jak parametr „RAMKA”), więc przed użyciem sprawdzam je i w razie potrzeby oczyszczam.
+- Produkt z kilkoma wartościami: wartości łączę przecinkiem, maksymalnie 100 znaków.
+- Do zrobienia: sprawdzić, czy parametr jest na poziomie produktu (`parameters/parameter`), czy w `sizes`.
+- Niczego nie zapisuję w panelu. Wgranie sterowników robi użytkownik.
+
+## Otwarte pytania
+- Czy w Meta ma być `custom_label_3`, czy inne pole? Decyzja po kroku 1.
+- Czy w feedach zagranicznych wartość ma być tłumaczona, czy zawsze PL, czy na sztywno „Black Days”? Domyślnie tłumaczenie.
+- Czy w RTB i WP nazwa pola ma być `black_days`? Do potwierdzenia po odczycie struktury feedu.
+
+## Zasady sesji
+- ClickUp tylko do odczytu. Komentarz zapisuję w `komentarz_clickup.txt`, wkleja go użytkownik.
+- Git: gałąź `black_days_ezebra` (wariant „nowy problem”). `/zapisz` i `/zamknij` wykonuje użytkownik, sesja realizująca nie commituje.
+  - Na gałąź przeszły też niezacommitowane przenosiny 6 plików `xslt/E/ezebra/PL` → `PL/old/` z `main`.
+- Przed kodem: potwierdzenie tej analizy przez użytkownika (globalny CLAUDE.md).
+- Przeglądarka: tak (panel IdoSell eZebra), jedna sesja z Claude in Chrome naraz.
+  - Panel nie osiąga `document_idle`, więc używam `javascript_tool`.
+  - Sterownik czytam z `textarea` okna „Ustawienia” serwisu, okno zamykam nawigacją, bez zapisu.
+  - Nie klikam „Zapisz” ani „Podgląd wyników działania sterownika”.
+- Zamówienie testowe i sprawdzanie zdarzeń: nie dotyczy.
+
+## Stan
+- 2026-11-06: analiza wstępna (sesja /zadanie); poprawki użytkownika:
+  - wartość = wartość parametru;
+  - WP i Onet = 10024;
+  - RTB = `ezebra_ceneo_RTB.xml`;
+  - krok porównania z panelem przed zmianą.

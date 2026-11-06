@@ -30,6 +30,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Aktualizacja towarów (Empik) | `02_Serwisy/IdoSell/Aktualizacja_towarow` | gotowe | nazwy i opisy dla serwisu (magnicreatix.pl) |
 | Walidacja aktualizacji API | `02_Serwisy/IdoSell/API_walidacja_aktualizacji` | gotowe (2026-09) | testy zmian Admin API v8; dokumentacja: `02_Serwisy/IdoSell/DOKUMENTACJA_API.md` |
 | Test zdarzeń po OSCOP | `02_Serwisy/IdoSell/Test_zdarzen_OSCOP` | w toku (2026-11-05) | zdarzenia Google/Meta/TikTok w nowym procesie zamówienia; raporty `raporty/<domena>_<data>/` (megadron.pl) |
+| Zmiany sterowników XSLT (eZebra) | `02_Serwisy/IdoSell/Zmiany_sterownikow/ezebra` | w toku (2026-11-06) | atrybut „Black Days” (parametr 91508) w feedach Meta, RTB, WP/Onet; sterowniki w `xslt/E/ezebra/` |
 | Weryfikacja FB (skill) | `02_Serwisy/Facebook/Weryfikacja_FB` | gotowe, cykl co 90 dni | feed, katalog, piksel/CAPI; raporty `raporty/<domena>_<data>/` |
 | Weryfikacja GMC (skill) | `02_Serwisy/GMC/Weryfikacja_GMC` | gotowe, cykl co 90 dni | konto, produkty, feed, dostawy; raporty `raporty/<domena>_<data>/` |
 | Piksel ChatGPT (dodatki IdoSell) | `02_Serwisy/OpenAI/Piksel_ChatGPT` | gotowe (2026-11-02) | dodatki HTML piksela `oaiq` (butyolivier.pl) + testy |
