@@ -58,3 +58,4 @@ Klient uruchomił w IdoSell nowy OSCOP (proces składania zamówienia). Sprawdza
 ## Stan
 - 2026-11-05: analiza wstępna (sesja /zadanie).
 - 2026-11-05: test wykonany (DevTools MCP, konto testowe). Wynik: Google Ads, Meta i TikTok działają na wszystkich krokach, zamówienie testowe 154136 do anulowania. Raport: `raporty/megadron.pl_2026-11-05/RAPORT_wewnetrzny.md`, komentarz: `komentarz_clickup.txt`. Panelu IdoSell, Google Ads i TikTok Events Managera nie sprawdzałem (niepotrzebne do odpowiedzi).
+- 2026-11-06: powtórny test na nowym OSCOP (`place-order.html`), zamówienie 154231 (przelew zwykły) do anulowania. Uwaga o TikTok wycofana, mapowanie w GTM poprawne. Test z 5.11 szedł starą ścieżką `order1`/`order2`.
