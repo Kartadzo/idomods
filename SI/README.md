@@ -38,7 +38,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Śledzenie konwersji Google Ads | `02_Serwisy/Google_Ads/Sledzenie_konwersji` | gotowe (2026-10-26) | raport wycieraczkidoszyb |
 | Base: powiązania (ivemax) | `02_Serwisy/Base/Powiazania_produktow/ivemax` | wstrzymane (2026-10-21) | czeka na eksport z wFirmy |
 | Base: powiązania (romanetka) | `02_Serwisy/Base/Powiazania_produktow/romanetka` | wstrzymane (2026-10-27) | czeka na decyzję klienta; analiza w `02_Serwisy/Base/Analiza/` |
-| Amazon: katalog | `02_Serwisy/Amazon/Katalog` | w toku | szablon TOY_BUILDING_BLOCK (magnicreatix.pl) |
+| Amazon: katalog | `02_Serwisy/Amazon/Katalog` | w toku — plik testowy (2026-11-06) | `amazon_szablon.py`: eksport XML IdoSell → flat file .xlsm, konfiguracja per klient (`MagniCreatix/konfiguracja.json`); czeka na dane zgodności od klienta |
 | Erli | `02_Serwisy/Erli` | wiedza | zamówienia Erli ↔ IdoSell (zooart) |
 | n8n + ClickUp | `02_Serwisy/n8n` | w toku | scenariusz „ClickUp - SUBTASK”, dokumentacja |
 | Zadania ClickUp (skill `/zadanie`) | `02_Serwisy/ClickUp/Zadania_ClickUp` | gotowe (2026-11-05) | link ClickUp → analiza → folder → nowe okno z Claude |

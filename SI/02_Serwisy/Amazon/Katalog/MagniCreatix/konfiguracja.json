@@ -1,0 +1,19 @@
+{
+    "klient": "MagniCreatix",
+    "szablon": "TOY_BUILDING_BLOCK.xlsm",
+    "typ_produktu": "TOY_BUILDING_BLOCK",
+    "marka": "MAGNICREATIX",
+    "slowa_wielkie": ["STEAM", "KIDIBOTS", "XL", "XXL"],
+    "punktor_lego": "Kompatybilne z klockami LEGO®",
+    "kraj_domyslny": "Polska",
+    "stan": "Nowy nowy",
+    "rodzaj_klockow": "Klocek magnetyczny do zabawy",
+    "pomin_oferte_dla_nowych": true,
+    "sku_czesciowa_aktualizacja": ["9-uniw", "10-uniw", "12-uniw"],
+    "id_z_bateriami": ["19", "48"],
+    "parametry_wymiarow": {
+        "length": "Długość towaru w centymetrach",
+        "width": "Szerokość towaru w centymetrach",
+        "height": "Wysokość towaru w centymetrach"
+    }
+}
