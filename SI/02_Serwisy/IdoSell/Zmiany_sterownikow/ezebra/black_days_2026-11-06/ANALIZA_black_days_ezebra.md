@@ -27,8 +27,8 @@ ID serwisów Meta i RTB w panelu odczytam w kroku 1.
 
 **Wyjście:**
 - poprawione sterowniki w `xslt/E/ezebra/<kraj>/`, do ręcznego wgrania w panelu;
-- poprzednie wersje w `old/` z datą;
-- `komentarz_clickup.txt` w tym folderze.
+- poprzednie wersje w `xslt/E/ezebra/<kraj>/old/` z datą;
+- `komentarz_clickup.txt` w tym folderze (`Zmiany_sterownikow/ezebra/black_days_2026-11-06/`).
 
 ## Plan
 1. **Panel IdoSell** (Claude in Chrome, tylko odczyt):
@@ -37,26 +37,26 @@ ID serwisów Meta i RTB w panelu odczytam w kroku 1.
    - sterownik każdego serwisu: tylko odczyt treści `textarea`, bez zapisu.
 2. **Zgodność wersji lokalnych z panelem.** Treść z panelu porównuję z plikiem lokalnym.
    - Zgodne: zostawiam.
-   - Różne: plik lokalny przenoszę do `old/<nazwa>_<RRRR-MM-DD>.xml`, a wersję z panelu zapisuję jako aktualną.
+   - Różne: plik lokalny przenoszę do `xslt/E/ezebra/<kraj>/old/<nazwa>_<RRRR-MM-DD>.xml`, a wersję z panelu zapisuję jako aktualną.
    - Zapisuję listę różnic.
 3. **Zmiana w sterownikach** (na wersji z panelu): atrybut z wartości parametru 91508, dopasowanie po `@id` parametru.
-   - **Meta:** `custom_label_3`, bo to pole jest wolne we wszystkich pięciu feedach. W PL i UK z prefiksem `g:`, jak pozostałe pola.
+   - **Meta:** `custom_label_4`. Wolne są pola 0, 3 i 4; pole 3 zajmie cena omnibus z równoległego zadania (`../cena_omnibus_2026-11-06/`). W PL i UK z prefiksem `g:`, jak pozostałe pola.
    - **RTB i WP:** pole w formacie danego feedu, np. `<black_days>` lub atrybut w bloku parametrów. Format ustalę po odczycie struktury.
    - Brak parametru: pole pomijam.
-   - Przed zmianą kopia do `old/` z datą.
+   - Przed zmianą kopia do `xslt/E/ezebra/<kraj>/old/` z datą.
 4. **Weryfikacja i oddanie:**
    - lxml na aktualnym eksporcie IOF: kompilacja, liczba produktów z atrybutem, przykładowe wartości;
    - pliki do ręcznego wgrania i `komentarz_clickup.txt` z listą feedów i nazwą pola dla agencji.
 
 ## Założenia
-- Wartość pola to **nazwa wartości parametru** w języku feedu, z rezerwą PL, gdy brak tłumaczenia. Atrybut nazywa się „Black Days” w znaczeniu opisu dla agencji, a w Meta jest to `custom_label_3`.
+- Wartość pola to **nazwa wartości parametru** w języku feedu, z rezerwą PL, gdy brak tłumaczenia. Atrybut nazywa się „Black Days” w znaczeniu opisu dla agencji, a w Meta jest to `custom_label_4`.
 - Wartości parametrów eZebra mogą zawierać HTML i style (jak parametr „RAMKA”), więc przed użyciem sprawdzam je i w razie potrzeby oczyszczam.
 - Produkt z kilkoma wartościami: wartości łączę przecinkiem, maksymalnie 100 znaków.
 - Do zrobienia: sprawdzić, czy parametr jest na poziomie produktu (`parameters/parameter`), czy w `sizes`.
 - Niczego nie zapisuję w panelu. Wgranie sterowników robi użytkownik.
 
 ## Otwarte pytania
-- Czy w Meta ma być `custom_label_3`, czy inne pole? Decyzja po kroku 1.
+- W Meta `custom_label_4` (ustalone 2026-11-06 przy zadaniu omnibus: pole 3 = omnibus); do potwierdzenia z klientem w komentarzu.
 - Czy w feedach zagranicznych wartość ma być tłumaczona, czy zawsze PL, czy na sztywno „Black Days”? Domyślnie tłumaczenie.
 - Czy w RTB i WP nazwa pola ma być `black_days`? Do potwierdzenia po odczycie struktury feedu.
 
@@ -72,6 +72,7 @@ ID serwisów Meta i RTB w panelu odczytam w kroku 1.
 - Zamówienie testowe i sprawdzanie zdarzeń: nie dotyczy.
 
 ## Stan
+- 2026-11-06: przeniesiono do podfolderu `black_days_2026-11-06/` (zasada: osobny folder `<element>_<data>` na zadanie); pole Meta zmienione na `custom_label_4`; kopie sterowników tylko w `xslt/E/ezebra/<kraj>/old/`. Realizacja w poniedziałek 09.11 razem z zadaniem omnibus (wspólne kroki 1–2).
 - 2026-11-06: analiza wstępna (sesja /zadanie); poprawki użytkownika:
   - wartość = wartość parametru;
   - WP i Onet = 10024;
