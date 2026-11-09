@@ -977,7 +977,6 @@
       <!-- 03.03.2026 MD -->
       <!-- Informacje o produkcie -->
       <xsl:if test="parameters/parameter[@hide = 'n' 
-                    and @distinction = 'y' 
                     and not(contains($informacje_wyroznione_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|')))
                     and not(contains($gender_nazwa_w_panelu, @name))
                     and not(contains($age_group_nazwa_w_panelu, @name))
@@ -990,7 +989,6 @@
                     ]/@name">
          <xsl:variable name='detail_get' 
                        select="parameters/parameter[@hide = 'n' 
-                               and @distinction = 'y' 
                                and not(contains($informacje_wyroznione_nazwa_w_panelu, concat('|',translate(@name, $upperLetters, $lowerLetters),'|')))
                                and not(contains($gender_nazwa_w_panelu, @name))
                                and not(contains($age_group_nazwa_w_panelu, @name))
