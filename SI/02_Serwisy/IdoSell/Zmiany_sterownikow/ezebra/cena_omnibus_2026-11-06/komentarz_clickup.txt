@@ -1,0 +1,6 @@
+Wdrożone we wszystkich 5 feedach Meta (PL, UK, DE, AT, UA):
+
+- custom_label_3 = cena omnibus (najniższa cena z ostatnich 30 dni), w walucie feedu: PL „49,99 zł”, DE/AT „49,99 €”, UK „£49.99”, UA „49,99 грн”. Gdy sklep nie podaje ceny omnibus dla produktu, pole jest pominięte.
+- custom_label_4 = Black Days: wartości parametru „Black Friday” (ID 91508) w języku feedu, kilka wartości po przecinku (max 100 znaków). Produkty bez tego parametru nie mają pola.
+
+Pola będą widoczne w katalogu po najbliższym pobraniu feedu. Prosimy o potwierdzenie formatu waluty w UA (грн) i UK (£49.99) — w razie potrzeby zmienimy na kod waluty.

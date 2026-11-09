@@ -335,6 +335,46 @@
                                 <!-- usunięcie wiodącego ", " i obcięcie do limitu 100 znaków -->
                                 <custom_label_1><xsl:value-of select="substring(substring($etykiety, 3), 1, 100)"/></custom_label_1>
                             </xsl:if>
+							
+                            <!-- CUSTOM_LABEL_3 - cena omnibus (najniższa cena z 30 dni) w walucie feedu, np. 49,99 грн (cena_omnibus_2026-11-06) -->
+                            <xsl:variable name="omnibus_cl3">
+                              <xsl:choose>
+                                <xsl:when test="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = current()/@id]/@gross &gt; 0">
+                                  <xsl:value-of select="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = current()/@id]/@gross"/>
+                                </xsl:when>
+                                <xsl:when test="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = '0']/@gross &gt; 0">
+                                  <xsl:value-of select="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = '0']/@gross"/>
+                                </xsl:when>
+                                <xsl:otherwise>0</xsl:otherwise>
+                              </xsl:choose>
+                            </xsl:variable>
+                            <xsl:if test="number($omnibus_cl3) &gt; 0">
+                              <xsl:variable name="omnibus_waluta" select="../../@currency"/>
+                              <custom_label_3>
+                                 <xsl:value-of select="translate(format-number($omnibus_cl3, '#.00'), '.', ',')"/>
+                                 <xsl:choose>
+                                    <xsl:when test="$omnibus_waluta = 'UAH'">
+                                       <xsl:text> грн</xsl:text>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                       <xsl:value-of select="concat(' ', $omnibus_waluta)"/>
+                                    </xsl:otherwise>
+                                 </xsl:choose>
+                              </custom_label_3>
+                            </xsl:if>
+
+                            <!-- CUSTOM_LABEL_4 - Black Days: wartości parametru 91508 „Black Friday” w języku feedu, po przecinku, max 100 znaków (black_days_2026-11-06) -->
+                            <xsl:variable name="black_days">
+                              <xsl:for-each select="../../parameters/parameter[@id = '91508']/value[normalize-space(@name) != '']">
+                                <xsl:text>, </xsl:text>
+                                <xsl:value-of select="normalize-space(@name)"/>
+                              </xsl:for-each>
+                            </xsl:variable>
+                            <xsl:if test="$black_days != ''">
+                              <custom_label_4>
+                                    <xsl:value-of select="substring(substring($black_days, 3), 1, 100)"/>
+                                </custom_label_4>
+                            </xsl:if>
                         </entry>
                     </xsl:for-each>
                 </xsl:if>

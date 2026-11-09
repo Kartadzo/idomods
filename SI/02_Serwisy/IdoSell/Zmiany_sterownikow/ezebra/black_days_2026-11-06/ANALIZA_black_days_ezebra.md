@@ -78,3 +78,4 @@ ID serwisów Meta i RTB w panelu odczytam w kroku 1.
   - WP i Onet = 10024;
   - RTB = `ezebra_ceneo_RTB.xml`;
   - krok porównania z panelem przed zmianą.
+- 2026-11-09: Meta (5 feedów) zrobione razem z omnibusem: `custom_label_4` = `parameters/parameter[@id='91508']/value/@name` po przecinku, max 100 znaków (szczegóły i weryfikacja w `../cena_omnibus_2026-11-06/ANALIZA_cena_omnibus_ezebra.md`). Parametr ma już kilkanaście wartości (np. „Perfumy Black Friday”, „Black Friday kosmetyki Nivea”), część łączeń jest obcinana do 100 znaków. RTB House i WP/Onet — do zrobienia.

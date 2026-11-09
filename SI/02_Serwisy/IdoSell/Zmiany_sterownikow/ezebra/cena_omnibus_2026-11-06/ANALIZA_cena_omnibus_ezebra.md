@@ -3,7 +3,7 @@ Zadanie ClickUp: [eZebra - Feed Meta ads - cena omnibus](https://app.clickup.com
 
 | | |
 |---|---|
-| Termin | 09.11.2026 |
+| Termin | 09.11.2026, **do 12:00** (przed generowaniem feedu) |
 | Szacunek | 1,5 h |
 | Priorytet | wysoki („pilne”) |
 | Realizacja | poniedziałek 09.11 |
@@ -75,3 +75,10 @@ Kroki 1 i 2 są wspólne z zadaniem `../black_days_2026-11-06/`, bo zmieniane s�
 
 ## Stan
 - 2026-11-06: analiza wstępna (sesja /zadanie); realizacja w poniedziałek razem z Black Days.
+- 2026-11-09: klient w wątku ClickUp prosi o wdrożenie do 12:00, przed generowaniem kolejnego feedu. Kolejność: najpierw omnibus (`custom_label_3`) we wszystkich 5 feedach, Black Days (`custom_label_4`) w tych samych plikach, jeśli czas pozwoli. Każdy sterownik wgrywany raz. Otwarte pytania przyjęte domyślnie (грн, £49.99, cena zawsze > 0), do potwierdzenia w komentarzu.
+- 2026-11-09 (realizacja): serwisy Meta w panelu: PL shop=1 ID 10018 „Facebook [indywidualny]”, DE shop=3 „Facebook [indywidualny]”, UK shop=4 „[BM] Facebook ads - feed produktowy”, UA shop=5 „Facebook [indywidualny]” (waluta eksportu UAH; wyłączony „Meta ADS [test]” pominięty), AT shop=7 „Facebook [indywidualny] AT”.
+  - Porównanie z panelem (odczyt textarea przez schowek): DE, UK, UA, AT zgodne z lokalnymi; PL różny (panel ma blok GTIN/MPN i `custom_label_1` bez `g:`) → lokalny przeniesiony do `PL/old/ezebrapl_fbAds_2026-11-09.xml`, aktualny = wersja z panelu.
+  - Dodane `custom_label_3` (omnibus) i `custom_label_4` (Black Days) w jednym bloku po etykietach marketingowych; prefiks jak `custom_label_1` w panelu: tylko UK z `g:`. Waluta z `@currency` produktu (PLN → zł, EUR → €, GBP → £ przed kwotą, UAH → грн, inna → kod). Site omnibus: najpierw `size_id` rozmiaru, potem `size_id="0"`.
+  - Weryfikacja lxml na eksporcie PL z 02.09 (waluty zagraniczne symulowane): kompilacja OK, 170/170 wpisów z `custom_label_3`, 81/170 z `custom_label_4`, diff do panelu = tylko dodane 40 linii.
+  - Nie sprawdzone: czy IOF zagraniczny podaje omnibus w walucie feedu i czy nazwy wartości 91508 są tłumaczone (EN/UA) — do kontroli w pliku eksportu po wgraniu.
+- 2026-11-09 (poprawka użytkownika): PL poprawiony i wgrany przez użytkownika — `format-number($omnibus_cl3, '#.##')`, warunek tylko dla waluty feedu, inna waluta = surowy kod (sygnał problemu). Ten sam wzór przeniesiony do DE/AT (€), UA (грн), UK (£ przed kwotą). Waluta omnibus w eksporcie zagranicznym = waluta feedu; parametr 91508 po ID (nazwy wartości z eksportu, bez sprawdzania tłumaczeń).
