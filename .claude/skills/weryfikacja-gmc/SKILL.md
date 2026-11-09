@@ -9,6 +9,7 @@ KATALOG: `SI/02_Serwisy/GMC/Weryfikacja_GMC/` (narzędzia wspólne z FB: `../../
 Wzorzec wyniku: `raporty/pewienpan.pl_2026-10-21/` (`dane.json`, `RAPORT_wewnetrzny.md`).
 
 ## Zasady (zawsze)
+- **Baza wiedzy o klientach:** przed pracą czytam `SI/Klienci/README.md` i plik domeny z indeksu (jeśli istnieje). Zasady klienta mają pierwszeństwo przed tym skillem; pozycje z „Wyjątki od standardu” pomijam w raportach i rekomendacjach. Nowe stałe ustalenie proponuję dopisać (po zgodzie), identyfikatory kont dopisuję sam.
 - **Tylko odczyt**, z jednym wyjątkiem: przy błędzie pobierania feedu wolno kliknąć „Zaktualizuj” przy źródle danych w GMC (ponowne pobranie) i opisać wynik. Pozostałe zmiany proponuję w raporcie i wdrażam dopiero po zgodzie, pozycja po pozycji, z zapisem „przed/po”.
 - Nie klikam: „Zapisz”, „Usuń”/kosz, „Zarchiwizuj”, „Dodaj wszystkie znalezione produkty”, „Zastosuj aktualizację”, „Pobierz plik”/„Pobierz produkty”, „Włącz teraz”, „Wyłącz integrację”, „Resetuj” (IP), nie zmieniam widoczności ani ustawień konta.
 - **Zdarzeń konwersji Google Ads nie sprawdzam**, chyba że ktoś o to poprosi (patrz sekcja E).

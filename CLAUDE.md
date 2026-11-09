@@ -28,6 +28,10 @@ There is **no build, lint, or test setup** (`npm test` is a placeholder that err
 
 Layout (map, project status table and rules for new projects: `SI/README.md`): `SI/_wspolne/` shared code (IdoSell API client, report/screenshot helpers), `SI/01_Feedy/<Projekt>/` feed tools, `SI/02_Serwisy/<Serwis>/<Projekt>/` work tied to one platform (IdoSell, Facebook, GMC, GTM, OpenAI, Base, Shoparena, Amazon, Erli, n8n, Google_Ads), `SI/03_Zewnetrzne_SI/` external AI machines (planned as git-connected), `SI/archiwum/<klient|serwis>/` finished work. Folder names: ASCII, no spaces. Code paths are relative to `__file__`; `_wspolne` is located by walking up the tree. When starting a new SI project, follow the rules in `SI/README.md` and add it to the status table.
 
+## Client knowledge base (`SI/Klienci/`, local only)
+
+`SI/Klienci/` is gitignored and holds one Markdown file per client (index: `SI/Klienci/README.md`): domains and shared panels (`shop=`), mandatory client rules (e.g. eZebra: no deployments on Fridays), exceptions not to mention in reports (e.g. abud.pl free listings via the Google Shopping CSS account), account IDs, feed notes. **Before any task for a domain, read its file and follow it.** Precedence: this CLAUDE.md and safety rules → client file → skill instructions. Propose new standing agreements as entries (add after user approval, with date and source); account IDs may be added directly. Never store passwords, tokens, API keys or shop customers' personal data there.
+
 ## IAI/IdoSell input format (key to all XSLT and much of the Python)
 
 Source XML uses `/offer/products/product`, each with `sizes/size` variants, an `iaiext:` extension namespace, and `@id` / `@currency` attributes. Feeds iterate `product` → `size` to emit one `<item>` per variant. Product attributes (gender, color, material, etc.) are matched by **Polish panel label** against pipe-delimited variable lists near the top of each stylesheet (e.g. `<xsl:variable name='gender_male'>|Męskie|</xsl:variable>`) — extend those lists rather than hardcoding new logic when a shop names a field differently.

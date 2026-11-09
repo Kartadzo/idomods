@@ -7,6 +7,7 @@ Mapa folderu, stan projektów i zasady zakładania nowych. Struktura od 2026-11-
 ```
 SI/
 ├── _wspolne/            kod współdzielony: idosell_client.py (+ config.json), zrzut.py, raport_docx.py
+├── Klienci/            baza wiedzy o klientach (lokalnie, poza gitem): zasady, panele, konta, wyjątki — czytać przed zadaniem
 ├── 01_Feedy/            narzędzia do feedów produktowych
 ├── 02_Serwisy/<Serwis>/ praca związana z jedną platformą (IdoSell, Facebook, GMC, GTM, OpenAI…)
 ├── 03_Zewnetrzne_SI/    zewnętrzne maszyny SI (docelowo podłączone przez git)

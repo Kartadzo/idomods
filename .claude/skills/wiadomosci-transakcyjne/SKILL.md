@@ -8,6 +8,7 @@ description: Status, edycja działania (które maile/SMS w jakich językach są 
 Folder narzędzia: `SI/02_Serwisy/IdoSell/Wiadomosci_transakcyjne/` (dalej KATALOG). Specyfikacja: `ANALIZA_wiadomosci_transakcyjne.md`.
 
 ## Zasady bezpieczeństwa (zawsze)
+- **Baza wiedzy o klientach:** przed pracą czytam `SI/Klienci/README.md` i plik domeny z indeksu (jeśli istnieje). Zasady klienta mają pierwszeństwo przed tym skillem; pozycje z „Wyjątki od standardu” pomijam w raportach i rekomendacjach. Nowe stałe ustalenie proponuję dopisać (po zgodzie), identyfikatory kont dopisuję sam.
 - Panel: `https://<domena>/panel/config-messages.php`. Użytkownik loguje się sam; ja nie wpisuję haseł.
 - Przed KAŻDYM zapisem w panelu: eksport ICF wiadomości na dysk (krok „Eksport") i zgoda użytkownika na listę zmian.
 - Nigdy: „Ustaw domyślną treść wiadomości" (masowe), „Przywróć" z historii, wiadomości „wycofywane", Web Push.
