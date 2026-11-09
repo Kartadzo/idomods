@@ -7,6 +7,7 @@ Mapa folderu, stan projektów i zasady zakładania nowych. Struktura od 2026-11-
 ```
 SI/
 ├── _wspolne/            kod współdzielony: idosell_client.py (+ config.json), zrzut.py, raport_docx.py
+├── Klienci/            baza wiedzy o klientach (lokalnie, poza gitem): zasady, panele, konta, wyjątki — czytać przed zadaniem
 ├── 01_Feedy/            narzędzia do feedów produktowych
 ├── 02_Serwisy/<Serwis>/ praca związana z jedną platformą (IdoSell, Facebook, GMC, GTM, OpenAI…)
 ├── 03_Zewnetrzne_SI/    zewnętrzne maszyny SI (docelowo podłączone przez git)
@@ -30,6 +31,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Aktualizacja towarów (Empik) | `02_Serwisy/IdoSell/Aktualizacja_towarow` | gotowe | nazwy i opisy dla serwisu (magnicreatix.pl) |
 | Walidacja aktualizacji API | `02_Serwisy/IdoSell/API_walidacja_aktualizacji` | gotowe (2026-09) | testy zmian Admin API v8; dokumentacja: `02_Serwisy/IdoSell/DOKUMENTACJA_API.md` |
 | Test zdarzeń po OSCOP | `02_Serwisy/IdoSell/Test_zdarzen_OSCOP` | w toku (2026-11-05) | zdarzenia Google/Meta/TikTok w nowym procesie zamówienia; raporty `raporty/<domena>_<data>/` (megadron.pl) |
+| Zmiany sterowników XSLT (eZebra) | `02_Serwisy/IdoSell/Zmiany_sterownikow/ezebra` | gotowe (2026-11-09) | folder na zadanie `<element>_<data>`: `black_days_2026-11-06` (parametr 91508 → Meta, RTB, WP/Onet), `cena_omnibus_2026-11-06` (`custom_label_3` w 5 feedach Meta); sterowniki w `xslt/E/ezebra/`, kopie w `<kraj>/old/` |
 | Weryfikacja FB (skill) | `02_Serwisy/Facebook/Weryfikacja_FB` | gotowe, cykl co 90 dni | feed, katalog, piksel/CAPI; raporty `raporty/<domena>_<data>/` |
 | Weryfikacja GMC (skill) | `02_Serwisy/GMC/Weryfikacja_GMC` | gotowe, cykl co 90 dni | konto, produkty, feed, dostawy; raporty `raporty/<domena>_<data>/` |
 | Piksel ChatGPT (dodatki IdoSell) | `02_Serwisy/OpenAI/Piksel_ChatGPT` | gotowe (2026-11-02) | dodatki HTML piksela `oaiq` (butyolivier.pl) + testy |
@@ -73,4 +75,5 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 6. **Wspólny kod** tylko w `_wspolne/`. Gdy coś kopiuję do drugiego projektu — przenoszę to do `_wspolne/`.
 7. **Status** — przy zakładaniu, wstrzymaniu i zamknięciu projektu aktualizuję tabelę powyżej.
 8. **Archiwum** — `archiwum/<klient lub serwis>/<projekt>/`, na prośbę lub przy zamykaniu projektu za zgodą.
-9. **Git** — reguły tylko w `Domino\.gitignore` (ogólne dla SI: `dane/`, `wyniki/`, `config.json`, `__pycache__/`); każdy projekt na osobnej gałęzi, merge do `main` przez `/zamknij`.
+9. **Zmiany istniejących sterowników XSLT** (dowolny klient) → `02_Serwisy/IdoSell/Zmiany_sterownikow/<klient>/<element>_<RRRR-MM-DD>/` (osobny podfolder na zadanie: analiza, notatki, `komentarz_clickup.txt`). Najpierw porównanie pliku lokalnego z panelem; stare wersje sterowników → `xslt/<litera>/<klient>/<kraj>/old/` z datą.
+10. **Git** — reguły tylko w `Domino\.gitignore` (ogólne dla SI: `dane/`, `wyniki/`, `config.json`, `__pycache__/`); każdy projekt na osobnej gałęzi, merge do `main` przez `/zamknij`.

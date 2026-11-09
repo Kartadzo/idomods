@@ -9,6 +9,7 @@ KATALOG: `SI/02_Serwisy/Facebook/Weryfikacja_FB/` (narzędzia wspólne z GMC: `.
 Wzorzec wyniku: `raporty/pyrawinyl.pl_2026-10-14/` (`dane.json`, `RAPORT_wewnetrzny.md`).
 
 ## Zasady (zawsze)
+- **Baza wiedzy o klientach:** przed pracą czytam `SI/Klienci/README.md` i plik domeny z indeksu (jeśli istnieje). Zasady klienta mają pierwszeństwo przed tym skillem; pozycje z „Wyjątki od standardu” pomijam w raportach i rekomendacjach. Nowe stałe ustalenie proponuję dopisać (po zgodzie), identyfikatory kont dopisuję sam.
 - **Tylko odczyt.** Niczego nie zapisuję w panelu IdoSell ani w Meta. Zmiany proponuję w raporcie, a wdrażam dopiero po zgodzie, pozycja po pozycji, z zapisem „przed/po”.
 - Nie klikam: „Zapisz”, „Zmień”, „Wyłącz integrację”, „Usuń”, „Połącz teraz”, „Prześlij ponownie plik danych”, „Zaktualizuj”.
 - Logowanie robi użytkownik. Strona „Logowanie użytkownika” lub logowanie Meta → proszę o zalogowanie i czekam.

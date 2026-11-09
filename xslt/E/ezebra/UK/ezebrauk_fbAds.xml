@@ -467,6 +467,16 @@
                 <xsl:text>|Promocja|</xsl:text>
             </xsl:if>
         </g:custom_label_1>
+        <!-- CUSTOM_LABEL_4 - Black Days: wartości parametru 91508 „Black Friday” w języku feedu, po przecinku, max 100 znaków (black_days_2026-11-06) -->
+        <xsl:variable name="black_days">
+            <xsl:for-each select="parameters/parameter[@id = '91508']/value[normalize-space(@name) != '']">
+                <xsl:text>, </xsl:text>
+                <xsl:value-of select="normalize-space(@name)"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:if test="$black_days != ''">
+            <g:custom_label_4><xsl:value-of select="substring(substring($black_days, 3), 1, 100)"/></g:custom_label_4>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template name="productSizeMatter"
@@ -486,6 +496,32 @@
         <xsl:if test="$etykiety != ''">
             <!-- usunięcie wiodącego ", " i obcięcie do limitu 100 znaków -->
             <g:custom_label_2><xsl:value-of select="substring(substring($etykiety, 3), 1, 100)"/></g:custom_label_2>
+        </xsl:if>
+        <!-- CUSTOM_LABEL_3 - cena omnibus (najniższa cena z 30 dni) w walucie feedu, np. £49.99 (cena_omnibus_2026-11-06) -->
+        <xsl:variable name="omnibus_cl3">
+          <xsl:choose>
+            <xsl:when test="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = current()/@id]/@gross &gt; 0">
+              <xsl:value-of select="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = current()/@id]/@gross"/>
+            </xsl:when>
+            <xsl:when test="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = '0']/@gross &gt; 0">
+              <xsl:value-of select="../../iaiext:omnibus_price_retail/iaiext:site[@size_id = '0']/@gross"/>
+            </xsl:when>
+            <xsl:otherwise>0</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:if test="number($omnibus_cl3) &gt; 0">
+          <xsl:variable name="omnibus_waluta" select="../../@currency"/>
+          <g:custom_label_3>
+             <xsl:choose>
+                <xsl:when test="$omnibus_waluta = 'GBP'">
+                   <xsl:text>£</xsl:text>
+                   <xsl:value-of select="format-number($omnibus_cl3, '#.00')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                   <xsl:value-of select="concat(format-number($omnibus_cl3, '#.00'), ' ', $omnibus_waluta)"/>
+                </xsl:otherwise>
+             </xsl:choose>
+          </g:custom_label_3>
         </xsl:if>
         
         <g:link>

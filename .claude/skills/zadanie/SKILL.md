@@ -9,6 +9,7 @@ Specyfikacja i decyzje: `SI/02_Serwisy/ClickUp/Zadania_ClickUp/ANALIZA_skill_zad
 Repo: `C:\Users\Admin\Desktop\Domino`. Launcher okna: `SI/02_Serwisy/ClickUp/Zadania_ClickUp/uruchom_sesje.bat`.
 
 ## Zasady (zawsze)
+- **Baza wiedzy o klientach:** w kroku 2 czytam `SI/Klienci/README.md` i plik domeny (zasady, wyjątki, panel wielosklepowy) i uwzględniam je w propozycji. W prompcie sesji realizującej dopisuję: „Przeczytaj SI/Klienci/<plik>.md i przestrzegaj zasad klienta.” Nowe stałe ustalenie z zadania lub komentarzy proponuję dopisać do bazy (po zgodzie).
 - **ClickUp tylko do odczytu.** Nie komentuję, nie zmieniam statusu, terminu, osób ani podzadań. Komentarz dla klienta/zespołu przygotowuje sesja realizująca jako `komentarz_clickup.txt` — użytkownik wkleja go sam.
 - Załączników nie pobieram bez zgody (podaję nazwę i rozmiar, pytam).
 - **Narzędzia przeglądarki** (ustalenie użytkownika 2026-11-05):

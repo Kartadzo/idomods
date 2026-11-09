@@ -9,6 +9,7 @@ KATALOG: `SI/01_Feedy/SummonFeed/`. Specyfikacja: `ANALIZA_skill_summonFeed.md`.
 Narzędzia: `narzedzia/konfiguruj.py`, `narzedzia/parametry_oferty.py`, `narzedzia/przytnij.py`, `narzedzia/weryfikuj.py`. Opis zmiennych: `zmienne_szablonow.md`. Warianty linku i grupy: `warianty.md`. Wymagania serwisów: `wymagania/INDEX.md` + `wymagania/<serwis>.md`.
 
 ## Zasady (zawsze)
+- **Baza wiedzy o klientach:** przed pracą czytam `SI/Klienci/README.md` i plik domeny z indeksu (jeśli istnieje). Zasady klienta mają pierwszeństwo przed tym skillem; pozycje z „Wyjątki od standardu” pomijam w raportach i rekomendacjach. Nowe stałe ustalenie proponuję dopisać (po zgodzie), identyfikatory kont dopisuję sam.
 - **Szablonów w `xslt/szablony/` nie edytuję bez pytania.** Gdy propozycja dotyczy szablonu głównego, pytam użytkownika, czy go aktualizować. Przed aktualizacją kopiuję bieżący plik do `xslt/szablony/old/<Szablon>_<RRRR-MM-DD>.xml` (ustalenie z 2026-10-28). Przy każdym wywołaniu czytam bieżącą wersję szablonów. Gdy szablon nie jest poprawnym XML, `konfiguruj.py` się zatrzymuje. Wtedy zgłaszam błąd użytkownikowi (linia, prawdopodobna przyczyna z `git diff`) i nie naprawiam szablonu.
 - Wynik to **zawsze XSLT 1.0** i nowy plik do ręcznego wgrania. W panelu niczego nie zapisuję ani nie klikam „Zapisz”. Panel tylko czytam, a loguje się użytkownik.
 - Zmiany logiki robię tylko w kopii i każdą opisuję w `zmiany.md`. Zmiana przydatna dla wszystkich sklepów trafia do podsumowania jako propozycja do szablonu.
