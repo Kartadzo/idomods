@@ -60,3 +60,4 @@ Poboczne: pierwotny problem z mapą Google (`BillingNotEnabledMapError`, płatno
 
 ## Stan
 - 2026-11-09: analiza wstępna (sesja /zadanie). Użytkownik: dostawa z niestandardowych punktów odbioru metody „Odbiór w punkcie” (Polska), można dodać własne punkty.
+- 2026-11-09: odczyt panelu i sklepu (notatki.md). Wdrożone: telefon w opisie punktu i komentarz dostawy 100105. Współrzędne punktu (0,0) czekają na support IdoSell.

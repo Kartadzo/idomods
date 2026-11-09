@@ -1,0 +1,12 @@
+Odbiór z butiku (dostawa „Butik Pewien Pan Łódź”): stan na 09.11
+
+Wdrożone:
+- W opisie punktu odbioru dodany telefon 786 086 977. Adres punktu (ul. Nawrot 7, 90-060 Łódź) był już poprawny, magazynów nie zmienialiśmy.
+- Przy wyborze dostawy w koszyku widać teraz: „Odbiór osobisty: ul. Nawrot 7, 90-060 Łódź, tel. 786 086 977”.
+
+W toku:
+- Punkt nie ma ustawionej lokalizacji na mapie. Przez to po wybraniu tej dostawy mapa pokazuje „Brak punktów odbioru” i bez wybrania punktu nie da się przejść dalej w zamówieniu. Lokalizację ustawia się w panelu na mapie, ale ta mapa w panelu IdoSell obecnie się nie wczytuje. Zgłosiliśmy to do supportu IdoSell i czekamy na odpowiedź.
+
+Po stronie klienta (mapa Google w koszyku):
+- Mapa już się wczytuje, problem z płatnościami w Google Cloud jest rozwiązany.
+- Nie działa wyszukiwanie punktu po wpisanym adresie: klucz Google Maps nie ma włączonej usługi Geocoding API. Prosimy o włączenie Geocoding API dla tego klucza w Google Cloud Console (APIs & Services → Library → Geocoding API → Enable) i dodanie jej do listy dozwolonych API klucza, jeśli klucz ma ograniczenia.

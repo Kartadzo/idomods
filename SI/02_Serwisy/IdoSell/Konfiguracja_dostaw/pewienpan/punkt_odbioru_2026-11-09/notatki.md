@@ -42,4 +42,16 @@ Data: 2026-11-09 · panel `shop=1` · dostawa 100105
 ## Wnioski
 1. Adres Nawrot 7 jest już wpisany w punkcie. Magazyny nie biorą w tym udziału.
 2. Klient sklepu nie widzi punktu, bo wyszukiwanie na mapie pada (brak Geocoding API w kluczu klienta), a punkt i tak ma współrzędne 0,0.
-3. Telefonu nie da się wpisać w osobne pole punktu. Można go dodać w opisie lokalizacji (trafia do `location` widocznego przy punkcie) lub w komentarzu dostawy 100105.
+3. **Blokada zakupu.** Bez wybrania punktu odbioru system nie pozwala przejść do kolejnego kroku zakupów. Problem to więc nie tylko mapa: klient wybierający „Butik Pewien Pan Łódź” nie może dokończyć zamówienia (informacja użytkownika, 2026-11-09).
+   - Potwierdzenie w sklepie (`place-order.php`): przy dostawie widnieje link „Wybierz punkt odbioru”, punkt nie jest wybrany. Okno „Wybierz punkt odbioru” z mapą wyśrodkowaną na Łodzi pokazuje „Brak punktów odbioru, sprawdź inny adres”. Zrzut: `przed_place_order_brak_punktow.jpeg`.
+   - Przyczyna: punkt ma współrzędne 0,0, więc nie pojawia się w żadnym obszarze mapy. Wyszukiwanie po adresie dodatkowo pada przez brak Geocoding API.
+   - Wniosek: współrzędne punktu trzeba poprawić, bo bez nich dostawa jest nie do użycia. Sam komentarz z adresem nie wystarczy.
+4. Telefonu nie da się wpisać w osobne pole punktu. Można go dodać w opisie lokalizacji (trafia do `location` widocznego przy punkcie) lub w komentarzu dostawy 100105.
+
+## Stan „po” (2026-11-09)
+Zmiany 1 i 2 wdrożył użytkownik. Sprawdziłem je w sklepie przez Chrome DevTools MCP, koszyk 2 szt., bez zamówienia.
+1. **Telefon w opisie lokalizacji punktu ID 1:** GraphQL `pickupPoints` zwraca w `location`: „…po prawej stronie. Tel. 786 086 977 Godziny pracy punktu odbioru: …”.
+2. **Komentarz dostawy 100105:** na `order1.php` pod „Butik Pewien Pan Łódź” jest tekst „Odbiór osobisty: ul. Nawrot 7, 90-060 Łódź, tel. 786 086 977”. Zrzut: `po_order1_komentarz.jpeg`.
+3. **Współrzędne:** bez zmian, nadal (0, 0). Czekamy na odpowiedź supportu IdoSell (mapa w formularzu punktu w panelu nie działa: nadpisane `Array.from`). Do tego czasu punktu nie da się wybrać, a zakup z tą dostawą jest zablokowany.
+
+Po stronie klienta: w kluczu Google Maps trzeba włączyć **Geocoding API**, bo bez niego nie działa wyszukiwanie punktu po adresie.
