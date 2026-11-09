@@ -1,0 +1,9 @@
+Atrybut Black Days dodany we wszystkich 7 feedach. Wartość to wartości parametru „Black Friday” (ID 91508). Gdy produkt ma kilka wartości, są podane po przecinku (max 100 znaków). Produkty bez tego parametru nie mają pola.
+
+Nazwa pola dla agencji:
+- Meta PL, DE, AT, UA: custom_label_4
+- Meta UK: g:custom_label_4
+- RTB House (RTB CUBE [Ceneo][IdoMods] #2): <a name="black_days"> w bloku <attrs>. Ten feed nadal przekazuje też dotychczasowe <a name="Black Friday">, osobno dla każdej wartości.
+- WP i Onet (wspólny feed wydawców, format Google Merchant Center): g:custom_label_4
+
+Pola pojawią się po najbliższym wygenerowaniu i pobraniu feedów.

@@ -79,3 +79,9 @@ ID serwisów Meta i RTB w panelu odczytam w kroku 1.
   - RTB = `ezebra_ceneo_RTB.xml`;
   - krok porównania z panelem przed zmianą.
 - 2026-11-09: Meta (5 feedów) zrobione razem z omnibusem: `custom_label_4` = `parameters/parameter[@id='91508']/value/@name` po przecinku, max 100 znaków (szczegóły i weryfikacja w `../cena_omnibus_2026-11-06/ANALIZA_cena_omnibus_ezebra.md`). Parametr ma już kilkanaście wartości (np. „Perfumy Black Friday”, „Black Friday kosmetyki Nivea”), część łączeń jest obcinana do 100 znaków. RTB House i WP/Onet — do zrobienia.
+- 2026-11-09 (RTB i WP/Onet): serwisy shop=1: RTB House = ID 10050 „RTB CUBE [Ceneo][IdoMods] #2” (aktywny; wyłączony 10041 bez #2 pominięty), WP/Onet = ID 10024 „sterownik WP i Onet”.
+  - Porównanie z panelem (schowek): oba różne → lokalne w `PL/old/ezebrapl_WP_2026-11-09.xml` i `PL/old/ezebra_ceneo_RTB_2026-11-09.xml`, aktualne = wersje z panelu. WP w panelu to ver. 2.0 z 2026-10-07 (omnibus, akcje, opis bez HTML), lokalny był ver. 1.0. RTB: tylko limit wartości parametru 92435 = 19 (lokalnie 7).
+  - Zmiany (potwierdzone przez użytkownika): RTB `<a name="black_days">` na końcu `<attrs>` (szablon `product`), ogólna pętla parametrów bez zmian, więc `<a name="Black Friday">` zostaje; WP `<black_days>` bez prefiksu, przed `adwords_grouping` (kontekst `size`, ścieżka `../../parameters`). Logika jak w Meta.
+  - Weryfikacja lxml na eksporcie PL z 02.09: kompilacja OK, bez błędów; oba feedy 81/170 ofert z polem (= 81 produktów z parametrem), max 100 znaków, jedno pole na ofertę; diff do panelu = tylko dodane linie (WP 13, RTB 12).
+  - Poprawka użytkownika: WP ma format GMC, więc zamiast `<black_days>` jest `g:custom_label_4` (żaden custom_label nie był zajęty; numer jak w Meta). Ponowna weryfikacja lxml: 81/170, max 100 znaków, diff do panelu +13/−0.
+  - `komentarz_clickup.txt` gotowy (7 feedów, nazwy pól). Do zrobienia przez użytkownika: wgranie 2 sterowników w panelu, wklejenie komentarza po wgraniu.

@@ -696,7 +696,7 @@
                     </xsl:call-template>
                 </xsl:if>
             </xsl:if>
-            
+
             <xsl:for-each select="parameters/parameter[@hide='n' and 
                                   value[1]/@name != '' and 
                                   @name != 'Kod producenta' and 
@@ -714,7 +714,7 @@
                                   and @id = '92435']">
                 <xsl:variable name="count" select="count(value)" />
                 
-                <xsl:for-each select="value[7 > position()]">      
+                <xsl:for-each select="value[19 > position()]">      
                     <xsl:variable name="revPos" select="$count - position() + 1" />
                     <xsl:for-each select="../value[$revPos]">
                         <a name="{../@name}">
@@ -739,6 +739,18 @@
                     <xsl:value-of select="iaiext:omnibus_price_retail/iaiext:site/@gross"></xsl:value-of>
                     <xsl:text><![CDATA[ ]]></xsl:text>
                     <xsl:value-of select="@currency"/>
+                </a>
+            </xsl:if>
+            <!-- Black Days: wartości parametru 91508 „Black Friday”, po przecinku, max 100 znaków (black_days_2026-11-06) -->
+            <xsl:variable name="black_days">
+                <xsl:for-each select="parameters/parameter[@id = '91508']/value[normalize-space(@name) != '']">
+                    <xsl:text>, </xsl:text>
+                    <xsl:value-of select="normalize-space(@name)"/>
+                </xsl:for-each>
+            </xsl:variable>
+            <xsl:if test="$black_days != ''">
+                <a name="black_days">
+                    <xsl:value-of select="substring(substring($black_days, 3), 1, 100)"/>
                 </a>
             </xsl:if>
         </attrs>
