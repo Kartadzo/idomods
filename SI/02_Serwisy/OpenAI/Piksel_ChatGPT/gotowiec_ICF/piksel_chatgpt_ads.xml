@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repository file_format="ICF" version="1.0"><element id="1794315874">
+<meta><title>[IdoMods.pl] ChatGPT Ads - piksel OpenAI</title><description>Autor: IdoMods.pl
+Support: kontakt@idomods.pl
+Version: 1.0
+-----------------------------------------
+Piksel ChatGPT Ads (OpenAI oaiq): page_viewed, contents_viewed, items_added, checkout_started, order_created.
+Po imporcie: 1) w edycji kampanii wpisz Pixel ID; 2) w dodatku "consent" dodaj plik cookie: dostawca ChatGPT, kategoria reklamowe.
+ 2026.11.10 14:04:34</description><icon encoding="base64"></icon><language name="pol"/></meta>
+<classification><type name="snippets_campaign"/></classification>
+<settings><setting type="config" name="pixel_id" description="Pixel ID ChatGPT Ads (OpenAI) - Ads Manager, Events Manager" value="" /><setting type="config" name="currency" description="Waluta sklepu, kod ISO 4217 (np. PLN, EUR, CZK)" value="PLN" /></settings>
+<contents><content type="title">[ChatGPT Ads] init</content><content type="text_main_0"><![CDATA[<script>
+  // Tylko kolejka i funkcje pomocnicze. SDK (oaiq.min.js), init i zgodę ładuje dodatek „consent”.
+  // Bez consent false: w SDK consent false kasuje cookie __oppref (ID kliknięcia reklamy) i __obref,
+  // więc wołane na każdej stronie odcinało zakupy od kliknięć w ChatGPT Ads.
+  (function (w) {
+    if (w.oaiq) return;
+    var q = function () {
+      q.q.push(arguments);
+    };
+    q.q = [];
+    w.oaiq = q;
+  })(window);
+
+  // Bufor do czasu zgody. Dodatki dynamiczne IdoSell wstrzykuje w losowej kolejności.
+  window.oaiqConsentGranted = window.oaiqConsentGranted || false;
+  window.oaiqBuffer = window.oaiqBuffer || [];
+
+  // Waluta ze zmiennej kampanii „currency” (domyślnie PLN).
+  window.oaiqCurrency = (function (c) {
+    c = String(c || '').trim().toUpperCase();
+    return /^[A-Z]{3}$/.test(c) ? c : 'PLN';
+  })('[config:currency]');
+
+  window.oaiqSafe = function () {
+    try {
+      if (window.oaiqConsentGranted) {
+        window.oaiq.apply(window, arguments);
+      } else {
+        window.oaiqBuffer.push(arguments);
+      }
+    } catch (e) {}
+  };
+
+  // Tekst z <template> (nazwy produktów, dane klienta) — bez ryzyka apostrofów w kodzie JS.
+  window.oaiqText = function (selector) {
+    const el = document.querySelector(selector);
+    if (!el) return '';
+    const text = (el.content ? el.content.textContent : el.textContent) || '';
+    return text.trim();
+  };
+
+  // Kwota w groszach (OpenAI: liczba całkowita, np. 2599 = 25,99).
+  window.oaiqAmount = function (value) {
+    const number = parseFloat(String(value).replace(',', '.').replace(/\s/g, ''));
+    return isNaN(number) ? 0 : Math.round(number * 100);
+  };
+
+  // Lista towarów z ukrytego kontenera wypełnionego pętlą [iai:foreach_products_begin].
+  window.oaiqItems = function (containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return [];
+    return Array.from(container.querySelectorAll('[data-oaiq-id]')).map(function (item) {
+      const entry = {
+        id: item.getAttribute('data-oaiq-id'),
+        content_type: 'product',
+        quantity: Math.max(1, Math.round(parseFloat(item.getAttribute('data-oaiq-qty')) || 1)),
+        amount: window.oaiqAmount(item.getAttribute('data-oaiq-price')),
+        currency: window.oaiqCurrency || 'PLN'
+      };
+      const name = (item.textContent || '').trim();
+      if (name) entry.name = name;
+      return entry;
+    });
+  };
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">head</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">n</content><content type="site">all</content><content type="timeout">1</content><content type="display_dynamically">no</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<contents><content type="title">[ChatGPT Ads] consent - wymaga zgody na cookies reklamowe</content><content type="text_main_0"><![CDATA[<script>
+  // Wywoływane po zgodzie na pliki cookies (reklamowe). Dopiero tu ładuje się SDK OpenAI:
+  // bez zgody nie ma zapytań ani cookies. Potem wysyłka zdarzeń zebranych wcześniej w buforze.
+  try {
+    // Pixel ID ze zmiennej kampanii „pixel_id”. Pusty → SDK się nie ładuje.
+    const pixelId = String('[config:pixel_id]').trim();
+    if (window.oaiq && !window.oaiqConsentGranted && /^[A-Za-z0-9_-]{8,}$/.test(pixelId)) {
+      oaiq('init', {
+        pixelId: pixelId
+      });
+      oaiq('consent', true);
+
+      // ID kliknięcia reklamy ze strony wejścia: zgodę kliknięto na stronie z ?oppref=,
+      // a ten dodatek IdoSell wstawia dopiero na następnej stronie (bez oppref w adresie).
+      try {
+        const hasUrlOppref = new URLSearchParams(location.search).has('oppref');
+        const hasCookieOppref = /(?:^|;\s*)__oppref=/.test(document.cookie);
+        if (!hasUrlOppref && !hasCookieOppref && document.referrer) {
+          const ref = new URL(document.referrer);
+          const landingOppref = ref.host === location.host ? (ref.searchParams.get('oppref') || '').trim() : '';
+          if (landingOppref) {
+            oaiq('init', { oppref: landingOppref });
+          }
+        }
+      } catch (e) {}
+
+      if (!document.querySelector('script[data-oaiq-sdk]')) {
+        const js = document.createElement('script');
+        js.async = true;
+        js.src = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
+        js.setAttribute('data-oaiq-sdk', '1');
+        const f = document.getElementsByTagName('script')[0];
+        f.parentNode.insertBefore(js, f);
+      }
+
+      window.oaiqConsentGranted = true;
+      (window.oaiqBuffer || []).splice(0).forEach(function (args) {
+        oaiq.apply(window, args);
+      });
+    }
+  } catch (e) {}
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">head</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">n</content><content type="site">all</content><content type="timeout">1</content><content type="display_dynamically">yes</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<contents><content type="title">[ChatGPT Ads] page_viewed</content><content type="text_main_0"><![CDATA[<script>
+  if (window.oaiqSafe) {
+    oaiqSafe('measure', 'page_viewed', { type: 'contents' });
+  }
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">body_bottom</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">n</content><content type="site">all</content><content type="timeout">1</content><content type="display_dynamically">yes</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<contents><content type="title">[ChatGPT Ads] contents_viewed</content><content type="text_main_0"><![CDATA[<template id="oaiq-product-name">[iai:itemcardpage_product_name]</template>
+<script>
+  (function () {
+    if (!window.oaiqSafe) return;
+    const amount = oaiqAmount('[iai:itemcardpage_product_price_gross_float]');
+    const product = {
+      id: '[iai:itemcardpage_product_id]',
+      content_type: 'product',
+      quantity: 1,
+      amount: amount,
+      currency: window.oaiqCurrency || 'PLN'
+    };
+    const name = oaiqText('#oaiq-product-name');
+    if (name) product.name = name;
+
+    oaiqSafe('measure', 'contents_viewed', {
+      type: 'contents',
+      amount: amount,
+      currency: window.oaiqCurrency || 'PLN',
+      contents: [product]
+    });
+  })();
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">body_bottom</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">n</content><content type="site">projector;</content><content type="timeout">1</content><content type="display_dynamically">yes</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<contents><content type="title">[ChatGPT Ads] items_added</content><content type="text_main_0"><![CDATA[<template id="oaiq-atc-name">[iai:itemcardpage_product_name]</template>
+<script>
+  (function () {
+    const button = document.querySelector('#projector_button_basket');
+    if (!button || !window.oaiqSafe || button.getAttribute('data-oaiq-bound')) return;
+    button.setAttribute('data-oaiq-bound', '1');
+
+    button.addEventListener('click', function () {
+      try {
+        const quantityInput = document.querySelector('#projector_number, input[name="number"]');
+        const quantity = Math.max(1, Math.round(parseFloat(quantityInput ? quantityInput.value : 1) || 1));
+        const unitAmount = oaiqAmount('[iai:itemcardpage_product_price_gross_float]');
+        const product = {
+          id: '[iai:itemcardpage_product_id]',
+          content_type: 'product',
+          quantity: quantity,
+          amount: unitAmount,
+          currency: window.oaiqCurrency || 'PLN'
+        };
+        const name = oaiqText('#oaiq-atc-name');
+        if (name) product.name = name;
+
+        oaiqSafe('measure', 'items_added', {
+          type: 'contents',
+          amount: unitAmount * quantity,
+          currency: window.oaiqCurrency || 'PLN',
+          contents: [product]
+        });
+      } catch (e) {}
+    });
+  })();
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">body_bottom</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">n</content><content type="site">projector;</content><content type="timeout">1</content><content type="display_dynamically">yes</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<contents><content type="title">[ChatGPT Ads] checkout_started</content><content type="text_main_0"><![CDATA[<div id="oaiq-checkout-items" hidden>
+  [iai:foreach_products_begin]
+  <span data-oaiq-id="[iai:product_id]" data-oaiq-qty="[iai:product_count]" data-oaiq-price="[iai:product_price_gross_float]">[iai:product_name]</span>
+  [iai:foreach_products_end]
+</div>
+<script>
+  (function () {
+    if (!window.oaiqSafe) return;
+    const contents = oaiqItems('#oaiq-checkout-items');
+    const amount = contents.reduce(function (sum, item) {
+      return sum + item.amount * item.quantity;
+    }, 0);
+
+    oaiqSafe('measure', 'checkout_started', {
+      type: 'contents',
+      amount: amount,
+      currency: window.oaiqCurrency || 'PLN',
+      contents: contents
+    });
+  })();
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">body_bottom</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">n</content><content type="site">order1;</content><content type="timeout">1</content><content type="display_dynamically">yes</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<contents><content type="title">[ChatGPT Ads] order_created</content><content type="text_main_0"><![CDATA[<div id="oaiq-order-items" hidden>
+  [iai:foreach_products_begin]
+  <span data-oaiq-id="[iai:product_id]" data-oaiq-qty="[iai:product_count]" data-oaiq-price="[iai:product_price_gross_float]">[iai:product_name]</span>
+  [iai:foreach_products_end]
+</div>
+<template id="oaiq-client-email">[iai:client_email]</template>
+<template id="oaiq-client-phone">[iai:client_phone_e164]</template>
+<template id="oaiq-client-firstname">[iai:client_name]</template>
+<template id="oaiq-client-lastname">[iai:client_lastname]</template>
+<template id="oaiq-client-city">[iai:client_city]</template>
+<template id="oaiq-client-region">[iai:client_province]</template>
+<script>
+  (function () {
+    if (!window.oaiqSafe) return;
+
+    // Dane klienta przed zdarzeniem — OpenAI przypisuje je do zapytania, a nie do pojedynczego measure.
+    // Surowe wartości: SDK normalizuje je wg reguł OpenAI i hashuje SHA-256 w przeglądarce (wysyła tylko hash).
+    // Znaczniki *_sha256 IdoSell nie mają opisanej normalizacji, więc hash mógłby nie pasować.
+    const rawUser = {
+      email_sha256: oaiqText('#oaiq-client-email'),
+      phone_number_sha256: oaiqText('#oaiq-client-phone'),
+      first_name_sha256: oaiqText('#oaiq-client-firstname'),
+      last_name_sha256: oaiqText('#oaiq-client-lastname'),
+      country: '[iai:client_country_code]'.toUpperCase(),
+      city: oaiqText('#oaiq-client-city'),
+      region: oaiqText('#oaiq-client-region'),
+      postal_code: '[iai:client_zip]'
+    };
+    const user = {};
+    Object.keys(rawUser).forEach(function (key) {
+      if (rawUser[key]) user[key] = rawUser[key];
+    });
+    if (Object.keys(user).length) {
+      oaiqSafe('init', { user: user });
+    }
+
+    // Wartość towarów bez kosztu dostawy.
+    const contents = oaiqItems('#oaiq-order-items');
+    const itemsSum = contents.reduce(function (sum, item) {
+      return sum + item.amount * item.quantity;
+    }, 0);
+    const productsAmount = oaiqAmount('[iai:products_worth_cpa2]') || itemsSum;
+    if (productsAmount > 0 && itemsSum > 0 && itemsSum !== productsAmount) {
+      const ratio = productsAmount / itemsSum;
+      contents.forEach(function (item) {
+        item.amount = Math.round(item.amount * ratio);
+      });
+    }
+
+    oaiqSafe('measure', 'order_created', {
+      type: 'contents',
+      amount: productsAmount,
+      currency: window.oaiqCurrency || 'PLN',
+      contents: contents
+    }, {
+      event_id: 'order_[iai:order_sn]'
+    });
+  })();
+</script>]]></content><content type="active">normal_mobile</content><content type="format">html</content><content type="region">body_bottom</content><content type="client_type">all</content><content type="clients_with_rebate_code">all</content><content type="clients_subscribed">all</content><content type="clients_with_orders">all</content><content type="auto_block">n</content><content type="site">after_order;payment_success;</content><content type="timeout">1</content><content type="display_dynamically">yes</content><content type="snippet_activated">yes</content><content type="only_support">no</content></contents>
+<enclosures> </enclosures>
+</element>
+</repository>
