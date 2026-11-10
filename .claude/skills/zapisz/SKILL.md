@@ -10,6 +10,7 @@ Repo: `C:\Users\Admin\Desktop\Domino`, remote `origin`, `push.autoSetupRemote=tr
 ## 1. Sprawdź gałąź
 - `git branch --show-current`.
 - Jeśli to **`main`** (albo detached HEAD): **nic nie commituję ani nie pushuję**. Informuję jednym zdaniem, że na `main` zapis robi użytkownik, i podaję listę plików zmienionych w tej sesji do jego commita. Koniec.
+- **Worktree zadania** (`Domino\.worktrees\<temat>`): przed `git add` sprawdzam, że w korzeniu worktree jest `.gitignore`. Bez niego git nie ignoruje feedów, eksportów ani kluczy, więc zatrzymuję się i zgłaszam to (kopię robi `worktree_zadania.py utworz`). Resztę kroków robię normalnie w worktree.
 
 ## 1a. Historia sterowników (gdy w sesji była praca ze sterownikami IdoSell)
 - Dotyczy pracy z feedami/sterownikami w panelu (Zmiany_sterownikow, summonfeed, zadanie z feedem). Procedura: `SI/02_Serwisy/IdoSell/Zmiany_sterownikow/_narzedzia/historia_sterownikow/README.md`.
