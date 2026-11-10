@@ -11,7 +11,7 @@ Narzędzia: `narzedzia/konfiguruj.py`, `narzedzia/parametry_oferty.py`, `narzedz
 ## Zasady (zawsze)
 - **Baza wiedzy o klientach:** przed pracą czytam `SI/Klienci/README.md` i plik domeny z indeksu (jeśli istnieje). Zasady klienta mają pierwszeństwo przed tym skillem; pozycje z „Wyjątki od standardu” pomijam w raportach i rekomendacjach. Nowe stałe ustalenie proponuję dopisać (po zgodzie), identyfikatory kont dopisuję sam.
 - **Szablonów w `xslt/szablony/` nie edytuję bez pytania.** Gdy propozycja dotyczy szablonu głównego, pytam użytkownika, czy go aktualizować. Przed aktualizacją kopiuję bieżący plik do `xslt/szablony/old/<Szablon>_<RRRR-MM-DD>.xml` (ustalenie z 2026-10-28). Przy każdym wywołaniu czytam bieżącą wersję szablonów. Gdy szablon nie jest poprawnym XML, `konfiguruj.py` się zatrzymuje. Wtedy zgłaszam błąd użytkownikowi (linia, prawdopodobna przyczyna z `git diff`) i nie naprawiam szablonu.
-- Wynik to **zawsze XSLT 1.0** i nowy plik do ręcznego wgrania. W panelu niczego nie zapisuję ani nie klikam „Zapisz”. Panel tylko czytam, a loguje się użytkownik.
+- Wynik to **zawsze XSLT 1.0** i nowy plik do wgrania. Panel czytam, a loguje się użytkownik. W panelu zapisuję wyłącznie sterownik i tylko wtedy, gdy na pytanie „Nowy sterownik wgrywasz Ty czy ja?” (krok 7) użytkownik wskaże mnie, według procedury historii sterowników. Serwisów nie zakładam ani nie zmieniam innych ustawień.
 - Zmiany logiki robię tylko w kopii i każdą opisuję w `zmiany.md`. Zmiana przydatna dla wszystkich sklepów trafia do podsumowania jako propozycja do szablonu.
 - Gdy parametru nie ma, zmienną zostawiam pustą (`''` albo `|`) i dopisuję uwagę. Nie zgaduję.
 - **Zapis zmiennych dopasowywanych do panelu:** parametry jako `|<@id>|<@name PL>|`, węzły menu 1 jako `|<@id>|<nazwa PL>|`, wartości jako `|<id>|<nazwa PL>|` (`zmienne_szablonow.md`, „Standard zapisu”). Przy ID z menu 1 sprawdzam w `/panel/navigation.php`, czy menu jest współdzielone między sklepami. Nazwa jest zapisana jak w panelu. Dotyczy to także `gender_` i `age_group_nazwa_w_panelu`. Gdy wersja szablonu porównuje zmienną jako jedną wartość, `konfiguruj.py` odrzuca listę. Wtedy wpisuję pojedyncze ID, nazwę podaję w `zmiany.md` i odnotowuję, że po aktualizacji szablonu wystarczy odtworzyć sterownik z listą. Szczegóły per zmienna są w „Standardzie zapisu”. Kopii nie łatam.
@@ -110,3 +110,9 @@ Gdy bazą nie jest Google ani Facebook, porównuję w kopii elementy wspólne z 
 `sterowniki/<domena>/`: `<domena>_<serwis>.xml`, `konfiguracja.json`, `raport_konfiguracji.md`, `zmiany.md`. Pliki `oferta.xml` i `podglad_wyniku.xml` są robocze i gitignorowane.
 `zmiany.md`: data, wersja szablonu (commit, sha256), odpowiedzi na pytania, mapowanie parametrów (parametr z panelu → zmienna), zmiany logiki, uwagi (brak parametru, brak domyślnej metody wysyłki, test na próbce zastępczej).
 Podsumowanie w czacie (krótko): ścieżka pliku, wybrane warianty, czego brakuje w danych sklepu, propozycje do szablonu, zaktualizowane wymagania.
+
+## 8. Wgranie i historia sterowników
+Procedura: `SI/02_Serwisy/IdoSell/Zmiany_sterownikow/_narzedzia/historia_sterownikow/README.md` (`<klient>` = folder klienta w `Zmiany_sterownikow/`, jak w `xslt/<litera>/<klient>/`).
+- Gdy sterownik ma trafić do istniejącego serwisu (ID znane): w kroku 1 zrzut `start` sklepów klienta, a do pliku wynikowego znaczniki `BM-SERWIS` (shop, ID, nazwa, plik) i `BM-EDYCJA` (data, „summonFeed <serwis>”).
+- Nowy serwis zakłada użytkownik. Po podaniu ID dopisuję znacznik i wtedy wgranie.
+- Pytanie: **„Nowy sterownik wgrywasz Ty czy ja?”**. Dalej zrzut `przed_wgraniem`, wgranie (moje albo użytkownika), zrzut `po_wgraniu` i `historia.py dziennik`. Wynik dziennika w podsumowaniu.

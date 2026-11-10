@@ -67,6 +67,7 @@ Wzorzec wyniku: `raporty/pewienpan.pl_2026-10-21/` (`dane.json`, `RAPORT_wewnetr
 10. `/mc/taskhub` — powiadomienia. „Zaktualizuj opisy: <kategoria>” → „Wyświetlanie produktów” pokazuje brakujące szczegóły („Kolor, Wzór i Materiał”). **Zrzut 10.**
 
 ## B. Panel IdoSell (`https://<domena>/panel/`)
+Na liście serwisów robię zrzut `reczny` historii sterowników (tylko odczyt; procedura: `SI/02_Serwisy/IdoSell/Zmiany_sterownikow/_narzedzia/historia_sterownikow/README.md`). Zmiany bez wpisu w dzienniku od poprzedniego zrzutu odnotowuję w raporcie wewnętrznym.
 0. **Model feedu** rozpoznaję po URL źródła podstawowego w GMC (A5):
    - `googleshopping…xml`: standardowy feed IdoSell + nasz feed uzupełniający (`feed<id>`) jako źródło dodatkowe. Sprawdzam oba.
    - `feed<id>_…xml`: jeden nasz feed podstawowy z XSLT (częsty wariant). Natywnego feedu IdoSell nie sprawdzam (krok 1 pomijam), a wszystkie atrybuty i dostawa pochodzą z XSLT o tym id.

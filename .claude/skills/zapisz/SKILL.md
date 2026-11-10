@@ -11,11 +11,18 @@ Repo: `C:\Users\Admin\Desktop\Domino`, remote `origin`, `push.autoSetupRemote=tr
 - `git branch --show-current`.
 - Jeśli to **`main`** (albo detached HEAD): **nic nie commituję ani nie pushuję**. Informuję jednym zdaniem, że na `main` zapis robi użytkownik, i podaję listę plików zmienionych w tej sesji do jego commita. Koniec.
 
+## 1a. Historia sterowników (gdy w sesji była praca ze sterownikami IdoSell)
+- Dotyczy pracy z feedami/sterownikami w panelu (Zmiany_sterownikow, summonfeed, zadanie z feedem). Procedura: `SI/02_Serwisy/IdoSell/Zmiany_sterownikow/_narzedzia/historia_sterownikow/README.md`.
+- Panel zalogowany → zrzut `zapis` wszystkich sklepów klienta (`historia.py sesja --rodzaj zapis`, `BM.zrzutSklepu` na każdym `shop=`, `historia.py zloz`). Zmiany bez wpisu w dzienniku zgłaszam w podsumowaniu.
+- Wylogowany panel albo brak pracy w panelu → bez zrzutu, odnotowuję w podsumowaniu. Zrzut nie blokuje commita.
+- Zrzut robię także na `main` (commit wtedy robi użytkownik — podaję mu pliki `_historia/*.json` i `dziennik_wdrozen.csv`).
+
 ## 2. Wybierz pliki
 - `git status --porcelain` — przejrzyj zmiany.
 - Do commita trafiają **tylko pliki należące do projektu tej gałęzi** (te, które zmienialiśmy w sesji / leżą w folderze projektu). Zmian użytkownika spoza projektu nie dodaję — wymieniam je w podsumowaniu jako pominięte.
 - Nigdy `git add -A` / `git add .` w katalogu głównym. Dodaję ścieżki jawnie (`git add -- "<ścieżka>"`).
 - Pliki ignorowane przez `.gitignore` (feedy, eksporty, tokeny, `config.json` z kluczami) zostają poza repo — nie używam `-f`.
+- Historia sterowników klienta (`Zmiany_sterownikow/<klient>/_historia/*.json`, `dziennik_wdrozen.csv`) należy do projektu, gdy powstała w tej sesji. `kopie/` i `_robocze/` są w `.gitignore`.
 - Kontrola rozmiaru: żaden plik w stage nie może przekraczać **50 MB** (GitHub odrzuca > 100 MB). Sprawdź `git diff --cached --name-only` + rozmiar plików. Jeśli jest większy — wyjmij go ze stage (`git restore --staged`) i zgłoś.
 - Brak zmian projektu do zapisania → poinformuj i przejdź do kroku 4 (push, jeśli są niewypchnięte commity).
 

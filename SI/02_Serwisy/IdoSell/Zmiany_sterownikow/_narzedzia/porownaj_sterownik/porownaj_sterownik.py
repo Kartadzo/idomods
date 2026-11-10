@@ -105,6 +105,18 @@ def wyglada_na_xslt(tekst):
     return "xsl:stylesheet" in tekst or "xsl:transform" in tekst
 
 
+def znacznik_serwisu(tekst):
+    """
+    Znacznik BM-SERWIS z początku sterownika (dodawany przy edycji, zob.
+    ANALIZA_historia_sterownikow.md): {'shop', 'id', 'plik'} albo None.
+    """
+    import re
+    m = re.search(r"BM-SERWIS:\s*shop=(\d+)\s*\|\s*ID\s*(\d+)\s*\|[^|]*\|\s*plik\s+(\S+)", tekst[:4000])
+    if not m:
+        return None
+    return {"shop": int(m.group(1)), "id": int(m.group(2)), "plik": m.group(3).replace("\\", "/")}
+
+
 # ---------------------------------------------------------------- porównanie
 
 def normalizuj(tekst, biale_znaki=True):
@@ -343,6 +355,13 @@ def main():
     print(f"SHA-256 panel:    {skrot(linie_panel)}  ({len(linie_panel)} linii)")
     print(f"SHA-256 lokalny:  {skrot(linie_lokalne)}  ({len(linie_lokalne)} linii)")
     print(f"Werdykt: {werdykt}")
+    zn_panel, zn_lokalny = znacznik_serwisu(tekst_panel), znacznik_serwisu(tekst_lokalny)
+    sciezka_wzgl = os.path.relpath(sciezka_lokalna, repo).replace("\\", "/")
+    if zn_panel and zn_panel["plik"] != sciezka_wzgl:
+        print(f"UWAGA: znacznik w panelu wskazuje plik {zn_panel['plik']}, a wybrano {sciezka_wzgl}"
+              f" — czy to właściwy serwis (shop={zn_panel['shop']}, ID {zn_panel['id']})?")
+    if zn_panel and zn_lokalny and zn_panel["id"] != zn_lokalny["id"]:
+        print(f"UWAGA: znacznik w panelu: ID {zn_panel['id']}, w pliku lokalnym: ID {zn_lokalny['id']}")
     if werdykt != ROZNE:
         return 0
 
