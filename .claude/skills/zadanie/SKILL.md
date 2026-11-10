@@ -18,6 +18,7 @@ Repo: `C:\Users\Admin\Desktop\Domino`. Launcher okna: `SI/02_Serwisy/ClickUp/Zad
     - sprawdzanie zdarzeń na stronie sklepu: zapytania sieciowe `gtag`/`fbq`/`ttq` i inne, dataLayer, podwójne odpalenia, wartości.
   - **Claude in Chrome:** reszta, czyli panele IdoSell, Events Manager, Google Ads, TikTok i GMC, gdzie użytkownik jest zalogowany.
   - Gdy inne działanie byłoby wydajniejsze w DevTools, proponuję to i pytam, zamiast przenosić je samemu.
+- **Historia sterowników:** gdy zadanie dotyczy feedów lub sterowników XSLT w panelu IdoSell, w prompcie sesji realizującej dopisuję: „Zadanie dotyczy sterowników: stosuj procedurę z SI/02_Serwisy/IdoSell/Zmiany_sterownikow/_narzedzia/historia_sterownikow/README.md (zrzut start przed pierwszą zmianą, znacznik BM-SERWIS/BM-EDYCJA w edytowanych plikach, przed wgraniem pytanie: wgrywasz Ty czy ja?, zrzuty przed/po wgraniu i dziennik).” W analizie (3B) wpisuję ten krok do planu.
 - **Powtarzalne zadania → propozycja skilla:** gdy ten sam typ zadania wystąpił już 3–5 razy (licząc bieżące) i nie ma dla niego dedykowanego skilla, w analizie dodaję punkt „Propozycja skilla”. Podaję w nim nazwę, zakres i to, co z dotychczasowych realizacji da się ustandaryzować. Skill tworzę dopiero po zgodzie użytkownika.
 - Ta sesja niczego nie realizuje: tylko analiza, folder i start nowego okna.
 - Przed zapisem plików czekam na akceptację propozycji (wyjątek: zadanie z dedykowanym skillem — krok 3A).

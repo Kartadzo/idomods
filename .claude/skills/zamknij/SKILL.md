@@ -11,6 +11,14 @@ Repo: `C:\Users\Admin\Desktop\Domino`, remote `origin`.
 - `git branch --show-current` → zapamiętaj jako `<galaz>`.
 - Jeśli to **`main`**: nie ma czego scalać. Informuję i kończę (zapis na `main` robi użytkownik — podaję listę plików do commita).
 
+## 1a. Przebieg kontrolny sterowników (gdy projekt dotyczył feedów/sterowników IdoSell)
+Cel: upewnić się, że w wyniku błędu sterownik nie trafił do dwóch serwisów ani do niewłaściwego. Procedura: `SI/02_Serwisy/IdoSell/Zmiany_sterownikow/_narzedzia/historia_sterownikow/README.md`.
+- Zrzut `koniec` **wszystkich** sklepów klienta (nie tylko tych, w których pracowaliśmy), potem `python historia.py kontrola --klient <klient>`.
+- Kod 0 → wynik „OK” do podsumowania, idę dalej.
+- Kod 1 → **nie robię merge**. Pokazuję listę problemów i przechodzę do procedury incydentu (spisanie, przywrócenie stanu z `_historia/kopie/`, zgłoszenie do IdoSell tylko gdy wygląda na ich błąd). Merge dopiero po wyjaśnieniu i ponownej kontroli.
+- Panel wylogowany → proszę o zalogowanie. Bez kontroli zamykam tylko na wyraźną decyzję użytkownika i odnotowuję to w opisie merge.
+- Pliki zrzutów i dziennika wchodzą do commita z kroku 2.
+
 ## 2. Zapisz gałąź
 Wykonaj kroki 2–4 skilla `/zapisz` (`.claude/skills/zapisz/SKILL.md`): wybór plików projektu, kontrola > 50 MB, commit z opisem, push — z tą różnicą, że **tytuł nie ma dopisku `(WIP)`**, a zamiast `Dalej:` piszę `Stan: ukończone`.
 
