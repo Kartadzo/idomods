@@ -37,6 +37,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Weryfikacja FB (skill) | `02_Serwisy/Facebook/Weryfikacja_FB` | gotowe, cykl co 90 dni | feed, katalog, piksel/CAPI; raporty `raporty/<domena>_<data>/` |
 | Weryfikacja GMC (skill) | `02_Serwisy/GMC/Weryfikacja_GMC` | gotowe, cykl co 90 dni | konto, produkty, feed, dostawy; raporty `raporty/<domena>_<data>/` |
 | Piksel ChatGPT (dodatki IdoSell) | `02_Serwisy/OpenAI/Piksel_ChatGPT` | gotowe (2026-11-02) | dodatki HTML piksela `oaiq` (butyolivier.pl) + testy |
+| Gotowiec ICF piksela ChatGPT (YouTube IdoMods) | `02_Serwisy/OpenAI/Piksel_ChatGPT/gotowiec_ICF` | gotowe (2026-11-10) | `piksel_chatgpt_ads.xml` + `INSTRUKCJA.md`; zmienne `[config:]` (Pixel ID, waluta), `oppref` z referrera, kwota `products_worth_cpa2`; builder i test; sprawdzone na abczoo.gr (2 zamówienia testowe) i zooart6 |
 | Weryfikacja GPTAds | `02_Serwisy/OpenAI/Weryfikacja_GPTAds` | gotowe (2026-11-02) | przypisanie konwersji do kliknięć (butyolivier.pl) |
 | Piksel ChatGPT przez GTM | `02_Serwisy/GTM/Piksel_ChatGPT_idomods` | w toku — czeka na publikację | import kontenera GTM dla idomods.pl |
 | Śledzenie konwersji Google Ads | `02_Serwisy/Google_Ads/Sledzenie_konwersji` | gotowe (2026-10-26) | raport wycieraczkidoszyb |

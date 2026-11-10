@@ -1,0 +1,30 @@
+Gotowy XML (ICF) z pikselem ChatGPT Ads — do wgrania jako kampania dodatków HTML, zmienne podaje się w edycji kampanii.
+
+Pliki (repo, SI/02_Serwisy/OpenAI/Piksel_ChatGPT/gotowiec_ICF/):
+- piksel_chatgpt_ads.xml — plik do importu (Moderacja → Wygląd sklepu → Dodatki HTML i JavaScript → Import ICF kampanii),
+- INSTRUKCJA.md — instrukcja krok po kroku do opisu filmu / wpisu (tylko kroki w panelu).
+
+Zmienne w edycji kampanii:
+- Pixel ID ChatGPT Ads (obowiązkowe),
+- Waluta sklepu (domyślnie PLN).
+Wartość zakupu = wartość towarów ze znacznika IdoSell [iai:products_worth_cpa2].
+
+Zdarzenia: page_viewed, contents_viewed, items_added, checkout_started, order_created (dane klienta hashowane przez skrypt OpenAI, event_id order_<numer>).
+
+Kroki ręczne po imporcie (do pokazania w filmie):
+1. Sklep w innym języku niż polski: w każdym z 7 dodatków „Powiel we wszystkich językach” i zapis — kod wgrywa się do polskiej wersji, wybór języka w okienku importu nic nie zmienia.
+2. W dodatku „[ChatGPT Ads] consent” plik cookie: dostawca ChatGPT (OpenAI), kategoria „reklamowe”, opis w każdym języku. ICF tego nie przenosi, a bez tego piksel ruszałby bez zgody.
+3. Kampanię włączyć dopiero na końcu (sklep odświeża dodatki z kilkuminutowym opóźnieniem).
+Sklep musi mieć włączony baner zgód na cookies.
+
+Sprawdzone:
+- abczoo.gr (sklep po grecku, EUR): pełna ścieżka z instrukcji i dwa zamówienia testowe (przelew) — bez zgody nic nie idzie do OpenAI, po zgodzie wszystkie zdarzenia z poprawnymi danymi, identyfikator kliknięcia w reklamę (oppref) dochodzi do zakupu. Zamówienia testowe 11111 i 11113 do anulowania; kampanie testowe wyłączone.
+- zooart6: import i zmienne w edycji kampanii.
+- 5 sklepów IdoSell (ezebra, naturalstyle, pewienpan, shiori, ulubioneobuwie): karta towaru ma elementy używane przez skrypt.
+
+Względem butyolivier.pl gotowiec ma dwie poprawki: oppref nie ginie, gdy klient zaakceptuje cookies na stronie wejścia z reklamy, i kwota zakupu bez dostawy. butyolivier zostaje bez zmian do osobnej decyzji.
+
+Uwagi:
+- Na abczoo.gr znacznik [iai:products_worth_cpa2] po zamówieniu podaje wartość z dostawą — zostawiamy znacznik IdoSell.
+- Nie usuwać pliku cookie z dodatku consent „na próbę” — na zooart6 dodatek przestał się potem wyświetlać, pomógł dopiero ponowny import.
+- Do filmu najlepiej nagrywać na sklepie z prawdziwymi towarami i włączonym banerem zgód (zooart6 nie ma banera i ma puste dane towarów).
