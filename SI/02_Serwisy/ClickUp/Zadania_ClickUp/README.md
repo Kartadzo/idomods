@@ -17,6 +17,8 @@ Status: gotowe (2026-11-05), czeka na pierwsze prawdziwe zadanie.
 | `ANALIZA_skill_zadanie_clickup.md` | specyfikacja, porównanie wariantów agentowych, decyzje |
 | `Zadanie_ClickUp.bat` | start z pulpitu/eksploratora |
 | `uruchom_sesje.bat "<folder>" "<prompt>" ["<tytuł>"]` | otwiera nowe okno `cmd` z `claude "<prompt>"` w folderze; `ZADANIE_KOMENDA` podmienia `claude` do testów |
+| `worktree_zadania.py` / `run_worktree.bat` | worktree zadania w `Domino\.worktrees\<temat>`: `utworz <temat> [--dolacz <ścieżka>]`, `lista`, `usun <temat> [--sila]`; dwuklik = menu |
+| `ANALIZA_worktree_zadanie.md` | decyzje i testy worktree (2026-11-10) |
 
 ## Najważniejsze zasady
 
@@ -24,7 +26,8 @@ Status: gotowe (2026-11-05), czeka na pierwsze prawdziwe zadanie.
 - Zadania FB / GMC / feed XSLT / wiadomości transakcyjne → od razu nowe okno z dedykowanym skillem.
 - Git:
   - przy pracy w ramach skilla sesja sama robi `/zapisz` i `/zamknij`, ale tylko dla wniosków z procesu, bez danych klientów;
-  - przy nowym problemie przełączamy na nową gałąź, a commity robi użytkownik.
+  - przy nowym problemie (od 2026-11-10) zadanie dostaje osobny worktree `Domino\.worktrees\<temat>` na swojej gałęzi i nowe okno VS Code; `Domino` nie przełącza gałęzi, commity i `/zamknij` robi użytkownik w oknie zadania, a merge idzie w `Domino`;
+  - worktree dostaje kopię `.gitignore`, dowiązania do `SI/Klienci`, historii sterowników i `config.json`; scalone worktree usuwa następne `/zadanie` po zamknięciu ich okna.
 - Jedna sesja w Claude in Chrome naraz.
 - Sesja realizująca otwiera się domyślnie jako nowa karta Claude w VS Code, przez link `vscode://anthropic.claude-code/open?prompt=…`. Karta startuje w `Domino`, więc prompt podaje folder zadania. Zapasowo działa okno `cmd` przez `uruchom_sesje.bat`.
 - Pierwsze prawdziwe zadanie: [MegaDron.pl gAds - Test zdarzeń na nowym OSCOP](https://app.clickup.com/t/1ammhmkcgn4) (2026-11-05) → `02_Serwisy/IdoSell/Test_zdarzen_OSCOP`.

@@ -34,6 +34,9 @@ Własna historia zmian sterowników XSLT w panelu IdoSell. Panel nie zapisuje, k
 ### Start pracy ze sterownikami (`/zadanie`, skille feedów)
 Zrzut `start` przed pierwszą zmianą. Zmiany od poprzedniego zrzutu klienta zgłaszam użytkownikowi od razu (ktoś pracował przed nami).
 
+**Praca w worktree zadania** (`Domino\.worktrees\<temat>`, od 2026-11-10): odbiornik uruchamiam z worktree, więc zrzuty `.json` i `dziennik_wdrozen.csv` trafiają do gałęzi zadania. Kopie treści (`_historia/kopie`, ignorowane) muszą być wspólne z `Domino`. Przed pierwszym zrzutem sprawdzam, czy `_historia/kopie` i `_historia/_robocze` klienta w worktree to dowiązania. Jeśli nie (pierwszy zrzut klienta), uruchamiam z `Domino`:
+`python SI/02_Serwisy/ClickUp/Zadania_ClickUp/worktree_zadania.py dolacz <temat> SI/02_Serwisy/IdoSell/Zmiany_sterownikow/<klient>/_historia/kopie --utworz` (to samo dla `_robocze`). Bez tego kopie zniknęłyby razem z worktree, a `usun` odmówi usunięcia.
+
 ### Edycja sterownika
 Do pliku, który **edytujemy** (nie przy samej kopii z panelu), dopisuję lub aktualizuję po deklaracji XML:
 ```xml

@@ -6,7 +6,7 @@ description: Zadanie ClickUp → krótka analiza i propozycja realizacji → po 
 # /zadanie — zadanie ClickUp → analiza → folder → sesja realizująca
 
 Specyfikacja i decyzje: `SI/02_Serwisy/ClickUp/Zadania_ClickUp/ANALIZA_skill_zadanie_clickup.md`. Mapa SI, tabela projektów i zasady folderów: `SI/README.md` (czytam przed krokiem 2).
-Repo: `C:\Users\Admin\Desktop\Domino`. Launcher okna: `SI/02_Serwisy/ClickUp/Zadania_ClickUp/uruchom_sesje.bat`.
+Repo: `C:\Users\Admin\Desktop\Domino`. Launcher okna: `SI/02_Serwisy/ClickUp/Zadania_ClickUp/uruchom_sesje.bat`. Worktree zadań: `SI/02_Serwisy/ClickUp/Zadania_ClickUp/worktree_zadania.py` (analiza: `ANALIZA_worktree_zadanie.md`).
 
 ## Zasady (zawsze)
 - **Baza wiedzy o klientach:** w kroku 2 czytam `SI/Klienci/README.md` i plik domeny (zasady, wyjątki, panel wielosklepowy) i uwzględniam je w propozycji. W prompcie sesji realizującej dopisuję: „Przeczytaj SI/Klienci/<plik>.md i przestrzegaj zasad klienta.” Nowe stałe ustalenie z zadania lub komentarzy proponuję dopisać do bazy (po zgodzie).
@@ -59,12 +59,13 @@ Co już mamy: projekt / skill / poprzednie raporty / notatki
 Czego brakuje: dane, dostępy, decyzje klienta
 Propozycja realizacji: 3–6 kroków; narzędzia; przeglądarka: Claude in Chrome (panele) / DevTools (zdarzenia, zamówienie testowe)
 Propozycja skilla: tylko gdy typ zadania powtórzył się 3–5 razy i nie ma skilla
-Folder: <ścieżka>  ·  Git: nowa gałąź <temat>
+Folder: <ścieżka>  ·  Git: worktree .worktrees/<temat>, gałąź <temat>
 Pytania blokujące: tylko te, bez których nie da się zacząć
 ```
 Kończę: „Realizować? Folder: `<ścieżka>`”. Czekam. Poprawki użytkownika wprowadzam do propozycji przed krokiem 4.
 
 ## 4. Folder i wstępna analiza (po akceptacji)
+- **Wariant „nowy problem”: najpierw worktree** (krok 6), dopiero potem folder. Folder zadania, `ANALIZA_<temat>.md` i wiersz w `SI/README.md` zapisuję **w worktree** (`C:\Users\Admin\Desktop\Domino\.worktrees\<temat>\SI\...`), nie w `Domino`. Wtedy trafiają do gałęzi zadania, a `Domino` zostaje czyste.
 - Folder według `SI/README.md`:
   - istniejący projekt + nowy klient → `<projekt>/klienci/<domena>/`;
   - nowa praca → `SI/01_Feedy/<Projekt>/` albo `SI/02_Serwisy/<Serwis>/<Projekt>/` (nowy serwis = nowy podfolder);
@@ -94,10 +95,13 @@ Kończę: „Realizować? Folder: `<ścieżka>`”. Czekam. Poprawki użytkownik
 
 ## 5. Start sesji realizującej
 **Domyślnie: nowa karta Claude w VS Code** (przetestowane 2026-11-05). Użytkownik pracuje w VS Code. Rozszerzenie Claude Code obsługuje link `vscode://anthropic.claude-code/open?prompt=…`. Link otwiera kartę w edytorze z wpisanym promptem, a wysyła go Enter użytkownika.
-- Karta startuje w folderze workspace (`Domino`), nie w folderze zadania. Dlatego prompt **zawsze podaje ścieżkę folderu** i każe w nim zapisywać pliki. Polskie znaki są dozwolone, bo prompt idzie przez URL-encoding. Przykład:
+- Karta startuje w folderze workspace okna VS Code, nie w folderze zadania. Dlatego prompt **zawsze podaje ścieżkę folderu** (względną od korzenia repo) i każe w nim zapisywać pliki. Polskie znaki są dozwolone, bo prompt idzie przez URL-encoding. Przykład:
   `Zadanie ClickUp <link> (<klient> - <temat>). Folder zadania: SI/<ścieżka>. Przeczytaj ANALIZA_<temat>.md w tym folderze oraz SI/README.md, potwierdź plan ze mną i realizuj zgodnie z sekcją Zasady sesji. Wszystkie pliki zapisuj w tym folderze.`
+- **Wariant „nowy problem” → nowe okno VS Code na worktree** (decyzja 2026-11-10, przetestowane): najpierw `code -n <worktree>`, chwila na start okna, potem link. Karta otwiera się w nowym oknie, z katalogiem roboczym i gałęzią worktree. Do promptu dopisuję: „Pracujesz w worktree .worktrees/<temat> (gałąź <temat>); nie przełączaj gałęzi i nie wchodź do folderu Domino.”
+- **Wariant „skill” (3A)** → karta w bieżącym oknie (`Domino`), bez `code -n`.
 - Wywołanie (narzędzie **PowerShell**):
   ```powershell
+  code -n 'C:\Users\Admin\Desktop\Domino\.worktrees\<temat>'; Start-Sleep -Seconds 8   # tylko „nowy problem”
   $p = '<prompt>'   # apostrof w treści podwajam: ''
   Start-Process ('vscode://anthropic.claude-code/open?prompt=' + [uri]::EscapeDataString($p))
   ```
@@ -111,5 +115,14 @@ Kończę: „Realizować? Folder: `<ścieżka>`”. Czekam. Poprawki użytkownik
 
 ## 6. Git
 - **Wariant „skill”** (krok 3A albo praca w folderze istniejącego skilla): sesja realizująca sama wykonuje `/zapisz` i `/zamknij`, ale tylko dla **nowych wniosków z procesu** (poprawki skilla, specyfikacji, narzędzi, wiedza). Dane klientów i ich serwisów (raporty, zrzuty, eksporty) nie trafiają do gita — wyjątek: plik ważny jako wzorzec, za zgodą. Gałąź `wnioski-<skill>-<domena>` zakłada dopiero, gdy jest co commitować.
-- **Wariant „nowy problem”:** przed startem okna przełączam na nową gałąź `git switch -c <temat>`; `/zapisz` i `/zamknij` wykonuje użytkownik (sesja realizująca nie commituje).
-- Gałąź zakładam tylko od `main`. Jeśli bieżąca gałąź ≠ `main` → pytam: przełączenie przeniosłoby z dysku pliki tamtej gałęzi, a drzewo jest wspólne dla wszystkich okien i VS Code.
+- **Wariant „nowy problem” → osobny worktree** (od 2026-11-10; `Domino` nie przełącza gałęzi):
+  - `python SI/02_Serwisy/ClickUp/Zadania_ClickUp/worktree_zadania.py utworz <temat>` (z `Domino`). Tworzy `.worktrees/<temat>` na nowej gałęzi `<temat>` z `origin/main`. Dołącza to, czego git nie przenosi:
+    - kopie `.gitignore` i `.claude/settings.local.json`;
+    - dowiązania do `SI/Klienci` i do `_historia/kopie` oraz `_robocze`;
+    - twarde dowiązania do plików `config.json`.
+  - Zadanie kontynuuje projekt z danymi tylko lokalnymi (np. `raporty/`, `dane/`, eksport) → dodaję `--dolacz <ścieżka>` (można powtarzać). Folder dostaje junction, a w folderze częściowo śledzonym brakujące pliki dostają twarde dowiązania. Nowe pliki wyników zostają w worktree, a `usun` ich nie skasuje bez `--sila`.
+  - Kod 0 → dalej. Kod 1 (gałąź lub folder istnieje, `git status` nieczysty, błąd dowiązania) → zgłaszam i nie otwieram okna.
+  - Gałąź bieżąca `Domino` nie ma znaczenia: nie pytam o nią i niczego w `Domino` nie przełączam.
+  - `/zapisz` i `/zamknij` wykonuje użytkownik w oknie zadania (sesja realizująca nie commituje). `/zamknij` w worktree robi merge w `Domino` i nie usuwa folderu, w którym sam działa.
+  - Tekst do „Zasad sesji”: „Git: worktree .worktrees/<temat>, gałąź <temat>; nie przełączaj gałęzi; /zapisz i /zamknij wykonuje użytkownik w tym oknie.”
+- **Sprzątanie na starcie:** przed krokiem 4 uruchamiam `worktree_zadania.py lista`. Worktree „SCALONA z main” proponuję usunąć jednym zdaniem: „zamknij okno VS Code zadania <temat>, a usunę worktree”. Po zgodzie: `worktree_zadania.py usun <temat>`. Skrypt odmawia, gdy są niezapisane zmiany, gałąź jest niescalona albo są pliki tylko lokalne. `--sila` tylko na wyraźną prośbę użytkownika.

@@ -46,7 +46,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Amazon: katalog | `02_Serwisy/Amazon/Katalog` | w toku | szablon TOY_BUILDING_BLOCK (magnicreatix.pl) |
 | Erli | `02_Serwisy/Erli` | wiedza | zamówienia Erli ↔ IdoSell (zooart) |
 | n8n + ClickUp | `02_Serwisy/n8n` | w toku | scenariusz „ClickUp - SUBTASK”, dokumentacja |
-| Zadania ClickUp (skill `/zadanie`) | `02_Serwisy/ClickUp/Zadania_ClickUp` | gotowe (2026-11-05) | link ClickUp → analiza → folder → nowe okno z Claude |
+| Zadania ClickUp (skill `/zadanie`) | `02_Serwisy/ClickUp/Zadania_ClickUp` | gotowe (2026-11-05), worktree 2026-11-10 | link ClickUp → analiza → worktree zadania → nowe okno VS Code z Claude; `worktree_zadania.py` |
 | Shoparena | `02_Serwisy/Shoparena` | — | folder na przyszłe projekty |
 | summonFeed — generator | `archiwum/SummonFeed/Generator` | archiwum (2026-11-05) | stary generator z klocków; wzorce linków nadal używane przez skill |
 
@@ -79,4 +79,4 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 7. **Status** — przy zakładaniu, wstrzymaniu i zamknięciu projektu aktualizuję tabelę powyżej.
 8. **Archiwum** — `archiwum/<klient lub serwis>/<projekt>/`, na prośbę lub przy zamykaniu projektu za zgodą.
 9. **Zmiany istniejących sterowników XSLT** (dowolny klient) → `02_Serwisy/IdoSell/Zmiany_sterownikow/<klient>/<element>_<RRRR-MM-DD>/` (osobny podfolder na zadanie: analiza, notatki, `komentarz_clickup.txt`). Najpierw porównanie pliku lokalnego z panelem (`_narzedzia/porownaj_sterownik/run_porownaj.bat`); stare wersje sterowników → `xslt/<litera>/<klient>/<kraj>/old/` z datą. Historia sterowników (`_narzedzia/historia_sterownikow/README.md`): zrzut `start` przed pierwszą zmianą, znaczniki `BM-SERWIS`/`BM-EDYCJA` tylko w edytowanych plikach, przed wgraniem pytanie „wgrywasz Ty czy ja?”, zrzuty przed/po wgraniu i `dziennik_wdrozen.csv`, w `/zamknij` przebieg kontrolny po wszystkich sklepach.
-10. **Git** — reguły tylko w `Domino\.gitignore` (ogólne dla SI: `dane/`, `wyniki/`, `config.json`, `__pycache__/`); każdy projekt na osobnej gałęzi, merge do `main` przez `/zamknij`.
+10. **Git** — reguły tylko w `Domino\.gitignore` (ogólne dla SI: `dane/`, `wyniki/`, `config.json`, `__pycache__/`); każdy projekt na osobnej gałęzi, merge do `main` przez `/zamknij`. Zadania „nowy problem” z `/zadanie` pracują w osobnym worktree `Domino\.worktrees\<temat>` (kopia `.gitignore`, dowiązania do danych lokalnych; `02_Serwisy/ClickUp/Zadania_ClickUp/worktree_zadania.py`), więc karty nie przełączają sobie gałęzi.
