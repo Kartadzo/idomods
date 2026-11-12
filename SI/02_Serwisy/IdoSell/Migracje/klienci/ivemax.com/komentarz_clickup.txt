@@ -1,0 +1,36 @@
+Przegląd panelu i sklepu (wersja PL) przed migracją – 12.11.2026
+
+Sprawdziliśmy panel IdoSell i front na domenie technicznej. Konfiguracja jest w dużej części gotowa (dane firmy, VAT, waluty, zwroty, proces zamówienia, przelew i płatności IdoPay). Zostały rzeczy do decyzji i pozostałości po szablonie standardowym, które trzeba usunąć przed startem.
+
+PYTANIA DO KLIENTA
+
+1. Poczta: na jaki adres w domenie ivemax.com mają wychodzić maile do klientów (np. shop@ivemax.com, który jest już w stopce)? Teraz sklep wysyła z adresu na domenie technicznej i ten adres trafia też do regulaminu. Potrzebujemy dostępu do OVH w umówionym terminie (kod przychodzi na Twój e-mail), żeby ustawić rekordy DNS.
+2. eNova: kto po stronie eNovy konfiguruje integrację z IdoSell i kiedy w grudniu? Czy dokumenty sprzedaży do klientów będzie wysyłać eNova? Czy eNova obsługuje też wysyłki (etykiety kurierskie)?
+3. Płatności: czy konta Stripe i PayPal są już założone? Potrzebujemy danych do podpięcia (w panelu oba są jeszcze wyłączone). Czy płatność przy odbiorze (pobranie) ma zostać? Teraz jest widoczna w koszyku.
+4. Dostawy: czy wysyłamy do Belgii? Profil Belgii jest pusty, a w bazie jest 136 klientów z Belgii. Czy forma dostawy „Niestandardowy” ma być widoczna dla klientów?
+5. Trusted Shops: czy pakiet jest aktywny i czy przenosimy go do IdoSell? W IdoSell nie ma jeszcze certyfikatu.
+6. Analityka: prosimy o dostęp do GA4, Google Search Console, Clarity i Google Tag Managera (lub ID kontenera). W sklepie nie ma jeszcze ID.
+7. Edrone: jeśli w OVH są rekordy DNS edrone (np. subdomena lub wpisy TXT), usuniemy je przy ustawianiu poczty. Wystarczy dostęp do OVH.
+8. Wersje językowe: sklep ma 8 języków widocznych dla klientów (PL, EN, DE, FR, ES, NL, SV, IT). Czy do czasu tłumaczeń ukrywamy wszystkie poza PL? Czy wszystkie 8 zostają docelowo?
+9. Karta produktu: w ramce korzyści są teksty „Darmowa i szybka dostawa”, „Odroczone płatności – zapłać za 30 dni” i „Sprawdź, w którym sklepie obejrzysz i kupisz od ręki”. Czy to zgodne z ofertą (sklepy stacjonarne, darmowa dostawa)?
+10. Menu kategorii: pozycje „Filtry”, „Części Karoserii”, „silniki i osprzęt”, „wyposażenie wnętrz”, „układ hamulcowy” są puste. Podpinamy kategorie czy ukrywamy?
+
+DO ZESPOŁU (@Katarzyna Woźniak, @Dominik Matyjasek)
+
+A. Pozostałości szablonu standardowego do usunięcia przed startem (szczegóły i miejsca w panelu w pliku pozostałości):
+   - slider: slajd demo „Wersje kolorystyczne” z linkiem do pomocy IdoSell i slajd „Bezproblemowe zwroty”;
+   - blog: 4 przykładowe wpisy („Zmienisz go w dziale MODERACJA > Blog”), także na stronie głównej; aktualności: 2 przykładowe newsy;
+   - producenci „Przykładowy producent A/B”;
+   - stopka: kolumna „Menu 4” z pięcioma „przykładowymi linkami”;
+   - strona „Zasady dotyczące zwrotów” (URL Darmowe-zwroty-Poczta-Polska) ma treść demo z dopiskiem „zmienisz w dziale MODERACJA > CMS…”;
+   - domyślne strony CMS: Paczkomaty 24/7, Karta podarunkowa, Oferta specjalna, Pozyskiwanie i wymiana punktów, Pozostałe informacje 1–3, Ankiety.
+B. SEO: karta produktu ma pusty <title>, a meta description zaczyna się od „{product_name}” (zła składnia zmiennej). Meta EN: „You can change the shop description in MODERATION \ SEO”. Tytuł listy kategorii kończy się „VIKI-CZĘŚCI” zamiast „Ivemax”.
+C. Dostawy: w koszyku za 250 zł wszystkie formy dostawy, także palety, są „Gratis!”. Czy to zamierzony wynik indywidualnej aplikacji dostaw i dodatku „Logika Palet - Test” (aktywny na produkcji z nazwą „Test”)?
+D. Klucz Admin API „Klucz API Base.” zdezaktywowany 12.11 (Base anulowane). Stany i ceny do czasu eNovy: kto je aktualizuje?
+E. Aplikacja „Idomods Translator” jest podpięta (klucz API użyty 12.11). Czy możemy ruszać z tłumaczeniami, w tym wiadomości transakcyjnych?
+F. Wiadomości transakcyjne: eksport z 12.11 pokazuje czysty standard IdoSell (bez marki Ivemax, edycje tylko „Support” 2016 i 08.2025). Pytanie z ticketu #1239568397 można zamknąć: IAI niczego pod klienta nie ustawiał. Ryzyka:
+   - maile FR/ES/NL/SV/IT są włączone, ale ich treść jest po polsku;
+   - 16 wiadomości ma wyłączony PL, a włączony EN/DE, m.in. „Przyjęcie wpłaty” i „Podziękowanie za zakupy i informacja o dostarczeniu paczki”.
+   Do decyzji: włączamy te PL i wyłączamy języki obce do czasu tłumaczeń?
+G. W komunikatach panelu są tickety IdoSell o IdoSell Bridge – enova365 (09.11 i 12.11, problem z bazą na serwerze Windows). Kto to prowadzi i czy mamy to w ClickUp?
+H. Status zadania w ClickUp nie odzwierciedla panelu. Np. „Blog – usunięcie standardu” ma 0,4 h z września, a wpisy dalej są opublikowane. „Strefy bannerowe” są oznaczone jako ukończone, a slider ma slajdy demo.
