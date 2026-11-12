@@ -11,6 +11,11 @@ Repo: `C:\Users\Admin\Desktop\Domino`, remote `origin`, `push.autoSetupRemote=tr
 - `git branch --show-current`.
 - Jeśli to **`main`** (albo detached HEAD): **nic nie commituję ani nie pushuję**. Informuję jednym zdaniem, że na `main` zapis robi użytkownik, i podaję listę plików zmienionych w tej sesji do jego commita. Koniec.
 - **Worktree zadania** (`Domino\.worktrees\<temat>`): przed `git add` sprawdzam, że w korzeniu worktree jest `.gitignore`. Bez niego git nie ignoruje feedów, eksportów ani kluczy, więc zatrzymuję się i zgłaszam to (kopię robi `worktree_zadania.py utworz`). Resztę kroków robię normalnie w worktree.
+- **Worktree: dane klienta do `Domino`** (ustalenie z 2026-11-12):
+  - przed commitem uruchamiam `git ls-files -o -i --exclude-standard`;
+  - pomijam to, co dokłada skrypt `utworz`: kopie `.gitignore` i `.claude/settings.local.json`, dowiązania `SI/Klienci`, `config.json`, foldery z `--dolacz` i `__pycache__`;
+  - pozostałe pliki tylko lokalne przenoszę do `Domino` pod tę samą ścieżkę względną; gdy plik już tam jest, nie nadpisuję go, tylko to zgłaszam;
+  - listę przeniesionych plików podaję w podsumowaniu.
 
 ## 1a. Historia sterowników (gdy w sesji była praca ze sterownikami IdoSell)
 - Dotyczy pracy z feedami/sterownikami w panelu (Zmiany_sterownikow, summonfeed, zadanie z feedem). Procedura: `SI/02_Serwisy/IdoSell/Zmiany_sterownikow/_narzedzia/historia_sterownikow/README.md`.
