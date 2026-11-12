@@ -28,6 +28,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Wiadomości transakcyjne (skill) | `02_Serwisy/IdoSell/Wiadomosci_transakcyjne` | gotowe (2026-10-14) | status, edycja działania, eksport/import treści maili i SMS |
 | Edycja eksportu XML | `02_Serwisy/IdoSell/Edycja_eksportu_XML` | gotowe, nieprzetestowane ręcznie | GUI tkinter: XML + CSV → 3 struktury |
 | Migracja klientów | `02_Serwisy/IdoSell/Migracja_klientow` | gotowe | konwersja eksportu klientów do importu IdoSell |
+| Migracje na IdoSell | `02_Serwisy/IdoSell/Migracje` | w toku (2026-11-12) | stan panelu i pozostałości techniczne przed migracją, wnioski do wycen; `klienci/ivemax.com/` (pierwsza migracja z SI) |
 | Aktualizacja towarów (Empik) | `02_Serwisy/IdoSell/Aktualizacja_towarow` | gotowe | nazwy i opisy dla serwisu (magnicreatix.pl) |
 | Walidacja aktualizacji API | `02_Serwisy/IdoSell/API_walidacja_aktualizacji` | gotowe (2026-09) | testy zmian Admin API v8; dokumentacja: `02_Serwisy/IdoSell/DOKUMENTACJA_API.md` |
 | Test zdarzeń po OSCOP | `02_Serwisy/IdoSell/Test_zdarzen_OSCOP` | w toku (2026-11-05) | zdarzenia Google/Meta/TikTok w nowym procesie zamówienia; raporty `raporty/<domena>_<data>/` (megadron.pl) |
@@ -41,7 +42,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Weryfikacja GPTAds | `02_Serwisy/OpenAI/Weryfikacja_GPTAds` | gotowe (2026-11-02) | przypisanie konwersji do kliknięć (butyolivier.pl) |
 | Piksel ChatGPT przez GTM | `02_Serwisy/GTM/Piksel_ChatGPT_idomods` | w toku — czeka na publikację | import kontenera GTM dla idomods.pl |
 | Śledzenie konwersji Google Ads | `02_Serwisy/Google_Ads/Sledzenie_konwersji` | gotowe (2026-10-26) | raport wycieraczkidoszyb |
-| Base: powiązania (ivemax) | `02_Serwisy/Base/Powiazania_produktow/ivemax` | wstrzymane (2026-10-21) | czeka na eksport z wFirmy |
+| Base: powiązania (ivemax) | `02_Serwisy/Base/Powiazania_produktow/ivemax` | anulowane (2026-11-12) | klient przechodzi w grudniu bezpośrednio na eNovę; ustalenia z Base nieaktualne |
 | Base: powiązania (romanetka) | `02_Serwisy/Base/Powiazania_produktow/romanetka` | wstrzymane (2026-10-27) | czeka na decyzję klienta; analiza w `02_Serwisy/Base/Analiza/` |
 | Amazon: katalog | `02_Serwisy/Amazon/Katalog` | w toku | szablon TOY_BUILDING_BLOCK (magnicreatix.pl) |
 | Erli | `02_Serwisy/Erli` | wiedza | zamówienia Erli ↔ IdoSell (zooart) |
