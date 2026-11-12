@@ -44,7 +44,7 @@ Status: **gotowe** · **w toku** · **wstrzymane** · **archiwum**. Daty z notat
 | Śledzenie konwersji Google Ads | `02_Serwisy/Google_Ads/Sledzenie_konwersji` | gotowe (2026-10-26) | raport wycieraczkidoszyb |
 | Base: powiązania (ivemax) | `02_Serwisy/Base/Powiazania_produktow/ivemax` | anulowane (2026-11-12) | klient przechodzi w grudniu bezpośrednio na eNovę; ustalenia z Base nieaktualne |
 | Base: powiązania (romanetka) | `02_Serwisy/Base/Powiazania_produktow/romanetka` | wstrzymane (2026-10-27) | czeka na decyzję klienta; analiza w `02_Serwisy/Base/Analiza/` |
-| Amazon: katalog | `02_Serwisy/Amazon/Katalog` | w toku | szablon TOY_BUILDING_BLOCK (magnicreatix.pl) |
+| Amazon: katalog | `02_Serwisy/Amazon/Katalog` | w toku (2026-11-12) | szablon TOY_BUILDING_BLOCK (magnicreatix.pl); `Weryfikacja_pliku/`: porównanie i walidacja pliku od klienta (GPSR), wyniki lokalnie w `<klient>/weryfikacja_<data>/` |
 | Erli | `02_Serwisy/Erli` | wiedza | zamówienia Erli ↔ IdoSell (zooart) |
 | n8n + ClickUp | `02_Serwisy/n8n` | w toku | scenariusz „ClickUp - SUBTASK”, dokumentacja |
 | Zadania ClickUp (skill `/zadanie`) | `02_Serwisy/ClickUp/Zadania_ClickUp` | gotowe (2026-11-05), worktree 2026-11-10 | link ClickUp → analiza → worktree zadania → nowe okno VS Code z Claude; `worktree_zadania.py` |
