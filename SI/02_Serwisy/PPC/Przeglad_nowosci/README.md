@@ -2,7 +2,7 @@
 
 Raz w miesiącu przegląd platform reklamowych i kont referencyjnych pod kątem nowych funkcji i możliwości optymalizacji **feedów** (specyfikacje, atrybuty, wymagania) i **zdarzeń** (CAPI, Events API, konwersje, consent mode, parametry). Zadanie ClickUp: [Nowe wytyczne do optymalizacji feedów i zdarzeń PPC](https://app.clickup.com/t/1ammhmkczj3).
 
-- Status: w toku (pierwsza edycja 2026-11, termin 2026-11-17); cykl co miesiąc.
+- Status: narzędzie gotowe, cykl co miesiąc. Edycja 2026-11 zakończona 2026-11-12 (raport lokalnie w `raporty/2026-11/`); kolejna: 2026-12.
 - Budżet: ok. 1 h na edycję.
 - Ostatnia zmiana: 2026-11-12.
 - Analiza: `ANALIZA_ppc_przeglad_nowosci.md`.
